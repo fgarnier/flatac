@@ -288,8 +288,7 @@ class panalyse (funinfos : Cil_types.fundec) = object(self)
 		      Affect_int_ptr ( LiIntPtr(vinfo.vname),  rhs) in
 		    label_list := (label :: !label_list) 
 
-		  | _ -> self#register_failure stmtp "Affectation to a non
-integer variable or pointer. Operation ignored"  
+		  | _ -> self#register_failure stmtp "Affectation to a non integer variable or pointer. Operation ignored"  
 	      with
 		  | Bad_expression_type ( msg ) -> self#register_failure stmtp ("failed to parse scalar expression "^msg);
 
@@ -324,14 +323,12 @@ integer variable or pointer. Operation ignored"
 			 (*The returned value is a variable that has another
 			 type than an integer type. Tpointer, float for instance*)
 
-			| _ ->  self#register_failure stmtp ( "returned value 
-is not of an integer type." )  
+			| _ ->  self#register_failure stmtp ( "returned value is not of an integer type." )  
 		    end
 
 		(*Other operations, notified here.*)
 
-		| _ ->  self#register_failure stmtp ( "The returned value is
-not affected to a variable type. Not consided in this version")    
+		| _ ->  self#register_failure stmtp ( "The returned value is not affected to a variable type. Not consided in this version")    
 
 	  end 
 	
@@ -462,17 +459,3 @@ not affected to a variable type. Not consided in this version")
     List.iter (fun s -> Format.fprintf out_channel "[log ] %s \n" s) log_messages 
 
 end;;
-
-
-
-
-
-
-
-    
-
-
-
-
-
-  
