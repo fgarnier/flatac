@@ -1,0 +1,11 @@
+*.cmi
+*.cmo
+*.cmx
+*.cmxs
+*.o
+*.depend
+*.annot
+*_DEP
+*.swp
+~*
+
