@@ -1,11 +1,18 @@
+*.aux
+*.log
+*.bbl
+*.blg
+*.pdf
+*.dvi
+
 *.cmi
 *.cmo
 *.cmx
 *.cmxs
 *.o
-*.depend
-*.annot
 *_DEP
-*.swp
-~*
+*.annot
+*.depend
+*.out
 
+*.swp
