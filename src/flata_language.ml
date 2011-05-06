@@ -190,9 +190,8 @@ let rec monom_list_of_scal ( res_list : inmon list )( scal_expr :
 Intermediate_language.c_scal ) =
   match scal_expr with 
     | LiProd ( _ , _ ) ->  ( mon_of_scal_prod_tree scal_expr )::res_list
-    | LiVar ( _ , var ) -> InMon (  1 ,
-				   XPow( var , LiIConst ( 1 ) )::[])::res_list
-    | LiConst( LiIConst ( i ) ) -> InMon ( LiIConst ( i ) ,
+    | LiVar ( _ , var ) -> (InMon (  1 , XPow( VarI ( var ) , LiIConst ( 1 ) )::[]))::res_list
+    | LiConst( LiIConst ( i ) ) -> InMon ( i  ,
 				XPow ( VarI( LiIntVar ("__Constante__C2CA")),
 						      LiIConst(0) )::[])::res_list
 
@@ -203,7 +202,7 @@ Intermediate_language.c_scal ) =
     | _ ->  raise  
       
 
-  (*
+  (*²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²
 
 let  monomials_of_scal  ( scal_expr : Intermediate_language.c_scal ) = 
   let scal_nf = expend_expr scal_expr in

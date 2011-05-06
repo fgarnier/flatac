@@ -36,7 +36,6 @@ that are the evaluation of arithmetic
 expressions which ground terms are free integer variables
 and integers constants.
 
-Je suis à la boure et Marychat va être fachée.
 *)
 
 exception Bad_expression_type of string

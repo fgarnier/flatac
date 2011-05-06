@@ -14,3 +14,6 @@
 *.annot
 *.depend
 *.out
+
+*.swp
+~*

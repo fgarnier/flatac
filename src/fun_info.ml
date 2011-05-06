@@ -51,8 +51,9 @@ module Enabled =
   Self.False
     (struct
        let option_name = "-flatac"
-       let descr = "Generates a counter automata based abstraction of a set of C functions"
-     end)
+       let help = "Generates a counter automata based abstraction of a set of C functions"
+      let descr = "" 
+	end)
 
 
 let pretty_print_cautomata_obj out = 
