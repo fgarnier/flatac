@@ -1,2 +1,16 @@
+*.aux
+*.log
+*.bbl
+*.blg
+*.pdf
+*.dvi
+
+*.cmi
+*.cmo
+*.cmx
+*.cmxs
+*.o
+*_DEP
+*.annot
 *.depend
 *.out
