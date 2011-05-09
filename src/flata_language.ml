@@ -199,7 +199,7 @@ Intermediate_language.c_scal ) =
     | LiMinus ( a , b ) -> ( monom_list_of_scal a )@( monom_list_of_scal b )
     | LiMod ( a , b ) -> ( monom_list_of_scal a )@( monom_list_of_scal b )
     | LiUnMin ( a ) ->   monom_list_of_scal a
-    | _ ->  raise  
+    | _ ->  raise Bad_expression_type  
       
 
   (*²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²
