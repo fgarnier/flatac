@@ -33,7 +33,7 @@ FRAMAC_LIBDIR 	:=$(shell frama-c.byte -print-libpath)
 
 
 
-SOURCES_FILES   := cautomata.ml c2cautomatanalys.ml fun_info.ml intermediate_language.ml flata_language.ml ast_goodies
+SOURCES_FILES   := cautomata.ml c2cautomatanalys.ml fun_info.ml intermediate_language.ml flata_language.ml ast_goodies.ml
 F_SRC		:= ~/FRAMAC/frama-c-Carbon-20110201
 
 PLUGIN_NAME	= Flatac
