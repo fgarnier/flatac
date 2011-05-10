@@ -43,7 +43,7 @@ module Self =
     (struct
        let name = "Flata-C"
        let shortname = "flatac"
-       let descr = "Generates a counter automata based abstraction of a set of C functions"
+       let help = "Generates a counter automata based abstraction of a set of C functions"
      end)
 
 (** Register the new Frama-C option "-hello". *)
@@ -52,7 +52,7 @@ module Enabled =
     (struct
        let option_name = "-flatac"
        let help = "Generates a counter automata based abstraction of a set of C functions"
-      let descr = "" 
+      let kind = `Correctness 
 	end)
 
 
@@ -93,10 +93,10 @@ let print () = Self.result "%t" ( fun out ->  pretty_print_cautomata_obj out )
     and second, each call to [run] is written in the Frama-C journal. *)
 let print =
   Dynamic.register
-    ~plugin:"Pfun"
+    ~plugin:"Flatac"
     "run"
     ~journalize:true
-    (Type.func Type.unit Type.unit)
+    (Datatype.func Datatype.unit Datatype.unit)
     print
 
 (** Print 'Hello World!' whenever the option is set. *)

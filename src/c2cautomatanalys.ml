@@ -1,4 +1,5 @@
-open Ast_info
+(*open Ast_info*)
+open Ast_goodies
 open Int64
 open Cautomata
 open Format
@@ -97,7 +98,12 @@ class c2cautomata_abstraction (funinfos : Cil_types.fundec) = object(self)
     let torig = Printf.sprintf "s%d" stmtp.sid in
     let tdest = Printf.sprintf "s%d" iterande.sid in
     let ntrans = {id = t_id ; orig = Control (torig,SINone) ; dest = Control (tdest,SINone) ;listlabel = []} in
-      self#add_transition_u  ntrans; Hashtbl.add table_stmt_loc torig (Ast_info.loc_stmt stmtp)
+      self#add_transition_u  ntrans; 
+      let locinfo = Ast_goodies.loc_stmt_opt stmtp in 
+	match locinfo with
+	    Some( stmtp') -> Hashtbl.add table_stmt_loc torig (stmtp')
+	  | None -> ()
+
 	
   method buildgraph (stmtp : Cil_types.stmt ) =
     List.iter ( self#add_trans_from_stmt stmtp ) stmtp.succs ;
@@ -241,12 +247,15 @@ class panalyse (funinfos : Cil_types.fundec) = object(self)
     
 
   method register_failure (stmp: Cil_types.stmt ) (info : string ) =
-    let (l1,_) = Ast_info.loc_stmt stmp in
-    let line = l1.pos_lnum in
-    let col = (l1.pos_cnum - l1.pos_bol ) in
-    let message = Printf.sprintf "In file %s, Line %d, Col %d : %s" l1.pos_fname line col info in
-    log_messages <- message::log_messages
-    
+    let tmp =  Ast_goodies.loc_stmt_opt stmp in
+      match tmp with 
+	  Some (l1,_) ->
+	    let line = l1.pos_lnum in
+	    let col = (l1.pos_cnum - l1.pos_bol ) in
+	    let message = Printf.sprintf "In file %s, Line %d, Col %d : %s" l1.pos_fname line col info in
+	      log_messages <- message::log_messages
+	| None ->  let message = Printf.sprintf " A failure occured at some position which isn't identified"  in
+	      log_messages <- message::log_messages
     
   (*****************************************************************************)
  
@@ -458,7 +467,12 @@ not affected to a variable type. Not consided in this version")
     let ntrans = {id = !t_id ; orig = Control (!torig,!node_info_orig) ; dest = Control (!tdest,!node_info_dest) ; listlabel = !label_list} in
     self#add_transition_u  ntrans; node_info_dest :=SINone; 
       if not ( Hashtbl.mem table_stmt_loc !torig) 
-      then Hashtbl.add table_stmt_loc !torig (Ast_info.loc_stmt stmtp);
+      then 
+	let loc_stmt = Ast_goodies.loc_stmt_opt stmtp in 
+	  match loc_stmt with
+	      Some( loc' ) ->
+		Hashtbl.add table_stmt_loc !torig loc'
+	    | None -> ()
 
  (*Last command of the sequence adds stmt number -> file position  in the stmt_loc  table.*)
 
