@@ -128,7 +128,7 @@ let rec cil_expr_2_bool (expr : Cil_types.exp) =
 	LiBEq(cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
 	  
     | Const(CInt64(value,_,_)) ->  LiBScal(LiConst( LiIConst (Int64.to_int value)))
-    | _-> raise ( Bad_expression_type "Trying to parse an expression
+    | _-> raise ( Bad_expression_type "Trying to parse an expression \
  that can't be evaluated as a boolean \n")
 
 
