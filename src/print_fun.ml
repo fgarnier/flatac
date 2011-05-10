@@ -10,7 +10,7 @@ open List
 open Format
 open Lexing
 open C2cautomatanalys
-
+open Cfg
 
  exception No_computation_performed
 
@@ -31,7 +31,7 @@ class print_fun_visitor (prj : Project.t) =  object
       is_computed <-true;
   match p with 
       GFun ( funinfos , _ ) ->   
-	Cil.prepareCFG funinfos; Cil.computeCFGInfo funinfos true; 
+	Cfg.prepareCFG funinfos; Cfg.computeCFGInfo funinfos true; 
 	let cauto_fun = new panalyse funinfos in
 	fun_cautomata <- ( cauto_fun :: fun_cautomata);
 	DoChildren

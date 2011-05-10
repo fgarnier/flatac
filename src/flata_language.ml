@@ -185,9 +185,10 @@ let rec mon_of_scal_prod_tree ( scal_expr : Intermediate_language.c_scal)
     | _ -> raise Not_a_monome
 	
 
+(*
+TODO 
 
-let rec monom_list_of_scal ( res_list : inmon list )( scal_expr : 
-Intermediate_language.c_scal ) =
+let rec monom_list_of_scal ( res_list : inmon list )( scal_expr : Intermediate_language.c_scal ) =
   match scal_expr with 
     | LiProd ( _ , _ ) ->  ( mon_of_scal_prod_tree scal_expr )::res_list
     | LiVar ( _ , var ) -> (InMon (  1 , XPow( VarI ( var ) , LiIConst ( 1 ) )::[]))::res_list
@@ -201,7 +202,7 @@ Intermediate_language.c_scal ) =
     | LiUnMin ( a ) ->   monom_list_of_scal a
     | _ ->  raise Bad_expression_type  
       
-
+*)
   (*²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²²
 
 let  monomials_of_scal  ( scal_expr : Intermediate_language.c_scal ) = 
