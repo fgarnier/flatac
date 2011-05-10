@@ -29,7 +29,8 @@ class flatac_visitor (prj : Project.t) =  object
 
   method vglob_aux  p = 
       is_computed <-true;
-  match p with 
+ 
+ match p with 
       GFun ( funinfos , _ ) ->   
 	Cfg.prepareCFG funinfos; Cfg.computeCFGInfo funinfos true; 
 	let cauto_fun = new panalyse funinfos in

@@ -33,11 +33,11 @@ FRAMAC_LIBDIR 	:=$(shell frama-c.byte -print-libpath)
 
 
 
-SOURCES_FILES   := cautomata.ml c2cautomatanalys.ml flatac_vistor.ml intermediate_language.ml flata_language.ml
+SOURCES_FILES   := ast_goodies.ml cautomata.ml c2cautomatanalys.ml flatac_vistor.ml intermediate_language.ml flata_language.ml
 F_SRC		:= ~/FRAMAC/frama-c-Carbon-20110201
 
 PLUGIN_NAME	= Flatac
-PLUGIN_CMO	=  intermediate_language cautomata c2cautomatanalys flata_language flatac_visitor
+PLUGIN_CMO	=  ast_goodies intermediate_language cautomata c2cautomatanalys flata_language flatac_visitor
 
 include $(FRAMAC_SHARE)/Makefile.dynamic
 

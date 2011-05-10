@@ -28,12 +28,11 @@ Registration of the flatac plugin.
 
 
 
-open Visitor
 open Cil
 open Cil_types
 open Printf
 open Format
-
+open Flatac_visitor
 
 (** Register the new plug-in "Hello World" and provide access to some plug-in
     dedicated features. *)
@@ -58,7 +57,7 @@ module Enabled =
 
 let pretty_print_cautomata_obj out = 
   let prj= Project.current() in
-  let visit_bibi = new  print_fun_visitor ( prj ) in
+  let visit_bibi = new  flatac_visitor ( prj ) in
   let file_ast = Ast.get() in
   let ca_out_name = Printf.sprintf "%s.ca" file_ast.fileName in
   let table_out_name = Printf.sprintf "%s.stbl" file_ast.fileName in
