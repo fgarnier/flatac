@@ -31,13 +31,11 @@
 FRAMAC_SHARE  	:=$(shell frama-c.byte -print-path)
 FRAMAC_LIBDIR 	:=$(shell frama-c.byte -print-libpath)
 
-
-
-SOURCES_FILES   := cautomata.ml c2cautomatanalys.ml fun_info.ml intermediate_language.ml flata_language.ml
+SOURCES_FILES   := flatac_ep.ml logging.ml 
 F_SRC		:=~/FRAMAC/frama-c-Boron-20100401-why-2.24
 
-PLUGIN_NAME	= Flatac
-PLUGIN_CMO	=  intermediate_language cautomata c2cautomatanalys flata_language fun_info
+PLUGIN_NAME	= FlataC
+PLUGIN_CMO	= flatac_ep logging 
 
 include $(FRAMAC_SHARE)/Makefile.dynamic
 
@@ -62,6 +60,3 @@ doc_html:
 		$(addprefix -stdlib , $(STDLIB_FILES)) \
 		$(FRAMA_C_DOC_DIR) \
 		$(SOURCES_FILES)
-
-
-

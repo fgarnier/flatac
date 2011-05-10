@@ -1,0 +1,9 @@
+#! /bin/sh
+make && make install \
+&& mv -f *.cmo ../obj >/dev/null \
+&& mv -f *.cmi ../obj >/dev/null \
+&& mv -f *.cmx ../obj >/dev/null \
+&& mv -f *.cmxs ../obj >/dev/null \
+&& mv -f *.o ../obj >/dev/null \
+&& mv -f *.annot ../obj >/dev/null \
+&& mv -f *_DEP ../obj >/dev/null
