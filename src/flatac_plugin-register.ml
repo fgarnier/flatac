@@ -52,7 +52,7 @@ module Enabled =
     (struct
        let option_name = "-flatac"
        let help = "Generates a counter automata based abstraction of a set of C functions"
-      let kind ="" 
+      let kind =`Correctness 
 	end)
 
 
