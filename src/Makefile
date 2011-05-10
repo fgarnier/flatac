@@ -33,11 +33,11 @@ FRAMAC_LIBDIR 	:=$(shell frama-c.byte -print-libpath)
 
 
 
-SOURCES_FILES   := cautomata.ml c2cautomatanalys.ml fun_info.ml intermediate_language.ml flata_language.ml
+SOURCES_FILES   := cautomata.ml c2cautomatanalys.ml flatac_vistor.ml intermediate_language.ml flata_language.ml
 F_SRC		:= ~/FRAMAC/frama-c-Carbon-20110201
 
 PLUGIN_NAME	= Flatac
-PLUGIN_CMO	=  intermediate_language cautomata c2cautomatanalys flata_language fun_info
+PLUGIN_CMO	=  intermediate_language cautomata c2cautomatanalys flata_language flatac_visitor
 
 include $(FRAMAC_SHARE)/Makefile.dynamic
 
@@ -50,7 +50,7 @@ FRAMA_C_DOC_DIR	=	-I /usr/lib/ocaml \
 			-I $(F_SRC)/src/lib \
 			-I .
 
-DOC_OPTIONS=-g $(F_SRC)/doc/code/docgen.cmo
+DOC_OPTIONS= #-g $(F_SRC)/doc/code/docgen.cmo
 
 STDLIB_FILES:=printf c2cautomatanalys list string  cautomata       
 STDLIB_FILES:=$(patsubst %, $(OCAMLLIB)/%.mli, $(STDLIB_FILES))
