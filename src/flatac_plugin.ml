@@ -33,6 +33,7 @@ open Cil_types
 open Printf
 open Format
 open Flatac_visitor
+open Visitor
 
 (** Register the new plug-in "Hello World" and provide access to some plug-in
     dedicated features. *)
