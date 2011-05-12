@@ -26,7 +26,7 @@ module SSL_types = struct
 		       a non normalized formula*)
     ptnil : (ptvar , unit) t;
                       (** The set of pointer variables that points to nil
-			 a.k.a. *)
+			 a.k.a. NULL *)
   }
   
  
