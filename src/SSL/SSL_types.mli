@@ -1,3 +1,5 @@
+
+
 module SSL_types :
   sig
     type ptvar = PVar of string
@@ -7,4 +9,12 @@ module SSL_types :
     type affectnil = Pointsnil of ptvar
     type exists_loc = Exists of locvar
     type pure_formula = Pure of eq list * affect list * affectnil list
+    
+    type heap_atom = Alloc of locvar
+		     | Emp
+
+    type space_formula = Space of heap_atom list
+    type heap = 
+	
+    val normalize :  
   end
