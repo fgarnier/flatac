@@ -1,0 +1,30 @@
+<html><head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of class attributes" rel=Appendix href="index_attributes.html">
+<link title="Index of class methods" rel=Appendix href="index_methods.html">
+<link title="Index of classes" rel=Appendix href="index_classes.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Ast_goodies" rel="Chapter" href="Ast_goodies.html">
+<link title="Cautomata" rel="Chapter" href="Cautomata.html">
+<link title="C2cautomatanalys" rel="Chapter" href="C2cautomatanalys.html">
+<link title="Intermediate_language" rel="Chapter" href="Intermediate_language.html">
+<link title="Flata_language" rel="Chapter" href="Flata_language.html"><title>C2cautomatanalys.c2cautomata_abstraction.print_table_stmt_loc</title>
+</head>
+<body>
+<code class="code"><span class="keyword">method</span>&nbsp;print_table_stmt_loc&nbsp;(out_channel&nbsp;:&nbsp;<span class="constructor">Format</span>.formatter)&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">(*Format.fprintf&nbsp;out_channel&nbsp;"Table&nbsp;correspondances&nbsp;entre&nbsp;états&nbsp;et&nbsp;position&nbsp;dans&nbsp;le&nbsp;fichier&nbsp;source.&nbsp;\n";*)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;cmpt&nbsp;=&nbsp;ref&nbsp;0&nbsp;<span class="keyword">in</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Hashtbl</span>.iter&nbsp;(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">fun</span>&nbsp;str&nbsp;(loca,locb)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span>&nbsp;!cmpt&nbsp;==&nbsp;0&nbsp;<span class="keyword">then</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">begin</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Format</span>.fprintf&nbsp;out_channel&nbsp;<span class="string">"Automaton&nbsp;:&nbsp;%s,&nbsp;source_file&nbsp;:&nbsp;%s&nbsp;:\n"</span>&nbsp;name&nbsp;loca.pos_fname;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmpt:=!cmpt+1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span>;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Format</span>.fprintf&nbsp;out_channel&nbsp;<span class="string">"State&nbsp;:&nbsp;%s&nbsp;location&nbsp;:&nbsp;from&nbsp;(line:%d,col:%d)&nbsp;to&nbsp;(line:%d,col:%d)&nbsp;\n"</span>&nbsp;str&nbsp;loca.pos_lnum&nbsp;(loca.pos_cnum-loca.pos_bol)&nbsp;&nbsp;locb.pos_lnum&nbsp;(locb.pos_cnum&nbsp;-&nbsp;locb.pos_bol)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;)&nbsp;table_stmt_loc;&nbsp;<span class="constructor">Format</span>.fprintf&nbsp;out_channel&nbsp;<span class="string">"\n"</span></code></body></html>

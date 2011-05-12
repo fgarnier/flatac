@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="Up" href="Cautomata.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of class attributes" rel=Appendix href="index_attributes.html">
+<link title="Index of class methods" rel=Appendix href="index_methods.html">
+<link title="Index of classes" rel=Appendix href="index_classes.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Ast_goodies" rel="Chapter" href="Ast_goodies.html">
+<link title="Cautomata" rel="Chapter" href="Cautomata.html">
+<link title="C2cautomatanalys" rel="Chapter" href="C2cautomatanalys.html">
+<link title="Intermediate_language" rel="Chapter" href="Intermediate_language.html">
+<link title="Flata_language" rel="Chapter" href="Flata_language.html"><title>Cautomata.cautomaton</title>
+</head>
+<body>
+<div class="navbar">&nbsp;<a href="Cautomata.html">Up</a>
+&nbsp;</div>
+<center><h1>Class <a href="type_Cautomata.cautomaton.html">Cautomata.cautomaton</a></h1></center>
+<br>
+<pre><span class="keyword">class</span> <a name="TYPEcautomaton"></a>cautomaton : <code class="type">string -> </code><code class="code">object</code> <a href="Cautomata.cautomaton.html">..</a> <code class="code">end</code></pre><hr width="100%">
+<a name="2_ClassCautomatondefinesthetypeoftheobjectusedtorepresentacounterautomate"></a>
+<h2>Class Cautomaton defines the type of the object used to represent
+a counter automate. The interface that follows allows to add both initial
+and terminal state as well as transitions</h2><pre><span class="keyword">val</span> <a name="ATTname"></a><span class="keyword">mutable</span> <a href="code_ATTCautomata.cautomaton.name.html">name</a> : <code class="type">string</code></pre><pre><span class="keyword">val</span> <a name="ATTtransitions"></a><a href="code_ATTCautomata.cautomaton.transitions.html">transitions</a> : <code class="type">(string, <a href="Cautomata.html#TYPEtransition">transition</a>) Hashtbl.t</code></pre><div class="info">
+The two fields that follows are used to represent the set
+      of control state and the set of transition of a counter automaton<br>
+</div>
+<pre><span class="keyword">val</span> <a name="ATTcontrol_states"></a><a href="code_ATTCautomata.cautomaton.control_states.html">control_states</a> : <code class="type">(string, <a href="Cautomata.html#TYPEstate_table_element">state_table_element</a>) Hashtbl.t</code></pre><pre><span class="keyword">val</span> <a name="ATTinitial_states_id"></a><a href="code_ATTCautomata.cautomaton.initial_states_id.html">initial_states_id</a> : <code class="type">(string, unit) Hashtbl.t</code></pre><div class="info">
+Here are both stored the reference to the set of initial and
+     final states<br>
+</div>
+<pre><span class="keyword">val</span> <a name="ATTfinal_states_id"></a><a href="code_ATTCautomata.cautomaton.final_states_id.html">final_states_id</a> : <code class="type">(string, unit) Hashtbl.t</code></pre><pre><span class="keyword">val</span> <a name="ATTcommon_states_id"></a><a href="code_ATTCautomata.cautomaton.common_states_id.html">common_states_id</a> : <code class="type">(string, unit) Hashtbl.t</code></pre><div class="info">
+This list contains the set of the Id of the states that are neither
+     initial nor terminal<br>
+</div>
+<pre><span class="keyword">val</span> <a name="ATTis_init"></a><span class="keyword">mutable</span> <a href="code_ATTCautomata.cautomaton.is_init.html">is_init</a> : <code class="type">bool</code></pre><pre><span class="keyword">method</span> <a name="METHODset_name"></a><a href="code_METHODCautomata.cautomaton.set_name.html">set_name</a> : <code class="type">string -> unit</code></pre><pre><span class="keyword">method</span> <a name="METHODadd_init_state"></a><a href="code_METHODCautomata.cautomaton.add_init_state.html">add_init_state</a> : <code class="type"><a href="Cautomata.html#TYPEcontrol_state">control_state</a> -> bool</code></pre><div class="info">
+This method is used to try add an initial state. Return true if the
+ control state is not referenced, returns false otherwise. The two methods
+that follow add_init_state perform the same task, for the final and common states<br>
+</div>
+<a name="2_Performthesametaskasthefunctionabovebutdoesntreturntruefalseonsuccessfailureofaddingthestates"></a>
+<h2>Perform the same task as the function above, but doesn't return true/false on success/failure
+of adding the state s.</h2><pre><span class="keyword">method</span> <a name="METHODadd_init_state_u"></a><a href="code_METHODCautomata.cautomaton.add_init_state_u.html">add_init_state_u</a> : <code class="type"><a href="Cautomata.html#TYPEcontrol_state">control_state</a> -> unit</code></pre><pre><span class="keyword">method</span> <a name="METHODadd_final_state"></a><a href="code_METHODCautomata.cautomaton.add_final_state.html">add_final_state</a> : <code class="type"><a href="Cautomata.html#TYPEcontrol_state">control_state</a> -> bool</code></pre><pre><span class="keyword">method</span> <a name="METHODadd_final_state_u"></a><a href="code_METHODCautomata.cautomaton.add_final_state_u.html">add_final_state_u</a> : <code class="type"><a href="Cautomata.html#TYPEcontrol_state">control_state</a> -> unit</code></pre><div class="info">
+Same as function above, but returns nil<br>
+</div>
+<pre><span class="keyword">method</span> <a name="METHODadd_set_final_state_u"></a><a href="code_METHODCautomata.cautomaton.add_set_final_state_u.html">add_set_final_state_u</a> : <code class="type"><a href="Cautomata.html#TYPEcontrol_state">control_state</a> -> unit</code></pre><pre><span class="keyword">method</span> <a name="METHODadd_common_state"></a><span class="keyword">private</span> <a href="code_METHODCautomata.cautomaton.add_common_state.html">add_common_state</a> : <code class="type"><a href="Cautomata.html#TYPEcontrol_state">control_state</a> -> bool</code></pre><pre><span class="keyword">method</span> <a name="METHODcheck_id_availability"></a><a href="code_METHODCautomata.cautomaton.check_id_availability.html">check_id_availability</a> : <code class="type">string -> bool</code></pre><a name="2_TrucsuspectPourquoinepuisjepascalculerHashtblmemcommonstatesidstralorsqueasvalueBool"></a>
+<h2>Truc suspect : Pourquoi ne puis-je pas calculer
+     !(Hashtbl.mem common_states_id str) alors que
+     ça s'évalue à Bool.</h2><pre><span class="keyword">method</span> <a name="METHODadd_transition"></a><a href="code_METHODCautomata.cautomaton.add_transition.html">add_transition</a> : <code class="type"><a href="Cautomata.html#TYPEtransition">transition</a> -> bool</code></pre><pre><span class="keyword">method</span> <a name="METHODadd_transition_u"></a><a href="code_METHODCautomata.cautomaton.add_transition_u.html">add_transition_u</a> : <code class="type"><a href="Cautomata.html#TYPEtransition">transition</a> -> unit</code></pre><div class="info">
+Try to add a transition, without notifying wheter the transition has been successfuly added
+or not. The return value is nil.<br>
+</div>
+<a name="2_Etvoil"></a>
+<h2>Et voilà</h2><pre><span class="keyword">method</span> <a name="METHODpretty_print_final_states"></a><a href="code_METHODCautomata.cautomaton.pretty_print_final_states.html">pretty_print_final_states</a> : <code class="type">Format.formatter -> unit</code></pre><pre><span class="keyword">method</span> <a name="METHODpretty_print_initial_states"></a><a href="code_METHODCautomata.cautomaton.pretty_print_initial_states.html">pretty_print_initial_states</a> : <code class="type">Format.formatter -> unit</code></pre><pre><span class="keyword">method</span> <a name="METHODpretty_print"></a><a href="code_METHODCautomata.cautomaton.pretty_print.html">pretty_print</a> : <code class="type">Format.formatter -> unit</code></pre></body></html>

@@ -1,0 +1,40 @@
+<html><head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of class attributes" rel=Appendix href="index_attributes.html">
+<link title="Index of class methods" rel=Appendix href="index_methods.html">
+<link title="Index of classes" rel=Appendix href="index_classes.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Ast_goodies" rel="Chapter" href="Ast_goodies.html">
+<link title="Cautomata" rel="Chapter" href="Cautomata.html">
+<link title="C2cautomatanalys" rel="Chapter" href="C2cautomatanalys.html">
+<link title="Intermediate_language" rel="Chapter" href="Intermediate_language.html">
+<link title="Flata_language" rel="Chapter" href="Flata_language.html"><title>Cautomata.pretty_print_label_list</title>
+</head>
+<body>
+<code class="code"><span class="keyword">let</span>&nbsp;<span class="keyword">rec</span>&nbsp;pretty_print_label_list&nbsp;(out_channel&nbsp;:&nbsp;<span class="constructor">Format</span>.formatter)&nbsp;(transition_list&nbsp;:&nbsp;trans_label&nbsp;list&nbsp;)&nbsp;=<br>
+&nbsp;&nbsp;<span class="keyword">match</span>&nbsp;transition_list&nbsp;<span class="keyword">with</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Format</span>.fprintf&nbsp;out_channel&nbsp;<span class="string">"}"</span>&nbsp;<span class="comment">(*Prints&nbsp;closing&nbsp;brackets&nbsp;*)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Guard</span>&nbsp;(&nbsp;g&nbsp;)::l&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Format</span>.fprintf&nbsp;out_channel&nbsp;<span class="string">"%s"</span>&nbsp;(<span class="constructor">Intermediate_language</span>.c_bool_to_string&nbsp;g&nbsp;);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span>&nbsp;<span class="constructor">List</span>.length&nbsp;l&nbsp;&gt;&nbsp;0&nbsp;<span class="keyword">then</span>&nbsp;&nbsp;<span class="constructor">Format</span>.fprintf&nbsp;out_channel&nbsp;<span class="string">","</span>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pretty_print_label_list&nbsp;out_channel&nbsp;l<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">FunCall</span>(&nbsp;fun_name&nbsp;,&nbsp;scalar&nbsp;)::&nbsp;l&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Format</span>.fprintf&nbsp;out_channel&nbsp;<span class="string">"%s(%s)"</span>&nbsp;fun_name&nbsp;(&nbsp;scalar_list_to_string&nbsp;scalar&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span>&nbsp;<span class="constructor">List</span>.length&nbsp;l&nbsp;&gt;&nbsp;0&nbsp;<span class="keyword">then</span>&nbsp;&nbsp;<span class="constructor">Format</span>.fprintf&nbsp;out_channel&nbsp;<span class="string">","</span>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pretty_print_label_list&nbsp;out_channel&nbsp;l<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">(*&nbsp;If&nbsp;the&nbsp;function&nbsp;returns&nbsp;a&nbsp;value,&nbsp;that&nbsp;is&nbsp;affected&nbsp;to&nbsp;a&nbsp;var,&nbsp;e.g.&nbsp;x,&nbsp;<br>
+then&nbsp;x&nbsp;must&nbsp;appear&nbsp;as&nbsp;x'&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;parameter&nbsp;list*)</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Affect_int</span>&nbsp;(&nbsp;<span class="constructor">LiIntVar</span>(s)&nbsp;,&nbsp;scalar&nbsp;)::l&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fprintf&nbsp;out_channel&nbsp;<span class="string">"%s"</span>&nbsp;(s^<span class="string">"'"</span>^<span class="string">"="</span>^(scal_to_string&nbsp;scalar&nbsp;));&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span>&nbsp;<span class="constructor">List</span>.length&nbsp;l&nbsp;&gt;&nbsp;0&nbsp;<span class="keyword">then</span>&nbsp;&nbsp;<span class="constructor">Format</span>.fprintf&nbsp;out_channel&nbsp;<span class="string">","</span>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pretty_print_label_list&nbsp;out_channel&nbsp;l<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;_&nbsp;::&nbsp;l&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;&nbsp;pretty_print_label_list&nbsp;out_channel&nbsp;l</code></body></html>

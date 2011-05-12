@@ -1,0 +1,217 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Ast_goodies.html">
+<link rel="next" href="C2cautomatanalys.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of class attributes" rel=Appendix href="index_attributes.html">
+<link title="Index of class methods" rel=Appendix href="index_methods.html">
+<link title="Index of classes" rel=Appendix href="index_classes.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Ast_goodies" rel="Chapter" href="Ast_goodies.html">
+<link title="Cautomata" rel="Chapter" href="Cautomata.html">
+<link title="C2cautomatanalys" rel="Chapter" href="C2cautomatanalys.html">
+<link title="Intermediate_language" rel="Chapter" href="Intermediate_language.html">
+<link title="Flata_language" rel="Chapter" href="Flata_language.html"><title>Cautomata</title>
+</head>
+<body>
+<div class="navbar"><a href="Ast_goodies.html">Previous</a>
+&nbsp;<a href="index.html">Up</a>
+&nbsp;<a href="C2cautomatanalys.html">Next</a>
+</div>
+<center><h1>Module <a href="type_Cautomata.html">Cautomata</a></h1></center>
+<br>
+<pre><span class="keyword">module</span> Cautomata: <code class="code">sig</code> <a href="Cautomata.html">..</a> <code class="code">end</code></pre>This module contains object and functions used to implement and transform counter automata. The design and implementation choices are influenced by the
+fact that this module is designed to be used by some FRAMA-C modules 
+<p>
+
+Verimag laboratory.
+For any question or remark, please contact florent.garnier<br>
+<hr width="100%">
+<pre><span class="keyword">exception</span> <a name="EXCEPTIONNegative_value"></a>Negative_value</pre>
+<pre><span class="keyword">exception</span> <a name="EXCEPTIONState_name_already_defined"></a>State_name_already_defined</pre>
+<br><code><span class="keyword">type</span> <a name="TYPEstate_info_type"></a><code class="type"></code>state_info_type = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">SINote</span> <span class="keyword">of</span> <code class="type">string</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">SIAssertion</span> <span class="keyword">of</span> <code class="type">string</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">SIBAssertion</span> <span class="keyword">of</span> <code class="type"><a href="Intermediate_language.html#TYPEc_bool">Intermediate_language.c_bool</a></code></code></td>
+
+</tr></table>
+
+
+<br><code><span class="keyword">type</span> <a name="TYPEstate_info"></a><code class="type"></code>state_info = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">SInfo</span> <span class="keyword">of</span> <code class="type"><a href="Cautomata.html#TYPEstate_info_type">state_info_type</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">SINone</span></code></td>
+
+</tr></table>
+
+
+<br><code><span class="keyword">type</span> <a name="TYPEcontrol_state"></a><code class="type"></code>control_state = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Control</span> <span class="keyword">of</span> <code class="type">string * <a href="Cautomata.html#TYPEstate_info">state_info</a></code></code></td>
+
+</tr></table>
+
+
+<br><code><span class="keyword">type</span> <a name="TYPEid"></a><code class="type"></code>id = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Prime</span> <span class="keyword">of</span> <code class="type">string</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Unprimed</span> <span class="keyword">of</span> <code class="type">string</code></code></td>
+
+</tr></table>
+
+
+<br><code><span class="keyword">type</span> <a name="TYPEnumber"></a><code class="type"></code>number = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Num</span> <span class="keyword">of</span> <code class="type">int</code></code></td>
+
+</tr></table>
+
+
+<br>
+type of a constainst/expression *<br>
+<br><code><span class="keyword">type</span> <a name="TYPEtrans_label"></a><code class="type"></code>trans_label = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Guard</span> <span class="keyword">of</span> <code class="type"><a href="Intermediate_language.html#TYPEc_bool">Intermediate_language.c_bool</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">FunCall</span> <span class="keyword">of</span> <code class="type">string * <a href="Intermediate_language.html#TYPEc_scal">Intermediate_language.c_scal</a> list</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Affect_int</span> <span class="keyword">of</span> <code class="type"><a href="Intermediate_language.html#TYPEc_int_var">Intermediate_language.c_int_var</a> * <a href="Intermediate_language.html#TYPEc_scal">Intermediate_language.c_scal</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">Affect_int_ptr</span> <span class="keyword">of</span> <code class="type"><a href="Intermediate_language.html#TYPEc_int_ptr">Intermediate_language.c_int_ptr</a> * <a href="Intermediate_language.html#TYPEc_scal">Intermediate_language.c_scal</a></code></code></td>
+
+</tr></table>
+
+
+<br><code><span class="keyword">type</span> <a name="TYPEtransition"></a><code class="type"></code>transition = {</code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code>id&nbsp;: <code class="type">string</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code>orig&nbsp;: <code class="type"><a href="Cautomata.html#TYPEcontrol_state">control_state</a></code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code>dest&nbsp;: <code class="type"><a href="Cautomata.html#TYPEcontrol_state">control_state</a></code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code>listlabel&nbsp;: <code class="type"><a href="Cautomata.html#TYPEtrans_label">trans_label</a> list</code>;</code></td>
+
+</tr></table>
+}
+
+
+<br>
+Type state_table_element define the data structure used to model a controle state of a counter automaton, it also contains the list of the Id of each incomming, resp. outcomming, transitions<br>
+<br><code><span class="keyword">type</span> <a name="TYPEstate_table_element"></a><code class="type"></code>state_table_element = {</code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code>control&nbsp;: <code class="type"><a href="Cautomata.html#TYPEcontrol_state">control_state</a></code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span class="keyword">mutable&nbsp;</span>incoming&nbsp;: <code class="type">string list</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span class="keyword">mutable&nbsp;</span>outcoming&nbsp;: <code class="type">string list</code>;</code></td>
+
+</tr></table>
+}
+
+
+<pre><span class="keyword">val</span> <a name="VALscalar_list_to_string"></a><a href="code_VALCautomata.scalar_list_to_string.html">scalar_list_to_string</a> : <code class="type"><a href="Intermediate_language.html#TYPEc_scal">Intermediate_language.c_scal</a> list -> string</code></pre><pre><span class="keyword">val</span> <a name="VALpretty_print_label_list"></a><a href="code_VALCautomata.pretty_print_label_list.html">pretty_print_label_list</a> : <code class="type">Format.formatter -> <a href="Cautomata.html#TYPEtrans_label">trans_label</a> list -> unit</code></pre><pre><span class="keyword">val</span> <a name="VALpretty_print_transition"></a><a href="code_VALCautomata.pretty_print_transition.html">pretty_print_transition</a> : <code class="type">Format.formatter -> <a href="Cautomata.html#TYPEtransition">transition</a> -> unit</code></pre><br>
+This class defines an object type that allows to store and operate manipulation on couter automata.
+Namely :
+ _ Defining a set of initial and a set of final control state.
+ _ Storing the set of transitions.
+ _ Computing the set of control state from the set of transitions.
+ _ Adding a transition.
+ _ Pretty printing a counter automaton into FLATA syntax.<br>
+<pre><span class="keyword">class</span> <a name="TYPEcautomaton"></a><a href="Cautomata.cautomaton.html">cautomaton</a> : <code class="type">string -> </code><code class="code">object</code> <a href="Cautomata.cautomaton.html">..</a> <code class="code">end</code></pre></body></html>

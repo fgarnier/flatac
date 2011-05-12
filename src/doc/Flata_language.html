@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Intermediate_language.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of class attributes" rel=Appendix href="index_attributes.html">
+<link title="Index of class methods" rel=Appendix href="index_methods.html">
+<link title="Index of classes" rel=Appendix href="index_classes.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Ast_goodies" rel="Chapter" href="Ast_goodies.html">
+<link title="Cautomata" rel="Chapter" href="Cautomata.html">
+<link title="C2cautomatanalys" rel="Chapter" href="C2cautomatanalys.html">
+<link title="Intermediate_language" rel="Chapter" href="Intermediate_language.html">
+<link title="Flata_language" rel="Chapter" href="Flata_language.html"><title>Flata_language</title>
+</head>
+<body>
+<div class="navbar"><a href="Intermediate_language.html">Previous</a>
+&nbsp;<a href="index.html">Up</a>
+&nbsp;</div>
+<center><h1>Module <a href="type_Flata_language.html">Flata_language</a></h1></center>
+<br>
+<pre><span class="keyword">module</span> Flata_language: <code class="code">sig</code> <a href="Flata_language.html">..</a> <code class="code">end</code></pre>In this file, we define the function that allows to check whether
+an expression of the intermediate language is expressible using flata's
+grammar.
+<p>
+
+The intermediate language allows to express things like "x'=x*y", for instance,
+which is of course not possible to express using the grammar of FLATA.
+<p>
+
+An arithmetic operation is expressible using a FLATA term if it contains
+no monomial whose degree is greater than one. Here, by polynomial variables,
+we mean counters.<br>
+<hr width="100%">
+<pre><span class="keyword">exception</span> <a name="EXCEPTIONNot_a_monome"></a>Not_a_monome</pre>
+<pre><span class="keyword">exception</span> <a name="EXCEPTIONUnsound_product"></a>Unsound_product</pre>
+<pre><span class="keyword">exception</span> <a name="EXCEPTIONCompare_integer_with_pointer"></a>Compare_integer_with_pointer</pre>
+<br><code><span class="keyword">type</span> <a name="TYPEvar_pol"></a><code class="type"></code>var_pol = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">VarI</span> <span class="keyword">of</span> <code class="type"><a href="Intermediate_language.html#TYPEc_int_var">Intermediate_language.c_int_var</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">VarIPtr</span> <span class="keyword">of</span> <code class="type"><a href="Intermediate_language.html#TYPEc_int_ptr">Intermediate_language.c_int_ptr</a></code></code></td>
+
+</tr></table>
+
+
+<br><code><span class="keyword">type</span> <a name="TYPEvar_pow"></a><code class="type"></code>var_pow = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">XPow</span> <span class="keyword">of</span> <code class="type"><a href="Flata_language.html#TYPEvar_pol">var_pol</a> * <a href="Intermediate_language.html#TYPEc_int_cst">Intermediate_language.c_int_cst</a></code></code></td>
+
+</tr></table>
+
+
+<br><code><span class="keyword">type</span> <a name="TYPEinmon"></a><code class="type"></code>inmon = </code><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span class="constructor">InMon</span> <span class="keyword">of</span> <code class="type">int * <a href="Flata_language.html#TYPEvar_pow">var_pow</a> list</code></code></td>
+
+</tr></table>
+
+
+<pre><span class="keyword">val</span> <a name="VALprod_var_list"></a><a href="code_VALFlata_language.prod_var_list.html">prod_var_list</a> : <code class="type"><a href="Flata_language.html#TYPEvar_pow">var_pow</a> list -><br>       <a href="Flata_language.html#TYPEvar_pow">var_pow</a> list -><br>       <a href="Flata_language.html#TYPEvar_pow">var_pow</a> list -> <a href="Flata_language.html#TYPEvar_pow">var_pow</a> list</code></pre><pre><span class="keyword">val</span> <a name="VALprod_inmon"></a><a href="code_VALFlata_language.prod_inmon.html">prod_inmon</a> : <code class="type"><a href="Flata_language.html#TYPEinmon">inmon</a> -> <a href="Flata_language.html#TYPEinmon">inmon</a> -> <a href="Flata_language.html#TYPEinmon">inmon</a></code></pre><pre><span class="keyword">val</span> <a name="VALlex_mon"></a><a href="code_VALFlata_language.lex_mon.html">lex_mon</a> : <code class="type"><a href="Flata_language.html#TYPEvar_pow">var_pow</a> list -> <a href="Flata_language.html#TYPEvar_pow">var_pow</a> list -> int</code></pre><pre><span class="keyword">val</span> <a name="VALcmp_inmon"></a><a href="code_VALFlata_language.cmp_inmon.html">cmp_inmon</a> : <code class="type"><a href="Flata_language.html#TYPEinmon">inmon</a> -> <a href="Flata_language.html#TYPEinmon">inmon</a> -> int</code></pre><pre><span class="keyword">val</span> <a name="VALexpend_expr"></a><a href="code_VALFlata_language.expend_expr.html">expend_expr</a> : <code class="type"><a href="Intermediate_language.html#TYPEc_scal">Intermediate_language.c_scal</a> -> <a href="Intermediate_language.html#TYPEc_scal">Intermediate_language.c_scal</a></code></pre><br>
+After normalisation, all subtree whose root are a node \times
+are monomials.<br>
+<pre><span class="keyword">val</span> <a name="VALmon_of_scal_prod_tree"></a><a href="code_VALFlata_language.mon_of_scal_prod_tree.html">mon_of_scal_prod_tree</a> : <code class="type"><a href="Intermediate_language.html#TYPEc_scal">Intermediate_language.c_scal</a> -> <a href="Flata_language.html#TYPEinmon">inmon</a></code></pre></body></html>

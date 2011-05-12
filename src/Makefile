@@ -52,16 +52,16 @@ FRAMA_C_DOC_DIR	=	-I /usr/lib/ocaml \
 
 DOC_OPTIONS= #-g $(F_SRC)/doc/code/docgen.cmo
 
-STDLIB_FILES:=printf c2cautomatanalys list string  cautomata       
+STDLIB_FILES:=printf c2cautomatanalys list string  cautomata datatype flatac_visitor      
 STDLIB_FILES:=$(patsubst %, $(OCAMLLIB)/%.mli, $(STDLIB_FILES))
 
 doc_html:
 	@ echo 'Entering directory' ${PWD} 
 	ocamldoc -html -v -d doc \
-	        $(DOC_OPTIONS) \
-		$(addprefix -stdlib , $(STDLIB_FILES)) \
-		$(FRAMA_C_DOC_DIR) \
+	      	$(FRAMA_C_DOC_DIR) \
 		$(SOURCES_FILES)
 
+
+# $(DOC_OPTIONS) \$(addprefix -stdlib , $(STDLIB_FILES)) \
 
 
