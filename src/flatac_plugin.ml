@@ -22,18 +22,18 @@
 (**************************************************************************)
 
 (** 
- This plugin is copied from the hello_world example from the Frama-C
-tutorial and sightly modified so that : It prints the name of the global function of a C-program. *)
+Registration of the flatac plugin. 
+
+ *)
 
 
 
-open Visitor
 open Cil
 open Cil_types
-open Print_fun
 open Printf
 open Format
-
+open Flatac_visitor
+open Visitor
 
 (** Register the new plug-in "Hello World" and provide access to some plug-in
     dedicated features. *)
@@ -41,7 +41,7 @@ open Format
 module Self =
   Plugin.Register
     (struct
-       let name = "Flata-C"
+       let name = "flatac"
        let shortname = "flatac"
        let help = "Generates a counter automata based abstraction of a set of C functions"
      end)
@@ -52,13 +52,13 @@ module Enabled =
     (struct
        let option_name = "-flatac"
        let help = "Generates a counter automata based abstraction of a set of C functions"
-      let kind = `Correctness 
+      let kind =`Correctness 
 	end)
 
 
 let pretty_print_cautomata_obj out = 
   let prj= Project.current() in
-  let visit_bibi = new  print_fun_visitor ( prj ) in
+  let visit_bibi = new  flatac_visitor ( prj ) in
   let file_ast = Ast.get() in
   let ca_out_name = Printf.sprintf "%s.ca" file_ast.fileName in
   let table_out_name = Printf.sprintf "%s.stbl" file_ast.fileName in
@@ -93,7 +93,7 @@ let print () = Self.result "%t" ( fun out ->  pretty_print_cautomata_obj out )
     and second, each call to [run] is written in the Frama-C journal. *)
 let print =
   Dynamic.register
-    ~plugin:"Flatac"
+    ~plugin:"flatac"
     "run"
     ~journalize:true
     (Datatype.func Datatype.unit Datatype.unit)

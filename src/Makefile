@@ -33,11 +33,11 @@ FRAMAC_LIBDIR 	:=$(shell frama-c.byte -print-libpath)
 
 
 
-SOURCES_FILES   := cautomata.ml c2cautomatanalys.ml fun_info.ml intermediate_language.ml flata_language.ml ast_goodies.ml
+SOURCES_FILES   := ast_goodies.ml cautomata.ml c2cautomatanalys.ml flatac_vistor.ml intermediate_language.ml flata_language.ml flatac_plugin.ml
 F_SRC		:= ~/FRAMAC/frama-c-Carbon-20110201
 
 PLUGIN_NAME	= Flatac
-PLUGIN_CMO	=  intermediate_language ast_goodies cautomata c2cautomatanalys flata_language fun_info 
+PLUGIN_CMO	=  ast_goodies intermediate_language cautomata c2cautomatanalys flata_language flatac_visitor flatac_plugin
 
 include $(FRAMAC_SHARE)/Makefile.dynamic
 
@@ -50,18 +50,18 @@ FRAMA_C_DOC_DIR	=	-I /usr/lib/ocaml \
 			-I $(F_SRC)/src/lib \
 			-I .
 
-DOC_OPTIONS=-g $(F_SRC)/doc/code/docgen.cmo
+DOC_OPTIONS= #-g $(F_SRC)/doc/code/docgen.cmo
 
-STDLIB_FILES:=printf c2cautomatanalys list string  cautomata       
+STDLIB_FILES:=printf c2cautomatanalys list string  cautomata datatype flatac_visitor      
 STDLIB_FILES:=$(patsubst %, $(OCAMLLIB)/%.mli, $(STDLIB_FILES))
 
 doc_html:
 	@ echo 'Entering directory' ${PWD} 
 	ocamldoc -html -v -d doc \
-	        $(DOC_OPTIONS) \
-		$(addprefix -stdlib , $(STDLIB_FILES)) \
-		$(FRAMA_C_DOC_DIR) \
+	      	$(FRAMA_C_DOC_DIR) \
 		$(SOURCES_FILES)
 
+
+# $(DOC_OPTIONS) \$(addprefix -stdlib , $(STDLIB_FILES)) \
 
 
