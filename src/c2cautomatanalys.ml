@@ -29,14 +29,6 @@ defined as a specialized class of the generic cautomata class.
 **)
 (*****************************************************************************)
 
-
-
-
-
-
-
- 
-
 (** Abstracts a C functions, contains the CFG and an abstraction
 of variables valuation variations   *)
 
@@ -482,17 +474,3 @@ not affected to a variable type. Not consided in this version")
     List.iter (fun s -> Format.fprintf out_channel "[log ] %s \n" s) log_messages 
 
 end;;
-
-
-
-
-
-
-
-    
-
-
-
-
-
-  
