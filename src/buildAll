@@ -1,1 +1,1 @@
-make && make install && make clean && frama-c.byte -flatac src/* && cat log 
+make && make install && frama-c.byte -flatac src/* && make clean

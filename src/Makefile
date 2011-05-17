@@ -35,7 +35,7 @@ SOURCES_FILES   := logging.ml ecfg.ml flatac_ep.ml
 F_SRC		:=~/FRAMAC/frama-c-Boron-20100401-why-2.24
 
 PLUGIN_NAME	= FlataC
-PLUGIN_CMO	= logging ecfg flatac_ep
+PLUGIN_CMO	= self logging ecfg flatac_ep 
 
 include $(FRAMAC_SHARE)/Makefile.dynamic
 

@@ -1,3 +1,4 @@
+open Self
 open Cil
 open Cil_types
 open Cfg
@@ -16,7 +17,7 @@ open Visitor
 	- florent.garnier@imag.fr
 *)
 
-(** This HashTable is defined to avoir looping through CFG *)
+(** This HashTable is defined to avoid looping through CFG *)
 module HashInt =
 struct
 	type t = int
@@ -40,13 +41,14 @@ struct
 
 	(* Container class of eCFG *)
 	class eCFG fName (root : cfg)
-	= object(self)
+	= object
 		val mutable _fName = ""
 		val mutable _root : cfg = Empty
 
 		initializer 
 			_fName <- fName;
 			_root <- root;
+			Self.debug ~level:1 "New eCFG built : %s" _fName
 
 		method getFunctionName () = _fName
 		method getRoot () = _root
@@ -59,8 +61,8 @@ struct
 							if IntHashtbl.find visited stmt.sid then () 		
 							(** Dirty exception hacking to handle the "Already visited" case *)
 						with _ -> (** Never visited *)
-								IntHashtbl.add visited stmt.sid true;
-								children := (_buildCfg stmt visited) :: !children 
+							IntHashtbl.add visited stmt.sid true;
+							children := (_buildCfg stmt visited) :: !children 
 					) stmtData.succs;
 			Node ( stmtData.sid, EntryPoint, None , !children ) 
 
@@ -73,7 +75,7 @@ struct
 	(** This visitor visits global function and trigger the build 
 	 of a new Cfg each one *)
 	class cfgVisitor ( prj : Project.t ) 
-	= object(self)
+	= object
 	inherit Visitor.generic_frama_c_visitor (prj) (Cil.inplace_visit())
 		val mutable is_computed = false
 	
