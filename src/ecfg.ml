@@ -2,9 +2,11 @@ open Cil
 open Cil_types
 open Visitor
 
-module ECFG =
+module ECFG = functor ( A : sig type t end ) ->
 struct
-	type 
+
+	type cfgLeaf = Leaf of int * A.t
+	type cfg = Node of cfgLeaf * (cfgLeaf list)
 
 	class eCFG ( prj : Project.t ) 
 	= object(self)
