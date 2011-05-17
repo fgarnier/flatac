@@ -31,11 +31,11 @@
 FRAMAC_SHARE  	:=$(shell frama-c.byte -print-path)
 FRAMAC_LIBDIR 	:=$(shell frama-c.byte -print-libpath)
 
-SOURCES_FILES   := logging.ml ecfg.ml flatac_ep.ml
+SOURCES_FILES   := ecfg.ml flatac_ep.ml
 F_SRC		:=~/FRAMAC/frama-c-Boron-20100401-why-2.24
 
 PLUGIN_NAME	= FlataC
-PLUGIN_CMO	= self logging ecfg flatac_ep 
+PLUGIN_CMO	= self semAndLogicFrontEnd trueLogicFrontEnd ecfg flatac_ep 
 
 include $(FRAMAC_SHARE)/Makefile.dynamic
 

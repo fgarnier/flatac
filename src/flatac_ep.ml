@@ -1,6 +1,5 @@
 open Self
 open Ecfg
-open Logging
 
 module Enabled =
 	Self.False

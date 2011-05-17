@@ -28,15 +28,24 @@ module IntHashtbl = Hashtbl.Make ( HashInt )
 
 module Ecfg = functor ( A : sig type t end ) ->
 struct
+	(* Node label *)
 	type stmtId = int
-
-	type transitionOp = Op of Cil_types.stmtkind
-	| EntryPoint
-
-	type semanticValue = ASem of A.t 
+	type semanticValue = 
+	| ASem of A.t 
 	| None
+	(*******************)
 
-	type cfg = Node of stmtId * transitionOp * semanticValue * (cfg list) 
+	(* Transition *)
+	type counterExpression = string
+	type transitionOp = 
+	| Op of Cil_types.stmtkind
+	| EntryPoint
+	type cfgTransition = Transition of transitionOp * counterExpression
+	(******************************************************************)
+
+	type cfg = 
+	| Node of stmtId * semanticValue * cfgTransition * (cfg list) 
+	| Leaf of stmtId * semanticValue
 	| Empty
 
 	(* Container class of eCFG *)
@@ -56,15 +65,18 @@ struct
 
 	let rec _buildCfg ( stmtData : Cil_types.stmt ) visited = 
 		let children = ref [] in
-			List.iter 	( fun stmt -> 
-						try (** Already visited *)
-							if IntHashtbl.find visited stmt.sid then () 		
-							(** Dirty exception hacking to handle the "Already visited" case *)
-						with _ -> (** Never visited *)
-							IntHashtbl.add visited stmt.sid true;
-							children := (_buildCfg stmt visited) :: !children 
-					) stmtData.succs;
-			Node ( stmtData.sid, EntryPoint, None , !children ) 
+			if (List.length stmtData.succs) = 0 then
+				Leaf ( stmtData.sid, None )
+			else
+				(List.iter 	( fun stmt -> 
+							try (** Already visited *)
+								if IntHashtbl.find visited stmt.sid then () 		
+								(** Dirty exception hacking to handle the "Already visited" case *)
+							with _ -> (** Never visited *)
+								IntHashtbl.add visited stmt.sid true;
+								children := (_buildCfg stmt visited) :: !children 
+						) stmtData.succs;
+				Node ( stmtData.sid, None, Transition ( EntryPoint, "" ) , !children ))
 
 	(** Private method called by the CilCFG Visitor at each function *)
 	let buildCfg ( funInfo : fundec ) = new eCFG funInfo.svar.vname (_buildCfg (List.hd funInfo.sallstmts) (IntHashtbl.create 1))
