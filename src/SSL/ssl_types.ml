@@ -27,7 +27,7 @@ struct
     affectations : (ptvar , (locvar , unit) t ) t; 
                        (** The set of affectations of pointer variables. A
 		       single variables can be affected different values in
-		       a non normalized formula*)
+			a non normalized formula*)
     ptnil : (ptvar , unit) t;
                       (** The set of pointer variables that points to nil
 			 a.k.a. NULL *)
@@ -50,9 +50,12 @@ quantified variables, a pure and a spatial part.*)
     space : space_formula; 
   }
   
+
+      
 end;;
 
 
-module SSL = SSL_types_gen (struct 
+module SSL_lex = SSL_types_gen (struct 
 			      let order_relation = (>)
 			    end) 
+
