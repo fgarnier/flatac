@@ -10,13 +10,17 @@ please blame : gaudin.maxime\\at//gmail-DoT-fr. :).
 open List
 open Hashtbl
 
-module SSL_types = struct
+module SSL_types_gen = functor ( P : sig 
+				   val order_relation : string -> string -> bool
+				 end ) ->
+struct
+  let order_relation = P.order_relation
   type ptvar = PVar of string
   type locvar = LVar of string
   type eq = Eqloc of locvar * locvar
   type affect = Pointsto of ptvar * locvar
   type affectnil = Pointsnil of ptvar
-
+  
   type pure_formula = { 
     equations: eq list ; 
                        (** The set of equations between location variables *)
@@ -47,3 +51,8 @@ quantified variables, a pure and a spatial part.*)
   }
   
 end;;
+
+
+module SSL = SSL_types_gen (struct 
+			      let order_relation = (>)
+			    end) 
