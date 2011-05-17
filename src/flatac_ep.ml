@@ -1,9 +1,12 @@
+open Logging
+
 module Self =
 	Plugin.Register
 		(struct
 			let name = "FlataC"
 			let shortname = "FlataC"
-			let help= "This plugin demonstrate the work of Radu Iosif, Florent Ganier, Marius Bozga and Maxime Gaudin about the automatic verification on critical embedded softwares."
+			let help= "This plugin demonstrate the work of Radu Iosif, Florent Ganier, Marius Bozga \
+			and Maxime Gaudin about the automatic verification on critical embedded softwares."
 		end)
 
 module Enabled =
@@ -14,7 +17,9 @@ module Enabled =
 			let kind= `Correctness
 		 end)
 
-let print () = Self.result "Hello world!"
+let print () = 
+	Self.result "Hello world!";
+	Logging.registerMsg "Salut les louloutes !" Logging.TRACE
 
 let run () = if Enabled.get () then print ()
 let () = Db.Main.extend run
