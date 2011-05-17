@@ -1,3 +1,4 @@
+open Ecfg
 open Logging
 
 module Self =
@@ -17,9 +18,17 @@ module Enabled =
 			let kind= `Correctness
 		 end)
 
+module CfgExtension =
+	struct
+		type t = int
+	end;;
+
+module IntCFG = Ecfg ( CfgExtension ) 
+
 let print () = 
+	IntCFG.computeECFGs (Project.current()) (Ast.get());
 	Self.result "Hello world!";
-	Logging.registerMsg "Salut les louloutes !" Logging.TRACE
+	List.iter ( fun e -> print_string (e#getFunctionName ()); print_newline () ) (!IntCFG.eCFGs)
 
 let run () = if Enabled.get () then print ()
 let () = Db.Main.extend run
