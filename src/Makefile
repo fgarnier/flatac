@@ -26,37 +26,35 @@
 # Frama-c should be properly installed with "make install" 
 # before any use of this makefile
 
+FRAMAC_SHARE  :=$(shell frama-c.byte -print-path)
+FRAMAC_LIBDIR :=$(shell frama-c.byte -print-libpath)
 
+SOURCES_FILES   := ast_goodies.ml cautomata.ml c2cautomatanalys.ml flatac_vistor.ml intermediate_language.ml flata_language.ml flatac_plugin.ml
+F_SRC:= ~/FRAMAC/frama-c-Carbon-20110201
 
-FRAMAC_SHARE  	:=$(shell frama-c.byte -print-path)
-FRAMAC_LIBDIR 	:=$(shell frama-c.byte -print-libpath)
-
-SOURCES_FILES   := ecfg.ml flatac_ep.ml
-F_SRC		:=~/FRAMAC/frama-c-Boron-20100401-why-2.24
-
-PLUGIN_NAME	= FlataC
+PLUGIN_NAME	= Flatac
 PLUGIN_CMO	= self semAndLogicFrontEnd trueLogicFrontEnd ecfg flatac_ep 
 
 include $(FRAMAC_SHARE)/Makefile.dynamic
 
-FRAMA_C_DOC_DIR	=	-I /usr/lib/ocaml \
-		 	-I $(F_SRC)/src/kernel \
-			-I $(F_SRC)/src/project \
-			-I $(F_SRC)/cil/ocamlutil \
-			-I $(F_SRC)/cil/src/logic \
-			-I $(F_SRC)/cil/src \
-			-I $(F_SRC)/src/lib \
-			-I .
+FRAMA_C_DOC_DIR=-I /usr/lib/ocaml \
+	-I $(F_SRC)/src/kernel \
+	-I $(F_SRC)/src/project \
+	-I $(F_SRC)/cil/ocamlutil \
+	-I $(F_SRC)/cil/src/logic \
+	-I $(F_SRC)/cil/src \
+	-I $(F_SRC)/src/lib \
+	-I .
 
-DOC_OPTIONS=-g $(F_SRC)/doc/code/docgen.cmo
+DOC_OPTIONS= #-g $(F_SRC)/doc/code/docgen.cmo
 
-STDLIB_FILES:=printf c2cautomatanalys list string  cautomata       
+STDLIB_FILES:=printf list string 
 STDLIB_FILES:=$(patsubst %, $(OCAMLLIB)/%.mli, $(STDLIB_FILES))
 
 doc_html:
 	@ echo 'Entering directory' ${PWD} 
 	ocamldoc -html -v -d doc \
-	        $(DOC_OPTIONS) \
+		$(DOC_OPTIONS) \
 		$(addprefix -stdlib , $(STDLIB_FILES)) \
 		$(FRAMA_C_DOC_DIR) \
 		$(SOURCES_FILES)
