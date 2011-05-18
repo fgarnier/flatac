@@ -1,5 +1,7 @@
 open Self
 open Ecfg
+open SemAndLogicFrontEnd
+open TrueLogicFrontEnd
 
 module Enabled =
 	Self.False
@@ -18,7 +20,9 @@ module IntCFG = Ecfg ( CfgExtension )
 
 let print () = 
 	Self.feedback~level:0 "Welcome to Flata-C !";
-	IntCFG.computeECFGs (Project.current()) (Ast.get())
+	let frontEnd = new trueLogicFrontEnd in
+		IntCFG.computeECFGs (Project.current()) (Ast.get()) ( frontEnd );
+		()
 	(* List.iter ( fun e -> Self.debug ~level:0 "%s\n" (e#getFunctionName ())) (!IntCFG.eCFGs) *)
 
 let run () = if Enabled.get () then print ()

@@ -3,6 +3,7 @@ open Cil
 open Cil_types
 open Cfg
 open Visitor
+open SemAndLogicFrontEnd
 
 (*
 	Maxime Gaudin - VERIMAG 2011 
@@ -32,7 +33,7 @@ struct
 	type stmtId = int
 	type semanticValue = 
 	| ASem of A.t 
-	| None
+	| NoSemantic
 	(*******************)
 
 	(* Transition *)
@@ -63,10 +64,10 @@ struct
 		method getRoot () = _root
 	end
 
-	let rec _buildCfg ( stmtData : Cil_types.stmt ) visited = 
+	let rec _buildCfg ( stmtData : Cil_types.stmt ) ( newSemanticValue : semanticValue ) ( frontEnd ) visited = 
 		let children = ref [] in
 			if (List.length stmtData.succs) = 0 then
-				Leaf ( stmtData.sid, None )
+				Leaf ( stmtData.sid, newSemanticValue )
 			else
 				(List.iter 	( fun stmt -> 
 							try (** Already visited *)
@@ -74,12 +75,13 @@ struct
 								(** Dirty exception hacking to handle the "Already visited" case *)
 							with _ -> (** Never visited *)
 								IntHashtbl.add visited stmt.sid true;
-								children := (_buildCfg stmt visited) :: !children 
+								children := (_buildCfg stmt ( frontEnd#next newSemanticValue "" stmtData.skind ) frontEnd visited) :: !children 
 						) stmtData.succs;
-				Node ( stmtData.sid, None, Transition ( EntryPoint, "" ) , !children ))
+				Node ( stmtData.sid, newSemanticValue, Transition ( EntryPoint, "" ) , !children ))
 
 	(** Private method called by the CilCFG Visitor at each function *)
-	let buildCfg ( funInfo : fundec ) = new eCFG funInfo.svar.vname (_buildCfg (List.hd funInfo.sallstmts) (IntHashtbl.create 1))
+	let buildCfg frontEnd ( funInfo : fundec ) = 
+		new eCFG funInfo.svar.vname (_buildCfg (List.hd funInfo.sallstmts) (frontEnd#getEntryPointAbstraction ()) (frontEnd) (IntHashtbl.create 1))
 
 	(** eCFGs accessor. *)
 	let eCFGs : ( (eCFG list) Pervasives.ref ) = ref []
@@ -90,16 +92,21 @@ struct
 	= object
 	inherit Visitor.generic_frama_c_visitor (prj) (Cil.inplace_visit())
 		val mutable is_computed = false
-	
+		val mutable _frontEnd = None
+
 		method vglob_aux g =
 			is_computed <- true;
-			match g with 
-			| GFun ( funInfo, _ ) -> eCFGs := (buildCfg funInfo) :: !eCFGs; DoChildren
+			
+			match (g, _frontEnd) with 
+			| ( GFun ( funInfo, _ ), Some ( frontEnd ) ) -> eCFGs := (buildCfg frontEnd funInfo) :: !eCFGs; DoChildren
 			| _ -> DoChildren
+
+		method setFrontEnd ( frontEnd : semAndLogicFrontEnd ) = _frontEnd <- Some ( frontEnd ) 
 	end
 
 	(** Compute the eCFG and fill the structures *)
-	let computeECFGs ( prj : Project.t ) ( ast : Cil_types.file ) = 
+	let computeECFGs ( prj : Project.t ) ( ast : Cil_types.file ) frontEnd = 
 		let cfgVisitorInst = new cfgVisitor ( prj ) in	
-			visitFramacFile ( cfgVisitorInst :> frama_c_copy ) ast;
+			cfgVisitorInst#setFrontEnd frontEnd; 
+			visitFramacFile ( cfgVisitorInst :> frama_c_copy ) ast
 end;;
