@@ -13,15 +13,15 @@ module Enabled =
 
 module CfgExtension =
 	struct
-		type t = int
+		type t = bool 
 	end;;
 
-module IntCFG = Ecfg ( CfgExtension ) 
+module BoolCFG = Ecfg ( CfgExtension ) 
 
 let print () = 
 	Self.feedback~level:0 "Welcome to Flata-C !";
 	let frontEnd = new trueLogicFrontEnd in
-		IntCFG.computeECFGs (Project.current()) (Ast.get()) ( frontEnd );
+		BoolCFG.computeECFGs (Project.current()) (Ast.get()) ( frontEnd );
 		()
 	(* List.iter ( fun e -> Self.debug ~level:0 "%s\n" (e#getFunctionName ())) (!IntCFG.eCFGs) *)
 
