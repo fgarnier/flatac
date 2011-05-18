@@ -29,10 +29,14 @@ module CfgExtension =
 module BoolCFG = Ecfg ( CfgExtension ) 
 
 let print () = 
-	Self.feedback~level:0 "Welcome to Flata-C !";
+	Self.feedback ~level:0 "Welcome to Flata-C !";
 	let frontEnd = new trueLogicFrontEnd in
+		Self.debug ~level:0 "RADU";
 		BoolCFG.computeECFGs (Project.current()) (Ast.get()) ( frontEnd );
-		()
+
+		Self.debug ~level:0 "FLORENT";
+		Self.debug ~level:0 "Maximw"
+
 	(* List.iter ( fun e -> Self.debug ~level:0 "%s\n" (e#getFunctionName ())) (!IntCFG.eCFGs) *)
 
 let run () = if Enabled.get () then print ()

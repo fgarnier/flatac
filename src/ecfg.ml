@@ -67,7 +67,10 @@ struct
 		initializer 
 			_fName <- fName;
 			_root <- root;
-			Self.debug ~level:0 "New eCFG built : %s" _fName
+			match _root with
+			| Node ( sid, _, _, _ ) -> Self.debug ~level:1 "New eCFG node built : %s ( %d )" _fName sid
+			| Leaf ( sid, _) -> Self.debug ~level:1 "New eCFG leaf built : %s ( %d )" _fName sid
+			| _ -> ()
 
 		method getFunctionName () = _fName
 		method getRoot () = _root
@@ -86,7 +89,7 @@ struct
 								let abs, newCounter = frontEnd#next newSemanticValue "" stmtData.skind in
 									children := (_buildCfg stmt abs frontEnd visited) :: !children 
 						) stmtData.succs;
-				Self.debug ~level:0 "New node built : %d (%s)" stmtData.sid (frontEnd#pretty newSemanticValue);
+				Self.debug ~level:1 "New node built : %d (%s)" stmtData.sid (frontEnd#pretty newSemanticValue);
 				Node ( stmtData.sid, newSemanticValue, Transition ( EntryPoint, "" ) , !children ))
 
 	(** Private method called by the CilCFG Visitor at each function *)
@@ -106,17 +109,43 @@ struct
 
 		method vglob_aux g =
 			is_computed <- true;
-			
 			match (g, _frontEnd) with 
-			| ( GFun ( funInfo, _ ), Some ( frontEnd ) ) -> eCFGs := (buildCfg frontEnd funInfo) :: !eCFGs; DoChildren
+			| ( GFun ( funInfo, _ ), Some ( frontEnd ) ) -> eCFGs := (buildCfg frontEnd funInfo) :: !eCFGs; Self.debug ~level:0 "Building eCFG #%d..." (List.length !eCFGs); DoChildren
 			| _ -> DoChildren
 
 		method setFrontEnd frontEnd = _frontEnd <- Some ( frontEnd ) 
+		method getComputationState = is_computed
 	end
 
 	(** Compute the eCFG and fill the structures *)
 	let computeECFGs ( prj : Project.t ) ( ast : Cil_types.file ) ( frontEnd : A.t semAndLogicFrontEnd ) = 
 		let cfgVisitorInst = new cfgVisitor ( prj ) in	
 			cfgVisitorInst#setFrontEnd frontEnd; 
-			visitFramacFile ( cfgVisitorInst :> frama_c_copy ) ast
+			visitFramacFile ( cfgVisitorInst :> frama_c_copy ) ast;
+			Self.debug ~level:0 "Computed %d eCFGs... " (List.length !eCFGs)
+
+
+	let rec _visiteCFGs root callback =
+		callback root;
+		match root with
+		| Node (_, _, _, l) -> List.iter ( fun newRoot -> _visiteCFGs newRoot callback ) l
+		| _ -> ()
+
+	let visiteCFGs callback =
+		List.iter ( fun g -> Self.debug ~level:0 "CALL !"; _visiteCFGs (g#getRoot ()) callback ) !eCFGs
+
+	let printDot node =
+		match node with
+		| Leaf (sid, _) -> Self.debug ~level:0 "%d" sid
+		| Node (sid, _, _, l) -> List.iter 	( fun e -> 
+								match e with
+								| Leaf (childSid, _) -> Self.debug ~level:0 "%d -> %d" sid childSid
+								| Node (childSid, _, _,  _) -> Self.debug ~level:0 "%d -> %d" sid childSid
+								| _ -> ()
+							) l
+		| _ -> ()
+
+	let export2Dot =
+		Self.debug ~level:0 "MAXIME %d... " (List.length !eCFGs);
+		visiteCFGs printDot
 end;;
