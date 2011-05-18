@@ -1,10 +1,3 @@
-open Self
-open Cil
-open Cil_types
-open Cfg
-open Visitor
-open SemAndLogicFrontEnd
-
 (*
 	Maxime Gaudin - VERIMAG 2011 
 
@@ -17,6 +10,13 @@ open SemAndLogicFrontEnd
 	- maxime.gaudin@imag.fr
 	- florent.garnier@imag.fr
 *)
+
+open Self
+open Cil
+open Cil_types
+open Cfg
+open Visitor
+open SemAndLogicFrontEnd
 
 (** This HashTable is defined to avoid looping through CFG *)
 module HashInt =

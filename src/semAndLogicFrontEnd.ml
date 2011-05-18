@@ -3,8 +3,8 @@
 
 	** THIS MODULE IS A PART OF FLATA-C, DEVELOPED AT VERIMAG (2011)
 
-	This module contains the definition of an eCFG and implements a generic algorithm to
-	fill it with the correct Abstract Interpretation and counter automata label
+	This virtual class defines an interface between the eCFG and the underlying user logic 
+	'a type is the abstract interpretation type 
 
 	For any question mail us to :
 	- maxime.gaudin@imag.fr
@@ -13,8 +13,6 @@
 open Self
 open Cil_types
 
-(** This virtual class define an interface between the eCFG and the underlying user logic *)
-(** 'a type is the abstract interpretation type *)
 class virtual ['a] semAndLogicFrontEnd = 
 object 
 	(** Returns the abstract interpretation of the entry point *)

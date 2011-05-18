@@ -1,3 +1,15 @@
+(*
+	Maxime Gaudin - VERIMAG 2011 
+
+	** THIS MODULE IS A PART OF FLATA-C, DEVELOPED AT VERIMAG (2011)
+
+	This module declares the plugin into Frama-C
+
+	For any question mail us to :
+	- maxime.gaudin@imag.fr
+	- florent.garnier@imag.fr
+*)
+
 module Self =
 	Plugin.Register
 		(struct
