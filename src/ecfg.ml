@@ -4,7 +4,7 @@
 	** THIS MODULE IS A PART OF FLATA-C, DEVELOPED AT VERIMAG (2011)
 
 	This module contains the definition of an eCFG and implements a generic algorithm to
-	fill it with the correct Abstract Interpretation and counter automata label
+	fill it with the correct Abstract Interpretation and counter automata label.
 
 	For any question mail us to :
 	- maxime.gaudin@imag.fr
@@ -18,7 +18,10 @@ open Cfg
 open Visitor
 open SemAndLogicFrontEnd
 
-(** This HashTable is defined to avoid looping through CFG *)
+(** 
+ 	This HashTable is defined to avoid 
+	looping through CFG 
+*)
 module HashInt =
 struct
 	type t = int
@@ -26,13 +29,21 @@ struct
 	let hash k = k
 end;;
 module IntHashtbl = Hashtbl.Make ( HashInt )
+(******************************************)
 
+(** 
+	 This module contains every structures and algorithms
+	 relatives to eCFG. It's parametrized by the type of the 
+	 abstract interpretation. 
+	 Obviously, this type must match with the front-end inherited
+	 type.
+ *)
 module Ecfg = functor ( A : sig type t end ) ->
 struct
 	(* Node label *)
 	type stmtId = int
 	type semanticValue = A.t
-	(*******************)
+	(***********************)
 
 	(* Transition *)
 	type counterExpression = string
@@ -56,7 +67,7 @@ struct
 		initializer 
 			_fName <- fName;
 			_root <- root;
-			Self.debug ~level:1 "New eCFG built : %s" _fName
+			Self.debug ~level:0 "New eCFG built : %s" _fName
 
 		method getFunctionName () = _fName
 		method getRoot () = _root
@@ -64,8 +75,7 @@ struct
 
 	let rec _buildCfg ( stmtData : Cil_types.stmt ) ( newSemanticValue : semanticValue ) ( frontEnd : A.t semAndLogicFrontEnd ) visited = 
 		let children = ref [] in
-			if (List.length stmtData.succs) = 0 then
-				Leaf ( stmtData.sid, newSemanticValue )
+			if (List.length stmtData.succs) = 0 then Leaf ( stmtData.sid, newSemanticValue )
 			else
 				(List.iter 	( fun stmt -> 
 							try (** Already visited *)
@@ -76,6 +86,7 @@ struct
 								let abs, newCounter = frontEnd#next newSemanticValue "" stmtData.skind in
 									children := (_buildCfg stmt abs frontEnd visited) :: !children 
 						) stmtData.succs;
+				Self.debug ~level:0 "New node built : %d (%s)" stmtData.sid (frontEnd#pretty newSemanticValue);
 				Node ( stmtData.sid, newSemanticValue, Transition ( EntryPoint, "" ) , !children ))
 
 	(** Private method called by the CilCFG Visitor at each function *)

@@ -1,3 +1,14 @@
+(*
+	Maxime Gaudin - VERIMAG 2011 
+
+	** THIS MODULE IS A PART OF FLATA-C, DEVELOPED AT VERIMAG (2011)
+
+	Entry point of the plugin.
+
+	For any question mail us to :
+	- maxime.gaudin@imag.fr
+	- florent.garnier@imag.fr
+*)
 open Self
 open Ecfg
 open SemAndLogicFrontEnd
@@ -15,7 +26,6 @@ module CfgExtension =
 	struct
 		type t = bool 
 	end;;
-
 module BoolCFG = Ecfg ( CfgExtension ) 
 
 let print () = 
