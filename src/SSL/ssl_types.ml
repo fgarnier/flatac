@@ -12,9 +12,11 @@ open Hashtbl
 
 module SSL_types_gen = functor ( P : sig 
 				   val order_relation : string -> string -> bool
+				   val equals_to : string -> string -> bool
 				 end ) ->
 struct
   let order_relation = P.order_relation
+  let equals_to = P.equals_to
   type ptvar = PVar of string
   type locvar = LVar of string
   type eq = Eqloc of locvar * locvar
@@ -22,7 +24,7 @@ struct
   type affectnil = Pointsnil of ptvar
   
   type pure_formula = { 
-    equations: eq list ; 
+    equations: ( eq , unit ) t  ; 
                        (** The set of equations between location variables *)
     affectations : (ptvar , (locvar , unit) t ) t; 
                        (** The set of affectations of pointer variables. A
@@ -57,5 +59,6 @@ end;;
 
 module SSL_lex = SSL_types_gen (struct 
 			      let order_relation = (>)
-			    end) 
+			      let equals_to = (=)
+				end) 
 
