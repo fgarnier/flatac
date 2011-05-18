@@ -57,8 +57,6 @@ module SSL = struct
 
 
 
-
-
   let subst_loc (xv : locvar)(yv : locvar)( equality : eq) =
    match xv , yv with
     (LVar(x),LVar(y)) ->
@@ -71,13 +69,13 @@ module SSL = struct
 	    else
 	      if ( SSL_lex.equals_to x b ) then Eqloc (LVar(a),LVar (y))
 	   else Eqloc ( LVar (a) , LVar (b) )
-	      
-    
+	          
 
   let subst_eqlist (xv : locvar) (yv :locvar )  (lst : eq list ) =
     List.map (subst_loc xv yv ) lst
 
-
+   
+  
       
 end;;
 (** Substitutes x by y  in pure formula f *)
