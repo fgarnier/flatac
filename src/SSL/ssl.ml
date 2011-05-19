@@ -88,11 +88,19 @@ module SSL = struct
   let del_tautologies (l : eq list ) =
       _del_tautologies [] l
 
+
+(**********************************************************************)
 (*   The part of the file that follows contains the functions that
      encodes the substitutions of the formulae.
 *)
 
+
+
+
+(**********************************************************************)
+
  (* Not for the interface. Called by subst_eqlist*)
+ 
   let subst_loc (xv : locvar)(yv : locvar)( equality : eq) =
    match xv , yv with
     (LVar(x),LVar(y)) ->
@@ -109,13 +117,27 @@ module SSL = struct
  (** Use this to replace all instance of xv by yv in list lst. 
 Shall appear in the interface file. *)
 
-  let subst_eqlist (xv : locvar) (yv :locvar )  (lst : eq list ) =
+  let subst_eqlist (xv : locvar) (yv :locvar ) (lst : eq list ) =
     List.map (subst_loc xv yv ) lst
 
-   
 
 
-  
+  let subst_loc_affect_iter 
+      ( table:( locvar , () )t )
+      (xv : locvar)
+      (yv : locvar)
+      ( iterande : locvar)() = 
+    match iterande xv with 
+	(LVar ( iname ) , LVar ( xvname )) -> if ( SSL_lex .equals iname xvname ) 
+	  then 
+	    
+
+
+
+
+  let subst_lvar_affect (xv : locvar) (yv :locvar) ( tabl : (ptvar, (locvar, ()))t) =
+    
+
       
 end;;
 

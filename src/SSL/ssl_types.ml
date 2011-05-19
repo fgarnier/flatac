@@ -24,7 +24,7 @@ struct
   type affectnil = Pointsnil of ptvar
   
   type pure_formula = { 
-    equations: ( eq , unit ) t  ; 
+    equations:  eq  list; 
                        (** The set of equations between location variables *)
     affectations : (ptvar , (locvar , unit) t ) t; 
                        (** The set of affectations of pointer variables. A
