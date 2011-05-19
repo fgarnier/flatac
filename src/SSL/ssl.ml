@@ -33,9 +33,6 @@ module SSL = struct
 	then LVar (x)
 	else LVar (y)
 
-
-
-    
   (* Returns the biggest key of hash table which keys are varlocs*)
   (* Any variable name in C contains at least a character, therefore
      is bigger than "".
@@ -45,12 +42,31 @@ module SSL = struct
     Hashtbl.fold fold_max tble ( LVar("") )
  
 
-  (** 
-      
-   *)
+  let extract_eq_from_hashtbl ( l : SSL_lex.eq list Pervasives.ref ) 
+      ( maxi : SSL_lex.locvar ) (iterande : SSL_lex.locvar)() =
+    
+    match maxi, iterande with
+	(LVar(iterande_name),LVar(maxi_name)) ->
+	  if (SSL_lex.equals_to iterande_name maxi_name ) == true 
+	  then ()
+	  else 
+	    l := (Eqloc(maxi,iterande):: !l )
 
-   (** *)
+   (** keep the biggest locvar in the hashtable, remove all the other
+   elements and returns the set of equations, following the 
+   rule  Unif Loc Var*)
+  
   let unify_eq ( tble : ((locvar , unit )t )) =
+    if ( Hashtbl.length tble ) == 0
+    then []
+    else
+      let eq_list_res = ref [] in
+      let repres = biggest_loc_var tble in
+      Hashtbl.iter  ( extract_eq_from_hashtbl eq_list_res repres )  tble ; 
+      Hashtbl.clear tble;Hashtbl.add tble repres (); 
+      !eq_list_res (* return the value contained in the refered
+		      list of equations *)
+      
     
 
 
