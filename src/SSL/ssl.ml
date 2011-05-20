@@ -151,12 +151,52 @@ them yv. This is done by iterating on tabl and by iterating on each subtables .*
   let subst_lvar_affect (xv : locvar) (yv :locvar) ( tabl : ( ( ptvar, (locvar, unit )t ) t) ) = 
     Hashtbl.iter ( inter_tabl_ptvar_loc xv yv  ) tabl
 
-  
+  (**
 
+     Pretty print related stuffs
+
+
+  *)
+
+
+  let print_eq_iterator ( out : Format.formatter ) (last_elem : bool ) ( equ : SSL_lex.eq ) =
+    match equ with
+	Eqloc(LVar(x) , LVar(y) )-> 
+	  if last_elem then Format.fprintf out "(%s==%s) ]" x y
+	  else  Format.fprintf out "(%s==%s) ; " x y
+
+  let print_eqlist (out :Format.formatter ) ( equ : SSL_lex.eq list ) =
+    let taille = List.length equ in
+    let cmp= ref 0 in
+    Format.fprintf out "[";
+    List.iter (fun s -> print_eq_iterator out (taille == !cmp ) s;
+      cmp:=!cmp+1 )
       
 
 
+ 
+  let print_pointstonil  (out :Format.formatter ) ( aff :  (ptvar , unit) t  ) =
+    let ptnil_iterator out_channel s () = 
+      match s with 
+	  PVar( sname ) ->
+	  Format.fprintf out " %s -> NIL and " sname
+    in
+    Hashtbl.iter ( ptnil_iterator out ) aff
 
+      
+
+  let print_affect_iter2  (out :Format.formatter) ( p : ptvar ) ( loc : locvar)() =
+    match p , loc with
+	(PVar(pt), LVar(l))->
+	  Format.fprintf out "%s -> %s and " pt l
+
+  let print_affect_iter1 (out :Format.formatter ) ( p : ptvar) ( aff :  (locvar , unit) t  ) =
+    Hashtbl.iter (print_affect_iter2 out p ) aff
+    
+    
+  let print_affect  (out :Format.formatter ) ( aff : (ptvar , (locvar , unit) t ) t ) =
+     Hashtbl.iter (print_affect_iter1 out ) aff
+    
 
 (** Substitutes x by y  in pure formula f *)
  
