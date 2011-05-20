@@ -1,0 +1,31 @@
+digraph G {
+1 [label="1 - "]
+2 [label="2 - "]
+1 -> 2
+
+2 [label="2 - "]
+4 [label="4 - i = 0;while (i < 999) { i ++; }while (i < 999) { i ++; }if (! (i < 999)) {\n                                                          break;"]
+2 -> 4
+
+4 [label="4 - \n                                                        }if (! (i < 999)) {\n                                                           break;"]
+5 [label="5 - \n                                                         }break;"]
+4 -> 5
+
+4 [label="4 - if (! (\n                                                                  i < 999)) {\n                                                                  break;"]
+6 [label="6 - \n                                                                }i ++;"]
+4 -> 6
+
+5 [label="5 - break;"]
+7 [label="7 - __retres = 0;"]
+5 -> 7
+
+7 [label="7 - __retres = 0;"]
+8 [label="8 - return (__retres);"]
+7 -> 8
+
+6 [label="6 - i ++;"]
+2 [label="2 - \nwhile (i < 999) { i ++;"]
+6 -> 2
+
+
+}

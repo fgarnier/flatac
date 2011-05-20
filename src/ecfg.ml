@@ -18,6 +18,9 @@ open Cfg
 open Visitor
 open SemAndLogicFrontEnd
 
+open Format
+open Buffer
+
 (** 
  	This HashTable is defined to avoid 
 	looping through CFG 
@@ -40,22 +43,22 @@ module IntHashtbl = Hashtbl.Make ( HashInt )
  *)
 module Ecfg = functor ( A : sig type t end ) ->
 struct
-	(* Node label *)
+	(* Node *)
 	type stmtId = int
+	type cOperation = 
+	| Op of Cil_types.stmt
+	| EntryPoint
 	type semanticValue = A.t
 	(***********************)
 
 	(* Transition *)
 	type counterExpression = string
-	type transitionOp = 
-	| Op of Cil_types.stmtkind
-	| EntryPoint
-	type cfgTransition = Transition of transitionOp * counterExpression
+	type cfgTransition = Transition of counterExpression
 	(******************************************************************)
 
 	type cfg = 
-	| Node of stmtId * semanticValue * cfgTransition * (cfg list) 
-	| Leaf of stmtId * semanticValue
+	| Node of stmtId * cOperation * semanticValue * cfgTransition * (cfg list) 
+	| Leaf of stmtId * cOperation * semanticValue
 	| Empty
 
 	(* Container class of eCFG *)
@@ -68,8 +71,8 @@ struct
 			_fName <- fName;
 			_root <- root;
 			match _root with
-			| Node ( sid, _, _, _ ) -> Self.debug ~level:1 "New eCFG node built : %s ( %d )" _fName sid
-			| Leaf ( sid, _) -> Self.debug ~level:1 "New eCFG leaf built : %s ( %d )" _fName sid
+			| Node ( sid, _, _, _, _ ) -> Self.debug ~level:1 "New eCFG node built : %s ( %d )" _fName sid
+			| Leaf ( sid, _, _) -> Self.debug ~level:1 "New eCFG leaf built : %s ( %d )" _fName sid
 			| _ -> ()
 
 		method getFunctionName () = _fName
@@ -77,20 +80,35 @@ struct
 	end
 
 	let rec _buildCfg ( stmtData : Cil_types.stmt ) ( newSemanticValue : semanticValue ) ( frontEnd : A.t semAndLogicFrontEnd ) visited = 
+		Self.debug ~level:1 "Visiting %d..." stmtData.sid;
+		IntHashtbl.add visited stmtData.sid ( Leaf ( stmtData.sid, Op (stmtData), newSemanticValue ) );
+
 		let children = ref [] in
-			if (List.length stmtData.succs) = 0 then Leaf ( stmtData.sid, newSemanticValue )
+			if (List.length stmtData.succs) = 0 then
+				let newNode = Leaf ( stmtData.sid, Op (stmtData), newSemanticValue ) in
+					Self.debug ~level:0 "New node built : %d (%s) with %d succs" stmtData.sid (frontEnd#pretty newSemanticValue) (List.length !children);
+					IntHashtbl.replace visited stmtData.sid newNode; newNode
 			else
-				(List.iter 	( fun stmt -> 
-							try (** Already visited *)
-								if IntHashtbl.find visited stmt.sid then () 		
-								(** Dirty exception hacking to handle the "Already visited" case *)
-							with _ -> (** Never visited *)
-								IntHashtbl.add visited stmt.sid true;
-								let abs, newCounter = frontEnd#next newSemanticValue "" stmtData.skind in
-									children := (_buildCfg stmt abs frontEnd visited) :: !children 
-						) stmtData.succs;
-				Self.debug ~level:1 "New node built : %d (%s)" stmtData.sid (frontEnd#pretty newSemanticValue);
-				Node ( stmtData.sid, newSemanticValue, Transition ( EntryPoint, "" ) , !children ))
+			begin
+					(** For each successors ... *)
+					List.iter 	( fun stmt -> 
+							 	(* Already visited *) 
+								try 
+									let s = IntHashtbl.find visited stmt.sid in children := s :: !children 
+ 								(** Never visited *)
+								with _ ->
+									Self.debug ~level:0 "%d not visited yet." stmt.sid;
+									(* While waiting for computing th real value *)
+									let abs, newCounter = frontEnd#next newSemanticValue "" stmtData.skind in
+										children := (_buildCfg stmt abs frontEnd visited) :: !children 
+							) stmtData.succs;
+					Self.debug ~level:0 "New node built : %d (%s) with %d succs" stmtData.sid (frontEnd#pretty newSemanticValue) (List.length !children);
+					let newNode = Node ( stmtData.sid, Op ( stmtData ), newSemanticValue, Transition ( "" ) , !children ) in
+						(* Here it is ! *) 
+						Self.debug ~level:0 "Removing last reference...";
+						IntHashtbl.replace visited stmtData.sid newNode;
+						newNode
+			end	
 
 	(** Private method called by the CilCFG Visitor at each function *)
 	let buildCfg ( frontEnd : A.t semAndLogicFrontEnd ) ( funInfo : fundec ) = 
@@ -110,7 +128,10 @@ struct
 		method vglob_aux g =
 			is_computed <- true;
 			match (g, _frontEnd) with 
-			| ( GFun ( funInfo, _ ), Some ( frontEnd ) ) -> eCFGs := (buildCfg frontEnd funInfo) :: !eCFGs; Self.debug ~level:0 "Building eCFG #%d..." (List.length !eCFGs); DoChildren
+			| ( GFun ( funInfo, _ ), Some ( frontEnd ) ) -> 
+				eCFGs := (buildCfg frontEnd funInfo) :: !eCFGs; 
+				Self.debug ~level:0 "Building eCFG #%d..." (List.length !eCFGs);
+				DoChildren
 			| _ -> DoChildren
 
 		method setFrontEnd frontEnd = _frontEnd <- Some ( frontEnd ) 
@@ -124,28 +145,62 @@ struct
 			visitFramacFile ( cfgVisitorInst :> frama_c_copy ) ast;
 			Self.debug ~level:0 "Computed %d eCFGs... " (List.length !eCFGs)
 
-
 	let rec _visiteCFGs root callback =
 		callback root;
 		match root with
-		| Node (_, _, _, l) -> List.iter ( fun newRoot -> _visiteCFGs newRoot callback ) l
-		| _ -> ()
+		| Node (sid, _, _, _, l) -> 
+			Self.debug ~level:0 "Visiting node %d..." sid;
+			List.iter ( fun newRoot -> _visiteCFGs newRoot callback ) l
+		| Leaf (sid, _, _ ) -> 
+			Self.debug ~level:0 "Visiting leaf %d..." sid
+		| _ -> Self.debug ~level:0 "Visiting empty ..."
 
 	let visiteCFGs callback =
-		List.iter ( fun g -> Self.debug ~level:0 "CALL !"; _visiteCFGs (g#getRoot ()) callback ) !eCFGs
+		List.iter ( fun g -> _visiteCFGs (g#getRoot ()) callback ) !eCFGs
 
-	let printDot node =
+(*
+	let prettyNode eCFGNode =
+	match eCFGNode with
+	| Leaf (sid, Op (stmtData), _ ) -> sprintf "%d / %s / [ ]" sid (stmtToString stmtData)
+	| Node (sid, Op (stmtData), _, _, l) ->
+		let sidList = "" in
+			List.iter 
+			( fun n ->
+				match node with
+				| Leaf ( succId, _, _ ) -> let sidList = sprintf "%s; %d" sidList succId
+			) l
+*)
+
+	let stmtToString stmt =
+		Buffer.reset stdbuf;
+		Cil.printStmt Cil.defaultCilPrinter str_formatter stmt;
+		String.escaped (Buffer.contents stdbuf)
+		
+
+	let printDot foc node =
 		match node with
-		| Leaf (sid, _) -> Self.debug ~level:0 "%d" sid
-		| Node (sid, _, _, l) -> List.iter 	( fun e -> 
+		| Leaf (sid, Op (stmtData), _ ) -> ()
+		| Node (sid, Op (stmtData), _, _, l) -> 
+							List.iter 	
+							( fun e -> 
 								match e with
-								| Leaf (childSid, _) -> Self.debug ~level:0 "%d -> %d" sid childSid
-								| Node (childSid, _, _,  _) -> Self.debug ~level:0 "%d -> %d" sid childSid
+								| Leaf (childSid, Op ( childStmtData ), _) -> 
+									Format.fprintf foc "%d [label=\"%d - %s\"]\n" sid sid (stmtToString stmtData);
+									Format.fprintf foc "%d [label=\"%d - %s\"]\n" childSid childSid (stmtToString childStmtData);
+									Format.fprintf foc "%d -> %d\n\n" sid childSid
+								| Node (childSid, Op ( childStmtData ), _ , _, _) -> 
+									Format.fprintf foc "%d [label=\"%d - %s\"]\n" sid sid (stmtToString stmtData);
+									Format.fprintf foc "%d [label=\"%d - %s\"]\n" childSid childSid (stmtToString childStmtData);
+									Format.fprintf foc "%d -> %d\n\n" sid childSid;
 								| _ -> ()
 							) l
 		| _ -> ()
-
-	let export2Dot =
-		Self.debug ~level:0 "MAXIME %d... " (List.length !eCFGs);
-		visiteCFGs printDot
+	
+	let exportDot () = 
+		let oc = open_out "output.dot" in
+		let foc = formatter_of_out_channel( oc ) in
+			Format.fprintf foc "digraph G {\n";
+				visiteCFGs (printDot foc);
+			Format.fprintf foc "\n}";
+			Self.feedback ~level:0 "Graph exported!"
 end;;
