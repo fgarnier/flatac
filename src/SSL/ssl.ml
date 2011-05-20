@@ -122,21 +122,30 @@ Shall appear in the interface file. *)
 
 
 
-  let subst_loc_affect_iter 
-      ( table:( locvar , () )t )
-      (xv : locvar)
-      (yv : locvar)
-      ( iterande : locvar)() = 
-    match iterande xv with 
-	(LVar ( iname ) , LVar ( xvname )) -> if ( SSL_lex .equals iname xvname ) 
+(* Shall not appear in the interface file *)
+  let subst_loc_affect_ite (table : (( locvar , unit )t) ) (xv : locvar) (yv : locvar) (iterande : locvar)() = 
+    match iterande, xv with 
+	(LVar ( iname ) , LVar ( xvname )) -> if ( SSL_lex.equals_to iname xvname ) 
 	  then 
-	    
+		  begin
+		    Hashtbl.remove table iterande; 
+		    Hashtbl.add table  yv  () 
+		  end
 
+ (*Shall not appear in the interface file *)
+  let  inter_tabl_ptvar_loc (xv:locvar)(yv:locvar)(pointer : ptvar)( iterand_table :  ((locvar , unit) t ))=
+    Hashtbl.iter (subst_loc_affect_ite iterand_table xv yv ) iterand_table
 
+  
 
+(**  Performs the substitution of all location variables which name equals to xv by renaming
+them yv. This is done by iterating on tabl and by iterating on each subtables .*)
+(* To be added in the interface file .*)
 
-  let subst_lvar_affect (xv : locvar) (yv :locvar) ( tabl : (ptvar, (locvar, ()))t) =
-    
+  let subst_lvar_affect (xv : locvar) (yv :locvar) ( tabl : ( ( ptvar, (locvar, unit )t ) t) ) = 
+    Hashtbl.iter ( inter_tabl_ptvar_loc xv yv  ) tabl
+
+  
 
       
 end;;
