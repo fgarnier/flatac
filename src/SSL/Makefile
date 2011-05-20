@@ -7,3 +7,6 @@ all : $(COMPINTERFACES)
 
 .ml.cmo : $(COMPINTERFACES)
 	ocmalc -c $*.ml
+tests :  ssl_types.cmo ssl.cmo tests.ml 
+	ocamlc -I ./ -o test  ssl_types.cmo ssl.cmo tests.ml
+

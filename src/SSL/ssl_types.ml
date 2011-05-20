@@ -15,6 +15,7 @@ module SSL_types_gen = functor ( P : sig
 				   val equals_to : string -> string -> bool
 				 end ) ->
 struct
+  let size_hash = 7 (* Initial size of a hastable *)
   let order_relation = P.order_relation
   let equals_to = P.equals_to
   type ptvar = PVar of string
@@ -24,7 +25,7 @@ struct
   type affectnil = Pointsnil of ptvar
   
   type pure_formula = { 
-    equations:  eq  list; 
+    mutable equations: eq  list; 
                        (** The set of equations between location variables *)
     affectations : (ptvar , (locvar , unit) t ) t; 
                        (** The set of affectations of pointer variables. A

@@ -10,8 +10,12 @@ open List
 open Ssl_types
 open Ssl_types.SSL_lex
 open Hashtbl 
-module SSL = struct
-       
+
+
+
+  let create () = 
+    {equations = [] ; affectations = Hashtbl.create SSL_lex.size_hash ; ptnil = Hashtbl.create SSL_lex.size_hash }
+    
   let orient_eq  equ   =
     match equ with
 	SSL_lex.Eqloc ( SSL_lex.LVar (x) , SSL_lex.LVar( y ) ) -> if (( SSL_lex.order_relation x y ) == true )
@@ -21,9 +25,11 @@ module SSL = struct
 	  SSL_lex.Eqloc ( SSL_lex.LVar( y ) , SSL_lex.LVar ( x ))
 	    
   (* This function orients all equation w.r.t. the oredering relation
-     on the naming of the variables. *)
+     on the naming of the variables. 
+     Shall appear in the Interface file.
+  *)
 
-  let orient_eqlist   eqlist   =
+  let orient_eqlist  eqlist   =
     List.map ( fun s -> ( orient_eq s ) ) eqlist 
 
 
@@ -148,7 +154,7 @@ them yv. This is done by iterating on tabl and by iterating on each subtables .*
   
 
       
-end;;
+
 
 
 
