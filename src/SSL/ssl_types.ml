@@ -27,11 +27,11 @@ struct
   type pure_formula = { 
     mutable equations: eq  list; 
                        (** The set of equations between location variables *)
-    affectations : (ptvar , (locvar , unit) t ) t; 
+     affectations : (ptvar , (locvar , unit) t ) t; 
                        (** The set of affectations of pointer variables. A
 		       single variables can be affected different values in
 			a non normalized formula*)
-    ptnil : (ptvar , unit) t;
+     ptnil : (ptvar , unit) t;
                       (** The set of pointer variables that points to nil
 			 a.k.a. NULL *)
   }

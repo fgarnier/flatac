@@ -14,9 +14,10 @@ open Hashtbl
 
 
   let create () = 
-    {equations = [] ; affectations = Hashtbl.create SSL_lex.size_hash ; ptnil = Hashtbl.create SSL_lex.size_hash }
+    {equations = [] ; affectations = Hashtbl.create (SSL_lex.size_hash) ; ptnil = Hashtbl.create (SSL_lex.size_hash)  }
     
-  let orient_eq  equ   =
+ 
+ let orient_eq  equ =
     match equ with
 	SSL_lex.Eqloc ( SSL_lex.LVar (x) , SSL_lex.LVar( y ) ) -> if (( SSL_lex.order_relation x y ) == true )
 	then
@@ -73,9 +74,7 @@ open Hashtbl
       !eq_list_res (* return the value contained in the refered
 		      list of equations *)
       
-    
-
-
+ 
 
  (* Called by del_tautologies. Shall not appear in the Interface. *)
 
@@ -99,8 +98,6 @@ open Hashtbl
 (*   The part of the file that follows contains the functions that
      encodes the substitutions of the formulae.
 *)
-
-
 
 
 (**********************************************************************)
@@ -173,7 +170,6 @@ them yv. This is done by iterating on tabl and by iterating on each subtables .*
       cmp:=!cmp+1 )
       
 
-
  
   let print_pointstonil  (out :Format.formatter ) ( aff :  (ptvar , unit) t  ) =
     let ptnil_iterator out_channel s () = 
@@ -204,3 +200,4 @@ them yv. This is done by iterating on tabl and by iterating on each subtables .*
     
 *)
 	    
+
