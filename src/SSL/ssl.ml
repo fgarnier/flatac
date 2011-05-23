@@ -10,7 +10,7 @@ open List
 open Ssl_types
 open Ssl_types.SSL_lex
 open Hashtbl 
-
+open Format
 
 
   let create () = 
@@ -156,18 +156,34 @@ them yv. This is done by iterating on tabl and by iterating on each subtables .*
   *)
 
 
+
+
+ let print_qvars_iterator ( out : Format.formatter ) (last_elem : bool ) ( qvar : SSL_lex.locvar )() =
+    match qvar with
+	LVar(x) -> 
+	  if last_elem then Format.fprintf out " %s ]" x 
+	  else  Format.fprintf out "%s ; " x 
+
+
+  let print_exist_vars (out : Format.formatter ) ( qvars : (locvar , unit ) t) =
+    let taille = Hashtbl.length qvars in
+    let cmp= ref 0 in
+    Format.fprintf out " Exist [";
+    Hashtbl.iter (fun s ()-> print_qvars_iterator out (taille == !cmp ) s ();
+      cmp:=!cmp+1 )
+
   let print_eq_iterator ( out : Format.formatter ) (last_elem : bool ) ( equ : SSL_lex.eq ) =
     match equ with
 	Eqloc(LVar(x) , LVar(y) )-> 
 	  if last_elem then Format.fprintf out "(%s==%s) ]" x y
-	  else  Format.fprintf out "(%s==%s) ; " x y
+	  else  Format.fprintf out "(%s==%s) and ; " x y
 
   let print_eqlist (out :Format.formatter ) ( equ : SSL_lex.eq list ) =
     let taille = List.length equ in
     let cmp= ref 0 in
     Format.fprintf out "[";
     List.iter (fun s -> print_eq_iterator out (taille == !cmp ) s;
-      cmp:=!cmp+1 )
+      cmp:=!cmp+1 ) equ
       
 
  
@@ -194,10 +210,41 @@ them yv. This is done by iterating on tabl and by iterating on each subtables .*
      Hashtbl.iter (print_affect_iter1 out ) aff
     
 
-(** Substitutes x by y  in pure formula f *)
- 
-(* let subst_in_pure_f ( x : SSL_lex.locvar ) ( y : SSL_lex.locvar ) ( f : SSL_types.pure_formula ) =
-    
-*)
-	    
 
+  let print_space_iter (out : Format.formatter )(is_last : bool )( lvar : locvar  )( occurence : int) =
+    match lvar with 
+	LVar ( x ) ->
+	  if (is_last == true )
+	  then  Format.fprintf out " ( Alloc( %s ) , %d )" x occurence
+	  else Format.fprintf out " ( Alloc ( %s) , %d ) *"  x occurence 
+
+ 
+  let  print_space ( out: Format.formatter ) ( space : (space_formula)) =
+    match space with 
+	 Space( table ) -> 
+	   if (Hashtbl.length table == 0 ) then
+	     fprintf out "Emp" 
+	   else
+	     let taille  = Hashtbl.length table in
+	     let cmt = ref 1 in
+	     Hashtbl.iter ( fun lv occ -> print_space_iter out (taille == !cmt) lv occ;  cmt := !cmt + 1 ) table
+      
+      | Top_heap  -> fprintf out "TOP"
+    
+
+
+
+  let print_pure_formula (out: Format.formatter) (puref : Ssl_types.SSL_lex.pure_formula) =
+    fprintf out " Equations : (";  print_eqlist out (puref.equations); 
+    fprintf out "Affectations : ["; print_affect out puref.affectations ;
+    fprintf out "]";
+    fprintf out "Set to nil : [";
+    print_pointstonil out puref.ptnil; fprintf  out "]"
+
+    
+(* ********************************************************************* **)
+
+(* The part that follows, contains the basic operations on SSL formulae,
+i.e. ; *)
+
+(**************************************************************************)

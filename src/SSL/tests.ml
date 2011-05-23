@@ -8,5 +8,7 @@ let main () =
    let newf = Ssl.create () in 
    let form = formatter_of_out_channel Pervasives.stdout in
    Format.fprintf  form "coucou \n";
-     Ssl.print_affect form (newf.affectations); Format.fprintf form "%!"  
+     Ssl.print_affect form (newf.affectations);
+     Ssl.print_pure_formula form newf ;
+     Format.fprintf form "%!"  
 let () = main ()
