@@ -112,6 +112,8 @@ struct
 
 	(** Private method called by the CilCFG Visitor at each function *)
 	let buildCfg ( frontEnd : A.t semAndLogicFrontEnd ) ( funInfo : fundec ) = 
+		let ep in 
+			ep = Node ( 
 		new eCFG funInfo.svar.vname (_buildCfg (List.hd funInfo.sallstmts) (frontEnd#getEntryPointAbstraction ()) (frontEnd) (IntHashtbl.create 1))
 
 	(** eCFGs accessor. *)

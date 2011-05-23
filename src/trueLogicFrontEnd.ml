@@ -1,4 +1,4 @@
-open Self
+
 open Cil_types
 open SemAndLogicFrontEnd
 

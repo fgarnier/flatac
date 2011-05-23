@@ -13,6 +13,7 @@
 open Self
 open Cil_types
 
+(* Changer le type string en CounterLabel ou un truc générique dans le genre *)
 class virtual ['a] semAndLogicFrontEnd = 
 object 
 	(** Returns the abstract interpretation of the entry point *)
