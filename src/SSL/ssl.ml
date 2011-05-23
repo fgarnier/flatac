@@ -13,9 +13,21 @@ open Hashtbl
 open Format
 
 
-  let create () = 
+  let create_pure_f () = 
     {equations = [] ; affectations = Hashtbl.create (SSL_lex.size_hash) ; ptnil = Hashtbl.create (SSL_lex.size_hash)  }
     
+
+  let create_space_f () =
+    let table = Hashtbl.create Ssl_types.SSL_lex.size_hash in
+    Space ( table )
+
+ (** Creates an empty SSL formula *)
+  let create_ssl_f () =
+    {
+      quant_vars = Hashtbl.create Ssl_types.SSL_lex.size_hash;
+      pure = create_pure_f ();
+      space = create_space_f ()
+    }
  
  let orient_eq  equ =
     match equ with
@@ -170,7 +182,8 @@ them yv. This is done by iterating on tabl and by iterating on each subtables .*
     let cmp= ref 0 in
     Format.fprintf out " Exist [";
     Hashtbl.iter (fun s ()-> print_qvars_iterator out (taille == !cmp ) s ();
-      cmp:=!cmp+1 )
+      cmp:=!cmp+1 ) qvars;
+      Format.fprintf out "]"
 
   let print_eq_iterator ( out : Format.formatter ) (last_elem : bool ) ( equ : SSL_lex.eq ) =
     match equ with
@@ -181,7 +194,6 @@ them yv. This is done by iterating on tabl and by iterating on each subtables .*
   let print_eqlist (out :Format.formatter ) ( equ : SSL_lex.eq list ) =
     let taille = List.length equ in
     let cmp= ref 0 in
-    Format.fprintf out "[";
     List.iter (fun s -> print_eq_iterator out (taille == !cmp ) s;
       cmp:=!cmp+1 ) equ
       
@@ -235,16 +247,70 @@ them yv. This is done by iterating on tabl and by iterating on each subtables .*
 
 
   let print_pure_formula (out: Format.formatter) (puref : Ssl_types.SSL_lex.pure_formula) =
-    fprintf out " Equations : (";  print_eqlist out (puref.equations); 
+    fprintf out " Equations : [";  print_eqlist out (puref.equations); fprintf out "] and "; 
     fprintf out "Affectations : ["; print_affect out puref.affectations ;
-    fprintf out "]";
+    fprintf out "] and ";
     fprintf out "Set to nil : [";
     print_pointstonil out puref.ptnil; fprintf  out "]"
 
+
+  let pprint_ssl_formula (out: Format.formatter)(sslf :  ssl_formula) =
+    if ( ((Hashtbl.length sslf.pure.affectations)
+	   + (Hashtbl.length sslf.pure.ptnil )
+	     +(List.length sslf.pure.equations ))>0
+    )
+    then 
+      begin
+    fprintf out "{";print_exist_vars out sslf.quant_vars;fprintf out "}";
+    fprintf out "PURE{"; print_pure_formula out sslf.pure ; 
+    fprintf out "}";
+      end
+    else
+      fprintf out "Pure{true}";
+    
+    fprintf out " || ";
+    fprintf out "SPACE {"; print_space out sslf.space;
+    fprintf out "}"
+     
+   
+      
     
 (* ********************************************************************* **)
 
 (* The part that follows, contains the basic operations on SSL formulae,
-i.e. ; *)
+namely ;
+_ And of an  atomic propositions and a SSL formula
+_ And of two pure formulae
+_ Computing the separation of two ssl formulae
+ *)
 
 (**************************************************************************)
+
+
+
+  let  and_atomic_eq (equ : SSL_lex.eq )( sslf : SSL_lex.ssl_formula) =
+    sslf.pure.equations <- (equ::sslf.pure.equations) (*It's damnes convenient,
+						      isn't it ?*)
+
+  let and_atomic_affect (equ : SSL_lex.affect)(sslf : SSL_lex.ssl_formula) =
+    match equ with 
+	Pointsto ( ptr, lv ) ->
+	  if ( (Hashtbl.mem sslf.pure.affectations ptr) == true )
+	  then
+	    let tble = Hashtbl.find sslf.pure.affectations ptr in
+	    Hashtbl.add tble lv ()
+	  else
+	    let tble = Hashtbl.create size_hash in
+	    Hashtbl.add tble lv (); (* One now add the binding
+				       lv->unit in the new table*)
+	    Hashtbl.add sslf.pure.affectations ptr tble (*And add this
+							 new this table associated
+to the key ptr*)
+       
+  let and_atomic_ptnil (ptnil : SSL_lex.affectnil )( sslf :SSL_lex.ssl_formula )=
+    match ptnil with 
+	Pointsnil ( ptr ) ->
+	  if ( (Hashtbl.mem sslf.pure.affectations ptr) == false ) 
+	  then Hashtbl.add sslf.pure.ptnil ptr ()
+	    (*One adds x->nil iff it is not yet present*)
+	  
