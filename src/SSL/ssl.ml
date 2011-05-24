@@ -167,9 +167,6 @@ them yv. This is done by iterating on tabl and by iterating on each subtables .*
 
   *)
 
-
-
-
  let print_qvars_iterator ( out : Format.formatter ) (last_elem : bool ) ( qvar : SSL_lex.locvar )() =
     match qvar with
 	LVar(x) -> 
@@ -314,3 +311,56 @@ to the key ptr*)
 	  then Hashtbl.add sslf.pure.ptnil ptr ()
 	    (*One adds x->nil iff it is not yet present*)
 	  
+
+
+  let add_alloc_cell (lvar : locvar ) (sslf : SSL_lex.ssl_formula ) =
+    match sslf.space with 
+        Space ( space_f ) -> if ( (Hashtbl.mem space_f lvar ) == true )
+	  then 
+	    let occur = Hashtbl.find space_f lvar in
+	      Hashtbl.replace space_f lvar (occur + 1) (* There is one more
+						  occurence 
+						    of lv in the heap*)
+	  else
+	     Hashtbl.add space_f lvar 1 (* in this case one states
+				       that lv appears once in the heap*)
+      | Top_heap -> () (* The heap has already been corrupted, adding more
+		       stuff won't change that fact.*)
+
+(*	       
+  let and_pure (fg : pure_formula )( fd : pure_formula ) = 
+    let res = create_pure_f () in
+    let affect_iterator  (pvar: ptvar ) (loctable :((locvar , unit ) t)) =
+      if ((Hashtbl.mem res.affectations pvar) != true )
+      then Hashtbl.add res.affectations pvar loctable
+      else 
+	let ltable = 
+    in 
+    let affect_nil_iterator (pvar: ptvar )() =
+      if ((Hashtbl.mem res.ptnil pvar ()) != true )
+      then Hashtbl.add res.ptnil pvar ()
+      else ()
+    in
+    res.equations <- ( fg.equations @ fd.equations );
+    Hashtbl.iter ( affect_iterator ) fg.affectations ;
+    Hashtbl.iter ( affect_iterator ) fd.affectations ;
+    Hashtbl.iter ( affect_nil_iterator ) fg.ptnil ;
+    Hashtbl.iter ( affect_nil_iterator ) fd.ptnil 
+  *)  
+
+  let and_ssl (fg : ssl_formula )( fd : ssl_formula ) =
+    let res =  create_ssl_f () in
+    let affect_iterator  (pvar: ptvar ) (loctable :((locvar , unit ) t)) =
+      Hashtbl.iter (fun lv () -> 
+	and_atomic_affect (Pointsto(pvar,lv)) res ) loctable
+    in 
+    let affect_nil_iterator (pvar: ptvar )() =
+     and_atomic_ptnil (Pointsnil(pvar)) res
+    in
+    res.pure.equations <- ( fg.pure.equations @ fd.pure.equations );
+    Hashtbl.iter affect_iterator fg.pure.affectations;
+    Hashtbl.iter affect_iterator fd.pure.affectations;
+    Hashtbl.iter affect_nil_iterator fg.pure.ptnil;
+    Hashtbl.iter affect_nil_iterator fd.pure.ptnil;
+    res
+    
