@@ -50,7 +50,7 @@ quantified variables, a pure and a spatial part.*)
   type ssl_formula = {
     quant_vars:(locvar , unit ) t;
     pure : pure_formula;
-    space : space_formula; 
+    mutable space : space_formula; 
   }
   
 

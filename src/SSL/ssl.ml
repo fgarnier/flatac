@@ -327,6 +327,19 @@ to the key ptr*)
       | Top_heap -> () (* The heap has already been corrupted, adding more
 		       stuff won't change that fact.*)
 
+  let add_alloc_cell_occ  (lvar : locvar )(occurences : int ) (sslf : SSL_lex.ssl_formula ) =
+    match sslf.space with 
+        Space ( space_f ) -> if ( (Hashtbl.mem space_f lvar ) == true )
+	  then 
+	    let occur = Hashtbl.find space_f lvar in
+	      Hashtbl.replace space_f lvar (occur + occurences) (* There is occurences more
+						  occurence 
+						    of lv in the heap*)
+	  else
+	     Hashtbl.add space_f lvar occurences (* in this case one states
+				       that lv appears occurences in the heap*)
+      | Top_heap -> ()
+
 (*	       
   let and_pure (fg : pure_formula )( fd : pure_formula ) = 
     let res = create_pure_f () in
@@ -348,7 +361,7 @@ to the key ptr*)
     Hashtbl.iter ( affect_nil_iterator ) fd.ptnil 
   *)  
 
-  let and_ssl (fg : ssl_formula )( fd : ssl_formula ) =
+  let and_pure_ssl (fg : ssl_formula )( fd : ssl_formula ) =
     let res =  create_ssl_f () in
     let affect_iterator  (pvar: ptvar ) (loctable :((locvar , unit ) t)) =
       Hashtbl.iter (fun lv () -> 
@@ -363,4 +376,33 @@ to the key ptr*)
     Hashtbl.iter affect_nil_iterator fg.pure.ptnil;
     Hashtbl.iter affect_nil_iterator fd.pure.ptnil;
     res
+
+
+      (** this function creates a new hashtable that describes the
+ heap that results from the separation of two heap of two ssl logic
+formulae *)
+  (*let space_sep (spaceg : space_formula) (spaced : space_formula) =*)
     
+    
+      
+  let star_sep (fg : ssl_formula )( fd : ssl_formula ) =
+     let res = and_pure_ssl fg fd in
+    match  fg.space , fd.space with 
+	( Space (space_g) , Space (space_d ) ) ->
+	  (* One start by computing the
+			       conjunction of both pure parts*)
+	  let add_cell_iterator (lv : locvar )( occ : int ) =
+	    add_alloc_cell_occ lv occ res 
+	  in
+	  let quant_var_iterator (lv : locvar)() =
+	    if ((Hashtbl.mem res.quant_vars lv) != true )
+	    then Hashtbl.add res.quant_vars lv ()
+	  in
+	  Hashtbl.iter (add_cell_iterator) space_g;
+	  Hashtbl.iter (add_cell_iterator) space_d;
+	  Hashtbl.iter (quant_var_iterator) fg.quant_vars;
+	  Hashtbl.iter (quant_var_iterator) fd.quant_vars;
+	  res
+	  
+      | (_,_) -> ( res.space <- Top_heap );
+	res
