@@ -52,7 +52,8 @@ open Format
 	then LVar (x)
 	else LVar (y)
 
-  (* Returns the biggest key of hash table which keys are varlocs*)
+  (* Returns the biggest key of hash table which keys are location
+  variables *)
   (* Any variable name in C contains at least a character, therefore
      is bigger than "".
   *)
@@ -61,6 +62,7 @@ open Format
     Hashtbl.fold fold_max tble ( LVar("") )
  
 
+  
   let extract_eq_from_hashtbl ( l : SSL_lex.eq list Pervasives.ref ) 
       ( maxi : SSL_lex.locvar ) (iterande : SSL_lex.locvar)() =
     
@@ -287,9 +289,18 @@ _ Computing the separation of two ssl formulae
     if (Hashtbl.mem sslf.quant_vars lv ) == false
     then Hashtbl.add  sslf.quant_vars lv () 
 
+
+(** Adds an equality to the  SSL formula and ensures that the left
+member of the equation is greater that the right one, w.r.t. the 
+order relation order *)
+
   let  and_atomic_eq (equ : SSL_lex.eq )( sslf : SSL_lex.ssl_formula) =
-    sslf.pure.equations <- (equ::sslf.pure.equations) (*It's damnes convenient,
-						      isn't it ?*)
+    match equ with  
+	Eqloc(LVar(lg),LVar(ld)) ->
+	  if ( SSL_lex.order_relation lg ld ) == false then
+	    let equ = Eqloc( LVar(ld) , LVar(lg) ) in
+		sslf.pure.equations <- (equ::sslf.pure.equations) (*It's damned convenient, isn't it ?*)
+	  else 	sslf.pure.equations <- (equ::sslf.pure.equations)
 
   let and_atomic_affect (equ : SSL_lex.affect)(sslf : SSL_lex.ssl_formula) =
     match equ with 
@@ -389,3 +400,14 @@ formulae *)
 	  
       | (_,_) -> ( res.space <- Top_heap );
 	res
+
+
+
+
+
+(** This part contains the main components of the normalisation 
+algorithm. *)
+
+
+(** Quotient Step below :*)
+

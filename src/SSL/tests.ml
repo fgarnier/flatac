@@ -5,8 +5,10 @@ open Printf
 open Format
 
 let main () =
-   let newf = Ssl.create_ssl_f () in 
+   let newf = Ssl.create_ssl_f () in
    and_atomic_eq (Eqloc(LVar("l_1"),LVar("l_4"))) newf;
+   and_atomic_eq (Eqloc(LVar("l_4"),LVar("l_5"))) newf;  
+   and_atomic_eq (Eqloc(LVar("l_2"),LVar("l_4"))) newf;
    and_atomic_ptnil (Pointsnil(PVar("x"))) newf;
    add_quant_var (LVar("l_1")) newf;
    and_atomic_affect (Pointsto(PVar("y"),LVar("l1"))) newf;
