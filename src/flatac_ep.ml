@@ -31,8 +31,8 @@ module BoolCFG = Ecfg ( CfgExtension )
 let print () = 
 	Self.feedback ~level:0 "Welcome to Flata-C !";
 	let frontEnd = new trueLogicFrontEnd in
-		BoolCFG.computeECFGs (Project.current()) (Ast.get()) ( frontEnd )
-(*		BoolCFG.exportDot () *)
+		BoolCFG.computeECFGs (Project.current()) (Ast.get()) ( frontEnd );
+		BoolCFG.exportDot ()
 
 	(* List.iter ( fun e -> Self.debug ~level:0 "%s\n" (e#getFunctionName ())) (!IntCFG.eCFGs) *)
 
