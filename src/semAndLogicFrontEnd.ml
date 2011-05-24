@@ -13,20 +13,22 @@
 open Self
 open Cil_types
 
+type counterExpression = string
+
 (* Changer le type string en CounterLabel ou un truc générique dans le genre *)
 class virtual ['a] semAndLogicFrontEnd = 
 object 
 	(** Returns the abstract interpretation of the entry point *)
 	method virtual getEntryPointAbstraction : unit -> 'a
 
-	method virtual getEntryPointPrecondition : unit -> 'a
+	method virtual getEntryPointPrecondition : unit -> counterExpression 
 
 	(** Returns true if the given state is an error state *)
 	method virtual isErrorState: 'a -> bool
 
 	(** Returns a the next couple of abstract interpretation and counter automata label based 
 	 on the current abstraction, the current counter, and the statement kind *)
-	method virtual next : 'a -> string -> stmtkind -> ('a * string)
+	method virtual next : 'a -> counterExpression -> stmtkind -> ('a * counterExpression)
 
 	method virtual pretty : 'a -> string
 end

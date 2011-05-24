@@ -45,79 +45,55 @@ module Ecfg = functor ( A : sig type t end ) ->
 struct
 	(* Node *)
 	type stmtId = int
+
 	type cOperation = 
 	| Op of Cil_types.stmt
 	| EntryPoint
+
 	type semanticValue = A.t
 	(***********************)
 
-	(* Transition *)
-	type counterExpression = string
-	type cfgTransition = Transition of counterExpression
-	(******************************************************************)
-
-	type cfg = 
-	| Node of stmtId * cOperation * semanticValue * cfgTransition * (cfg list) 
-	| Leaf of stmtId * cOperation * semanticValue
+	type cfgNode = 
+	| Node of stmtId * cOperation * semanticValue * ((cfgNode * counterExpression) list)
 	| Empty
 
 	(* Container class of eCFG *)
-	class eCFG fName (root : cfg)
-	= object
+	class eCFG fName stmtData ( frontEnd : A.t semAndLogicFrontEnd ) 
+	= object(self)
 		val mutable _fName = ""
-		val mutable _root : cfg = Empty
+		val mutable _root = Empty
+		val mutable _visited = IntHashtbl.create 100
 
 		initializer 
 			_fName <- fName;
-			_root <- root;
-			match _root with
-			| Node ( sid, _, _, _, _ ) -> Self.debug ~level:1 "New eCFG node built : %s ( %d )" _fName sid
-			| Leaf ( sid, _, _) -> Self.debug ~level:1 "New eCFG leaf built : %s ( %d )" _fName sid
-			| _ -> ()
+			let epAbstraction = frontEnd#getEntryPointAbstraction () in let epCounterValue = frontEnd#getEntryPointPrecondition () in 
+				_root <- self#buildNode epAbstraction epCounterValue stmtData frontEnd
+		
+		method buildNode currentAbstraction counterValue stmtData ( frontEnd : A.t semAndLogicFrontEnd ) =
+			let bindings = IntHashtbl.find_all _visited stmtData.sid in
+			if not ( List.exists ( fun v -> v = currentAbstraction ) bindings ) then 
+			begin
+				IntHashtbl.add _visited stmtData.sid currentAbstraction;
+				Self.debug ~level:0 "Visite du noeud %d... (%d)" stmtData.sid (IntHashtbl.length _visited);
+				Node 	( stmtData.sid, (Op stmtData), currentAbstraction, 
+						List.map 	( fun subStmt -> 
+									let subAbs, newCounter = frontEnd#next currentAbstraction counterValue subStmt.skind in  
+										self#buildNode subAbs counterValue subStmt frontEnd, newCounter
+								) stmtData.succs
+					)
+			end
+			else Empty
 
 		method getFunctionName () = _fName
 		method getRoot () = _root
 	end
 
-	let rec _buildCfg ( stmtData : Cil_types.stmt ) ( newSemanticValue : semanticValue ) ( frontEnd : A.t semAndLogicFrontEnd ) visited = 
-		Self.debug ~level:1 "Visiting %d..." stmtData.sid;
-		IntHashtbl.add visited stmtData.sid ( Leaf ( stmtData.sid, Op (stmtData), newSemanticValue ) );
+	let buildCfg ( frontEnd : A.t semAndLogicFrontEnd ) ( funInfo : fundec ) = new eCFG funInfo.svar.vname (List.hd funInfo.sallstmts) frontEnd
 
-		let children = ref [] in
-			if (List.length stmtData.succs) = 0 then
-				let newNode = Leaf ( stmtData.sid, Op (stmtData), newSemanticValue ) in
-					Self.debug ~level:0 "New node built : %d (%s) with %d succs" stmtData.sid (frontEnd#pretty newSemanticValue) (List.length !children);
-					IntHashtbl.replace visited stmtData.sid newNode; newNode
-			else
-			begin
-					(** For each successors ... *)
-					List.iter 	( fun stmt -> 
-							 	(* Already visited *) 
-								try 
-									let s = IntHashtbl.find visited stmt.sid in children := s :: !children 
- 								(** Never visited *)
-								with _ ->
-									Self.debug ~level:0 "%d not visited yet." stmt.sid;
-									(* While waiting for computing th real value *)
-									let abs, newCounter = frontEnd#next newSemanticValue "" stmtData.skind in
-										children := (_buildCfg stmt abs frontEnd visited) :: !children 
-							) stmtData.succs;
-					Self.debug ~level:0 "New node built : %d (%s) with %d succs" stmtData.sid (frontEnd#pretty newSemanticValue) (List.length !children);
-					let newNode = Node ( stmtData.sid, Op ( stmtData ), newSemanticValue, Transition ( "" ) , !children ) in
-						(* Here it is ! *) 
-						Self.debug ~level:0 "Removing last reference...";
-						IntHashtbl.replace visited stmtData.sid newNode;
-						newNode
-			end	
+	(* Node stmtData.sid stmtData currentAbstraction *) 
 
-	(** Private method called by the CilCFG Visitor at each function *)
-	let buildCfg ( frontEnd : A.t semAndLogicFrontEnd ) ( funInfo : fundec ) = 
-		let ep in 
-			ep = Node ( 
-		new eCFG funInfo.svar.vname (_buildCfg (List.hd funInfo.sallstmts) (frontEnd#getEntryPointAbstraction ()) (frontEnd) (IntHashtbl.create 1))
-
-	(** eCFGs accessor. *)
-	let eCFGs : ( (eCFG list) Pervasives.ref ) = ref []
+		(** eCFGs accessor. *)
+	let eCFGs : ( (eCFG list) ref ) = ref []
 
 	(** This visitor visits global function and trigger the build 
 	 of a new Cfg each one *)
@@ -130,10 +106,7 @@ struct
 		method vglob_aux g =
 			is_computed <- true;
 			match (g, _frontEnd) with 
-			| ( GFun ( funInfo, _ ), Some ( frontEnd ) ) -> 
-				eCFGs := (buildCfg frontEnd funInfo) :: !eCFGs; 
-				Self.debug ~level:0 "Building eCFG #%d..." (List.length !eCFGs);
-				DoChildren
+			| ( GFun ( funInfo, _ ), Some ( frontEnd ) ) -> eCFGs := (buildCfg frontEnd funInfo) :: !eCFGs; DoChildren
 			| _ -> DoChildren
 
 		method setFrontEnd frontEnd = _frontEnd <- Some ( frontEnd ) 
@@ -150,16 +123,11 @@ struct
 	let rec _visiteCFGs root callback =
 		callback root;
 		match root with
-		| Node (sid, _, _, _, l) -> 
-			Self.debug ~level:0 "Visiting node %d..." sid;
-			List.iter ( fun newRoot -> _visiteCFGs newRoot callback ) l
-		| Leaf (sid, _, _ ) -> 
-			Self.debug ~level:0 "Visiting leaf %d..." sid
-		| _ -> Self.debug ~level:0 "Visiting empty ..."
+		| Node (_, _, _, children ) -> List.iter ( fun (newRoot, _) -> _visiteCFGs newRoot callback ) children
+		| Empty -> () 
 
 	let visiteCFGs callback =
 		List.iter ( fun g -> _visiteCFGs (g#getRoot ()) callback ) !eCFGs
-
 (*
 	let prettyNode eCFGNode =
 	match eCFGNode with
@@ -173,36 +141,4 @@ struct
 			) l
 *)
 
-	let stmtToString stmt =
-		Buffer.reset stdbuf;
-		Cil.printStmt Cil.defaultCilPrinter str_formatter stmt;
-		String.escaped (Buffer.contents stdbuf)
-		
-
-	let printDot foc node =
-		match node with
-		| Leaf (sid, Op (stmtData), _ ) -> ()
-		| Node (sid, Op (stmtData), _, _, l) -> 
-							List.iter 	
-							( fun e -> 
-								match e with
-								| Leaf (childSid, Op ( childStmtData ), _) -> 
-									Format.fprintf foc "%d [label=\"%d - %s\"]\n" sid sid (stmtToString stmtData);
-									Format.fprintf foc "%d [label=\"%d - %s\"]\n" childSid childSid (stmtToString childStmtData);
-									Format.fprintf foc "%d -> %d\n\n" sid childSid
-								| Node (childSid, Op ( childStmtData ), _ , _, _) -> 
-									Format.fprintf foc "%d [label=\"%d - %s\"]\n" sid sid (stmtToString stmtData);
-									Format.fprintf foc "%d [label=\"%d - %s\"]\n" childSid childSid (stmtToString childStmtData);
-									Format.fprintf foc "%d -> %d\n\n" sid childSid;
-								| _ -> ()
-							) l
-		| _ -> ()
-	
-	let exportDot () = 
-		let oc = open_out "output.dot" in
-		let foc = formatter_of_out_channel( oc ) in
-			Format.fprintf foc "digraph G {\n";
-				visiteCFGs (printDot foc);
-			Format.fprintf foc "\n}";
-			Self.feedback ~level:0 "Graph exported!"
 end;;
