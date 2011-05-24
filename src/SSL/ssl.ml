@@ -409,5 +409,19 @@ formulae *)
 algorithm. *)
 
 
-(** Quotient Step below :*)
+  let cmp_eq (eq_1 : SSL_lex.eq) (eq_2 : SSL_lex.eq) =
+    match eq_1 , eq_2 with
+	 Eqloc( LVar(lg) , LVar(ld) ) -> if ((SSL_lex.order lg ld) == true)
+	  then 1 
+	  else if (SSL_lex.equals_to lg ld) == true
+	  then 0
+	  else -1
+
+(** Quotient Step below :
+*)
+
+  let quotient_eq_list (eql : SSL_lex.eq )
+  let eql = List.sort (cmp_eq) eql in
+  
+  
 
