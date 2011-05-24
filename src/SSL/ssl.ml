@@ -283,7 +283,9 @@ _ Computing the separation of two ssl formulae
 
 (**************************************************************************)
 
-
+  let add_quant_var ( lv : locvar )(sslf :  SSL_lex.ssl_formula) =
+    if (Hashtbl.mem sslf.quant_vars lv ) == false
+    then Hashtbl.add  sslf.quant_vars lv () 
 
   let  and_atomic_eq (equ : SSL_lex.eq )( sslf : SSL_lex.ssl_formula) =
     sslf.pure.equations <- (equ::sslf.pure.equations) (*It's damnes convenient,
@@ -340,26 +342,7 @@ to the key ptr*)
 				       that lv appears occurences in the heap*)
       | Top_heap -> ()
 
-(*	       
-  let and_pure (fg : pure_formula )( fd : pure_formula ) = 
-    let res = create_pure_f () in
-    let affect_iterator  (pvar: ptvar ) (loctable :((locvar , unit ) t)) =
-      if ((Hashtbl.mem res.affectations pvar) != true )
-      then Hashtbl.add res.affectations pvar loctable
-      else 
-	let ltable = 
-    in 
-    let affect_nil_iterator (pvar: ptvar )() =
-      if ((Hashtbl.mem res.ptnil pvar ()) != true )
-      then Hashtbl.add res.ptnil pvar ()
-      else ()
-    in
-    res.equations <- ( fg.equations @ fd.equations );
-    Hashtbl.iter ( affect_iterator ) fg.affectations ;
-    Hashtbl.iter ( affect_iterator ) fd.affectations ;
-    Hashtbl.iter ( affect_nil_iterator ) fg.ptnil ;
-    Hashtbl.iter ( affect_nil_iterator ) fd.ptnil 
-  *)  
+
 
   let and_pure_ssl (fg : ssl_formula )( fd : ssl_formula ) =
     let res =  create_ssl_f () in
