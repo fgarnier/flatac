@@ -411,17 +411,25 @@ algorithm. *)
 
   let cmp_eq (eq_1 : SSL_lex.eq) (eq_2 : SSL_lex.eq) =
     match eq_1 , eq_2 with
-	 Eqloc( LVar(lg) , LVar(ld) ) -> if ((SSL_lex.order lg ld) == true)
+	 ( Eqloc( LVar(lg_1) , LVar(ld_1) ) , Eqloc(LVar(lg_2),LVar(ld_2))) -> if ((SSL_lex.order_relation lg_1 lg_2) == true)
 	  then 1 
-	  else if (SSL_lex.equals_to lg ld) == true
-	  then 0
+	  else if ((SSL_lex.equals_to lg_2 ld_2) == true)
+	  then begin
+	    if (( SSL_lex.order_relation ld_1 ld_2 ) == true)
+	    then 1
+	    else if (( SSL_lex.equals_to ld_1 ld_2 ) == true)
+	    then 0
+	    else -1
+	    end 
+	   
 	  else -1
 
 (** Quotient Step below :
 *)
-
-  let quotient_eq_list (eql : SSL_lex.eq )
+(*
+  let quotient_eq_list (eql : SSL_lex.eq ) =
   let eql = List.sort (cmp_eq) eql in
+  *)
   
   
 
