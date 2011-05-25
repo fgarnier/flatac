@@ -42,8 +42,19 @@ let find_repr (lvar : locvar )( part : partition ) =
 	      | _ -> !ret
 	  end
 
+(*  A refaire dans l'autre sens. Il faut trouver un representant d
+'une classe d'equivalence vide ou par defaut *)
 
+(** find_class raises  Element_not_found  if lvar is not an element
+in the partition *)
+
+let find_class (lvar : locvar ) ( part : partition ) =
+  let repres = find_repr lvar part in 
+  match part with 
+      Partition( table ) ->
+	Hashtbl.find table repres (* We get the whole class, hence the
+				  return value.*)
 (** Merges two equivances classes of the partition part into a single one *)
 
-let union (eq_1: eq_class) (eq_2 : eq_class) (part : partition ) =
+(*let union (lvar: locvar) (lvar: eq_class) (part : partition ) =*)
   
