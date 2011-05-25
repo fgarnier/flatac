@@ -14,7 +14,13 @@ the eq class. partition encodes a forest.
 *)
 
 exception Element_not_found 
+exception Non_membership (* An equivalence class, or an equivalence
+			    class referenced by its representant does 
+			    not belong to a partition.*)
 
+let is_rep_of_a_class (lvar : locvar ) ( part : partition ) =
+  match part with
+      Partition ( table ) -> Hashtbl.mem table lvar 
 
 (** find of an element returns the key of the class of this element
 or an exception if this element does'nt belong to  *)
@@ -55,6 +61,35 @@ let find_class (lvar : locvar ) ( part : partition ) =
 	Hashtbl.find table repres (* We get the whole class, hence the
 				  return value.*)
 (** Merges two equivances classes of the partition part into a single one *)
+(** copies all elements of eqmin in the class of eqmax, then removes eqmin
+from the partition *)
 
-(*let union (lvar: locvar) (lvar: eq_class) (part : partition ) =*)
-  
+let union_wrt_order (eqmax : eqclass ) (eqmin : eqclass ) (part : partition) =
+ 
+  match eqmax , eqmin with
+      (Eq_class(LVar(key1) , table_1 ) , Eq_class( LVar(key_2) , table_2)) ->
+	 let copy_iterator lvar () =
+	   Hashtbl.add table_1 lvar ()
+	 in
+	 Hashtbl.iter copy_iterator table_2;
+	 Hashtbl.add table_1 (LVar(key_2)) ();
+	 match part with
+	     Partition(tablepart) ->
+	       Hashtbl.remove tablepart (LVar(key_2))
+	
+
+let union (eq_1: eqclass) (eq_2: eqclass) (part : partition ) = 
+  match eq_1 , eq_2 with
+      (Eq_class(LVar(key_1) , table_1 ), Eq_class(LVar(key_2), table_2)) ->
+	if ( (is_rep_of_a_class (LVar(key_1)) part ) && ((is_rep_of_a_class (LVar(key_2)) part )  ) ) then begin
+	if ( SSL_lex.order_relation key_1 key_2 ) then 
+	   union_wrt_order eq_1 eq_2 part
+	else 
+	   union_wrt_order eq_2 eq_1 part
+	end
+	else raise Non_membership
+
+
+
+
+
