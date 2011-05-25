@@ -97,6 +97,12 @@ let union (eq_1: eqclass) (eq_2: eqclass) (part : partition ) =
 
 
 
-
+let union_from_equality (equality : SSL_lex.eq )(part : partition ) =
+  match equality with 
+      Eqloc(l1,l2)->
+	let classe1 = find_class l1 part in
+	let classe2 = find_class l2 part in
+	union classe1 classe2 part
+	  (** Et puis basta !*)
 
 
