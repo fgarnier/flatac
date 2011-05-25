@@ -5,7 +5,11 @@ open Hashtbl
 
 (** This file contains the current implementations of the
 "union find" algorithm used to compute the representant 
-of equivalences classes defined by a set of equalities *)
+of equivalences classes defined by a set of equalities 
+
+for questions or comment, write to florent-dot-garnier!at!imag^dot^fr
+
+*)
 
 type eqclass = Eq_class of locvar *  ( locvar , unit ) t  
 type partition = Partition of (locvar , eqclass ) t
@@ -62,7 +66,8 @@ let find_class (lvar : locvar ) ( part : partition ) =
 				  return value.*)
 (** Merges two equivances classes of the partition part into a single one *)
 (** copies all elements of eqmin in the class of eqmax, then removes eqmin
-from the partition *)
+from the partition. One must ensure that eqmax and eqmin are both
+member of part. The function union gurantee that while calling to union_wrt_order.*)
 
 let union_wrt_order (eqmax : eqclass ) (eqmin : eqclass ) (part : partition) =
  
@@ -88,6 +93,8 @@ let union (eq_1: eqclass) (eq_2: eqclass) (part : partition ) =
 	   union_wrt_order eq_2 eq_1 part
 	end
 	else raise Non_membership
+
+
 
 
 
