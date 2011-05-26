@@ -17,8 +17,12 @@ ssl.cmo : ssl.ml ssl_types.cmo
 union_find.cmo : ssl_types.cmo ssl.cmo union_find.ml
 	ocamlc -annot -c union_find.ml
 
-tests :  ssl_types.cmo ssl.cmo tests.ml 
-	ocamlc -I ./ -annot -o test ssl_types.cmo ssl.cmo tests.ml
+
+debug_printers.cmo : ssl_types.cmo ssl.cmo debug_printers.ml
+	ocamlc -annot -c debug_printers.ml
+
+tests :  ssl_types.cmo ssl.cmo union_find.cmo debug_printers.cmo tests.ml 
+	ocamlc -I ./ -annot -o test ssl_types.cmo ssl.cmo debug_printers.cmo union_find.cmo tests.ml
 
 clean : 
 	rm -f *.o *.cmo *.cmi

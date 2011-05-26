@@ -3,6 +3,7 @@ open Ssl
 open Ssl_types.SSL_lex
 open Printf
 open Format
+open Union_find
 
 let main () =
    let newf = Ssl.create_ssl_f () in
@@ -25,6 +26,21 @@ let main () =
    let f4 = star_sep newf newf2 in
    let form = formatter_of_out_channel Pervasives.stdout in
    Ssl.pprint_ssl_formula form f4 ;
-   Format.fprintf form "%!"  
+   Format.fprintf form "%!"  ;
+   Format.fprintf form "\n Testing unify eq loc \n";
+   let test_unif_eq = Ssl.create_ssl_f () in
+   and_atomic_affect (Pointsto(PVar("y1"),LVar("l3"))) test_unif_eq;
+   and_atomic_affect (Pointsto(PVar("y1"),LVar("j"))) test_unif_eq;
+   and_atomic_affect (Pointsto(PVar("y1"),LVar("k"))) test_unif_eq;
+   and_atomic_affect (Pointsto(PVar("y1"),LVar("w3"))) test_unif_eq;
+   and_atomic_affect (Pointsto(PVar("y1"),LVar("jl"))) test_unif_eq;
+   and_atomic_affect (Pointsto(PVar("y1"),LVar("mk"))) test_unif_eq;
+
+
+   let aff_y1 = Hashtbl.find test_unif_eq.pure.affectations (PVar("y1")) in
+   let list_eq = unify_eq aff_y1 in
+   print_eqlist form  list_eq;
+   Format.fprintf form "\n %!"
+   
 
 let () = main ()
