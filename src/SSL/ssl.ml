@@ -13,6 +13,11 @@ open Hashtbl
 open Format
 
 
+let cmp_lex_lvar (g : locvar ) (d : locvar ) =
+  match g , d with
+      ( LVar( lg ) , LVar ( ld ) ) -> SSL_lex.order_relation lg ld
+ 
+
   let create_pure_f () = 
     {equations = [] ; affectations = Hashtbl.create (SSL_lex.size_hash) ; ptnil = Hashtbl.create (SSL_lex.size_hash)  }
     
