@@ -57,13 +57,6 @@ let find_repr (lvar : locvar )( part : partition ) =
 	  class has been found *)
 
 
-(*  begin
-	    Hashtbl.iter ( eqclass_iterator lvar ) table;
-	    match (!ret) with 
-		LVar("") -> raise Element_not_found 
-	      | _ -> !ret
-	  end\ *)
-
 (*  A refaire dans l'autre sens. Il faut trouver un representant d
 'une classe d'equivalence vide ou par defaut *)
 
@@ -77,8 +70,9 @@ let find_class (lvar : locvar ) ( part : partition ) =
     | _ ->
       match part with 
 	  Partition( table ) ->
-	    Hashtbl.find table repres (* We get the whole class, hence the
-				  return value.*)
+	    Hashtbl.find table repres 
+	      (* We get the whole class, hence this 
+		 return value.*)
 
 
 (** Merges two equivances classes of the partition part into a single one *)
@@ -219,12 +213,7 @@ let add_eq_to_partition (part : partition) (equation : SSL_lex.eq) =
 	    | ( _ , _ ) -> merge_wrt_order class_max class_min part
 	end
 	 
-       
-	    
-	
-
-  
-
+      
 let eqlists_to_partition( eqlist : SSL_lex.eq list ) =
   let order_elem (s : SSL_lex.eq) =
     match s with 
