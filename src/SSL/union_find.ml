@@ -26,6 +26,8 @@ exception Non_membership (* An equivalence class, or an equivalence
 			    class referenced by its representant does 
 			    not belong to a partition.*)
 
+
+
 let is_rep_of_a_class (lvar : locvar ) ( part : partition ) =
   match part with
       Partition ( table ) -> Hashtbl.mem table lvar 
@@ -42,17 +44,25 @@ let find_repr (lvar : locvar )( part : partition ) =
   in
   match part with 
       Partition (table ) ->
-	if ( Hashtbl.mem table lvar ) == true (* Case where the query is a key*)
+	if ( Hashtbl.mem table lvar ) == true (* Case where the
+						 query is a key*)
 	then let eqcl = (Hashtbl.find table lvar) 
-	     in  eqcl.repres
-	(* One returns the equivqlence class representant *)
-	else 
+	     in  eqcl.repres                                  
+	else  
 	  begin
+	  Hashtbl.iter (eqclass_iterator lvar ) table ; !ret
+	  end
+
+	  (* Return the valuet LVar("") if no equivalence
+	  class has been found *)
+
+
+(*  begin
 	    Hashtbl.iter ( eqclass_iterator lvar ) table;
 	    match (!ret) with 
 		LVar("") -> raise Element_not_found 
 	      | _ -> !ret
-	  end
+	  end\ *)
 
 (*  A refaire dans l'autre sens. Il faut trouver un representant d
 'une classe d'equivalence vide ou par defaut *)
@@ -61,11 +71,16 @@ let find_repr (lvar : locvar )( part : partition ) =
 in the partition *)
 
 let find_class (lvar : locvar ) ( part : partition ) =
-  let repres = find_repr lvar part in 
-  match part with 
-      Partition( table ) ->
-	Hashtbl.find table repres (* We get the whole class, hence the
+  let repres = find_repr lvar part in
+  match repres with 
+      LVar("")-> {repres = LVar(""); members = Hashtbl.create 1 }
+    | _ ->
+      match part with 
+	  Partition( table ) ->
+	    Hashtbl.find table repres (* We get the whole class, hence the
 				  return value.*)
+
+
 (** Merges two equivances classes of the partition part into a single one *)
 (** copies all elements of eqmin in the class of eqmax, then removes eqmin
 from the partition. One must ensure that eqmax and eqmin are both
@@ -130,12 +145,18 @@ two classes are different.
  
  *)
 
-let add_elem_to_class ( lvar : SSL_lex.locvar )( ecl : eqclass )( part : partition) =
+(* the third parameter is required, because "part" is a hastable that
+contains all equivalence class, which are indexed by their
+representant. Any change of a representant of a class must
+be propagated within this index. *)
+
+
+let add_element_to_class ( lvar : SSL_lex.locvar )( ecl : eqclass )( part : partition) =
   if (( cmp_lex_lvar lvar  ecl.repres ) == true) 
   then
     match part with
 	Partition ( table ) ->
-	  try
+	  (*try*)
 	    let update_class = Hashtbl.find table ecl.repres in
 	    Hashtbl.remove table update_class.repres ; (*removing
 						       binding from
@@ -143,29 +164,65 @@ let add_elem_to_class ( lvar : SSL_lex.locvar )( ecl : eqclass )( part : partiti
 	    
 	    update_class.repres <- lvar ;
 	    Hashtbl.add update_class.members ecl.repres ();
-	    Hashtbl.add table  lvar update_class
-	  with
+	    Hashtbl.add table  lvar update_class 
+	 (* with
+	      Element_not_found ->
+	    | Non_membership -> *)	
 	      
   
   else
+    Hashtbl.add ecl.members lvar () 
   
     
-
+let add_class_to_partition (ecl : eqclass )( part : partition ) =
+  match part with
+      Partition ( table_part ) ->
+	Hashtbl.add table_part ecl.repres ecl
+  
+  
 
 
 (********************************************************)
 
 
-(*
 
-let add_eq_to_partition (equation : SSL_lex.eq)(part : partition) =
+let add_eq_to_partition (part : partition) (equation : SSL_lex.eq) =
   let eqsort = ref equation in
   match equation with 
-      Eqloc ( lg , ld ) -> 
-	if ( cmp_lex_lvar lg ld ) == false
-	then eqsort := (Eqloc ( ld , lg ));
+      Eqloc ( lg , ld ) ->
+	begin
+	  let lmax = ref lg in
+	  let lmin = ref ld in
+	  begin
+	    if (( cmp_lex_lvar lg ld ) == false)
+	    then  
+	      begin
+		eqsort := (Eqloc ( ld , lg ));
+		lmax := ld; 
+		lmin := lg
+	      end
+	    else ()
+	  end;
+	  let class_max  =  find_class  (!lmax) part  in
+	  let class_min = find_class !lmin part  in
+	  match class_max.repres , class_min.repres with 
+	      (LVar(""), LVar("")) -> 
+		let table_nclass = Hashtbl.create SSL_lex.size_hash in
+		Hashtbl.add table_nclass !lmin ();
+		let new_class = {
+		  repres = !lmax;
+		  members = table_nclass 
+		} in
+		add_class_to_partition new_class part
+	    | (LVar(""), _ ) ->  add_element_to_class !lmax class_min part
+	    | (_ , LVar("")) ->  add_element_to_class !lmin class_max part 
+	    | ( _ , _ ) -> merge_wrt_order class_max class_min part
+	end
+	 
+       
+	    
 	
-*)
+
   
 
 let eqlists_to_partition( eqlist : SSL_lex.eq list ) =
