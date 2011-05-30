@@ -63,29 +63,35 @@ struct
 		val mutable _fName = ""
 		val mutable _root = Empty
 		val mutable _maxUID = 0
-		val mutable _visited = IntHashtbl.create 100
+		val mutable _visited = IntHashtbl.create 22
 
 		initializer 
 			_fName <- fName;
 			let epAbstraction = frontEnd#getEntryPointAbstraction () in let epCounterValue = frontEnd#getEntryPointPrecondition () in 
 				_root <- self#buildNode epAbstraction epCounterValue stmtData frontEnd
-		
+	
+		method alreadyVisited (sid : int) (abstraction : semanticValue) =
+				
+
 		method buildNode currentAbstraction counterValue stmtData ( frontEnd : A.t semAndLogicFrontEnd ) =
-			let bindings = IntHashtbl.find_all _visited stmtData.sid in
-			if not ( List.exists ( fun v -> v = currentAbstraction ) bindings ) then 
+			let oldNode = self#alreadyVisited stmtData.sid currentAbstraction in
+			if oldNode != Empty then
+				oldNode
+			else
 			begin
-				IntHashtbl.add _visited stmtData.sid currentAbstraction;
 				_maxUID <- _maxUID + 1;
-				let deref = _maxUID in
-				Self.debug ~level:0 "Visite du noeud %d, stmt = %d" _maxUID stmtData.sid;
-				Node 	( deref, stmtData.sid, (Op stmtData), currentAbstraction, 
-						List.map 	( fun subStmt -> 
-									let subAbs, newCounter = frontEnd#next currentAbstraction counterValue subStmt.skind in  
-										self#buildNode subAbs counterValue subStmt frontEnd, newCounter
-								) stmtData.succs
-					)
+				let newUID = _maxUID in
+				let newNodeRef = ref Empty in
+					IntHashtbl.add _visited newUID newNodeRef;
+					Self.debug ~level:0 "Visite du noeud %d, stmt = %d" _maxUID stmtData.sid;
+					newNodeRef := Node 	( newUID, stmtData.sid, (Op stmtData), currentAbstraction, 
+							List.map 	( fun subStmt -> 
+										let subAbs, newCounter = frontEnd#next currentAbstraction counterValue subStmt.skind in  
+											self#buildNode subAbs counterValue subStmt frontEnd, newCounter
+									) stmtData.succs
+						);
+					!newNodeRef
 			end
-			else Empty
 
 		method getFunctionName () = _fName
 		method getRoot () = _root
@@ -134,9 +140,15 @@ struct
 
 	let stmtToString stmt =
 		Buffer.reset stdbuf;
-		Cil.printStmt Cil.defaultCilPrinter str_formatter stmt;
-		String.escaped (Buffer.contents stdbuf)
-
+		match stmt.skind with
+		| Instr ( Set ( (Var ( lvalueInfo ), _) , expression, _ ) ) ->
+			let vname = lvalueInfo.vname in
+				add_string stdbuf vname; add_string stdbuf " = ";
+				Cil.printExp Cil.defaultCilPrinter str_formatter expression; 
+				String.escaped (Buffer.contents stdbuf)
+		| _ -> 
+			Cil.printStmt Cil.defaultCilPrinter str_formatter stmt; 
+			String.escaped (Buffer.contents stdbuf)
 
 	let printDot foc node =
 		match node with
