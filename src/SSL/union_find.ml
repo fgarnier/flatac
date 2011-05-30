@@ -233,4 +233,31 @@ let eqlists_to_partition( eqlist : SSL_lex.eq list ) =
 	  Hashtbl.add part_table  lg { repres = lg ; members = eq_class_table }
   in  
   List.iter create_part_iterator ordered_list;
+    Partition(part_table)
   
+   
+
+
+let eqclass_to_string (eq : eqclass) =
+  let member_to_string (lvar: locvar ) () (res : string ) =
+    match lvar with 
+	LVar(vname) -> ( res^";"^vname)
+  in
+  match eq.repres with 
+      LVar(rep_name) -> "Class of : ["^ rep_name ^"] : " ^( Hashtbl.fold member_to_string eq.members  "") 
+
+let part_to_string (part : partition ) =
+  match part with 
+      Partition(part_table) ->
+	let part_fold lvar eq_c str =
+	  match lvar with
+	      LVar(cname) -> "Class_name:"^cname^"Eqclass: "^(eqclass_to_string eq_c )
+	in
+	  Hashtbl.fold part_fold part_table "Patition : \n"
+
+
+let pprint_partition (out : Format.formatter ) (part : partition) =
+  let pmess = part_to_string part in
+    Format.fprintf out  "%s" pmess;
+   
+
