@@ -223,17 +223,20 @@ let eqlist_to_partition( eqlist : SSL_lex.eq list ) =
 	  else 
   	    Eqloc (LVar (lg) , LVar (ld) )
   in
-  let part_table = Hashtbl.create SSL_lex.size_hash in
+  let part = Partition ( Hashtbl.create SSL_lex.size_hash ) in
   let ordered_list = List.map  order_elem eqlist in
   let create_part_iterator (s : SSL_lex.eq) =
-    match s with 
-	Eqloc ( lg , ld ) -> 
+   (* match s with 
+	(*Eqloc ( lg , ld ) -> 
 	  let eq_class_table = Hashtbl.create SSL_lex.size_hash in
 	  Hashtbl.add eq_class_table ld ();
+	    
 	  Hashtbl.add part_table  lg { repres = lg ; members = eq_class_table }
+   *)*)
+    add_eq_to_partition part s
   in  
   List.iter create_part_iterator ordered_list;
-    Partition(part_table)
+  part
   
    
 

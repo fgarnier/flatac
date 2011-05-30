@@ -34,11 +34,15 @@ let main () =
    and_atomic_affect (Pointsto(PVar("y1"),LVar("k"))) test_unif_eq;
    and_atomic_affect (Pointsto(PVar("y1"),LVar("w3"))) test_unif_eq;
    and_atomic_affect (Pointsto(PVar("y1"),LVar("jl"))) test_unif_eq;
+   and_atomic_affect (Pointsto(PVar("z"),LVar("f"))) test_unif_eq;
+   and_atomic_affect (Pointsto(PVar("x"),LVar("d56"))) test_unif_eq;
+   and_atomic_affect (Pointsto(PVar("z"),LVar("jlo"))) test_unif_eq;
    and_atomic_affect (Pointsto(PVar("y1"),LVar("mk"))) test_unif_eq;
 
 
    let aff_y1 = Hashtbl.find test_unif_eq.pure.affectations (PVar("y1")) in
-   let list_eq = unify_eq aff_y1 in
+   let aff_z = Hashtbl.find test_unif_eq.pure.affectations (PVar("z")) in
+   let list_eq = ( unify_eq aff_y1 ) @ ( unify_eq aff_z) in
    print_eqlist form  list_eq;
    Format.fprintf form "\n %!";
    let part = eqlist_to_partition list_eq in
