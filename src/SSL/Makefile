@@ -1,6 +1,6 @@
 
 
-COMPINTERFACES =  ssl_types.cmo ssl.cmo
+COMPINTERFACES =  ssl_types.cmo ssl.cmo union_find.cmo
 
 
 all : $(COMPINTERFACES)
