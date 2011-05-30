@@ -40,7 +40,9 @@ let main () =
    let aff_y1 = Hashtbl.find test_unif_eq.pure.affectations (PVar("y1")) in
    let list_eq = unify_eq aff_y1 in
    print_eqlist form  list_eq;
-   Format.fprintf form "\n %!"
+   Format.fprintf form "\n %!";
+   let part = eqlist_to_partition list_eq in
+     pprint_partition form part
    
    
 

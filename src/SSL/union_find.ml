@@ -214,7 +214,7 @@ let add_eq_to_partition (part : partition) (equation : SSL_lex.eq) =
 	end
 	 
       
-let eqlists_to_partition( eqlist : SSL_lex.eq list ) =
+let eqlist_to_partition( eqlist : SSL_lex.eq list ) =
   let order_elem (s : SSL_lex.eq) =
     match s with 
 	Eqloc (LVar (lg) , LVar (ld) ) ->  
@@ -251,13 +251,19 @@ let part_to_string (part : partition ) =
       Partition(part_table) ->
 	let part_fold lvar eq_c str =
 	  match lvar with
-	      LVar(cname) -> "Class_name:"^cname^"Eqclass: "^(eqclass_to_string eq_c )
+	      LVar(cname) -> "Class_name:"^cname^"Eqclass: "^(eqclass_to_string eq_c )^"\n"^str
 	in
 	  Hashtbl.fold part_fold part_table "Patition : \n"
 
 
 let pprint_partition (out : Format.formatter ) (part : partition) =
-  let pmess = part_to_string part in
-    Format.fprintf out  "%s" pmess;
+  match part with 
+      Partition ( part_table ) ->
+	let pmess = part_to_string part in
+	let nb_classes =  Hashtbl.length part_table in
+	  Format.fprintf out "Nombre de classes : %d \n " nb_classes;
+	  Format.fprintf out  "%s" pmess;
+	  Format.fprintf out "%!"
+
    
 
