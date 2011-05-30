@@ -254,9 +254,9 @@ let part_to_string (part : partition ) =
       Partition(part_table) ->
 	let part_fold lvar eq_c str =
 	  match lvar with
-	      LVar(cname) -> "Class_name:"^cname^"Eqclass: "^(eqclass_to_string eq_c )^"\n"^str
+	      LVar(cname) -> "Class_name: [ "^cname^" ] Eqclass: "^(eqclass_to_string eq_c )^"\n"^str
 	in
-	  Hashtbl.fold part_fold part_table "Patition : \n"
+	  ( " Partition : \n"^( Hashtbl.fold part_fold part_table "" ))
 
 
 let pprint_partition (out : Format.formatter ) (part : partition) =
