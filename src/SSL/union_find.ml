@@ -162,8 +162,7 @@ let add_element_to_class ( lvar : SSL_lex.locvar )( ecl : eqclass )( part : part
 	 (* with
 	      Element_not_found ->
 	    | Non_membership -> *)	
-	      
-  
+	     
   else
     Hashtbl.add ecl.members lvar () 
   
