@@ -49,28 +49,30 @@ struct
 		val mutable _eCFGs : ( eCFG list ) = []
 
 		val mutable _currentECFG : ( eCFGNode list ) = []
-		val mutable _currentUID = 0
 		val mutable _visitedNodes : (int * semanticAbstraction) list = []
 
-		method getUID sid abstraction =
-			let childId, _ = List.find ( fun (_, abs) -> id = sid && abstraction = abs ) _visitedNodes in
-				childId
+		method _getUID sid abstraction visitedList counter =
+			match visitedList with
+			| [] -> -1 
+			| head::tail -> if head = (sid, abstraction) then counter
+					else self#_getUID sid abstraction tail counter + 1
+		method getUID sid abstraction = self#_getUID sid abstraction _visitedNodes 0
 	
 		method _buildNodeList ( statement : stmt ) abstraction guardCounter frontEnd =
 			let nodeSemantic = (statement.sid, abstraction) in
-			if not (List.exists ( fun e -> e = nodeSemantic ) _visitedNodes ) then 
-			begin
-				_visitedNodes <- nodeSemantic :: _visitedNodes;
-				let subEdges = List.map ( fun e -> 
-								let newAbstraction, newGuardCounter = frontEnd#next abstraction guardCounter e.skind in
-									let edgeUID = self#_buildNodeList e newAbstraction newGuardCounter frontEnd in
-										Edge (edgeUID, newGuardCounter) 
-							) statement.succs in
-					_currentUID <- _currentUID + 1;
-					_currentECFG <- Node ( _currentUID, Semantic ( statement, abstraction ), subEdges ) :: _currentECFG;
-					_currentUID
-			end
-			else (self#getUID statement.sid abstraction)
+				if not (List.exists ( fun e -> e = nodeSemantic ) _visitedNodes ) then 
+				begin
+					_visitedNodes <- _visitedNodes @ [nodeSemantic]; (* @ VOLOTAIRE ! *)
+					let subEdges = List.map ( fun e -> 
+									let newAbstraction, newGuardCounter = frontEnd#next abstraction guardCounter e.skind in
+										let edgeUID = self#_buildNodeList e newAbstraction newGuardCounter frontEnd in
+											Edge (edgeUID, newGuardCounter) 
+								) statement.succs in
+						let currentUID = self#getUID statement.sid abstraction in
+							_currentECFG <-  Node ( currentUID, Semantic ( statement, abstraction ), subEdges ) :: _currentECFG;
+							currentUID
+				end
+				else (self#getUID statement.sid abstraction)
 				
 		method buildNodeList ( funInfo : fundec ) frontEnd =
 			_currentECFG <- [];
@@ -117,7 +119,7 @@ struct
 	let printDot foc frontEnd node =
 		match node with
 		| Node (uid, Semantic ( statement, abstraction ), listOfEdges) -> 
-			Format.fprintf foc "%d [label=\"%d\\nCode : %s\\nAbstraction : %s\"]\n" uid statement.sid (stmtToString statement) (frontEnd#pretty abstraction);
+			Format.fprintf foc "%d [label=\"%d/%d\\nCode : %s\\nAbstraction : %s\"]\n" uid uid statement.sid (stmtToString statement) (frontEnd#pretty abstraction);
 			List.iter 	
 				( fun (Edge(toUid, counterValue))  -> Format.fprintf foc "%d -> %d [label=\"Counter : %s\"]\n\n" uid toUid counterValue) listOfEdges
 	
