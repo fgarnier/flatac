@@ -40,7 +40,7 @@ struct
 	| EmptyGraph
 
 	(** This visitor visits global function and trigger the build 
-	 of a new Cfg each one *)
+	 of a new Cfg for each function *)
 	class cfgVisitor ( prj : Project.t ) 
 	= object(self)
 	inherit Visitor.generic_frama_c_visitor (prj) (Cil.inplace_visit())
@@ -62,7 +62,7 @@ struct
 			let nodeSemantic = (statement.sid, abstraction) in
 				if not (List.exists ( fun e -> e = nodeSemantic ) _visitedNodes ) then 
 				begin
-					_visitedNodes <- _visitedNodes @ [nodeSemantic]; (* @ VOLOTAIRE ! *)
+					_visitedNodes <- _visitedNodes @ [nodeSemantic]; (* Volontary @ to keep list order *)
 					let subEdges = List.map ( fun e -> 
 									let newAbstraction, newGuardCounter = frontEnd#next abstraction guardCounter e.skind in
 										let edgeUID = self#_buildNodeList e newAbstraction newGuardCounter frontEnd in
@@ -77,8 +77,9 @@ struct
 		method buildNodeList ( funInfo : fundec ) frontEnd =
 			_currentECFG <- [];
 			let rootStmt = (List.hd funInfo.sallstmts) in
-				self#_buildNodeList rootStmt (frontEnd#getEntryPointAbstraction ()) (frontEnd#getEntryPointPrecondition ()) frontEnd;
-				CGraph (funInfo.svar.vname, _currentECFG)
+				(* Let is there to get rid of the warning *)
+				let _ = self#_buildNodeList rootStmt (frontEnd#getEntryPointAbstraction ()) (frontEnd#getEntryPointPrecondition ()) frontEnd in
+					CGraph (funInfo.svar.vname, _currentECFG)
 
 		method vglob_aux g =
 			is_computed <- true;
@@ -119,9 +120,11 @@ struct
 	let printDot foc frontEnd node =
 		match node with
 		| Node (uid, Semantic ( statement, abstraction ), listOfEdges) -> 
-			Format.fprintf foc "%d [label=\"%d/%d\\nCode : %s\\nAbstraction : %s\"]\n" uid uid statement.sid (stmtToString statement) (frontEnd#pretty abstraction);
-			List.iter 	
-				( fun (Edge(toUid, counterValue))  -> Format.fprintf foc "%d -> %d [label=\"Counter : %s\"]\n\n" uid toUid counterValue) listOfEdges
+			Format.fprintf foc "\t%d [label=\"%d/%d\\nCode : %s\\nAbstraction : %s\"]\n" 
+				uid uid statement.sid (stmtToString statement) (frontEnd#pretty abstraction);
+			List.iter ( fun (Edge(toUid, counterValue))  -> 
+				  	Format.fprintf foc "\t%d -> %d [label=\"Counter : %s\"]\n\n" uid toUid counterValue
+				  ) listOfEdges
 	
 	let exportDot eCFGs frontEnd= 
 		let oc = open_out "output.dot" in
@@ -130,18 +133,4 @@ struct
 				visiteCFGs eCFGs (printDot foc frontEnd);
 			Format.fprintf foc "\n}";
 			Self.feedback ~level:0 "Graph exported!"
-
-(*
-	let prettyNode eCFGNode =
-	match eCFGNode with
-	| Leaf (sid, Op (stmtData), _ ) -> sprintf "%d / %s / [ ]" sid (stmtToString stmtData)
-	| Node (sid, Op (stmtData), _, _, l) ->
-		let sidList = "" in
-			List.iter 
-			( fun n ->
-				match node with
-				| Leaf ( succId, _, _ ) -> let sidList = sprintf "%s; %d" sidList succId
-			) l
-*)
-
 end;;
