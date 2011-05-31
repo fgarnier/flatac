@@ -54,14 +54,15 @@ struct
 		method _buildNodeList ( statement : stmt ) abstraction guardCounter frontEnd =
 			let nodeSemantic = (statement.sid, abstraction) in
 			if not (List.exists ( fun e -> e = nodeSemantic ) _visitedNodes ) then 
+			begin
 				_visitedNodes <- nodeSemantic :: _visitedNodes;
 				let subEdges = List.map ( fun e -> 
 								let newAbstraction, newGuardCounter = frontEnd#next abstraction guardCounter e.skind in
 									self#_buildNodeList e newAbstraction newGuardCounter frontEnd;
 									Edge (e.sid, newGuardCounter) 
 							) statement.succs in
-					_currentECFG <- Node ( statement.sid, Semantic ( statement, abstraction ), subEdges ) :: _currentECFG;
-					()
+					_currentECFG <- Node ( statement.sid, Semantic ( statement, abstraction ), subEdges ) :: _currentECFG
+			end
 				
 		method buildNodeList ( funInfo : fundec ) frontEnd =
 			_currentECFG <- [];
@@ -85,16 +86,13 @@ struct
 			cfgVisitorInst#setFrontEnd frontEnd; 
 			visitFramacFile ( cfgVisitorInst :> frama_c_copy ) ast;
 			cfgVisitorInst#getECFGs 
-(*
-	let rec _visiteCFGs root callback =
-		callback root;
-		match root with
-		| Node (_, _, _, _, children ) -> List.iter ( fun (newRoot, _) -> _visiteCFGs newRoot callback ) children
-		| Empty -> () 
 
-	(*****************************************************************************************************************)
-	let visiteCFGs callback =
-		List.iter ( fun flowGraph -> _visiteCFGs (flowGraph#getRoot ()) callback ) !eCFGs
+	let visiteCFGs eCFGs callback =
+		List.iter 	( fun e ->
+					match e with
+					| CGraph ( _, listOfNodes ) -> List.iter ( callback ) listOfNodes
+					| _ -> ()
+				) eCFGs
 
 	let stmtToString stmt =
 		Buffer.reset stdbuf;
@@ -110,26 +108,20 @@ struct
 
 	let printDot foc node =
 		match node with
-		| Node (uid, sid, Op (stmtData), _, l) -> 
+		| Node (uid, Semantic ( statement, _), listOfEdges) -> 
+			Format.fprintf foc "%d [label=\"%d - %s\"]\n" uid uid (stmtToString statement);
 			List.iter 	
-			( fun (node, _) -> 
-				match node with
-				| Node (childUID, childSID, Op ( childStmtData ), _, _) -> 
-					Format.fprintf foc "%d [label=\"%d - %s\"]\n" uid sid (stmtToString stmtData);
-					Format.fprintf foc "%d [label=\"%d - %s\"]\n" childUID childSID (stmtToString childStmtData);
-					Format.fprintf foc "%d -> %d\n\n" uid childUID;
-				| _ -> ()
-			) l
+				( fun (Edge(toUid, counterValue))  -> Format.fprintf foc "%d -> %d [label=\"Counter : %s\"]\n\n" uid toUid counterValue) listOfEdges
 		| _ -> ()
 	
-	let exportDot () = 
+	let exportDot eCFGs = 
 		let oc = open_out "output.dot" in
 		let foc = formatter_of_out_channel( oc ) in
 			Format.fprintf foc "digraph G {\n";
-				visiteCFGs (printDot foc);
+				visiteCFGs eCFGs (printDot foc);
 			Format.fprintf foc "\n}";
 			Self.feedback ~level:0 "Graph exported!"
-			*)
+
 (*
 	let prettyNode eCFGNode =
 	match eCFGNode with

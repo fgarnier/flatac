@@ -29,8 +29,7 @@ let print () =
 	Self.feedback ~level:0 "Welcome to Flata-C !";
 	let frontEnd = new trueLogicFrontEnd in
 	let eCFGs = BoolCFG.computeECFGs (Project.current()) (Ast.get()) ( frontEnd ) in
-		()
-		(* BoolCFG.exportDot () *)
+		BoolCFG.exportDot eCFGs
 
 let run () = if Enabled.get () then print ()
 let () = Db.Main.extend run
