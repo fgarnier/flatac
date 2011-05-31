@@ -49,8 +49,13 @@ struct
 		val mutable _eCFGs : ( eCFG list ) = []
 
 		val mutable _currentECFG : ( eCFGNode list ) = []
+		val mutable _currentUID = 0
 		val mutable _visitedNodes : (int * semanticAbstraction) list = []
 
+		method getUID sid abstraction =
+			let childId, _ = List.find ( fun (_, abs) -> id = sid && abstraction = abs ) _visitedNodes in
+				childId
+	
 		method _buildNodeList ( statement : stmt ) abstraction guardCounter frontEnd =
 			let nodeSemantic = (statement.sid, abstraction) in
 			if not (List.exists ( fun e -> e = nodeSemantic ) _visitedNodes ) then 
@@ -58,11 +63,14 @@ struct
 				_visitedNodes <- nodeSemantic :: _visitedNodes;
 				let subEdges = List.map ( fun e -> 
 								let newAbstraction, newGuardCounter = frontEnd#next abstraction guardCounter e.skind in
-									self#_buildNodeList e newAbstraction newGuardCounter frontEnd;
-									Edge (e.sid, newGuardCounter) 
+									let edgeUID = self#_buildNodeList e newAbstraction newGuardCounter frontEnd in
+										Edge (edgeUID, newGuardCounter) 
 							) statement.succs in
-					_currentECFG <- Node ( statement.sid, Semantic ( statement, abstraction ), subEdges ) :: _currentECFG
+					_currentUID <- _currentUID + 1;
+					_currentECFG <- Node ( _currentUID, Semantic ( statement, abstraction ), subEdges ) :: _currentECFG;
+					_currentUID
 			end
+			else (self#getUID statement.sid abstraction)
 				
 		method buildNodeList ( funInfo : fundec ) frontEnd =
 			_currentECFG <- [];
@@ -101,24 +109,23 @@ struct
 			let vname = lvalueInfo.vname in
 				add_string stdbuf vname; add_string stdbuf " = ";
 				Cil.printExp Cil.defaultCilPrinter str_formatter expression; 
-				String.escaped (Buffer.contents stdbuf)
+				String.escaped (flush_str_formatter ())
 		| _ -> 
 			Cil.printStmt Cil.defaultCilPrinter str_formatter stmt; 
-			String.escaped (Buffer.contents stdbuf)
+			String.escaped (flush_str_formatter ())
 
-	let printDot foc node =
+	let printDot foc frontEnd node =
 		match node with
-		| Node (uid, Semantic ( statement, _), listOfEdges) -> 
-			Format.fprintf foc "%d [label=\"%d - %s\"]\n" uid uid (stmtToString statement);
+		| Node (uid, Semantic ( statement, abstraction ), listOfEdges) -> 
+			Format.fprintf foc "%d [label=\"%d\\nCode : %s\\nAbstraction : %s\"]\n" uid statement.sid (stmtToString statement) (frontEnd#pretty abstraction);
 			List.iter 	
 				( fun (Edge(toUid, counterValue))  -> Format.fprintf foc "%d -> %d [label=\"Counter : %s\"]\n\n" uid toUid counterValue) listOfEdges
-		| _ -> ()
 	
-	let exportDot eCFGs = 
+	let exportDot eCFGs frontEnd= 
 		let oc = open_out "output.dot" in
 		let foc = formatter_of_out_channel( oc ) in
 			Format.fprintf foc "digraph G {\n";
-				visiteCFGs eCFGs (printDot foc);
+				visiteCFGs eCFGs (printDot foc frontEnd);
 			Format.fprintf foc "\n}";
 			Self.feedback ~level:0 "Graph exported!"
 
