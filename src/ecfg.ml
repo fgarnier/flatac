@@ -113,6 +113,27 @@ struct
 				add_string stdbuf vname; add_string stdbuf " = ";
 				Cil.printExp Cil.defaultCilPrinter str_formatter expression; 
 				String.escaped (flush_str_formatter ())
+		| If ( expression, _, _, _) -> 
+				add_string stdbuf " IF ";
+				Cil.printExp Cil.defaultCilPrinter str_formatter expression; 
+				String.escaped (flush_str_formatter ())
+		| Loop ( _, _, _, _, _ ) ->
+				add_string stdbuf " WHILE ( 1 )";
+				String.escaped (flush_str_formatter ())
+		| Return ( Some ( expression ), _ ) ->
+				add_string stdbuf " RETURN ";
+				Cil.printExp Cil.defaultCilPrinter str_formatter expression; 
+				String.escaped (flush_str_formatter ())
+		| Return ( None, _ ) ->
+				add_string stdbuf " RETURN ;";
+				String.escaped (flush_str_formatter ())
+		| UnspecifiedSequence _ ->
+				add_string stdbuf " UNSPECIFIED :  ";
+				Cil.printStmt Cil.defaultCilPrinter str_formatter stmt; 
+				String.escaped (flush_str_formatter ())
+		| Block (_) ->
+				add_string stdbuf " BLOCK ";
+				String.escaped (flush_str_formatter ())
 		| _ -> 
 			Cil.printStmt Cil.defaultCilPrinter str_formatter stmt; 
 			String.escaped (flush_str_formatter ())
