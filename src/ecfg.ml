@@ -22,19 +22,6 @@ open Format
 open Buffer
 
 (** 
- 	This HashTable is defined to avoid 
-	looping through CFG 
-*)
-module HashInt =
-struct
-	type t = int
-	let equal i j = ( i = j )
-	let hash k = k
-end;;
-module IntHashtbl = Hashtbl.Make ( HashInt )
-(******************************************)
-
-(** 
 	 This module contains every structures and algorithms
 	 relatives to eCFG. It's parametrized by the type of the 
 	 abstract interpretation. 
@@ -43,83 +30,53 @@ module IntHashtbl = Hashtbl.Make ( HashInt )
  *)
 module Ecfg = functor ( A : sig type t end ) ->
 struct
-	(* Node *)
-	type stmtId = int
+	type semanticAbstraction = A.t
+	type semantic = Semantic of stmt * semanticAbstraction
 
-	type cOperation = 
-	| Op of Cil_types.stmt
-	| EntryPoint
-
-	type semanticValue = A.t
-	(***********************)
-
-	type cfgNode = 
-	| Node of int * stmtId * cOperation * semanticValue * ((cfgNode * counterExpression) list)
-	| Empty
-
-	(* Container class of eCFG *)
-	class eCFG fName stmtData ( frontEnd : A.t semAndLogicFrontEnd ) 
-	= object(self)
-		val mutable _fName = ""
-		val mutable _root = Empty
-		val mutable _maxUID = 0
-		val mutable _visited = IntHashtbl.create 22
-
-		initializer 
-			_fName <- fName;
-			let epAbstraction = frontEnd#getEntryPointAbstraction () in let epCounterValue = frontEnd#getEntryPointPrecondition () in 
-				_root <- self#buildNode epAbstraction epCounterValue stmtData frontEnd
-	
-		method alreadyVisited (sid : int) (abstraction : semanticValue) =
-				
-
-		method buildNode currentAbstraction counterValue stmtData ( frontEnd : A.t semAndLogicFrontEnd ) =
-			let oldNode = self#alreadyVisited stmtData.sid currentAbstraction in
-			if oldNode != Empty then
-				oldNode
-			else
-			begin
-				_maxUID <- _maxUID + 1;
-				let newUID = _maxUID in
-				let newNodeRef = ref Empty in
-					IntHashtbl.add _visited newUID newNodeRef;
-					Self.debug ~level:0 "Visite du noeud %d, stmt = %d" _maxUID stmtData.sid;
-					newNodeRef := Node 	( newUID, stmtData.sid, (Op stmtData), currentAbstraction, 
-							List.map 	( fun subStmt -> 
-										let subAbs, newCounter = frontEnd#next currentAbstraction counterValue subStmt.skind in  
-											self#buildNode subAbs counterValue subStmt frontEnd, newCounter
-									) stmtData.succs
-						);
-					!newNodeRef
-			end
-
-		method getFunctionName () = _fName
-		method getRoot () = _root
-	end
-
-	let buildCfg ( frontEnd : A.t semAndLogicFrontEnd ) ( funInfo : fundec ) = new eCFG funInfo.svar.vname (List.hd funInfo.sallstmts) frontEnd
-
-	(* Node stmtData.sid stmtData currentAbstraction *) 
-
-	(** eCFGs accessor. *)
-	let eCFGs : ( (eCFG list) ref ) = ref []
+	type eCFGEdge = Edge of int * counterExpression
+	type eCFGNode = Node of int * semantic * (eCFGEdge list)
+	type eCFG = 
+	| CGraph of string * (eCFGNode list)
+	| EmptyGraph
 
 	(** This visitor visits global function and trigger the build 
 	 of a new Cfg each one *)
 	class cfgVisitor ( prj : Project.t ) 
-	= object
+	= object(self)
 	inherit Visitor.generic_frama_c_visitor (prj) (Cil.inplace_visit())
 		val mutable is_computed = false
 		val mutable _frontEnd : ( (A.t semAndLogicFrontEnd) option ) = None
+		val mutable _eCFGs : ( eCFG list ) = []
+
+		val mutable _currentECFG : ( eCFGNode list ) = []
+		val mutable _visitedNodes : (int * semanticAbstraction) list = []
+
+		method _buildNodeList ( statement : stmt ) abstraction guardCounter frontEnd =
+			let nodeSemantic = (statement.sid, abstraction) in
+			if not (List.exists ( fun e -> e = nodeSemantic ) _visitedNodes ) then 
+				_visitedNodes <- nodeSemantic :: _visitedNodes;
+				let subEdges = List.map ( fun e -> 
+								let newAbstraction, newGuardCounter = frontEnd#next abstraction guardCounter e.skind in
+									self#_buildNodeList e newAbstraction newGuardCounter frontEnd;
+									Edge (e.sid, newGuardCounter) 
+							) statement.succs in
+					_currentECFG <- Node ( statement.sid, Semantic ( statement, abstraction ), subEdges ) :: _currentECFG;
+					()
+				
+		method buildNodeList ( funInfo : fundec ) frontEnd =
+			_currentECFG <- [];
+			let rootStmt = (List.hd funInfo.sallstmts) in
+				self#_buildNodeList rootStmt (frontEnd#getEntryPointAbstraction ()) (frontEnd#getEntryPointPrecondition ()) frontEnd;
+				CGraph (funInfo.svar.vname, _currentECFG)
 
 		method vglob_aux g =
 			is_computed <- true;
 			match (g, _frontEnd) with 
-			| ( GFun ( funInfo, _ ), Some ( frontEnd ) ) -> eCFGs := (buildCfg frontEnd funInfo) :: !eCFGs; DoChildren
+			| ( GFun ( funInfo, _ ), Some ( frontEnd ) ) -> _eCFGs <- (self#buildNodeList funInfo frontEnd) :: _eCFGs; DoChildren
 			| _ -> DoChildren
 
 		method setFrontEnd frontEnd = _frontEnd <- Some ( frontEnd ) 
-		method getComputationState = is_computed
+		method getECFGs = _eCFGs
 	end
 
 	(** Compute the eCFG and fill the structures *)
@@ -127,14 +84,15 @@ struct
 		let cfgVisitorInst = new cfgVisitor ( prj ) in	
 			cfgVisitorInst#setFrontEnd frontEnd; 
 			visitFramacFile ( cfgVisitorInst :> frama_c_copy ) ast;
-			Self.debug ~level:0 "Computed %d eCFGs... " (List.length !eCFGs)
-
+			cfgVisitorInst#getECFGs 
+(*
 	let rec _visiteCFGs root callback =
 		callback root;
 		match root with
 		| Node (_, _, _, _, children ) -> List.iter ( fun (newRoot, _) -> _visiteCFGs newRoot callback ) children
 		| Empty -> () 
 
+	(*****************************************************************************************************************)
 	let visiteCFGs callback =
 		List.iter ( fun flowGraph -> _visiteCFGs (flowGraph#getRoot ()) callback ) !eCFGs
 
@@ -171,6 +129,7 @@ struct
 				visiteCFGs (printDot foc);
 			Format.fprintf foc "\n}";
 			Self.feedback ~level:0 "Graph exported!"
+			*)
 (*
 	let prettyNode eCFGNode =
 	match eCFGNode with

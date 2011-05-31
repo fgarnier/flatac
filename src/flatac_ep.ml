@@ -22,19 +22,15 @@ module Enabled =
 			let kind= `Correctness
 		 end)
 
-module CfgExtension =
-	struct
-		type t = bool 
-	end;;
+module CfgExtension = struct type t = bool end;;
 module BoolCFG = Ecfg ( CfgExtension ) 
 
 let print () = 
 	Self.feedback ~level:0 "Welcome to Flata-C !";
 	let frontEnd = new trueLogicFrontEnd in
-		BoolCFG.computeECFGs (Project.current()) (Ast.get()) ( frontEnd )
-(*		BoolCFG.exportDot () *)
-
-	(* List.iter ( fun e -> Self.debug ~level:0 "%s\n" (e#getFunctionName ())) (!IntCFG.eCFGs) *)
+	let eCFGs = BoolCFG.computeECFGs (Project.current()) (Ast.get()) ( frontEnd ) in
+		()
+		(* BoolCFG.exportDot () *)
 
 let run () = if Enabled.get () then print ()
 let () = Db.Main.extend run
