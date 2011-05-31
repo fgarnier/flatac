@@ -30,7 +30,7 @@ let subst_from_partition (part : Union_find.partition ) =
 
 
 (* This fonction shall not appear in the ml-interface file *)
-
+(*
 let subst_against_affectation (subst : loc_subst )(affect_table : ((SSL_lex.ptvar , (SSL_lex.locvar , unit) t ) t)) =
   let subst_map subst_table current_table lvar_table () =
     if ( Hashtbl.mem substable lvar ) == true
@@ -46,5 +46,5 @@ let subst_against_affectation (subst : loc_subst )(affect_table : ((SSL_lex.ptva
       Substitution ( table_subst ) ->
 	Hashtbl.iter (affect_table_iterator subst_table ) affect_table
 	
-  
+*)
 
