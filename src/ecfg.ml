@@ -98,10 +98,13 @@ struct
 			visitFramacFile ( cfgVisitorInst :> frama_c_copy ) ast;
 			cfgVisitorInst#getECFGs 
 
-	let visiteCFGs eCFGs callback =
+	let visiteCFGs eCFGs preCallback postCallback callback =
 		List.iter 	( fun e ->
 					match e with
-					| CGraph ( _, listOfNodes ) -> List.iter ( callback ) listOfNodes
+					| CGraph ( fname, listOfNodes ) -> 
+						preCallback fname;
+						List.iter ( callback fname ) listOfNodes;
+						postCallback fname;
 					| _ -> ()
 				) eCFGs
 
@@ -138,20 +141,23 @@ struct
 			Cil.printStmt Cil.defaultCilPrinter str_formatter stmt; 
 			String.escaped (flush_str_formatter ())
 
-	let printDot foc frontEnd node =
+	let printDot foc frontEnd _ node =
 		match node with
 		| Node (uid, Semantic ( statement, abstraction ), listOfEdges) -> 
-			Format.fprintf foc "\t%d [label=\"%d/%d\\nCode : %s\\nAbstraction : %s\"]\n" 
+			Format.fprintf foc "\t\t%d [label=\"%d/%d\\nCode : %s\\nAbstraction : %s\"]\n" 
 				uid uid statement.sid (stmtToString statement) (frontEnd#pretty abstraction);
 			List.iter ( fun (Edge(toUid, counterValue))  -> 
-				  	Format.fprintf foc "\t%d -> %d [label=\"Counter : %s\"]\n\n" uid toUid counterValue
+				  	Format.fprintf foc "\t\t%d -> %d [label=\"Counter : %s\"]\n\n" uid toUid counterValue
 				  ) listOfEdges
 	
 	let exportDot eCFGs frontEnd= 
 		let oc = open_out "output.dot" in
 		let foc = formatter_of_out_channel( oc ) in
 			Format.fprintf foc "digraph G {\n";
-				visiteCFGs eCFGs (printDot foc frontEnd);
+				visiteCFGs eCFGs 
+					( fun fname -> Format.fprintf foc "\tsubgraph cluster_%s {\n\t\tnode [style=filled,color=white]; \n\t\tstyle=filled; \n\t\tcolor=lightgray; \n\t\tlabel = \"%s\"; \n\t\tfontsize=40; \n\n" fname fname ) 
+					( fun _ -> Format.fprintf foc "\t}\n" ) 
+					(printDot foc frontEnd);
 			Format.fprintf foc "\n}";
 			Self.feedback ~level:0 "Graph exported!"
 end;;
