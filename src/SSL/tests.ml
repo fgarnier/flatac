@@ -50,7 +50,9 @@ let main () =
    and_atomic_affect (Pointsto(PVar("z32"),LVar("f99"))) test_unif_eq; 
    and_atomic_affect (Pointsto(PVar("z32"),LVar("C90"))) test_unif_eq;
    and_atomic_affect (Pointsto(PVar("z32"),LVar("C99"))) test_unif_eq;
-   
+   add_alloc_cell (LVar("f90"))  test_unif_eq;
+   add_alloc_cell (LVar("w3"))  test_unif_eq;
+   add_alloc_cell (LVar("C99"))  test_unif_eq;
  (*  let aff_y1 = Hashtbl.find test_unif_eq.pure.affectations (PVar("y1")) in
    let aff_z = Hashtbl.find test_unif_eq.pure.affectations (PVar("z")) in
    let list_eq = ( unify_eq aff_y1 ) @ ( unify_eq aff_z) in
