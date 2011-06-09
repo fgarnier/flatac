@@ -24,7 +24,7 @@ debug_printers.cmo : ssl_types.cmo ssl.cmo debug_printers.ml
 	ocamlc -annot -c debug_printers.ml
 
 tests :  ssl_types.cmo ssl.cmo union_find.cmo debug_printers.cmo ssl_substitution.cmo tests.ml 
-	ocamlc -I ./ -annot -o test ssl_types.cmo ssl.cmo debug_printers.cmo union_find.cmo tests.ml
+	ocamlc -I ./ -annot -o test ssl_types.cmo ssl.cmo debug_printers.cmo union_find.cmo ssl_substitution.cmo tests.ml
 
 
 html_api : ssl_types.cmo ssl.cmo union_find.cmo debug_printers.cmo ssl_substitution.cmo

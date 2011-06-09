@@ -1,5 +1,9 @@
 (** In this file we define the type of a substitution as well
-as how to transfor the syntax of a SSL formula upon a substitution.*)
+as how to transfor the syntax of a SSL formula upon a substitution.
+
+Athor : Florent Garnier.
+write to first_name-dot-name-at-imag-dot-fr for question and/or comments.
+*)
 
 
 open Union_find
@@ -30,21 +34,24 @@ let subst_from_partition (part : Union_find.partition ) =
 
 
 (* This fonction shall not appear in the ml-interface file *)
-(*
+
 let subst_against_affectation (subst : loc_subst )(affect_table : ((SSL_lex.ptvar , (SSL_lex.locvar , unit) t ) t)) =
-  let subst_map subst_table current_table lvar_table () =
-    if ( Hashtbl.mem substable lvar ) == true
+  let subst_map (subst_table : ((SSL_lex.locvar , SSL_lex.locvar ) t)) (current_table: (SSL_lex.locvar , unit) t ) (lvar : SSL_lex.locvar) () =
+    if (( Hashtbl.mem subst_table lvar ) == true )
     then 
+      begin
 	Hashtbl.remove current_table lvar;
-	Hashtbl.add current_table (Hashtbl.find substable lvar) ()
+	let rvar =  Hashtbl.find subst_table lvar in 
+	Hashtbl.add current_table rvar ()
+      end
     else ()
   in
   let affect_table_iterator subst_table pvar lvar_table =
     Hashtbl.iter ( subst_map subst_table lvar_table ) lvar_table
   in
   match subst with 
-      Substitution ( table_subst ) ->
-	Hashtbl.iter (affect_table_iterator subst_table ) affect_table
+      Subst ( table_subst ) ->
+	Hashtbl.iter (affect_table_iterator table_subst ) affect_table
 	
-*)
+
 
