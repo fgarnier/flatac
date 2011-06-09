@@ -17,13 +17,13 @@ ssl.cmo : ssl.ml ssl_types.cmo
 union_find.cmo : ssl_types.cmo ssl.cmo union_find.ml
 	ocamlc -annot -c union_find.ml
 
-ssl_substitution.cmo :  ssl_types.cmo ssl.cmo union_find.cmo debug_printers.cmo
+ssl_substitution.cmo :  ssl_types.cmo ssl.cmo union_find.cmo 
 	ocamlc -annot -c ssl_substitution.ml 
 
 debug_printers.cmo : ssl_types.cmo ssl.cmo debug_printers.ml
 	ocamlc -annot -c debug_printers.ml
 
-tests :  ssl_types.cmo ssl.cmo union_find.cmo debug_printers.cmo ssl_substitution.cmo tests.ml 
+tests :  ssl_types.cmo ssl.cmo union_find.cmo  ssl_substitution.cmo tests.ml debug_printers.cmo 
 	ocamlc -I ./ -annot -o test ssl_types.cmo ssl.cmo debug_printers.cmo union_find.cmo ssl_substitution.cmo tests.ml
 
 

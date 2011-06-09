@@ -28,7 +28,8 @@ let subst_from_partition (part : Union_find.partition ) =
    
   in    
   match part with 
-      Partition (table_part ) -> Hashtbl.fold  inverse_image_folder table_part (Hashtbl.create SSL_lex.size_hash)
+      Partition (table_part ) -> let table = Hashtbl.fold  inverse_image_folder table_part (Hashtbl.create SSL_lex.size_hash) in
+				 Subst (table)
 
 
 
