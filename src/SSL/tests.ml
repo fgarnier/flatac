@@ -66,7 +66,11 @@ let main () =
        Format.fprintf form "\n %!";
        let subst_test = subst_from_partition part in
        pprint_subst form subst_test;
-       Format.fprintf  form "%!"
+       Format.fprintf  form "%!" ;
+     
+       let after_subst_formula = subst_agains_ssl subst_test test_unif_eq in
+       Ssl.pprint_ssl_formula form  after_subst_formula;
+       Format.fprintf  form "%!" 
      
    
    

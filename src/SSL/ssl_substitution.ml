@@ -99,11 +99,16 @@ let subst_against_space (subst : loc_subst ) (sform : space_formula ) =
       Space (table)
 
 
-let subst_agains_ssl (subst : loc_subst)(sformula : pure_formula) =
+let subst_agains_ssl (subst : loc_subst)(sformula : ssl_formula ) =
   {
-    equations = subst_against_eqlist  subst sformula.equations;
-    affectations =  subst_against_affectation subst sformula.affectations;
-    ptnil = sformula.ptnil;
+    quant_vars = sformula.quant_vars;
+    pure = {
+      equations = subst_against_eqlist  subst sformula.pure.equations;
+      affectations =  subst_against_affectation subst sformula.pure.affectations;
+      ptnil = sformula.pure.ptnil; 
+    };
+    space = subst_against_space subst sformula.space
+      
   }
   
 
