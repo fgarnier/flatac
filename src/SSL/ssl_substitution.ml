@@ -53,6 +53,29 @@ let subst_against_affectation (subst : loc_subst )(affect_table : ((SSL_lex.ptva
   match subst with 
       Subst ( table_subst ) ->
 	Hashtbl.iter (affect_table_iterator table_subst ) affect_table
-	
+
+
+let subst_against_space (subst : loc_subst ) (sform : space_formula ) =
+  let space_iterator (subst_table : (locvar, locvar ) t ) 
+      ( current_table : (locvar , int) t ) lvar occur =
+    if (( Hashtbl.mem subst_table lvar ) == true )
+    then 
+      begin
+	let occ_lvar =  Hashtbl.find  current_table lvar in
+	Hashtbl.remove current_table lvar;
+	let rvar =  Hashtbl.find subst_table lvar in 
+	add_alloc_occurences_space rvar occ_lvar (Space ( current_table ))
+      end
+    else ()
+  in
+  match sform , subst with 
+      (Top_heap  , _ ) -> Top_heap
+    | (Space (table ) , Subst (subst_table) )  ->
+      Hashtbl.iter (space_iterator subst_table table) table;
+      Space (table)
+
+
+
+
 
 

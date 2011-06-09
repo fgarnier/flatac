@@ -330,6 +330,19 @@ to the key ptr*)
 	    (*One adds x->nil iff it is not yet present*)
 	  
 
+  let add_alloc_occurences_space ( lvar : locvar) (occurences : int ) 
+      (sform :  space_formula) =
+    match sform with
+	Top_heap -> ()
+      | Space (table_occurences ) ->
+	if (( Hashtbl.mem table_occurences lvar ) == true )
+	then 
+	  begin
+	    let occ_add = Hashtbl.find table_occurences lvar 
+	    in Hashtbl.replace table_occurences lvar (occ_add+occurences)
+	  end
+	else
+	  Hashtbl.add table_occurences lvar occurences
 
   let add_alloc_cell (lvar : locvar ) (sslf : SSL_lex.ssl_formula ) =
     match sslf.space with 
