@@ -36,6 +36,29 @@ let subst_from_partition (part : Union_find.partition ) =
 
 (* This fonction shall not appear in the ml-interface file *)
 
+
+let map_subst_list_eq (subst : loc_subst) ( equation : eq ) =
+  let ret_eq = ref equation in
+  match subst , equation with 
+      ( Subst(subst_table) , Eqloc( xg , xd ) ) ->
+	begin
+	  if Hashtbl.mem subst_table xg 
+	  then 
+	    let xg' = Hashtbl.find subst_table xg in
+	    ret_eq := Ssl.subst_loc xg xg' equation  
+	end;
+	begin
+	  if  Hashtbl.mem subst_table xd 
+	  then 
+	    let xd' = Hashtbl.find subst_table xg in
+	    ret_eq := Ssl.subst_loc xd xd' !ret_eq  
+	end;
+	!ret_eq
+
+let subst_against_eqlist (subst :loc_subst )( eqlist : eq list ) =
+  List.map (map_subst_list_eq subst) eqlist
+  
+
 let subst_against_affectation (subst : loc_subst )(affect_table : ((SSL_lex.ptvar , (SSL_lex.locvar , unit) t ) t)) =
   let subst_map (subst_table : ((SSL_lex.locvar , SSL_lex.locvar ) t)) (current_table: (SSL_lex.locvar , unit) t ) (lvar : SSL_lex.locvar) () =
     if (( Hashtbl.mem subst_table lvar ) == true )
@@ -52,7 +75,8 @@ let subst_against_affectation (subst : loc_subst )(affect_table : ((SSL_lex.ptva
   in
   match subst with 
       Subst ( table_subst ) ->
-	Hashtbl.iter (affect_table_iterator table_subst ) affect_table
+	Hashtbl.iter (affect_table_iterator table_subst ) affect_table;
+	affect_table
 
 
 let subst_against_space (subst : loc_subst ) (sform : space_formula ) =
@@ -75,6 +99,13 @@ let subst_against_space (subst : loc_subst ) (sform : space_formula ) =
       Space (table)
 
 
+let subst_agains_ssl (subst : loc_subst)(sformula : pure_formula) =
+  {
+    equations = subst_against_eqlist  subst sformula.equations;
+    affectations =  subst_against_affectation subst sformula.affectations;
+    ptnil = sformula.ptnil;
+  }
+  
 
 
 
