@@ -31,8 +31,8 @@ tests :  ssl_types.cmo ssl.cmo union_find.cmo  ssl_substitution.cmo ssl_normaliz
 	ocamlc -I ./ -annot -o test ssl_types.cmo ssl.cmo debug_printers.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo tests.ml
 
 
-html_api : ssl_types.cmo ssl.cmo union_find.cmo  ssl_substitution.cmo debug_printers.cmo
-	ocamldoc -html -d ./api ssl_types.ml ssl.ml union_find.ml debug_printers.ml ssl_substitution.ml
+html_api : ssl_types.cmo ssl.cmo union_find.cmo  ssl_substitution.cmo  ssl_normalization.cmo debug_printers.cmo
+	ocamldoc -html -d ./api ssl_types.ml ssl.ml union_find.ml debug_printers.ml ssl_substitution.ml ssl_normalization.ml
 clean : 
 	rm -f *.o *.cmo *.cmi > /dev/null ; \
 	cd api &&\

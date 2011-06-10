@@ -10,8 +10,7 @@ open Ssl_substitution
 open Ssl_normalization
 open Debug_printers
 
- let all_aff_fold_to_theory _ (lvars : (locvar , unit) t ) (list_of_eq : SSL_lex.eq list) =
-     (unify_eq lvars ) @ list_of_eq
+
 
 let main () =
    let newf = Ssl.create_ssl_f () in
@@ -72,6 +71,7 @@ let main () =
        Format.fprintf  form "%!" ;
      
        let after_subst_formula = subst_agains_ssl subst_test test_unif_eq in
+
        Ssl.pprint_ssl_formula form  after_subst_formula;
        Format.fprintf  form "%!" 
      
