@@ -20,5 +20,9 @@ let var_elim ( sslf : ssl_formula ) =
   in
   Hashtbl.iter iter_elim sslf.quant_vars
     
-
+let theories_cleanup (sslf : ssl_formula ) =
+  sslf.pure.equations = []
  
+
+
+
