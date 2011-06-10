@@ -7,6 +7,7 @@ open Union_find
 open Hashtbl
 open List
 open Ssl_substitution
+open Ssl_normalization
 open Debug_printers
 
  let all_aff_fold_to_theory _ (lvars : (locvar , unit) t ) (list_of_eq : SSL_lex.eq list) =
