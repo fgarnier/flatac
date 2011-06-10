@@ -13,6 +13,8 @@ open Hashtbl
 open Format
 
 
+exception Lvar_found 
+
 let cmp_lex_lvar (g : locvar ) (d : locvar ) =
   match g , d with
       ( LVar( lg ) , LVar ( ld ) ) -> SSL_lex.order_relation lg ld
@@ -279,9 +281,9 @@ them yv. This is done by iterating on tabl and by iterating on each subtables .*
    
       
     
-(* ********************************************************************* **)
+(* ********************************************************************* *)
 
-(* The part that follows, contains the basic operations on SSL formulae,
+(** The part that follows, contains the basic operations on SSL formulae,
 namely ;
 _ And of an  atomic propositions and a SSL formula
 _ And of two pure formulae
@@ -442,12 +444,41 @@ algorithm. *)
 	   
 	  else -1
 
-(** Quotient Step below :
-*)
-(*
-  let quotient_eq_list (eql : SSL_lex.eq ) =
-  let eql = List.sort (cmp_eq) eql in
-  *)
-  
-  
 
+(** Checks whether a location variable appears in the  affectation part 
+of the pure part if a SSL formula*)
+
+  let pure_contains_locvar ( lvar : locvar )( pformula : pure_formula ) =
+ 
+    let fold_pure ( lvar : locvar ) _ (table_locvar : ( locvar , unit ) t ) _ =
+      if ( Hashtbl.mem table_locvar lvar) ==true 
+      then raise Lvar_found
+      else false
+    in
+    try
+      Hashtbl.fold ( fold_pure lvar ) pformula.affectations false
+    with
+	Lvar_found -> true
+    
+    
+	  
+(** This function checks whether a location variable is listed in the 
+spacial part of a SSL formula *)
+  
+  let space_contains_locvar (lvar : locvar )( spacef : space_formula) =
+    match spacef with
+	Space ( loctable ) ->
+	  Hashtbl.mem loctable lvar
+      | Top_heap -> false
+
+
+ 
+      
+    
+
+(** Checks whether a ssl contains an instance of a location variable*)
+  let ssl_contains_locvar ( lvar : locvar )( sformula : ssl_formula ) = 
+    if ( space_contains_locvar lvar sformula.space )
+    then true
+    else pure_contains_locvar lvar sformula.pure
+      
