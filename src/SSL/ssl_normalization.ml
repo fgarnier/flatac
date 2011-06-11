@@ -24,7 +24,7 @@ let var_elim ( sslf : ssl_formula ) =
   Hashtbl.iter iter_elim sslf.quant_vars
     
 let theories_cleanup (sslf : ssl_formula ) =
-  sslf.pure.equations = []
+  sslf.pure.equations <- []
  
 
 let normalize_ssl ( sslf : ssl_formula ) =

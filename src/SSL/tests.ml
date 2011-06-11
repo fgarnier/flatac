@@ -73,6 +73,30 @@ let main () =
        let after_subst_formula = subst_agains_ssl subst_test test_unif_eq in
 
        Ssl.pprint_ssl_formula form  after_subst_formula;
+       Format.fprintf  form "%!" ;
+
+       Format.fprintf form "*********** test of normization *************** %!";
+        let test_unif_eq = Ssl.create_ssl_f () in
+   and_atomic_affect (Pointsto(PVar("y1"),LVar("l3"))) test_unif_eq;
+   and_atomic_affect (Pointsto(PVar("y1"),LVar("j"))) test_unif_eq;
+   and_atomic_affect (Pointsto(PVar("y1"),LVar("k"))) test_unif_eq;
+   and_atomic_affect (Pointsto(PVar("y1"),LVar("w3"))) test_unif_eq;
+   and_atomic_affect (Pointsto(PVar("y1"),LVar("jl"))) test_unif_eq;
+   and_atomic_affect (Pointsto(PVar("z"),LVar("f"))) test_unif_eq;
+   and_atomic_affect (Pointsto(PVar("x"),LVar("d56"))) test_unif_eq;
+   and_atomic_affect (Pointsto(PVar("z"),LVar("jlo"))) test_unif_eq;
+   and_atomic_affect (Pointsto(PVar("new_z"),LVar("new_mk"))) test_unif_eq;
+   and_atomic_affect (Pointsto(PVar("new_z"),LVar("new_mk2"))) test_unif_eq;
+   and_atomic_affect (Pointsto(PVar("z32"),LVar("f90"))) test_unif_eq;
+   and_atomic_affect (Pointsto(PVar("z32"),LVar("f99"))) test_unif_eq; 
+   and_atomic_affect (Pointsto(PVar("z32"),LVar("C90"))) test_unif_eq;
+   and_atomic_affect (Pointsto(PVar("z32"),LVar("C99"))) test_unif_eq;
+   add_alloc_cell (LVar("f90"))  test_unif_eq;
+   add_alloc_cell (LVar("w3"))  test_unif_eq;
+   add_alloc_cell (LVar("C99"))  test_unif_eq;
+   normalize_ssl test_unif_eq;
+     
+    Ssl.pprint_ssl_formula form  test_unif_eq;
        Format.fprintf  form "%!" 
      
    
