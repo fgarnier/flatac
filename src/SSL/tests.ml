@@ -6,9 +6,11 @@ open Format
 open Union_find
 open Hashtbl
 open List
+open Ssl_substitution
+open Ssl_normalization
+open Debug_printers
 
- let all_aff_fold_to_theory _ (lvars : (locvar , unit) t ) (list_of_eq : SSL_lex.eq list) =
-     (unify_eq lvars ) @ list_of_eq
+
 
 let main () =
    let newf = Ssl.create_ssl_f () in
@@ -46,6 +48,11 @@ let main () =
    and_atomic_affect (Pointsto(PVar("new_z"),LVar("new_mk2"))) test_unif_eq;
    and_atomic_affect (Pointsto(PVar("z32"),LVar("f90"))) test_unif_eq;
    and_atomic_affect (Pointsto(PVar("z32"),LVar("f99"))) test_unif_eq; 
+   and_atomic_affect (Pointsto(PVar("z32"),LVar("C90"))) test_unif_eq;
+   and_atomic_affect (Pointsto(PVar("z32"),LVar("C99"))) test_unif_eq;
+   add_alloc_cell (LVar("f90"))  test_unif_eq;
+   add_alloc_cell (LVar("w3"))  test_unif_eq;
+   add_alloc_cell (LVar("C99"))  test_unif_eq;
  (*  let aff_y1 = Hashtbl.find test_unif_eq.pure.affectations (PVar("y1")) in
    let aff_z = Hashtbl.find test_unif_eq.pure.affectations (PVar("z")) in
    let list_eq = ( unify_eq aff_y1 ) @ ( unify_eq aff_z) in
@@ -58,7 +65,15 @@ let main () =
  
      let part = eqlist_to_partition all_theories in
        pprint_partition form part;
-       Format.fprintf form "\n %!"
+       Format.fprintf form "\n %!";
+       let subst_test = subst_from_partition part in
+       pprint_subst form subst_test;
+       Format.fprintf  form "%!" ;
+     
+       let after_subst_formula = subst_agains_ssl subst_test test_unif_eq in
+
+       Ssl.pprint_ssl_formula form  after_subst_formula;
+       Format.fprintf  form "%!" 
      
    
    
