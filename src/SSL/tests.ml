@@ -94,7 +94,7 @@ let main () =
    and_atomic_affect (Pointsto(PVar("z32"),LVar("C99"))) test_unif_eq;
    add_alloc_cell (LVar("f90"))  test_unif_eq;
    add_alloc_cell (LVar("w3"))  test_unif_eq;
-   add_alloc_cell (LVar("C99"))  test_unif_eq;
+   (*add_alloc_cell (LVar("C99"))  test_unif_eq;*)
    Format.fprintf form "\n Equation to be normalized \n ";
    Ssl.pprint_ssl_formula form test_unif_eq;
    Format.fprintf form " \n Equation in normal form \n";
