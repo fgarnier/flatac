@@ -101,9 +101,29 @@ let main () =
    normalize_ssl test_unif_eq;   
    Ssl.pprint_ssl_formula form  test_unif_eq;
    Format.fprintf  form "\n%!";
-   if (sat_ssl test_unif_eq ) then 
-     Format.fprintf form " \n Formula is SAT \n %!"
-   else
-     Format.fprintf form " \n Formula is UNSAT \n %!" 
+   begin
+     if (sat_ssl test_unif_eq ) then 
+       Format.fprintf form " \n Formula is SAT \n %!"
+     else
+       Format.fprintf form " \n Formula is UNSAT \n %!" 
+   end;
+   
+   Format.fprintf  form " Testing garbageness \n %!";
+   begin
+     if garbage_ssl test_unif_eq then
+        Format.fprintf form " \n Formula contains garbage \n %!"
+     else
+       Format.fprintf form " \n Formula contains no garbage \n %!"   
+   end;
+
+   add_alloc_cell (LVar("Unpointed_lvar"))  test_unif_eq;
+    Format.fprintf  form " Testing garbageness \n %!";
+   begin
+     if garbage_ssl test_unif_eq then
+        Format.fprintf form " \n Formula contains garbage \n %!"
+     else
+       Format.fprintf form " \n Formula contains no garbage \n %!"   
+   end
+
 
 let () = main ()
