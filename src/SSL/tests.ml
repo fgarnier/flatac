@@ -8,6 +8,7 @@ open Hashtbl
 open List
 open Ssl_substitution
 open Ssl_normalization
+open Ssl_decision
 open Debug_printers
 
 
@@ -75,7 +76,7 @@ let main () =
        Ssl.pprint_ssl_formula form  after_subst_formula;
        Format.fprintf  form "%!" ;
 
-       Format.fprintf form "*********** test of normization *************** %!";
+       Format.fprintf form " \n *********** test of normization *************** \n %!";
         let test_unif_eq = Ssl.create_ssl_f () in
    and_atomic_affect (Pointsto(PVar("y1"),LVar("l3"))) test_unif_eq;
    and_atomic_affect (Pointsto(PVar("y1"),LVar("j"))) test_unif_eq;
@@ -94,12 +95,15 @@ let main () =
    add_alloc_cell (LVar("f90"))  test_unif_eq;
    add_alloc_cell (LVar("w3"))  test_unif_eq;
    add_alloc_cell (LVar("C99"))  test_unif_eq;
-   normalize_ssl test_unif_eq;
-     
-    Ssl.pprint_ssl_formula form  test_unif_eq;
-       Format.fprintf  form "%!" 
-     
-   
-   
+   Format.fprintf form "\n Equation to be normalized \n ";
+   Ssl.pprint_ssl_formula form test_unif_eq;
+   Format.fprintf form " \n Equation in normal form \n";
+   normalize_ssl test_unif_eq;   
+   Ssl.pprint_ssl_formula form  test_unif_eq;
+   Format.fprintf  form "\n%!";
+   if (sat_ssl test_unif_eq ) then 
+     Format.fprintf form " \n Formula is SAT \n %!"
+   else
+    Format.fprintf form " \n Formula is UNSAT \n %!" 
 
 let () = main ()
