@@ -37,15 +37,17 @@ equations, from this set.
 *)
 
 let q_elim (sslf : ssl_formula ) ( part : Union_find.partition ) =
-  
+
   let q_exists_iterator part_table lvar () =
     if Hashtbl.mem part_table lvar then
-      if 
+      let cl =  Hashtbl.find part_table lvar in
+	if ( Union_find.eqclass_exists_free_var cl sslf )
+	then Hashtbl.remove sslf.quant_vars lvar
+	else ()
   in
-    
   match part with 
-      Parition ( part_table ) -> 
-	Hashtbl.iter q_exists_iterator part_table sslf.quant_vars
+      Partition ( part_table ) -> 
+	Hashtbl.iter (q_exists_iterator part_table) sslf.quant_vars
 	
 
 (** TODO : One need to elimate the existentially quantified vars that are
@@ -53,9 +55,10 @@ equals to free vars. *)
 let normalize_ssl ( sslf : ssl_formula ) =
   let theories = (Hashtbl.fold all_aff_fold_to_theory sslf.pure.affectations []) in
   let part = eqlist_to_partition theories in
-  let subst_test = subst_from_partition part in
-  let after_subst_formula = subst_agains_ssl subst_test sslf in
-  var_elim after_subst_formula; theories_cleanup after_subst_formula
+    qelim sslf part ;
+    let subst_test = subst_from_partition part in
+    let after_subst_formula = subst_agains_ssl subst_test sslf in
+      var_elim after_subst_formula; theories_cleanup after_subst_formula
   
   
 

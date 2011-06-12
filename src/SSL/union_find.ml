@@ -30,7 +30,7 @@ exception Non_membership (* An equivalence class, or an equivalence
 
 (** returns true if one locvar of cl is a f.v. of sslf, false otherwise *)
 
-let eqclass_exist_free_var  (cl : eqclass) (sslf : ssl_formula) =
+let eqclass_exists_free_var  (cl : eqclass) (sslf : ssl_formula) =
   let eqclass_iterator lvar () =
     if (Hashtbl.mem sslf.quant_vars lvar) then ()
     else raise FVar_found 
