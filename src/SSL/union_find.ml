@@ -11,6 +11,8 @@ for questions or comment, write to florent-dot-garnier!at!imag^dot^fr
 
 *)
 
+exception FVar_found
+
 type eqclass = {
   mutable repres : locvar ;      (*Member representing the class*)
   members : ( locvar , unit ) t; (*All members but the representant*)
@@ -25,6 +27,18 @@ exception Element_not_found
 exception Non_membership (* An equivalence class, or an equivalence
 			    class referenced by its representant does 
 			    not belong to a partition.*)
+
+(** returns true if one locvar of cl is a f.v. of sslf, false otherwise *)
+
+let eqclass_exist_free_var  (cl : eqclass) (sslf : ssl_formula) =
+  let eqclass_iterator lvar () =
+    if (Hashtbl.mem sslf.quant_vars lvar) then ()
+    else raise FVar_found 
+  in
+    try	  
+      Hashtbl.iter eqclass_iterator cl.members; false
+    with
+	FVar_found -> true
 
 
 

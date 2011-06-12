@@ -473,7 +473,11 @@ spacial part of a SSL formula *)
 
 
  
-      
+(** This function evaluates to true if the location variable is existancially
+quantified in the formula, false in any other cases *)
+
+  let is_exists_quantified (lvar : locvar ) (sslf : ssl_formula ) =
+    Hashtbl.mem sslf.quant_vars lvar
     
 
 (** Checks whether a ssl contains an instance of a location variable*)

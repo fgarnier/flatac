@@ -27,6 +27,29 @@ let theories_cleanup (sslf : ssl_formula ) =
   sslf.pure.equations <- []
  
 
+(* qelim removes all represent of class from the set of existentially
+quantified vars, if at least one of the members of the class
+is a free variable.
+
+The case of others variable is not dealt with in this function, as
+we latter eliminate all variables that doesn't appear inside the
+equations, from this set.
+*)
+
+let q_elim (sslf : ssl_formula ) ( part : Union_find.partition ) =
+  
+  let q_exists_iterator part_table lvar () =
+    if Hashtbl.mem part_table lvar then
+      if 
+  in
+    
+  match part with 
+      Parition ( part_table ) -> 
+	Hashtbl.iter q_exists_iterator part_table sslf.quant_vars
+	
+
+(** TODO : One need to elimate the existentially quantified vars that are
+equals to free vars. *)
 let normalize_ssl ( sslf : ssl_formula ) =
   let theories = (Hashtbl.fold all_aff_fold_to_theory sslf.pure.affectations []) in
   let part = eqlist_to_partition theories in
