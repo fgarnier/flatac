@@ -127,8 +127,8 @@ let main () =
         Format.fprintf form " \n Formula contains garbage \n %!"
      else
        Format.fprintf form " \n Formula contains no garbage \n %!"   
-   end;
-   Format.fprintf form " \n Testing quantificator elimination \n %!"
+   end
+   
    
 
 

@@ -486,3 +486,32 @@ quantified in the formula, false in any other cases *)
     then true
     else pure_contains_locvar lvar sformula.pure
       
+
+
+
+ (** Copies a space formula *)
+  let copy_space_formula space_f =
+    match space_f with 
+	Space (table ) -> Space ( ( Hashtbl.copy table ) )
+      | Top_heap -> Top_heap
+
+ (** This function creates a copy of the formula given as a parameter*)
+  let copy (sslf  : ssl_formula ) =
+    let copy_affectation_iterator affectable pvar table_pvar =
+      Hashtbl.add affectable pvar (Hashtbl.copy table_pvar)
+    in
+    let ret_affectations = Hashtbl.create SSL_lex.size_hash in
+    Hashtbl.iter (copy_affectation_iterator ret_affectations) sslf.pure.affectations;
+  let ret_ptnil = Hashtbl.copy sslf.pure.ptnil in
+  let ret_spacef = copy_space_formula sslf.space in
+  let ret_quant_vars = Hashtbl.copy sslf.quant_vars in
+  {
+    quant_vars = ret_quant_vars ;
+    pure = { 
+      equations = sslf.pure.equations;
+      affectations =  ret_affectations ;
+      ptnil = ret_ptnil ;
+    } ;
+    space = ret_spacef ;
+  }
+  
