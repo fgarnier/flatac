@@ -1,4 +1,5 @@
 
+CFLAGS = -annot
 
 COMPINTERFACES =  ssl_types.cmo ssl.cmo
 
@@ -6,36 +7,39 @@ COMPINTERFACES =  ssl_types.cmo ssl.cmo
 all : $(COMPINTERFACES)
 
 .ml.cmo : $(COMPINTERFACES)
-	ocmalc -c $*.ml
+	ocmalc $(CFLAGS) $*.ml
 
 ssl_types.cmo : ssl_types.ml
-	ocamlc -annot -c ssl_types.ml
+	ocamlc $(CFLAGS)  -c ssl_types.ml
 
 ssl.cmo : ssl.ml ssl_types.cmo
-	ocamlc -annot -c ssl.ml
+	ocamlc $(CFLAGS)  -c ssl.ml
 
 union_find.cmo : ssl_types.cmo ssl.cmo union_find.ml
-	ocamlc -annot -c union_find.ml
+	ocamlc $(CFLAGS)  -c union_find.ml
 
 ssl_substitution.cmo :  ssl_types.cmo ssl.cmo union_find.cmo 
-	ocamlc -annot -c ssl_substitution.ml 
+	ocamlc $(CFLAGS)  -c ssl_substitution.ml 
 
 debug_printers.cmo : ssl_types.cmo ssl.cmo debug_printers.ml
-	ocamlc -annot -c debug_printers.ml
+	ocamlc $(CFLAGS)  -c debug_printers.ml
 
 
 ssl_normalization.cmo : ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo
-		ocamlc -annot -c ssl_normalization.ml
+		ocamlc $(CFLAGS)  -c ssl_normalization.ml
 
 ssl_decision.cmo :  ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo
-	ocamlc -annot -c ssl_decision.ml
+	ocamlc $(CFLAGS)  -c ssl_decision.ml
+
+ssl_entailement.cmo : ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo ssl_entailement.ml 
+	ocamlc $(CFLAGS) -c ssl_entailement.ml
 
 tests :  ssl_types.cmo ssl.cmo union_find.cmo  ssl_substitution.cmo ssl_normalization.cmo tests.ml debug_printers.cmo ssl_decision.cmo 
-	ocamlc -I ./ -annot -o test ssl_types.cmo ssl.cmo debug_printers.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo ssl_decision.cmo tests.ml
+	ocamlc -I ./ $(CFLAGS) -o test ssl_types.cmo ssl.cmo debug_printers.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo ssl_decision.cmo tests.ml
 
 
-html_api : ssl_types.cmo ssl.cmo union_find.cmo  ssl_substitution.cmo  ssl_normalization.cmo ssl_decision.cmo debug_printers.cmo 
-	ocamldoc -html -d ./api ssl_types.ml ssl.ml union_find.ml debug_printers.ml ssl_substitution.ml ssl_normalization.ml ssl_decision.ml
+html_api : ssl_types.cmo ssl.cmo union_find.cmo  ssl_substitution.cmo  ssl_normalization.cmo ssl_decision.cmo ssl_entailement.cmo debug_printers.cmo 
+	ocamldoc -html -d ./api ssl_types.ml ssl.ml union_find.ml debug_printers.ml ssl_substitution.ml ssl_normalization.ml ssl_entailement.ml ssl_decision.ml
 
 clean : 
 	rm -f *.o *.cmo *.cmi > /dev/null ; \

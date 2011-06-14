@@ -99,6 +99,12 @@ let subst_against_space (subst : loc_subst ) (sform : space_formula ) =
       Space (table)
 
 
+
+(**
+ Applies a substitution to a SSL formula. 
+*TODO* One need to check the impact on quant_vars list. 
+
+*)
 let subst_agains_ssl (subst : loc_subst)(sformula : ssl_formula ) =
   {
     quant_vars = sformula.quant_vars;
