@@ -51,11 +51,15 @@ let q_elim (sslf : ssl_formula ) ( part : Union_find.partition ) =
 	
 
 (** TODO : One need to elimate the existentially quantified vars that are
-equals to free vars. *)
+equals to free vars.
+
+Done. Need to chech it works well.
+
+ *)
 let normalize_ssl ( sslf : ssl_formula ) =
   let theories = (Hashtbl.fold all_aff_fold_to_theory sslf.pure.affectations []) in
   let part = eqlist_to_partition theories in
-    qelim sslf part ;
+    q_elim sslf part ;
     let subst_test = subst_from_partition part in
     let after_subst_formula = subst_agains_ssl subst_test sslf in
       var_elim after_subst_formula; theories_cleanup after_subst_formula

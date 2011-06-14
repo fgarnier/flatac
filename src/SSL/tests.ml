@@ -95,6 +95,10 @@ let main () =
    add_alloc_cell (LVar("f90"))  test_unif_eq;
    add_alloc_cell (LVar("w3"))  test_unif_eq;
    add_alloc_cell (LVar("C99"))  test_unif_eq;
+   add_quant_var (LVar("C99")) test_unif_eq;
+   add_quant_var (LVar("Must_appear_in_qlist")) test_unif_eq;
+   and_atomic_affect (Pointsto(PVar("Pointstoexists"),LVar("Must_appear_in_qlist") )) test_unif_eq;
+  (*  and_atomic_affect (Pointsto(PVar("Pointstoexists"),LVar("free_varloc") )) test_unif_eq; *)
    Format.fprintf form "\n Equation to be normalized \n ";
    Ssl.pprint_ssl_formula form test_unif_eq;
    Format.fprintf form " \n Equation in normal form \n";
@@ -123,7 +127,9 @@ let main () =
         Format.fprintf form " \n Formula contains garbage \n %!"
      else
        Format.fprintf form " \n Formula contains no garbage \n %!"   
-   end
+   end;
+   Format.fprintf form " \n Testing quantificator elimination \n %!"
+   
 
 
 let () = main ()
