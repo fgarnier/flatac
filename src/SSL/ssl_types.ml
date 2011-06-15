@@ -10,6 +10,9 @@ please blame : gaudin.maxime\\at//gmail-DoT-fr. :).
 open List
 open Hashtbl
 
+
+exception Top_heap_exception
+
 module SSL_types_gen = functor ( P : sig 
 				   val order_relation : string -> string -> bool
 				   val equals_to : string -> string -> bool
