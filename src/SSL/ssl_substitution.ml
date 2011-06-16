@@ -55,7 +55,7 @@ let map_subst_list_eq (subst : loc_subst) ( equation : eq ) =
 	end;
 	!ret_eq
 
-let subst_against_eqlist (subst :loc_subst )( eqlist : eq list ) =
+let subst_against_eqlist (subst : loc_subst )( eqlist : eq list ) =
   List.map (map_subst_list_eq subst) eqlist
   
 
@@ -116,7 +116,19 @@ let subst_agains_ssl (subst : loc_subst)(sformula : ssl_formula ) =
     space = subst_against_space subst sformula.space
       
   }
-  
+
+(** Perfomrs the same operation as above, but *)
+ let subst_agains_ssl_mutable (subst : loc_subst)(sformula : ssl_formula ) =
+  {
+    quant_vars = sformula.quant_vars;
+    pure = {
+      equations = subst_against_eqlist  subst sformula.pure.equations;
+      affectations =  subst_against_affectation subst sformula.pure.affectations;
+      ptnil = sformula.pure.ptnil; 
+    };
+    space = subst_against_space subst sformula.space
+      
+  } 
 
 
 

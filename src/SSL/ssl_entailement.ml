@@ -8,7 +8,7 @@ open Ssl
 open Ssl_normalization
 open SSL_lex
 
-
+exception Get_a_locvar of locvar
 
 type entail_problem = {left : ssl_formula ; right : ssl_formula ;}
 type fresh_loc_var = FLVar of string * int
@@ -76,7 +76,7 @@ let varname_folder lvar () lvar_arg =
     lvar 
   else lvar_arg
  
-let reduce_r1  ( etp : entail_problem ) = 
+let entail_r1  ( etp : entail_problem ) = 
   let r1_iterator pvar loctable  =
     if Hashtbl.mem etp.right.pure.affectations pvar then
     let lvar_rel = Hashtbl.fold varname_folder loctable (LVar("")) in
@@ -92,14 +92,36 @@ let reduce_r1  ( etp : entail_problem ) =
   in
   Hashtbl.iter r1_iterator etp.left.pure.affectations
   
-  
 
-(**
- else 
-	if  ( Hashtbl.mem etp.right.quant_vars lvar_rel ) && (  Hashtbl.mem etp.left.quant_vars lvar_rel )
-	then
-	  let fresh_flvar = fresh_locvar_name_from_etp etp in
-	  let fresh_lvar = flvar_to_locvar flvar in
-	  Hashtbl.remove etp.right.pure.affectations pvar; 
-	  Hashtbl.remove etp.left.pure.affectations pvar;
-*)
+let pick_first_lvar ( loctable : ( locvar , unit ) t) =
+  let it_table lvar () =
+    raise  Get_a_locvar ( lvar )
+  in
+  try 
+    Hashtbl.iter it_table loctable; (LVar(""))
+  with
+      Get_a_locvar ( lvar ) -> lvar
+ 
+
+let entail_r4 ( etp : entail_problem ) =
+  let r4_iterator pvar loctable  =
+    if Hashtbl.mem etp.right.pure.affectations pvar then
+    let lvar_rel = Hashtbl.fold varname_folder loctable (LVar("")) in
+    let pvar_right = Hashtbl.find etp.right.pure.affectations pvar in
+    if Hashtbl.mem pvar_right lvar_rel then
+      if  ( Hashtbl.mem etp.right.quant_vars lvar_rel ) && (  Hashtbl.mem etp.left.quant_vars lvar_rel )
+      then
+	let fresh_flvar = fresh_locvar_name_from_etp etp in
+	let fresh_lvar = flvar_to_locvar flvar in
+	let locv_left =  (Hashtbl.find etp.left.pure.affectations pvar) in
+	let locv_right =  (Hashtbl.find etp.right.pure.affectations pvar) in
+	let subst_table = Hashtbl.create Ssl.size_hash in
+	Hashtbl.add subst_table locv_left fresh_lvar;
+	Hashtbl.add subst_table locv_right fresh_lvar;
+	let subst = Subst ( subst_table) in
+	Hashtbl.remove etp.right.pure.affectations pvar; 
+	Hashtbl.remove etp.left.pure.affectations pvar;
+	subst_against_ssl subst etp.right;
+	subst_against_ssl subst etp.left
+	
+	  
