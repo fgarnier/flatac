@@ -95,7 +95,7 @@ let entail_r1  ( etp : entail_problem ) =
 
 let pick_first_lvar ( loctable : ( locvar , unit ) t) =
   let it_table lvar () =
-    raise  Get_a_locvar ( lvar )
+    raise ( Get_a_locvar ( lvar ) )
   in
   try 
     Hashtbl.iter it_table loctable; (LVar(""))
@@ -118,10 +118,10 @@ let entail_r4 ( etp : entail_problem ) =
 	let subst_table = Hashtbl.create Ssl.size_hash in
 	Hashtbl.add subst_table locv_left fresh_lvar;
 	Hashtbl.add subst_table locv_right fresh_lvar;
-	let subst = Subst ( subst_table) in
+	let subst = Subst ( subst_table ) in
 	Hashtbl.remove etp.right.pure.affectations pvar; 
 	Hashtbl.remove etp.left.pure.affectations pvar;
 	subst_against_ssl subst etp.right;
 	subst_against_ssl subst etp.left
-	
-	  
+  in
+  

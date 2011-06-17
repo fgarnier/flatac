@@ -75,8 +75,7 @@ let subst_against_affectation (subst : loc_subst )(affect_table : ((SSL_lex.ptva
   in
   match subst with 
       Subst ( table_subst ) ->
-	Hashtbl.iter (affect_table_iterator table_subst ) affect_table;
-	affect_table
+	Hashtbl.iter (affect_table_iterator table_subst ) affect_table
 
 
 let subst_against_space (subst : loc_subst ) (sform : space_formula ) =
@@ -93,10 +92,10 @@ let subst_against_space (subst : loc_subst ) (sform : space_formula ) =
     else ()
   in
   match sform , subst with 
-      (Top_heap  , _ ) -> Top_heap
+      (Top_heap  , _ ) -> ()
     | (Space (table ) , Subst (subst_table) )  ->
-      Hashtbl.iter (space_iterator subst_table table) table;
-      Space (table)
+      Hashtbl.iter (space_iterator subst_table table) table
+      
 
 
 
@@ -105,7 +104,8 @@ let subst_against_space (subst : loc_subst ) (sform : space_formula ) =
 *TODO* One need to check the impact on quant_vars list. 
 
 *)
-let subst_agains_ssl (subst : loc_subst)(sformula : ssl_formula ) =
+
+(*let subst_agains_ssl (subst : loc_subst)(sformula : ssl_formula ) =
   {
     quant_vars = sformula.quant_vars;
     pure = {
@@ -115,20 +115,15 @@ let subst_agains_ssl (subst : loc_subst)(sformula : ssl_formula ) =
     };
     space = subst_against_space subst sformula.space
       
-  }
+  }*)
 
 (** Perfomrs the same operation as above, but *)
- let subst_agains_ssl_mutable (subst : loc_subst)(sformula : ssl_formula ) =
-  {
-    quant_vars = sformula.quant_vars;
-    pure = {
-      equations = subst_against_eqlist  subst sformula.pure.equations;
-      affectations =  subst_against_affectation subst sformula.pure.affectations;
-      ptnil = sformula.pure.ptnil; 
-    };
-    space = subst_against_space subst sformula.space
-      
-  } 
+ let subst_agains_ssl (subst : loc_subst)(sformula : ssl_formula ) =
+  
+    
+   subst_against_space subst sformula.space; subst_against_affectation subst sformula.pure.affectations; sformula.pure.equations <- (subst_against_eqlist subst sformula.pure.equations )
+   
+   
 
 
 
