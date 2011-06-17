@@ -71,9 +71,9 @@ let main () =
        pprint_subst form subst_test;
        Format.fprintf  form "%!" ;
      
-       let after_subst_formula = subst_agains_ssl subst_test test_unif_eq in
+       subst_agains_ssl subst_test test_unif_eq;
 
-       Ssl.pprint_ssl_formula form  after_subst_formula;
+       Ssl.pprint_ssl_formula form  test_unif_eq;
        Format.fprintf  form "%!" ;
 
        Format.fprintf form " \n *********** test of normization *************** \n %!";

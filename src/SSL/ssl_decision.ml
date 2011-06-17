@@ -13,6 +13,9 @@ exception Lvar_present
 exception Not_pointed
 
 
+let free_var (sslf : ssl_formula)(lvar : locvar ) =
+  not ( Hashtbl.mem sslf.quant_vars lvar )
+
 (** A SSL formula in normal form is sat iff 
 _ Each loc var that appears on the heap appears once
 _ There is no x->l and x->nil and Alloc(l) on the heap

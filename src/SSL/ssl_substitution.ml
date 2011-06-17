@@ -118,7 +118,7 @@ let subst_against_space (subst : loc_subst ) (sform : space_formula ) =
   }*)
 
 (** Perfomrs the same operation as above, but *)
- let subst_agains_ssl (subst : loc_subst)(sformula : ssl_formula ) =
+ let subst_against_ssl (subst : loc_subst)(sformula : ssl_formula ) =
   
     
    subst_against_space subst sformula.space; subst_against_affectation subst sformula.pure.affectations; sformula.pure.equations <- (subst_against_eqlist subst sformula.pure.equations )

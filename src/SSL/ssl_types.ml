@@ -38,7 +38,7 @@ struct
                       (** The set of pointer variables that points to nil
 			 a.k.a. NULL *)
   }
-  
+
  
   type space_formula = Space of (locvar , int ) t (** Contains the set of
 						  the possibly empty allocated

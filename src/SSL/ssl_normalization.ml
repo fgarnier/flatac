@@ -61,8 +61,8 @@ let normalize_ssl ( sslf : ssl_formula ) =
   let part = eqlist_to_partition theories in
     q_elim sslf part ;
     let subst_test = subst_from_partition part in
-    let after_subst_formula = subst_agains_ssl subst_test sslf in
-      var_elim after_subst_formula; theories_cleanup after_subst_formula
+    subst_against_ssl subst_test sslf;
+      var_elim sslf; theories_cleanup sslf
   
   
 

@@ -7,6 +7,8 @@ open Ssl_types
 open Ssl
 open Ssl_normalization
 open SSL_lex
+open Ssl_substitution
+open Ssl_decision
 
 exception Get_a_locvar of locvar
 
@@ -112,10 +114,10 @@ let entail_r4 ( etp : entail_problem ) =
       if  ( Hashtbl.mem etp.right.quant_vars lvar_rel ) && (  Hashtbl.mem etp.left.quant_vars lvar_rel )
       then
 	let fresh_flvar = fresh_locvar_name_from_etp etp in
-	let fresh_lvar = flvar_to_locvar flvar in
-	let locv_left =  (Hashtbl.find etp.left.pure.affectations pvar) in
-	let locv_right =  (Hashtbl.find etp.right.pure.affectations pvar) in
-	let subst_table = Hashtbl.create Ssl.size_hash in
+	let fresh_lvar = flvar_to_locvar fresh_flvar in
+	let locv_left =  pick_first_lvar (Hashtbl.find etp.left.pure.affectations pvar) in
+	let locv_right =  pick_first_lvar (Hashtbl.find etp.right.pure.affectations pvar) in
+	let subst_table = Hashtbl.create SSL_lex.size_hash in
 	Hashtbl.add subst_table locv_left fresh_lvar;
 	Hashtbl.add subst_table locv_right fresh_lvar;
 	let subst = Subst ( subst_table ) in
@@ -124,4 +126,37 @@ let entail_r4 ( etp : entail_problem ) =
 	subst_against_ssl subst etp.right;
 	subst_against_ssl subst etp.left
   in
-  
+  Hashtbl.iter r4_iterator etp.left.pure.affectations 
+
+
+let entail_r2 ( etp : entail_problem ) =
+  let r2_iterator lvar occurence  =
+    if occurence != 1 then ()
+    else
+      match etp.left.space ,  etp.right.space with
+	  (Space (space_table_left) , Space (space_table_right )) ->
+	    if Hashtbl.mem space_table_right lvar then
+	      let occurence_right = Hashtbl.find space_table_right lvar in
+	      (* Both locvar are free vars in both equations *)   
+	      if  (free_var  etp.left lvar ) && ( free_var etp.right lvar ) && (occurence_right == 1)
+	      then
+		begin
+		  Hashtbl.remove space_table_left lvar;
+		  Hashtbl.remove space_table_right lvar
+		end
+	      else ()
+	| (_,_) -> raise Top_heap_exception
+  in
+  try
+    match  etp.left.space with
+	Space( space_table_left ) -> Hashtbl.iter r2_iterator space_table_left
+      | Top_heap -> raise Top_heap_exception
+  with
+      Top_heap_exception -> raise Top_heap_exception
+
+
+
+
+(*
+let entail_r6 (etp : entail_proble ) =
+*)
