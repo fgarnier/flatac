@@ -11,6 +11,7 @@ open Ssl_substitution
 open Ssl_decision
 
 exception Get_a_locvar of locvar
+exception No_more_vars
 
 type entail_problem = {left : ssl_formula ; right : ssl_formula ;}
 type fresh_loc_var = FLVar of string * int
@@ -31,12 +32,21 @@ let fresh_flvar (flvar : fresh_loc_var ) =
 SSL formulae of the entailement problem
 *)
 
+(** returns the set of the existencially quantified locvar of the heap,
+that are not pointed at by any pointer variables. *)
 
-
+let garbage_exists_lvar_heap ( sslf : ssl_formula ) =
+  let ret = Hashtbl.create SSL_lex.size_hash in
+  let garb_iterator lvar _ =
+    if (free_var sslf lvar) && (is_locvar_pointed_at lvar sslf.pure )
+    then Hashtbl.add ret lvar ()
+  in
+    match sslf.space with
+	Space (space_table ) ->
+	  Hashtbl.iter garb_iterator space_table; ret
+      | Top_heap -> ret
   
 
-
-    
 let fresh_locvar_name_from_etp (etp : entail_problem ) =
   let max_varloc_name_lex_fold_affect_table lvar () lvar_param =
     if Ssl.cmp_lex_lvar lvar lvar_param
@@ -157,6 +167,34 @@ let entail_r2 ( etp : entail_problem ) =
 
 
 
-(*
-let entail_r6 (etp : entail_proble ) =
-*)
+
+let entail_r6 (etp : entail_problem ) =
+  let del_garbage_iterator table_g table_d garbage_d lvar () =
+    let occurences = Hashtbl.find table_g lvar in
+      if occurences != 1 then ()
+      else 
+	if Hashtbl.length table_d == 0
+	then raise No_more_vars
+	else 
+	  let lvar_d = pick_first_lvar garbage_d in
+	  let occ_lvard = Hashtbl.find table_d lvar_d in
+	    if occ_lvard == 1 then
+	      begin
+		Hashtbl.remove table_g lvar;
+		Hashtbl.remove table_d lvar_d
+	      end
+	    else ()
+  in
+  let garb_left = garbage_exists_lvar_heap etp.left in
+  let garb_right = garbage_exists_lvar_heap etp.right in
+    match etp.left.space , etp.right.space with
+	(Space (table_g) , Space (table_d)) ->
+	  begin
+	    try
+	      Hashtbl.iter (del_garbage_iterator table_g table_d garb_right) garb_left
+	    with
+		No_more_vars -> ()
+	  end
+      | (_,_) -> ()
+	    
+    

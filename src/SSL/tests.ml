@@ -10,7 +10,7 @@ open Ssl_substitution
 open Ssl_normalization
 open Ssl_decision
 open Debug_printers
-
+open Ssl_entailement
 
 
 let main () =
@@ -71,7 +71,7 @@ let main () =
        pprint_subst form subst_test;
        Format.fprintf  form "%!" ;
      
-       subst_agains_ssl subst_test test_unif_eq;
+       subst_against_ssl subst_test test_unif_eq;
 
        Ssl.pprint_ssl_formula form  test_unif_eq;
        Format.fprintf  form "%!" ;
@@ -127,8 +127,34 @@ let main () =
         Format.fprintf form " \n Formula contains garbage \n %!"
      else
        Format.fprintf form " \n Formula contains no garbage \n %!"   
-   end
-   
+   end;
+
+   let phi_g = create_ssl_f () in
+   let phi_d = create_ssl_f () in
+     and_atomic_affect (Pointsto(PVar("x"),LVar("l1"))) phi_g;
+     and_atomic_affect (Pointsto(PVar("y"),LVar("l1"))) phi_g;
+     add_alloc_cell (LVar("l1")) phi_g;
+     add_alloc_cell (LVar("l2")) phi_g;
+     add_quant_var (LVar("l1")) phi_g;
+     and_atomic_affect (Pointsto(PVar("x"),LVar("m1"))) phi_d;
+     and_atomic_affect (Pointsto(PVar("y"),LVar("m1"))) phi_d;
+     add_alloc_cell (LVar("l1")) phi_d;
+     add_alloc_cell (LVar("m1")) phi_d;
+     add_quant_var (LVar("m1")) phi_d;
+     let entp = {left = phi_g; right = phi_d ;} in
+       Format.fprintf form "Entail problem : \n";
+       Format.fprintf form "Left equation : \n";
+        Ssl.pprint_ssl_formula form entp.left;
+       Format.fprintf form "\n right equation : \n";
+	Ssl.pprint_ssl_formula form entp.right;
+       entail_r4 entp;
+        Format.fprintf form " \n Entail problem after rule r_4: \n";
+	Format.fprintf form "Left equation : \n";
+        Ssl.pprint_ssl_formula form entp.left;
+	 Format.fprintf form "\n right equation : \n";
+	Ssl.pprint_ssl_formula form entp.right;
+	 Format.fprintf form "%!"
+	
    
 
 
