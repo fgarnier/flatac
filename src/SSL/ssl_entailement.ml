@@ -119,22 +119,27 @@ let entail_r4 ( etp : entail_problem ) =
   let r4_iterator pvar loctable  =
     if Hashtbl.mem etp.right.pure.affectations pvar then
     let lvar_rel = Hashtbl.fold varname_folder loctable (LVar("")) in
-    let pvar_right = Hashtbl.find etp.right.pure.affectations pvar in
-    if Hashtbl.mem pvar_right lvar_rel then
-      if  ( Hashtbl.mem etp.right.quant_vars lvar_rel ) && (  Hashtbl.mem etp.left.quant_vars lvar_rel )
+    begin match lvar_rel with 
+	LVar(varname ) ->
+	  Format.printf " lvar_rel = %s \n" varname 
+    end;
+    let pvar_right_table = Hashtbl.find etp.right.pure.affectations pvar in
+    let locv_left =  pick_first_lvar (Hashtbl.find etp.left.pure.affectations pvar) in
+    let locv_right =  pick_first_lvar (pvar_right_table) in
+      if  ( Hashtbl.mem etp.right.quant_vars locv_right ) && (  Hashtbl.mem etp.left.quant_vars locv_left )
       then
+	Format.printf("Entering both lvar_rel quant part \n");
 	let fresh_flvar = fresh_locvar_name_from_etp etp in
 	let fresh_lvar = flvar_to_locvar fresh_flvar in
-	let locv_left =  pick_first_lvar (Hashtbl.find etp.left.pure.affectations pvar) in
-	let locv_right =  pick_first_lvar (Hashtbl.find etp.right.pure.affectations pvar) in
+
 	let subst_table = Hashtbl.create SSL_lex.size_hash in
 	Hashtbl.add subst_table locv_left fresh_lvar;
 	Hashtbl.add subst_table locv_right fresh_lvar;
 	let subst = Subst ( subst_table ) in
 	Hashtbl.remove etp.right.pure.affectations pvar; 
-	Hashtbl.remove etp.left.pure.affectations pvar;
+	Hashtbl.remove etp.left.pure.affectations pvar ;
 	subst_against_ssl subst etp.right;
-	subst_against_ssl subst etp.left
+	subst_against_ssl subst etp.left 
   in
   Hashtbl.iter r4_iterator etp.left.pure.affectations 
 
