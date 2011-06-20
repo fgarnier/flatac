@@ -118,17 +118,16 @@ let pick_first_lvar ( loctable : ( locvar , unit ) t) =
 let entail_r4 ( etp : entail_problem ) =
   let r4_iterator pvar loctable  =
     if Hashtbl.mem etp.right.pure.affectations pvar then
-    let lvar_rel = Hashtbl.fold varname_folder loctable (LVar("")) in
-    begin match lvar_rel with 
+    (*let lvar_rel = Hashtbl.fold varname_folder loctable (LVar("")) in*)
+    (*begin match lvar_rel with 
 	LVar(varname ) ->
 	  Format.printf " lvar_rel = %s \n" varname 
-    end;
+    end;*)
     let pvar_right_table = Hashtbl.find etp.right.pure.affectations pvar in
     let locv_left =  pick_first_lvar (Hashtbl.find etp.left.pure.affectations pvar) in
     let locv_right =  pick_first_lvar (pvar_right_table) in
       if  ( Hashtbl.mem etp.right.quant_vars locv_right ) && (  Hashtbl.mem etp.left.quant_vars locv_left )
       then
-	Format.printf("Entering both lvar_rel quant part \n");
 	let fresh_flvar = fresh_locvar_name_from_etp etp in
 	let fresh_lvar = flvar_to_locvar fresh_flvar in
 

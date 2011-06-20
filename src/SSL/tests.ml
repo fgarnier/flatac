@@ -142,19 +142,33 @@ let main () =
      add_alloc_cell (LVar("m1")) phi_d;
      add_quant_var (LVar("m1")) phi_d;
      let entp = {left = phi_g; right = phi_d ;} in
-       Format.fprintf form "Entail problem : \n";
-       Format.fprintf form "Left equation : \n";
-        Ssl.pprint_ssl_formula form entp.left;
-       Format.fprintf form "\n right equation : \n";
-	Ssl.pprint_ssl_formula form entp.right;
+     Format.fprintf form "********* Entailement problem ********* \n";
+        pprint_entailproblem form entp;
        entail_r4 entp;
-        Format.fprintf form " \n Entail problem after rule r_4: \n";
-	Format.fprintf form "Left equation : \n";
-        Ssl.pprint_ssl_formula form entp.left;
-	 Format.fprintf form "\n right equation : \n";
-	Ssl.pprint_ssl_formula form entp.right;
-	 Format.fprintf form "%!"
-	
+       Format.fprintf form " ************** Entailement problem afer r_4 *****\n";
+       pprint_entailproblem form entp;
+       
+       let phi_g = create_ssl_f () in
+       let phi_d = create_ssl_f () in
+and_atomic_affect (Pointsto(PVar("x"),LVar("l1"))) phi_g;
+       and_atomic_affect (Pointsto(PVar("y"),LVar("l1"))) phi_g;
+       add_alloc_cell (LVar("l1")) phi_g;
+       add_alloc_cell (LVar("l2")) phi_g;
+       add_alloc_cell (LVar("Garbage_1")) phi_g;
+       add_alloc_cell (LVar("Garbage_2")) phi_d;
+       add_quant_var (LVar("l1")) phi_g;
+       and_atomic_affect (Pointsto(PVar("x"),LVar("m1"))) phi_d;
+       and_atomic_affect (Pointsto(PVar("y"),LVar("m1"))) phi_d;
+       add_alloc_cell (LVar("l1")) phi_d;
+       add_alloc_cell (LVar("m1")) phi_d;
+       add_quant_var (LVar("m1")) phi_d;
+       let entp = {left = phi_g; right = phi_d ;} in
+       Format.fprintf form "********* Entailement problem ********* \n";
+       pprint_entailproblem form entp;
+       entail_r2 entp;
+       Format.fprintf form " ************** Entailement problem afer r_2 *****\n";
+       pprint_entailproblem form entp
+       
    
 
 
