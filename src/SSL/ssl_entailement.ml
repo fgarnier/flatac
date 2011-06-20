@@ -172,22 +172,6 @@ let entail_r2 ( etp : entail_problem ) =
 
 
 
-(***********************For debuging purposes. Shall be removed *****)
-
-
-let pprint_debug_lvar_unit_table table =
-  let iterator lvar () =
-    match lvar with 
-	LVar (name ) -> Format.printf "%s;" name
-  in
-  Hashtbl.iter iterator table; 
-  Format.printf "\n %!"
-
-    
-
-(* *)
-
-
 let entail_r6 (etp : entail_problem ) =
   let del_garbage_iterator table_g table_d garbage_d lvar () =
       (*if not ( Hashtbl.mem table_g lvar) then ()*)

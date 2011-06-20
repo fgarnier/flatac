@@ -32,7 +32,7 @@ ssl_decision.cmo :  ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo ss
 	ocamlc $(CFLAGS)  -c ssl_decision.ml
 
 ssl_entailement.cmo : ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo ssl_decision.cmo  ssl_entailement.ml 
-	ocamlc $(CFLAGS) -c ssl_entailement.ml
+	ocamlc $(CFLAGS)  -c ssl_entailement.ml
 
 tests :  ssl_types.cmo ssl.cmo union_find.cmo  ssl_substitution.cmo ssl_normalization.cmo tests.ml debug_printers.cmo ssl_decision.cmo ssl_entailement.cmo 
 	ocamlc -I ./ $(CFLAGS) -o test ssl_types.cmo ssl.cmo debug_printers.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo ssl_decision.cmo ssl_entailement.cmo tests.ml
