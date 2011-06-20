@@ -156,6 +156,8 @@ and_atomic_affect (Pointsto(PVar("x"),LVar("l1"))) phi_g;
        add_alloc_cell (LVar("l2")) phi_g;
        add_alloc_cell (LVar("Garbage_1")) phi_g;
        add_alloc_cell (LVar("Garbage_2")) phi_d;
+        add_alloc_cell (LVar("Garbage_3")) phi_g;
+       add_alloc_cell (LVar("Garbage_3")) phi_d;
        add_quant_var (LVar("l1")) phi_g;
        and_atomic_affect (Pointsto(PVar("x"),LVar("m1"))) phi_d;
        and_atomic_affect (Pointsto(PVar("y"),LVar("m1"))) phi_d;
