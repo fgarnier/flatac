@@ -10,6 +10,7 @@ open SSL_lex
 open Ssl_substitution
 open Ssl_decision
 
+
 exception Get_a_locvar of locvar
 exception No_more_vars
 
@@ -38,7 +39,7 @@ that are not pointed at by any pointer variables. *)
 let garbage_exists_lvar_heap ( sslf : ssl_formula ) =
   let ret = Hashtbl.create SSL_lex.size_hash in
   let garb_iterator lvar _ =
-    if (free_var sslf lvar) && (is_locvar_pointed_at lvar sslf.pure )
+    if (not (free_var sslf lvar)) && (not (is_locvar_pointed_at lvar sslf.pure ))
     then Hashtbl.add ret lvar ()
   in
     match sslf.space with
@@ -171,34 +172,63 @@ let entail_r2 ( etp : entail_problem ) =
 
 
 
+(***********************For debuging purposes. Shall be removed *****)
+
+
+let pprint_debug_lvar_unit_table table =
+  let iterator lvar () =
+    match lvar with 
+	LVar (name ) -> Format.printf "%s;" name
+  in
+  Hashtbl.iter iterator table; 
+  Format.printf "\n %!"
+
+    
+
+(* *)
+
 
 let entail_r6 (etp : entail_problem ) =
   let del_garbage_iterator table_g table_d garbage_d lvar () =
+      (*if not ( Hashtbl.mem table_g lvar) then ()*)
+      (* else *)
     let occurences = Hashtbl.find table_g lvar in
-      if occurences != 1 then ()
+    if occurences != 1 then ()
+    else 
+      if ( Hashtbl.length table_d ) == 0
+      then raise No_more_vars
       else 
-	if Hashtbl.length table_d == 0
-	then raise No_more_vars
-	else 
-	  let lvar_d = pick_first_lvar garbage_d in
-	  let occ_lvard = Hashtbl.find table_d lvar_d in
-	    if occ_lvard == 1 then
-	      begin
-		Hashtbl.remove table_g lvar;
-		Hashtbl.remove table_d lvar_d
-	      end
-	    else ()
+	let lvar_d = pick_first_lvar garbage_d in
+	begin
+	  match lvar_d with 
+	      LVar("") -> ()
+	    | LVar(value) ->
+	      let occ_lvard = Hashtbl.find table_d lvar_d in
+	      if occ_lvard == 1 then
+		begin
+		  Hashtbl.remove table_g lvar;
+		  Hashtbl.remove table_d lvar_d;
+		  Hashtbl.remove garbage_d lvar_d
+		end
+	      else ()
+	end
+	  
   in
   let garb_left = garbage_exists_lvar_heap etp.left in
   let garb_right = garbage_exists_lvar_heap etp.right in
-    match etp.left.space , etp.right.space with
-	(Space (table_g) , Space (table_d)) ->
-	  begin
-	    try
-	      Hashtbl.iter (del_garbage_iterator table_g table_d garb_right) garb_left
-	    with
-		No_more_vars -> ()
-	  end
-      | (_,_) -> ()
-	    
+ 
+  match etp.left.space , etp.right.space with
+      (Space (table_g) , Space (table_d)) ->
+	begin
+	  try
+	    Hashtbl.iter (del_garbage_iterator table_g table_d garb_right) garb_left
+	  with
+	      No_more_vars -> ()
+	end
+    | (_,_) -> ()
+
+
+
+
+
     

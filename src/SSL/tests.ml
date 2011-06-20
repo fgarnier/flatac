@@ -191,9 +191,38 @@ and_atomic_affect (Pointsto(PVar("x"),LVar("l1"))) phi_g;
        pprint_entailproblem form entp;
        entail_r1 entp;
        Format.fprintf form " ************** Entailement problem afer r_1 *****\n";
-       pprint_entailproblem form entp
+       pprint_entailproblem form entp ;
+	 
+    let phi_g = create_ssl_f () in
+       let phi_d = create_ssl_f () in
+and_atomic_affect (Pointsto(PVar("x"),LVar("l1"))) phi_g;
+       and_atomic_affect (Pointsto(PVar("y"),LVar("l1"))) phi_g;
+       add_alloc_cell (LVar("l1")) phi_g;
+       add_alloc_cell (LVar("l2")) phi_g;
+       add_alloc_cell (LVar("Garbage_1")) phi_g;
+       add_alloc_cell (LVar("Garbage_1")) phi_d;
+       add_alloc_cell (LVar("Garbage_2")) phi_g;
+       add_alloc_cell (LVar("Garbage_2")) phi_d;
+       add_alloc_cell (LVar("Garbage_3")) phi_g;
+       add_alloc_cell (LVar("Garbage_3")) phi_d;
+       add_quant_var (LVar("l1")) phi_g;
+       and_atomic_affect (Pointsto(PVar("x"),LVar("m1"))) phi_d;
+       and_atomic_affect (Pointsto(PVar("y"),LVar("m1"))) phi_d;
+       add_alloc_cell (LVar("l1")) phi_d;
+       add_alloc_cell (LVar("m1")) phi_d;
+       add_quant_var (LVar("m1")) phi_d;
+       add_quant_var (LVar("Garbage_1")) phi_g;
+       add_quant_var (LVar("Garbage_1")) phi_d;
+       add_quant_var (LVar("Garbage_2")) phi_g;
+       add_quant_var (LVar("Garbage_2")) phi_d;
+       add_quant_var (LVar("Garbage_3")) phi_d;
        
-   
+       let entp = {left = phi_g; right = phi_d ;} in
+       Format.fprintf form "********* Entailement problem ********* \n";
+       pprint_entailproblem form entp;
+       entail_r6 entp;
+       Format.fprintf form " ************** Entailement problem afer r_6 *****\n";
+       pprint_entailproblem form entp
 
 
 let () = main ()

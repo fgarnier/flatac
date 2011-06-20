@@ -37,3 +37,4 @@ let pprint_entailproblem (out : Format.formatter)(entp : Ssl_entailement.entail_
   Format.fprintf out "\n right equation : \n";
   Ssl.pprint_ssl_formula out entp.right;
   Format.fprintf out " \n%!"
+

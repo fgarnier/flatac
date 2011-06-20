@@ -1,5 +1,5 @@
 
-CFLAGS = -annot
+CFLAGS = -g -annot
 
 COMPINTERFACES =  ssl_types.cmo ssl.cmo
 
@@ -21,7 +21,7 @@ union_find.cmo : ssl_types.cmo ssl.cmo union_find.ml
 ssl_substitution.cmo :  ssl_types.cmo ssl.cmo union_find.cmo 
 	ocamlc $(CFLAGS)  -c ssl_substitution.ml 
 
-debug_printers.cmo : ssl_types.cmo ssl.cmo debug_printers.ml
+debug_printers.cmo : ssl_types.cmo ssl.cmo  ssl_entailement.cmo debug_printers.ml
 	ocamlc $(CFLAGS)  -c debug_printers.ml
 
 
@@ -31,7 +31,7 @@ ssl_normalization.cmo : ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cm
 ssl_decision.cmo :  ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo
 	ocamlc $(CFLAGS)  -c ssl_decision.ml
 
-ssl_entailement.cmo : ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo ssl_decision.cmo ssl_entailement.ml 
+ssl_entailement.cmo : ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo ssl_decision.cmo  ssl_entailement.ml 
 	ocamlc $(CFLAGS) -c ssl_entailement.ml
 
 tests :  ssl_types.cmo ssl.cmo union_find.cmo  ssl_substitution.cmo ssl_normalization.cmo tests.ml debug_printers.cmo ssl_decision.cmo ssl_entailement.cmo 

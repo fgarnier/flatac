@@ -45,6 +45,7 @@ let is_locvar_pointed_at (lvar :locvar ) ( puref : pure_formula ) =
     then raise Lvar_present
     else ()
   in
+  if Hashtbl.length puref.affectations == 0 then false else
     try
       Hashtbl.iter aff_iterator puref.affectations; false
     with
