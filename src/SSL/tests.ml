@@ -248,7 +248,7 @@ and_atomic_affect (Pointsto(PVar("x"),LVar("l1"))) phi_g;
        add_quant_var (LVar("Garbage_2")) phi_g;
        add_quant_var (LVar("Garbage_2")) phi_d;
        add_quant_var (LVar("Garbage_3")) phi_d;
-       
+       add_quant_var (LVar("Garbage_3")) phi_g;
        let entp = {left = phi_g; right = phi_d ;} in
        Format.fprintf form "********* Entailement problem ********* \n";
        pprint_entailproblem form entp;
