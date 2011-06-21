@@ -34,8 +34,11 @@ ssl_decision.cmo :  ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo ss
 ssl_entailement.cmo : ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo ssl_decision.cmo  ssl_entailement.ml 
 	ocamlc $(CFLAGS)  -c ssl_entailement.ml
 
-tests :  ssl_types.cmo ssl.cmo union_find.cmo  ssl_substitution.cmo ssl_normalization.cmo tests.ml debug_printers.cmo ssl_decision.cmo ssl_entailement.cmo 
-	ocamlc -I ./ $(CFLAGS) -o test ssl_types.cmo ssl.cmo debug_printers.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo ssl_decision.cmo ssl_entailement.cmo tests.ml
+ssl_biabduction.cmo : ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo ssl_decision.cmo  ssl_entailement.cmo ssl_biabduction.ml
+	ocamlc $(CFLAGS)  -c ssl_biabduction.ml
+
+tests :  ssl_types.cmo ssl.cmo union_find.cmo  ssl_substitution.cmo ssl_normalization.cmo tests.ml debug_printers.cmo ssl_decision.cmo ssl_entailement.cmo ssl_biabduction.cmo
+	ocamlc -I ./ $(CFLAGS) -o test ssl_types.cmo ssl.cmo debug_printers.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo ssl_decision.cmo ssl_entailement.cmo ssl_biabduction.cmo tests.ml
 
 
 html_api : ssl_types.cmo ssl.cmo union_find.cmo  ssl_substitution.cmo  ssl_normalization.cmo ssl_decision.cmo ssl_entailement.cmo debug_printers.cmo 
