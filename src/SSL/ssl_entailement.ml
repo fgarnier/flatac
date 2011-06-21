@@ -141,7 +141,9 @@ let entail_r4 ( etp : entail_problem ) =
 	subst_against_ssl subst etp.right;
 	subst_against_ssl subst etp.left 
   in
-  Hashtbl.iter r4_iterator etp.left.pure.affectations 
+  Hashtbl.iter r4_iterator etp.left.pure.affectations;
+  var_elim etp.left;
+  var_elim etp.right
 
 
 let entail_r2 ( etp : entail_problem ) =
@@ -205,7 +207,7 @@ let entail_r6 (etp : entail_problem ) =
       (Space (table_g) , Space (table_d)) ->
 	begin
 	  try
-	    Hashtbl.iter (del_garbage_iterator table_g table_d garb_right) garb_left
+	    Hashtbl.iter (del_garbage_iterator table_g table_d garb_right) garb_left; Ssl_normalization.var_elim etp.left; Ssl_normalization.var_elim etp.right
 	  with
 	      No_more_vars -> ()
 	end
