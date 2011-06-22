@@ -156,7 +156,7 @@ and_atomic_affect (Pointsto(PVar("x"),LVar("l1"))) phi_g;
        add_alloc_cell (LVar("l2")) phi_g;
        add_alloc_cell (LVar("Garbage_1")) phi_g;
        add_alloc_cell (LVar("Garbage_2")) phi_d;
-        add_alloc_cell (LVar("Garbage_3")) phi_g;
+       add_alloc_cell (LVar("Garbage_3")) phi_g;
        add_alloc_cell (LVar("Garbage_3")) phi_d;
        add_quant_var (LVar("l1")) phi_g;
        and_atomic_affect (Pointsto(PVar("x"),LVar("m1"))) phi_d;
@@ -243,6 +243,7 @@ and_atomic_affect (Pointsto(PVar("x"),LVar("l1"))) phi_g;
        add_alloc_cell (LVar("l1")) phi_d;
        
        add_quant_var (LVar("m1")) phi_d;
+       add_quant_var  (LVar("mhohljkh")) phi_d;
        add_quant_var (LVar("Garbage_1")) phi_g;
        add_quant_var (LVar("Garbage_1")) phi_d;
        add_quant_var (LVar("Garbage_2")) phi_g;
@@ -252,9 +253,38 @@ and_atomic_affect (Pointsto(PVar("x"),LVar("l1"))) phi_g;
        let entp = {left = phi_g; right = phi_d ;} in
        Format.fprintf form "********* Entailement problem ********* \n";
        pprint_entailproblem form entp;
-       biabduction entp;
+       let biabduct_res = biabduction entp in
        Format.fprintf form "********* Entailement problem After biabduction ********* \n";
-       pprint_entailproblem form entp
+        Format.fprintf form "********* Enunciate after renaming ********* \n";
+       pprint_entailproblem form biabduct_res.enunciate;
+        Format.fprintf form "********* Frame and antiframe ********* \n";
+       pprint_entailproblem form biabduct_res.frame_antiframe;
+        let phi_g = create_ssl_f () in
+       let phi_d = create_ssl_f () in
+       and_atomic_affect (Pointsto(PVar("x"),LVar("l1"))) phi_g;
+       and_atomic_affect (Pointsto(PVar("y"),LVar("l2"))) phi_g;
+       add_alloc_cell (LVar("l1")) phi_g;
+       add_alloc_cell (LVar("l2")) phi_g;
+       add_quant_var (LVar("l1")) phi_g;
+       and_atomic_affect (Pointsto(PVar("x"),LVar("m1"))) phi_d;
+       and_atomic_affect (Pointsto(PVar("y"),LVar("l1"))) phi_d;
+       add_alloc_cell (LVar("l1")) phi_d;
+       add_quant_var (LVar("m1")) phi_d;
+       
+       let entp = {left = phi_g; right = phi_d ;} in
+       Format.fprintf form "********* Entailement problem ********* \n";
+       pprint_entailproblem form entp;
+       let biabduct_res = biabduction entp in
+       Format.fprintf form "********* Entailement problem After biabduction ********* \n";
+        Format.fprintf form "********* Enunciate after renaming ********* \n";
+       pprint_entailproblem form biabduct_res.enunciate;
+        Format.fprintf form "********* Frame and antiframe ********* \n";
+       pprint_entailproblem form biabduct_res.frame_antiframe
+
+
+
+       
+       
        
 
 

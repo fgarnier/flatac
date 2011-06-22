@@ -17,9 +17,8 @@ a SSL formula *)
 
 let var_elim ( sslf : ssl_formula ) =
   let iter_elim lvar () =
-    if (ssl_contains_locvar lvar sslf  ) == false
-    then Hashtbl.remove sslf.quant_vars lvar
-    else ()
+    if (ssl_contains_locvar lvar sslf  ) then ()
+    else Hashtbl.remove sslf.quant_vars lvar
   in
   Hashtbl.iter iter_elim sslf.quant_vars
     

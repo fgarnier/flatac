@@ -95,7 +95,7 @@ let entail_r1  ( etp : entail_problem ) =
     let lvar_rel = Hashtbl.fold varname_folder loctable (LVar("")) in
     let pvar_right = Hashtbl.find etp.right.pure.affectations pvar in
     if Hashtbl.mem pvar_right lvar_rel then
-      if  ( not ( Hashtbl.mem etp.right.quant_vars lvar_rel )  ) &&  ( not ( Hashtbl.mem etp.left.quant_vars lvar_rel ) = false ) 
+      if  ( not ( Hashtbl.mem etp.right.quant_vars lvar_rel )  ) &&  ( not ( Hashtbl.mem etp.left.quant_vars lvar_rel ) ) 
       then
 	begin
 	  Hashtbl.remove etp.right.pure.affectations pvar; 
