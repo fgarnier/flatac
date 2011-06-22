@@ -16,6 +16,11 @@ open Ssl_types.SSL_lex
 (* Keys : Domain of the substitutionm and values are the range *)
 type loc_subst =  Subst of (locvar , locvar ) t
 
+(** Creation of the identity substitution*)
+let subst_id =
+  let table = Hashtbl.create size_hash in
+  Subst (table)
+
 let eq_class_inversor  (repres : SSL_lex.locvar ) (lvars : SSL_lex.locvar )
     () (tble : (locvar , locvar) t) =
   Hashtbl.add tble lvars repres; tble 
@@ -122,6 +127,29 @@ let subst_against_space (subst : loc_subst ) (sform : space_formula ) =
   
     
    subst_against_space subst sformula.space; subst_against_affectation subst sformula.pure.affectations; sformula.pure.equations <- (subst_against_eqlist subst sformula.pure.equations )
+   
+
+(** compose_subst phi psi computes phi \odot psi. *)
+ let compose_subst (subst_1 : loc_subst)(subst_2 : loc_subst) =
+   let ret_table = Hashtbl.create size_hash in
+   match subst_1 , subst_2 with
+       ( Subst (table_1) , Subst (table_2) ) ->
+	 let subst_2_iterator lvarg lvard =
+	   if Hashtbl.mem table_1 lvard then
+	     Hashtbl.add ret_table lvarg lvard 
+	   else 
+	     let succs =  Hashtbl.find table_1 lvard in
+	     Hashtbl.add ret_table lvarg succs 
+	 in
+	 let subst_1_iterator lvarg lvard =
+	   if Hashtbl.mem ret_table lvarg then ()
+	   else Hashtbl.add ret_table lvarg lvard
+	 in
+	 Hashtbl.iter subst_2_iterator table_2;
+	 Hashtbl.iter subst_1_iterator table_1;
+	 Subst(ret_table)
+   
+   
    
    
 

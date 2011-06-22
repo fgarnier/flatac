@@ -144,7 +144,7 @@ let main () =
      let entp = {left = phi_g; right = phi_d ;} in
      Format.fprintf form "********* Entailement problem ********* \n";
         pprint_entailproblem form entp;
-       entail_r4 entp;
+       entail_r4 None entp;
        Format.fprintf form " ************** Entailement problem afer r_4 *****\n";
        pprint_entailproblem form entp;
        

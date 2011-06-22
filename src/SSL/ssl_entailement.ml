@@ -116,7 +116,12 @@ let pick_first_lvar ( loctable : ( locvar , unit ) t) =
       Get_a_locvar ( lvar ) -> lvar
  
 
-let entail_r4 ( etp : entail_problem ) =
+(** The first optional parameter can be used to compute the composition
+of all the substitutions used to reduce the entailement problem. This
+information is needed by the biabduction procedure.
+ *)
+
+let entail_r4 ( subst_ref : (loc_subst ref) option )( etp : entail_problem ) =
   let r4_iterator pvar loctable  =
     if Hashtbl.mem etp.right.pure.affectations pvar then
     (*let lvar_rel = Hashtbl.fold varname_folder loctable (LVar("")) in*)
@@ -139,7 +144,11 @@ let entail_r4 ( etp : entail_problem ) =
 	Hashtbl.remove etp.right.pure.affectations pvar; 
 	Hashtbl.remove etp.left.pure.affectations pvar ;
 	subst_against_ssl subst etp.right;
-	subst_against_ssl subst etp.left 
+	subst_against_ssl subst etp.left;
+	match subst_ref with 
+	    Some ( overall_subst ) -> 
+	      overall_subst := (Ssl_substitution.compose_subst subst !overall_subst )
+	  | None -> ()
   in
   Hashtbl.iter r4_iterator etp.left.pure.affectations;
   var_elim etp.left;
