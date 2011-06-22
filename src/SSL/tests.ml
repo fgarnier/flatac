@@ -279,7 +279,14 @@ and_atomic_affect (Pointsto(PVar("x"),LVar("l1"))) phi_g;
         Format.fprintf form "********* Enunciate after renaming ********* \n";
        pprint_entailproblem form biabduct_res.enunciate;
         Format.fprintf form "********* Frame and antiframe ********* \n";
-       pprint_entailproblem form biabduct_res.frame_antiframe
+       pprint_entailproblem form biabduct_res.frame_antiframe;
+
+       let etpf = { 
+	 left = (star_sep biabduct_res.enunciate.left biabduct_res.frame_antiframe.right ) ;
+	 right = (star_sep biabduct_res.enunciate.right biabduct_res.frame_antiframe.left ) 
+       } in
+	 pprint_entailproblem form etpf
+	 
 
 
 
