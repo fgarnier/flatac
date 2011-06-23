@@ -11,6 +11,8 @@ for questions or comment, write to florent-dot-garnier!at!imag^dot^fr
 
 *)
 
+exception FVar_found
+
 type eqclass = {
   mutable repres : locvar ;      (*Member representing the class*)
   members : ( locvar , unit ) t; (*All members but the representant*)
@@ -26,15 +28,26 @@ exception Non_membership (* An equivalence class, or an equivalence
 			    class referenced by its representant does 
 			    not belong to a partition.*)
 
+(** returns true if one locvar of cl is a f.v. of sslf, false otherwise *)
+
+let eqclass_exists_free_var  (cl : eqclass) (sslf : ssl_formula) =
+  let eqclass_iterator lvar () =
+    if (Hashtbl.mem sslf.quant_vars lvar) then ()
+    else raise FVar_found 
+  in
+    try	  
+      Hashtbl.iter eqclass_iterator cl.members; false
+    with
+	FVar_found -> true
 
 
+(** Is lvar the representant of an equivalence class of part ?*)
 let is_rep_of_a_class (lvar : locvar ) ( part : partition ) =
   match part with
       Partition ( table ) -> Hashtbl.mem table lvar 
 
-(** find of an element returns the key of the class of this element
+(** Finds of an element returns the key of the class of this element
 or an exception if this element does'nt belong to  *)
-
 let find_repr (lvar : locvar )( part : partition ) =
   let ret = ref (LVar("")) in 
   let eqclass_iterator ( key  :  locvar) ( iterande : locvar ) ( eqc : eqclass) =
@@ -53,7 +66,7 @@ let find_repr (lvar : locvar )( part : partition ) =
 	  Hashtbl.iter (eqclass_iterator lvar ) table ; !ret
 	  end
 
-	  (* Return the valuet LVar("") if no equivalence
+	  (** Return the valuet LVar("") if no equivalence
 	  class has been found *)
 
 
@@ -62,7 +75,6 @@ let find_repr (lvar : locvar )( part : partition ) =
 
 (** find_class raises  Element_not_found  if lvar is not an element
 in the partition *)
-
 let find_class (lvar : locvar ) ( part : partition ) =
   let repres = find_repr lvar part in
   match repres with 
@@ -75,11 +87,10 @@ let find_class (lvar : locvar ) ( part : partition ) =
 		 return value.*)
 
 
-(** Merges two equivances classes of the partition part into a single one *)
-(** copies all elements of eqmin in the class of eqmax, then removes eqmin
+(** Merges two equivances classes of the partition part into a single one.
+Copies all elements of eqmin in the class of eqmax, then removes eqmin
 from the partition. One must ensure that eqmax and eqmin are both
 member of part. The function union gurantee that while calling to union_wrt_order.*)
-
 let merge_wrt_order (eqmax : eqclass ) (eqmin : eqclass ) (part : partition) =
   let copy_iterator lvar () =
     Hashtbl.add eqmax.members lvar ()
@@ -90,8 +101,7 @@ let merge_wrt_order (eqmax : eqclass ) (eqmin : eqclass ) (part : partition) =
       Partition(tablepart) ->
 	Hashtbl.remove tablepart (eqmin.repres)
 
-(* Merges two classes of the partition part, into a single one *)	
-
+(** Merges two classes of the partition part, into a single one *)	
 let merge_class (eq_1: eqclass) (eq_2: eqclass) (part : partition ) = 
  
   if  ((is_rep_of_a_class eq_1.repres part ) && (is_rep_of_a_class eq_2.repres part   ) ) then begin
@@ -102,7 +112,8 @@ let merge_class (eq_1: eqclass) (eq_2: eqclass) (part : partition ) =
   end
   else raise Non_membership
 
-
+(** Merges the equivalence classes of each member of the equations,
+if they are indeed distinct.*)
 let merge_from_equality (equality : SSL_lex.eq )(part : partition ) =
   match equality with 
       Eqloc(l1,l2)->
@@ -137,14 +148,10 @@ already belong to equivalence classe,
  In this case, one shall merge both classes, whenever those
 two classes are different.
  
- *)
-
-(* the third parameter is required, because "part" is a hastable that
+ the third parameter is required, because "part" is a hastable that
 contains all equivalence class, which are indexed by their
 representant. Any change of a representant of a class must
 be propagated within this index. *)
-
-
 let add_element_to_class ( lvar : SSL_lex.locvar )( ecl : eqclass )( part : partition) =
   if (( cmp_lex_lvar lvar  ecl.repres ) == true) 
   then
@@ -166,7 +173,7 @@ let add_element_to_class ( lvar : SSL_lex.locvar )( ecl : eqclass )( part : part
   else
     Hashtbl.add ecl.members lvar () 
   
-    
+(** Adds a new partition to the partition to the eqclass*)    
 let add_class_to_partition (ecl : eqclass )( part : partition ) =
   match part with
       Partition ( table_part ) ->
@@ -178,7 +185,7 @@ let add_class_to_partition (ecl : eqclass )( part : partition ) =
 (********************************************************)
 
 
-
+(** Adds an equality and modifies the partition accordingly.*)
 let add_eq_to_partition (part : partition) (equation : SSL_lex.eq) =
   let eqsort = ref equation in
   match equation with 
@@ -212,7 +219,7 @@ let add_eq_to_partition (part : partition) (equation : SSL_lex.eq) =
 	    | ( _ , _ ) -> merge_wrt_order class_max class_min part
 	end
 	 
-      
+(** Creates a partition from a list of equations*)      
 let eqlist_to_partition( eqlist : SSL_lex.eq list ) =
   let order_elem (s : SSL_lex.eq) =
     match s with 
@@ -231,7 +238,7 @@ let eqlist_to_partition( eqlist : SSL_lex.eq list ) =
   part
   
    
-
+(** Prints an equation class into a string.*)
 let eqclass_to_string (eq : eqclass) =
   let member_to_string (lvar: locvar ) () (res : string ) =
     match lvar with 
@@ -240,6 +247,7 @@ let eqclass_to_string (eq : eqclass) =
   match eq.repres with 
       LVar(rep_name) -> "Class of : ["^ rep_name ^"] : " ^( Hashtbl.fold member_to_string eq.members  "") 
 
+(** Prints a partition into a string.*)
 let part_to_string (part : partition ) =
   match part with 
       Partition(part_table) ->
@@ -249,7 +257,7 @@ let part_to_string (part : partition ) =
 	in
 	  ( " Partition : \n"^( Hashtbl.fold part_fold part_table "" ))
 
-
+(** Pretty prints a partition into a formatter.*)
 let pprint_partition (out : Format.formatter ) (part : partition) =
   match part with 
       Partition ( part_table ) ->

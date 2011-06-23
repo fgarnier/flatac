@@ -10,6 +10,7 @@ open Ssl
 open Format
 open List
 open Ssl_substitution
+open Ssl_entailement
 
 (** Printing a list of equations *)
 
@@ -30,5 +31,10 @@ let subst_to_string ( subst : Ssl_substitution.loc_subst ) =
 let pprint_subst (out : Format.formatter ) ( subst :Ssl_substitution.loc_subst   ) =
   Format.fprintf out "%s" ( subst_to_string subst)
   
-
+let pprint_entailproblem (out : Format.formatter)(entp : Ssl_entailement.entail_problem) =
+  Format.fprintf out "Left equation : \n";
+  Ssl.pprint_ssl_formula out entp.left;
+  Format.fprintf out "\n right equation : \n";
+  Ssl.pprint_ssl_formula out entp.right;
+  Format.fprintf out " \n%!"
 
