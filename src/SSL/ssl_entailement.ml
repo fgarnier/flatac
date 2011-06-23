@@ -155,6 +155,19 @@ let entail_r4 ( subst_ref : (loc_subst ref) option )( etp : entail_problem ) =
   var_elim etp.right
 
 
+
+let entail_ptnil ( etp : entail_problem ) =
+  (* one iterates on rhs equation*)
+  let ptnil_iterator pvar () =
+    if Hashtbl.mem etp.left.pure.ptnil pvar 
+    then 
+      begin
+	Hashtbl.remove etp.left.pure.ptnil pvar;
+	Hashtbl.remove etp.right.pure.ptnil pvar
+      end
+  in
+  Hashtbl.iter ptnil_iterator etp.right.pure.ptnil
+
 let entail_r2 ( etp : entail_problem ) =
   let r2_iterator lvar occurence  =
     if occurence != 1 then ()
@@ -232,7 +245,8 @@ let ssl_entailement (etp : entail_problem ) =
   entail_r4 None etp;
   entail_r6 etp;
   entail_r1 etp;
-  entail_r2 etp
+  entail_r2 etp;
+  entail_ptnil etp
 
 
 

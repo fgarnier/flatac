@@ -23,6 +23,8 @@ let main () =
   and_atomic_affect (Pointsto(PVar("y"),LVar("l2"))) phi_g;
   add_alloc_cell (LVar("l1")) phi_g;
   add_alloc_cell (LVar("l2")) phi_g;
+  and_atomic_ptnil (Pointsnil(PVar("z"))) phi_g;
+ (* and_atomic_ptnil (Pointsnil(PVar("z"))) phi_d;*)
   add_quant_var (LVar("l1")) phi_g;
   and_atomic_affect (Pointsto(PVar("x"),LVar("m1"))) phi_d;
   and_atomic_affect (Pointsto(PVar("y"),LVar("l2"))) phi_d;
@@ -54,9 +56,7 @@ let main () =
 
 
 
-       
-       
-       
+           
 
 
 let () = main ()
