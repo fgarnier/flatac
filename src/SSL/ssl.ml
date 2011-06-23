@@ -98,7 +98,6 @@ let cmp_lex_lvar (g : locvar ) (d : locvar ) =
  
 
  (* Called by del_tautologies. Shall not appear in the Interface. *)
-
   let rec _del_tautologies ( lg : eq list )( ld : eq list) =
     match lg , ld  with 
 	(x, []) -> x
@@ -109,8 +108,6 @@ let cmp_lex_lvar (g : locvar ) (d : locvar ) =
 
 
  (** This fuction is used to remove trivial equalities, such as l1=l1*)
-	 
-
   let del_tautologies (l : eq list ) =
       _del_tautologies [] l
 
@@ -124,7 +121,7 @@ let cmp_lex_lvar (g : locvar ) (d : locvar ) =
 (**********************************************************************)
 
  (* Not for the interface. Called by subst_eqlist*)
- 
+
   let subst_loc (xv : locvar)(yv : locvar)( equality : eq) =
    match xv , yv with
     (LVar(x),LVar(y)) ->
@@ -140,7 +137,6 @@ let cmp_lex_lvar (g : locvar ) (d : locvar ) =
 	          
  (** Use this to replace all instance of xv by yv in list lst. 
 Shall appear in the interface file. *)
-
   let subst_eqlist (xv : locvar) (yv :locvar ) (lst : eq list ) =
     List.map (subst_loc xv yv ) lst
 
@@ -161,11 +157,9 @@ Shall appear in the interface file. *)
     Hashtbl.iter (subst_loc_affect_ite iterand_table xv yv ) iterand_table
 
   
-
+(* To be added in the interface file .*)
 (**  Performs the substitution of all location variables which name equals to xv by renaming
 them yv. This is done by iterating on tabl and by iterating on each subtables .*)
-(* To be added in the interface file .*)
-
   let subst_lvar_affect (xv : locvar) (yv :locvar) ( tabl : ( ( ptvar, (locvar, unit )t ) t) ) = 
     Hashtbl.iter ( inter_tabl_ptvar_loc xv yv  ) tabl
 
@@ -259,7 +253,7 @@ them yv. This is done by iterating on tabl and by iterating on each subtables .*
     fprintf out "Set to nil : [";
     print_pointstonil out puref.ptnil; fprintf  out "]"
 
-
+(** Prints a ssl formula into a formater*)
   let pprint_ssl_formula (out: Format.formatter)(sslf :  ssl_formula) =
     if ( ((Hashtbl.length sslf.pure.affectations)
 	   + (Hashtbl.length sslf.pure.ptnil )
@@ -291,7 +285,7 @@ _ Computing the separation of two ssl formulae
  *)
 
 (**************************************************************************)
-
+(** Adds lv to the set of quantified vars*)
   let add_quant_var ( lv : locvar )(sslf :  SSL_lex.ssl_formula) =
     if (Hashtbl.mem sslf.quant_vars lv ) == false
     then Hashtbl.add  sslf.quant_vars lv () 
@@ -300,7 +294,6 @@ _ Computing the separation of two ssl formulae
 (** Adds an equality to the  SSL formula and ensures that the left
 member of the equation is greater that the right one, w.r.t. the 
 order relation order *)
-
   let  and_atomic_eq (equ : SSL_lex.eq )( sslf : SSL_lex.ssl_formula) =
     match equ with  
 	Eqloc(LVar(lg),LVar(ld)) ->
@@ -309,6 +302,7 @@ order relation order *)
 		sslf.pure.equations <- (equ::sslf.pure.equations) (*It's damned convenient, isn't it ?*)
 	  else 	sslf.pure.equations <- (equ::sslf.pure.equations)
 
+(** Adds the affectation to pure part of sslf*)
   let and_atomic_affect (equ : SSL_lex.affect)(sslf : SSL_lex.ssl_formula) =
     match equ with 
 	Pointsto ( ptr, lv ) ->
@@ -323,7 +317,8 @@ order relation order *)
 	    Hashtbl.add sslf.pure.affectations ptr tble (*And add this
 							 new this table associated
 to the key ptr*)
-       
+ 
+ (** Adds the affectation to NIL to the pure part of sslf*)     
   let and_atomic_ptnil (ptnil : SSL_lex.affectnil )( sslf :SSL_lex.ssl_formula )=
     match ptnil with 
 	Pointsnil ( ptr ) ->
@@ -331,7 +326,7 @@ to the key ptr*)
 	  then Hashtbl.add sslf.pure.ptnil ptr ()
 	    (*One adds x->nil iff it is not yet present*)
 	  
-
+(** Adds one more instance of lvar in the heap*)
   let add_alloc_occurences_space ( lvar : locvar) (occurences : int ) 
       (sform :  space_formula) =
     match sform with
@@ -346,6 +341,7 @@ to the key ptr*)
 	else
 	  Hashtbl.add table_occurences lvar occurences
 
+(**  Adds one Alloc(lvar) on the heap*)
   let add_alloc_cell (lvar : locvar ) (sslf : SSL_lex.ssl_formula ) =
     match sslf.space with 
         Space ( space_f ) -> if ( (Hashtbl.mem space_f lvar ) == true )
@@ -374,7 +370,7 @@ to the key ptr*)
       | Top_heap -> ()
 
 
-
+(** Computes a new pure ssl formula which is equals to fd and fg*)
   let and_pure_ssl (fg : ssl_formula )( fd : ssl_formula ) =
     let res =  create_ssl_f () in
     let affect_iterator  (pvar: ptvar ) (loctable :((locvar , unit ) t)) =
@@ -398,7 +394,8 @@ formulae *)
   (*let space_sep (spaceg : space_formula) (spaced : space_formula) =*)
     
     
-      
+ (** Computes a new formula that is equals to the star operation of
+the two SSL formulae.*)     
   let star_sep (fg : ssl_formula )( fd : ssl_formula ) =
      let res = and_pure_ssl fg fd in
     match  fg.space , fd.space with 
@@ -447,7 +444,6 @@ algorithm. *)
 
 (** Checks whether a location variable appears in the  affectation part 
 of the pure part if a SSL formula*)
-
   let pure_contains_locvar ( lvar : locvar )( pformula : pure_formula ) =
  
     let fold_pure ( lvar : locvar ) _ (table_locvar : ( locvar , unit ) t ) _ =
@@ -464,7 +460,6 @@ of the pure part if a SSL formula*)
 	  
 (** This function checks whether a location variable is listed in the 
 spacial part of a SSL formula *)
-  
   let space_contains_locvar (lvar : locvar )( spacef : space_formula) =
     match spacef with
 	Space ( loctable ) ->
@@ -475,7 +470,6 @@ spacial part of a SSL formula *)
  
 (** This function evaluates to true if the location variable is existancially
 quantified in the formula, false in any other cases *)
-
   let is_exists_quantified (lvar : locvar ) (sslf : ssl_formula ) =
     Hashtbl.mem sslf.quant_vars lvar
     

@@ -21,11 +21,14 @@ struct
   let size_hash = 7 (* Initial size of a hastable *)
   let order_relation = P.order_relation
   let equals_to = P.equals_to
-  type ptvar = PVar of string
-  type locvar = LVar of string
-  type eq = Eqloc of locvar * locvar
-  type affect = Pointsto of ptvar * locvar
-  type affectnil = Pointsnil of ptvar
+
+  type ptvar = PVar of string  (** Type of a pointer variable*)
+  type locvar = LVar of string (** Type of a location variable*)
+  type eq = Eqloc of locvar * locvar (** Describes an equality between two 
+				     locations variables*)
+  type affect = Pointsto of ptvar * locvar (** Pvar points to a locvar*)
+  type affectnil = Pointsnil of ptvar (** A Pvar points to the constant 
+					  NIL address*)
   
   type pure_formula = { 
     mutable equations: eq  list; 
@@ -48,12 +51,12 @@ struct
 
 
 (** A ssl formula consists in a set --possibly empty-- of existentially
-quantified variables, a pure and a spatial part.*)
-  
+quantified variables, a pure and a spatial part.*)  
   type ssl_formula = {
-    quant_vars:(locvar , unit ) t;
-    pure : pure_formula;
-    mutable space : space_formula; 
+    quant_vars:(locvar , unit ) t; (** Set of the existentially quantified
+				   locations variables*)
+    pure : pure_formula; (** The pure part of the SSL formula*)
+    mutable space : space_formula;  (**  The spacial part of the formula*)
   }
   
 

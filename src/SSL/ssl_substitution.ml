@@ -26,6 +26,8 @@ let eq_class_inversor  (repres : SSL_lex.locvar ) (lvars : SSL_lex.locvar )
   Hashtbl.add tble lvars repres; tble 
 
 
+(** Computes a substitution from a partition. Used in the normalization
+algorithm. I.e : Equations -> Theories -> substitutions -> Normalization*)
 let subst_from_partition (part : Union_find.partition ) =
   let inverse_image_folder (locv : SSL_lex.locvar) (eq_c : Union_find.eqclass)
       (table_subst : (locvar , locvar) t) =
@@ -57,7 +59,7 @@ let subst_against_quant_vars ( subst : loc_subst )( loctable : (locvar , unit) t
  
 (* This fonction shall not appear in the ml-interface file *)
 
-
+(** Applies a substitution against an equatio*)
 let map_subst_list_eq (subst : loc_subst) ( equation : eq ) =
   let ret_eq = ref equation in
   match subst , equation with 
@@ -75,7 +77,7 @@ let map_subst_list_eq (subst : loc_subst) ( equation : eq ) =
 	    ret_eq := Ssl.subst_loc xd xd' !ret_eq  
 	end;
 	!ret_eq
-
+(** Maps the function above on an equation list.*)
 let subst_against_eqlist (subst : loc_subst )( eqlist : eq list ) =
   List.map (map_subst_list_eq subst) eqlist
   
@@ -138,14 +140,14 @@ let subst_against_space (subst : loc_subst ) (sform : space_formula ) =
       
   }*)
 
-(** Perfomrs the same operation as above, but *)
+(** Performs the same operation as above, but *)
  let subst_against_ssl (subst : loc_subst)(sformula : ssl_formula ) =
   
     
    subst_against_space subst sformula.space; subst_against_affectation subst sformula.pure.affectations; sformula.pure.equations <- (subst_against_eqlist subst sformula.pure.equations ) ; subst_against_quant_vars subst sformula.quant_vars
    
 
-(** compose_subst phi psi computes phi \odot psi. *)
+(** Compose_subst phi psi computes phi \odot psi. *)
  let compose_subst (subst_1 : loc_subst)(subst_2 : loc_subst) =
    let ret_table = Hashtbl.create size_hash in
    match subst_1 , subst_2 with

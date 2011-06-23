@@ -13,6 +13,14 @@ enunciate : entail_problem ;
 frame_antiframe : entail_problem ;
 }
 
+(** Takes as input an entailement problem and returns the
+a biabduction_sol structures such that :
+
+ _ enunciate is a entailement problem which both formulae are
+logically equivalent to the correspondig etp formulae.
+_ frame_antiframe contains two formulae such that :
+     enunciate.left *  frame_antiframe.right |- enunciate.right *  frame_antiframe.left \leadsto (true|Emp) |- (true |Emp) iff the biabdcution problem is SAT. 
+*)
 let biabduction (etp : entail_problem ) =
   let overall_subst =  ref (subst_id) in
   normalize_ssl etp.left;

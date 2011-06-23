@@ -12,7 +12,8 @@ exception No_locvars_left
 exception Lvar_present
 exception Not_pointed
 
-
+(** This function returns true if lvar isn't a bounded var
+of sslf.*)
 let free_var (sslf : ssl_formula)(lvar : locvar ) =
   not ( Hashtbl.mem sslf.quant_vars lvar )
 
@@ -38,7 +39,6 @@ let sat_ssl (sslf : ssl_formula ) =
 
 (** A formula is garbage if it contains an allocated cell which
 base address is not pointed by a pointer variable*)
-
 let is_locvar_pointed_at (lvar :locvar ) ( puref : pure_formula ) =
   let aff_iterator _ table_lvar =
     if (Hashtbl.mem table_lvar lvar )
@@ -51,7 +51,7 @@ let is_locvar_pointed_at (lvar :locvar ) ( puref : pure_formula ) =
     with
 	Lvar_present -> true
 	  
-
+(** Returns true if the heap contains some garbage.*)
 let garbage_ssl (sslf : ssl_formula ) =
   let space_iterator lvar _ =
     if (is_locvar_pointed_at lvar sslf.pure ) == false then

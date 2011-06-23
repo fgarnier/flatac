@@ -14,19 +14,19 @@ open Ssl_substitution
 
 (** Removal of uninstanciated existancially quantified variables of
 a SSL formula *)
-
 let var_elim ( sslf : ssl_formula ) =
   let iter_elim lvar () =
     if (ssl_contains_locvar lvar sslf  ) then ()
     else Hashtbl.remove sslf.quant_vars lvar
   in
   Hashtbl.iter iter_elim sslf.quant_vars
-    
+   
+(** Deletes all equations of a formula*) 
 let theories_cleanup (sslf : ssl_formula ) =
   sslf.pure.equations <- []
  
 
-(* qelim removes all represent of class from the set of existentially
+(** qelim removes all represent of class from the set of existentially
 quantified vars, if at least one of the members of the class
 is a free variable.
 
@@ -34,7 +34,6 @@ The case of others variable is not dealt with in this function, as
 we latter eliminate all variables that doesn't appear inside the
 equations, from this set.
 *)
-
 let q_elim (sslf : ssl_formula ) ( part : Union_find.partition ) =
 
   let q_exists_iterator part_table lvar () =
@@ -49,11 +48,8 @@ let q_elim (sslf : ssl_formula ) ( part : Union_find.partition ) =
 	Hashtbl.iter (q_exists_iterator part_table) sslf.quant_vars
 	
 
-(** TODO : One need to elimate the existentially quantified vars that are
-equals to free vars.
-
-Done. Need to chech it works well.
-
+(**
+Puts the formula in normal form.
  *)
 let normalize_ssl ( sslf : ssl_formula ) =
   let theories = (Hashtbl.fold all_aff_fold_to_theory sslf.pure.affectations []) in
