@@ -226,4 +226,16 @@ let entail_r6 (etp : entail_problem ) =
 
 
 
+let ssl_entailement (etp : entail_problem ) =
+  normalize_ssl etp.left;
+  normalize_ssl etp.right;
+  entail_r4 None etp;
+  entail_r6 etp;
+  entail_r1 etp;
+  entail_r2 etp
+
+
+
+
+
     

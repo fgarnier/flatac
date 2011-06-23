@@ -38,7 +38,23 @@ let subst_from_partition (part : Union_find.partition ) =
 
 
 
-
+(** Applies a substitution to the set of existancialy quantified vars
+of a  SSL formula*)
+let subst_against_quant_vars ( subst : loc_subst )( loctable : (locvar , unit) t) =
+  let map_qvars subst_table lvar () =
+    if Hashtbl.mem subst_table lvar then
+      begin
+	Hashtbl.remove loctable lvar;
+	let nv_varname = Hashtbl.find subst_table lvar in
+	if not (Hashtbl.mem loctable nv_varname )
+	then  Hashtbl.add loctable nv_varname ()
+	else ()
+      end
+  in
+  match subst with
+      Subst ( subst_table ) ->
+	Hashtbl.iter (map_qvars subst_table ) loctable 
+ 
 (* This fonction shall not appear in the ml-interface file *)
 
 
@@ -126,7 +142,7 @@ let subst_against_space (subst : loc_subst ) (sform : space_formula ) =
  let subst_against_ssl (subst : loc_subst)(sformula : ssl_formula ) =
   
     
-   subst_against_space subst sformula.space; subst_against_affectation subst sformula.pure.affectations; sformula.pure.equations <- (subst_against_eqlist subst sformula.pure.equations )
+   subst_against_space subst sformula.space; subst_against_affectation subst sformula.pure.affectations; sformula.pure.equations <- (subst_against_eqlist subst sformula.pure.equations ) ; subst_against_quant_vars subst sformula.quant_vars
    
 
 (** compose_subst phi psi computes phi \odot psi. *)
