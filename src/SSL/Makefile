@@ -48,5 +48,7 @@ html_api : ssl_types.cmo ssl.cmo union_find.cmo  ssl_substitution.cmo  ssl_norma
 
 clean : 
 	rm -f *.o *.cmo *.cmi > /dev/null ; \
+	rm test > /dev/null ; \
+	rm test_biabduction > /dev/null; \
 	cd api &&\
-	rm -f *.html
+	rm -f *.html\
