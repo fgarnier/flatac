@@ -16,7 +16,7 @@ open Ssl_entailement
 open Ssl_biabduction
 
 let main () =   	 
-  let taille_test = 256000 in
+  let taille_test = 102400 in
   let form = formatter_of_out_channel Pervasives.stdout in
   let phi_g = create_ssl_f () in
   let phi_d = create_ssl_f () in

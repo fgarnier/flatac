@@ -50,7 +50,7 @@ html_api : ssl_types.cmo ssl.cmo union_find.cmo  ssl_substitution.cmo  ssl_norma
 	ocamldoc -html -d ./api ssl_types.ml ssl.ml union_find.ml debug_printers.ml ssl_substitution.ml ssl_normalization.ml ssl_entailement.ml ssl_decision.ml ssl_biabduction.ml
 
 clean : 
-	rm -f *.o *.cmo *.cmi > /dev/null ; \
+	rm -f *.o *.cmo *.cmi *.annot > /dev/null ; \
 	rm test > /dev/null ; \
 	rm test_biabduction > /dev/null; \
 	cd api &&\
