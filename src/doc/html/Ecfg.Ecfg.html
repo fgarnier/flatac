@@ -44,6 +44,9 @@
 </table>
 <hr width="100%">
 <pre><span id="TYPEsemanticAbstraction"><span class="keyword">type</span> <code class="type"></code>semanticAbstraction</span> = <code class="type">A.t</code> </pre>
+<div class="info">
+A.t represents the data type of the abstraction.<br>
+</div>
 
 <br><code><span id="TYPEsemantic"><span class="keyword">type</span> <code class="type"></code>semantic</span> = </code><table class="typetable">
 <tr>
@@ -93,10 +96,18 @@
 
 
 <pre><span name="TYPEcfgVisitor"><span class="keyword">class</span> <a href="Ecfg.Ecfg.cfgVisitor-c.html">cfgVisitor</a></span> : <code class="type">Project.t -> </code><code class="code">object</code> <a href="Ecfg.Ecfg.cfgVisitor-c.html">..</a> <code class="code">end</code></pre><div class="info">
-This visitor visits global function and trigger the build 
-	 of a new Cfg for each function
+This visitor handle global function and trigger the build 
+	 of a new Cfg for each function.
 </div>
 <pre><span id="VALcomputeECFGs"><span class="keyword">val</span> <a href="code_VALEcfg.Ecfg.computeECFGs.html">computeECFGs</a></span> : <code class="type">Project.t -><br>       Cil_types.file -><br>       <a href="Ecfg.Ecfg.html#TYPEsemanticAbstraction">semanticAbstraction</a> <a href="SemAndLogicFrontEnd.semAndLogicFrontEnd-c.html">SemAndLogicFrontEnd.semAndLogicFrontEnd</a> -><br>       <a href="Ecfg.Ecfg.html#TYPEeCFG">eCFG</a> list</code></pre><div class="info">
-Compute the eCFG and fill the structures<br>
+Compute the eCFG and fill the structures.<br>
 </div>
-<pre><span id="VALvisiteCFGs"><span class="keyword">val</span> <a href="code_VALEcfg.Ecfg.visiteCFGs.html">visiteCFGs</a></span> : <code class="type"><a href="Ecfg.Ecfg.html#TYPEeCFG">eCFG</a> list -><br>       (string -> 'a) -><br>       (string -> unit) -> (string -> <a href="Ecfg.Ecfg.html#TYPEeCFGNode">eCFGNode</a> -> unit) -> unit</code></pre><pre><span id="VALstmtToString"><span class="keyword">val</span> <a href="code_VALEcfg.Ecfg.stmtToString.html">stmtToString</a></span> : <code class="type">Cil_types.stmt -> string</code></pre><pre><span id="VALprintDot"><span class="keyword">val</span> <a href="code_VALEcfg.Ecfg.printDot.html">printDot</a></span> : <code class="type">Format.formatter -><br>       < pretty : <a href="Ecfg.Ecfg.html#TYPEsemanticAbstraction">semanticAbstraction</a> -> string; .. > -><br>       'a -> <a href="Ecfg.Ecfg.html#TYPEeCFGNode">eCFGNode</a> -> unit</code></pre><pre><span id="VALexportDot"><span class="keyword">val</span> <a href="code_VALEcfg.Ecfg.exportDot.html">exportDot</a></span> : <code class="type"><a href="Ecfg.Ecfg.html#TYPEeCFG">eCFG</a> list -><br>       < pretty : <a href="Ecfg.Ecfg.html#TYPEsemanticAbstraction">semanticAbstraction</a> -> string; .. > -> unit</code></pre></body></html>
+<pre><span id="VALvisiteCFGs"><span class="keyword">val</span> <a href="code_VALEcfg.Ecfg.visiteCFGs.html">visiteCFGs</a></span> : <code class="type"><a href="Ecfg.Ecfg.html#TYPEeCFG">eCFG</a> list -><br>       (string -> 'a) -><br>       (string -> unit) -> (string -> <a href="Ecfg.Ecfg.html#TYPEeCFGNode">eCFGNode</a> -> unit) -> unit</code></pre><div class="info">
+An eCFG visitor with a callback function. You must use this method if you 
+	 want to gather eCFG datas.<br>
+</div>
+<pre><span id="VALstmtToString"><span class="keyword">val</span> <a href="code_VALEcfg.Ecfg.stmtToString.html">stmtToString</a></span> : <code class="type">Cil_types.stmt -> string</code></pre><pre><span id="VALprintDot"><span class="keyword">val</span> <a href="code_VALEcfg.Ecfg.printDot.html">printDot</a></span> : <code class="type">Format.formatter -><br>       < pretty : <a href="Ecfg.Ecfg.html#TYPEsemanticAbstraction">semanticAbstraction</a> -> string; .. > -><br>       'a -> <a href="Ecfg.Ecfg.html#TYPEeCFGNode">eCFGNode</a> -> unit</code></pre><pre><span id="VALexportDot"><span class="keyword">val</span> <a href="code_VALEcfg.Ecfg.exportDot.html">exportDot</a></span> : <code class="type"><a href="Ecfg.Ecfg.html#TYPEeCFG">eCFG</a> list -><br>       string -> < pretty : <a href="Ecfg.Ecfg.html#TYPEsemanticAbstraction">semanticAbstraction</a> -> string; .. > -> unit</code></pre><div class="info">
+This function export the given eCFG in dot format into the given file.
+	 If the file does not exist, it is created. It is overwritten otherwise.<br>
+</div>
+</body></html>

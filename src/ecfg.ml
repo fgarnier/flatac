@@ -1,16 +1,11 @@
-(*
-	Maxime Gaudin - VERIMAG 2011 
-
-	** THIS MODULE IS A PART OF FLATA-C, DEVELOPED AT VERIMAG (2011)
-
+(**
 	This module contains the definition of an eCFG and implements a generic algorithm to
 	fill it with the correct Abstract Interpretation and counter automata label.
 
-	For any question mail us to :
-	- maxime.gaudin@imag.fr
-	- florent.garnier@imag.fr
+	Maxime Gaudin - VERIMAG 2011 
+	** THIS MODULE IS A PART OF FLATA-C, DEVELOPED AT VERIMAG (2011)
+	For any question mail us to  maxime.gaudin [AT] imag [DOT] fr or florent.garnier [AT] imag [DOT] fr
 *)
-
 open Self
 open Cil
 open Cil_types
@@ -30,6 +25,7 @@ open Buffer
  *)
 module Ecfg = functor ( A : sig type t end ) ->
 struct
+	(** A.t represents the data type of the abstraction. *)
 	type semanticAbstraction = A.t
 	type semantic = Semantic of stmt * semanticAbstraction
 
@@ -39,8 +35,8 @@ struct
 	| CGraph of string * (eCFGNode list)
 	| EmptyGraph
 
-	(** This visitor visits global function and trigger the build 
-	 of a new Cfg for each function *)
+	(** This visitor handle global function and trigger the build 
+	 of a new Cfg for each function. *)
 	class cfgVisitor ( prj : Project.t ) 
 	= object(self)
 	inherit Visitor.generic_frama_c_visitor (prj) (Cil.inplace_visit())
@@ -91,13 +87,15 @@ struct
 		method getECFGs = _eCFGs
 	end
 
-	(** Compute the eCFG and fill the structures *)
+	(** Compute the eCFG and fill the structures. *)
 	let computeECFGs ( prj : Project.t ) ( ast : Cil_types.file ) ( frontEnd : A.t semAndLogicFrontEnd ) = 
 		let cfgVisitorInst = new cfgVisitor ( prj ) in	
 			cfgVisitorInst#setFrontEnd frontEnd; 
 			visitFramacFile ( cfgVisitorInst :> frama_c_copy ) ast;
 			cfgVisitorInst#getECFGs 
 
+	(** An eCFG visitor with a callback function. You must use this method if you 
+	 want to gather eCFG datas. *)
 	let visiteCFGs eCFGs preCallback postCallback callback =
 		List.iter 	( fun e ->
 					match e with
@@ -149,9 +147,11 @@ struct
 			List.iter ( fun (Edge(toUid, counterValue))  -> 
 				  	Format.fprintf foc "\t\t%d -> %d [label=\"%s\"]\n\n" uid toUid counterValue
 				  ) listOfEdges
-	
-	let exportDot eCFGs frontEnd= 
-		let oc = open_out "output.dot" in
+
+	(** This function export the given eCFG in dot format into the given file.
+	 If the file does not exist, it is created. It is overwritten otherwise. *)
+	let exportDot eCFGs filename frontEnd= 
+		let oc = open_out filename in
 		let foc = formatter_of_out_channel( oc ) in
 			Format.fprintf foc "digraph G {\n";
 				visiteCFGs eCFGs 

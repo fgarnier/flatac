@@ -14,8 +14,8 @@
 <link title="Ecfg" rel="Chapter" href="Ecfg.html"><title>Ecfg.Ecfg.exportDot</title>
 </head>
 <body>
-<code class="code"><span class="keyword">let</span>&nbsp;exportDot&nbsp;eCFGs&nbsp;frontEnd=&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;oc&nbsp;=&nbsp;open_out&nbsp;<span class="string">"output.dot"</span>&nbsp;<span class="keyword">in</span><br>
+<code class="code"><span class="keyword">let</span>&nbsp;exportDot&nbsp;eCFGs&nbsp;filename&nbsp;frontEnd=&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;oc&nbsp;=&nbsp;open_out&nbsp;filename&nbsp;<span class="keyword">in</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">let</span>&nbsp;foc&nbsp;=&nbsp;formatter_of_out_channel(&nbsp;oc&nbsp;)&nbsp;<span class="keyword">in</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Format</span>.fprintf&nbsp;foc&nbsp;<span class="string">"digraph&nbsp;G&nbsp;{\n"</span>;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;visiteCFGs&nbsp;eCFGs&nbsp;<br>

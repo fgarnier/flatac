@@ -22,14 +22,12 @@
 <center><h1>Class virtual <a href="type_SemAndLogicFrontEnd.semAndLogicFrontEnd.html">SemAndLogicFrontEnd.semAndLogicFrontEnd</a></h1></center>
 <br>
 <pre><span name="TYPEsemAndLogicFrontEnd"><span class="keyword">class</span> <span class="keyword">virtual</span> <code class="type">['a]</code> semAndLogicFrontEnd</span> : <code class="type"></code><code class="code">object</code> <a href="SemAndLogicFrontEnd.semAndLogicFrontEnd-c.html">..</a> <code class="code">end</code></pre><hr width="100%">
-<pre><span id="METHODgetEntryPointAbstraction"><span class="keyword">method</span> <span class="keyword">virtual</span> <a href="code_METHODSemAndLogicFrontEnd.semAndLogicFrontEnd.getEntryPointAbstraction.html">getEntryPointAbstraction</a></span> : <code class="type">unit -> 'a</code></pre><div class="info">
-Returns the abstract interpretation of the entry point<br>
-</div>
-<pre><span id="METHODgetEntryPointPrecondition"><span class="keyword">method</span> <span class="keyword">virtual</span> <a href="code_METHODSemAndLogicFrontEnd.semAndLogicFrontEnd.getEntryPointPrecondition.html">getEntryPointPrecondition</a></span> : <code class="type">unit -> <a href="SemAndLogicFrontEnd.html#TYPEcounterExpression">counterExpression</a></code></pre><pre><span id="METHODisErrorState"><span class="keyword">method</span> <span class="keyword">virtual</span> <a href="code_METHODSemAndLogicFrontEnd.semAndLogicFrontEnd.isErrorState.html">isErrorState</a></span> : <code class="type">'a -> bool</code></pre><div class="info">
-Returns true if the given state is an error state<br>
+<pre><span id="METHODgetEntryPointAbstraction"><span class="keyword">method</span> <span class="keyword">virtual</span> <a href="code_METHODSemAndLogicFrontEnd.semAndLogicFrontEnd.getEntryPointAbstraction.html">getEntryPointAbstraction</a></span> : <code class="type">unit -> 'a</code></pre><pre><span id="METHODgetEntryPointPrecondition"><span class="keyword">method</span> <span class="keyword">virtual</span> <a href="code_METHODSemAndLogicFrontEnd.semAndLogicFrontEnd.getEntryPointPrecondition.html">getEntryPointPrecondition</a></span> : <code class="type">unit -> <a href="SemAndLogicFrontEnd.html#TYPEcounterExpression">counterExpression</a></code></pre><pre><span id="METHODisErrorState"><span class="keyword">method</span> <span class="keyword">virtual</span> <a href="code_METHODSemAndLogicFrontEnd.semAndLogicFrontEnd.isErrorState.html">isErrorState</a></span> : <code class="type">'a -> bool</code></pre><div class="info">
+Returns true if the given state is an error state.<br>
 </div>
 <pre><span id="METHODnext"><span class="keyword">method</span> <span class="keyword">virtual</span> <a href="code_METHODSemAndLogicFrontEnd.semAndLogicFrontEnd.next.html">next</a></span> : <code class="type">'a -><br>       <a href="SemAndLogicFrontEnd.html#TYPEcounterExpression">counterExpression</a> -><br>       Cil_types.stmtkind -> 'a * <a href="SemAndLogicFrontEnd.html#TYPEcounterExpression">counterExpression</a></code></pre><div class="info">
 Returns a the next couple of abstract interpretation and counter automata label based 
-	 on the current abstraction, the current counter, and the statement kind<br>
+	 on the current abstraction, the current counter, and the statement kind. 
+	 The process must be markovian though.<br>
 </div>
 <pre><span id="METHODpretty"><span class="keyword">method</span> <span class="keyword">virtual</span> <a href="code_METHODSemAndLogicFrontEnd.semAndLogicFrontEnd.pretty.html">pretty</a></span> : <code class="type">'a -> string</code></pre></body></html>
