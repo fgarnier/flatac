@@ -27,7 +27,7 @@ let biabduction (etp : entail_problem ) =
   normalize_ssl etp.right;
   let enun = { left = (Ssl.copy etp.left) ; right =( Ssl.copy etp.right) } in
   entail_r4 (Some(overall_subst)) etp;
-  Format.printf "Debug :  %s \n %!" ( subst_to_string !overall_subst );
+  (*Format.printf "Debug :  %s \n %!" ( subst_to_string !overall_subst );*)
   entail_r6 etp;
   entail_r1 etp;
   entail_r2 etp;
