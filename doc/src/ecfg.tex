@@ -1,11 +1,10 @@
 The \gls{eCFG} is the internal way for \flatac to represent the \tsl{Frama-C} \gls{CFG} plus our own datas such as :
 \begin{itemize}
-	\item Abstract interpretation
-	\item Counter automata label
-	\item Value analysis
-	\item Statement
+	\item Statements and their abstraction,
+	\item each transition counter automata guard,
+	\item value analysis (still todo).
 \end{itemize}
 
 \image{img/ecfg}{1}
 
-In principle, you \tbf{do not have to access directly to the \gls{eCFG}}. Indeed, the \gls{eCFG} module encapsulate every algorithms and data structures to avoid complexity. That's why the (only) thing to do is to define a new \gls{ls} by coding a \tsl{front-end} as you'll see in next section.
+In principle, you \tbf{do not have to access directly to the \gls{eCFG}}. Indeed, the \gls{eCFG} module encapsulate every algorithms and data structures to hide complexity. That's why the (only) thing to do is to define a new \gls{ls} by coding a \tsl{front-end} as you'll see in next section.

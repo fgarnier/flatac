@@ -7,23 +7,3 @@ The architecture of \flatac was made to be as generic as possible. One of our go
 \begin{center}\input{img/FrontEnd.tex}\end{center}
 
 The \tsl{front-end} acts as an interface between the \gls{eCFG} algorithms and data structures, this way, even if the methods of the \tsl{front-end} are constrained, you can choose the way to implement your own \tsl{\gls{ls}}.
-
-\subsubsection{Front-end}
-Let's study in detail all the methods of the \tsl{front-end}. Let \ttt{'a} be the parameter of the \tsl{front-end} class :
-
-\code[Caml]{getEntryPointAbstraction}{getEntryPointAbstraction_sig.ml}
-This method provides the abstract interpretation of the entry point, which is the thus, the state of the \tsl{eCFG}'s root.
-
-\code[Caml]{getEntryPointPrecondition}{getEntryPointPrecondition_sig.ml}
-This method provides the precondition of the entry point, which is the thus, the precondition of the \tsl{eCFG}'s root.
-
-\code[Caml]{next}{next_sig.ml}
-Return the couple of (Abstraction, CounterAutomataExpression) of the next state.
-
-\code[Caml]{isErrorState}{isErrorState_sig.ml}
-This method returns true if the given abstraction is an error state. It returns false otherwise.
-
-\code[Caml]{Pretty}{pretty_sig.ml}
-This methods convert the given abstract interpretation to displayable string. It's mainly used for debugging.
-
-
