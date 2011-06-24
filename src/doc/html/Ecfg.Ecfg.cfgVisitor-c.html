@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="Up" href="Ecfg.Ecfg.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of class attributes" rel=Appendix href="index_attributes.html">
+<link title="Index of class methods" rel=Appendix href="index_methods.html">
+<link title="Index of classes" rel=Appendix href="index_classes.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Self" rel="Chapter" href="Self.html">
+<link title="SemAndLogicFrontEnd" rel="Chapter" href="SemAndLogicFrontEnd.html">
+<link title="TrueLogicFrontEnd" rel="Chapter" href="TrueLogicFrontEnd.html">
+<link title="Ecfg" rel="Chapter" href="Ecfg.html"><title>Ecfg.Ecfg.cfgVisitor</title>
+</head>
+<body>
+<div class="navbar">&nbsp;<a href="Ecfg.Ecfg.html">Up</a>
+&nbsp;</div>
+<center><h1>Class <a href="type_Ecfg.Ecfg.cfgVisitor.html">Ecfg.Ecfg.cfgVisitor</a></h1></center>
+<br>
+<pre><span name="TYPEcfgVisitor"><span class="keyword">class</span> cfgVisitor</span> : <code class="type">Project.t -> </code><code class="code">object</code> <a href="Ecfg.Ecfg.cfgVisitor-c.html">..</a> <code class="code">end</code></pre>This visitor visits global function and trigger the build 
+	 of a new Cfg for each function<br>
+<b>Inherits</b><ul>
+<li><code class="code">Visitor.generic_frama_c_visitor</code></li>
+</ul>
+<hr width="100%">
+<pre><span id="ATTis_computed"><span class="keyword">val</span> <span class="keyword">mutable</span> <a href="code_ATTEcfg.Ecfg.cfgVisitor.is_computed.html">is_computed</a></span> : <code class="type">bool</code></pre><pre><span id="ATT_frontEnd"><span class="keyword">val</span> <span class="keyword">mutable</span> <a href="code_ATTEcfg.Ecfg.cfgVisitor._frontEnd.html">_frontEnd</a></span> : <code class="type"><a href="Ecfg.Ecfg.html#TYPEsemanticAbstraction">semanticAbstraction</a> <a href="SemAndLogicFrontEnd.semAndLogicFrontEnd-c.html">SemAndLogicFrontEnd.semAndLogicFrontEnd</a> option</code></pre><pre><span id="ATT_eCFGs"><span class="keyword">val</span> <span class="keyword">mutable</span> <a href="code_ATTEcfg.Ecfg.cfgVisitor._eCFGs.html">_eCFGs</a></span> : <code class="type"><a href="Ecfg.Ecfg.html#TYPEeCFG">eCFG</a> list</code></pre><pre><span id="ATT_currentECFG"><span class="keyword">val</span> <span class="keyword">mutable</span> <a href="code_ATTEcfg.Ecfg.cfgVisitor._currentECFG.html">_currentECFG</a></span> : <code class="type"><a href="Ecfg.Ecfg.html#TYPEeCFGNode">eCFGNode</a> list</code></pre><pre><span id="ATT_visitedNodes"><span class="keyword">val</span> <span class="keyword">mutable</span> <a href="code_ATTEcfg.Ecfg.cfgVisitor._visitedNodes.html">_visitedNodes</a></span> : <code class="type">(int * <a href="Ecfg.Ecfg.html#TYPEsemanticAbstraction">semanticAbstraction</a>) list</code></pre><pre><span id="METHOD_getUID"><span class="keyword">method</span> <a href="code_METHODEcfg.Ecfg.cfgVisitor._getUID.html">_getUID</a></span> : <code class="type">int -><br>       <a href="Ecfg.Ecfg.html#TYPEsemanticAbstraction">semanticAbstraction</a> -><br>       (int * <a href="Ecfg.Ecfg.html#TYPEsemanticAbstraction">semanticAbstraction</a>) list -> int -> int</code></pre><pre><span id="METHODgetUID"><span class="keyword">method</span> <a href="code_METHODEcfg.Ecfg.cfgVisitor.getUID.html">getUID</a></span> : <code class="type">int -> <a href="Ecfg.Ecfg.html#TYPEsemanticAbstraction">semanticAbstraction</a> -> int</code></pre><pre><span id="METHOD_buildNodeList"><span class="keyword">method</span> <a href="code_METHODEcfg.Ecfg.cfgVisitor._buildNodeList.html">_buildNodeList</a></span> : <code class="type">Cil_types.stmt -><br>       <a href="Ecfg.Ecfg.html#TYPEsemanticAbstraction">semanticAbstraction</a> -><br>       <a href="SemAndLogicFrontEnd.html#TYPEcounterExpression">SemAndLogicFrontEnd.counterExpression</a> -><br>       <a href="Ecfg.Ecfg.html#TYPEsemanticAbstraction">semanticAbstraction</a> <a href="SemAndLogicFrontEnd.semAndLogicFrontEnd-c.html">SemAndLogicFrontEnd.semAndLogicFrontEnd</a> -> int</code></pre><pre><span id="METHODbuildNodeList"><span class="keyword">method</span> <a href="code_METHODEcfg.Ecfg.cfgVisitor.buildNodeList.html">buildNodeList</a></span> : <code class="type">Cil_types.fundec -><br>       <a href="Ecfg.Ecfg.html#TYPEsemanticAbstraction">semanticAbstraction</a> <a href="SemAndLogicFrontEnd.semAndLogicFrontEnd-c.html">SemAndLogicFrontEnd.semAndLogicFrontEnd</a> -><br>       <a href="Ecfg.Ecfg.html#TYPEeCFG">eCFG</a></code></pre><pre><span id="METHODvglob_aux"><span class="keyword">method</span> <a href="code_METHODEcfg.Ecfg.cfgVisitor.vglob_aux.html">vglob_aux</a></span> : <code class="type">Cil_types.global -> Cil_types.global list Cil.visitAction</code></pre><pre><span id="METHODsetFrontEnd"><span class="keyword">method</span> <a href="code_METHODEcfg.Ecfg.cfgVisitor.setFrontEnd.html">setFrontEnd</a></span> : <code class="type"><a href="Ecfg.Ecfg.html#TYPEsemanticAbstraction">semanticAbstraction</a> <a href="SemAndLogicFrontEnd.semAndLogicFrontEnd-c.html">SemAndLogicFrontEnd.semAndLogicFrontEnd</a> -> unit</code></pre><pre><span id="METHODgetECFGs"><span class="keyword">method</span> <a href="code_METHODEcfg.Ecfg.cfgVisitor.getECFGs.html">getECFGs</a></span> : <code class="type"><a href="Ecfg.Ecfg.html#TYPEeCFG">eCFG</a> list</code></pre></body></html>

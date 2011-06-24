@@ -147,7 +147,7 @@ struct
 			Format.fprintf foc "\t\t%d [label=\"%d/%d\\nCode : %s\\nAbstraction : %s\"]\n" 
 				uid uid statement.sid (stmtToString statement) (frontEnd#pretty abstraction);
 			List.iter ( fun (Edge(toUid, counterValue))  -> 
-				  	Format.fprintf foc "\t\t%d -> %d [label=\"Counter : %s\"]\n\n" uid toUid counterValue
+				  	Format.fprintf foc "\t\t%d -> %d [label=\"%s\"]\n\n" uid toUid counterValue
 				  ) listOfEdges
 	
 	let exportDot eCFGs frontEnd= 
