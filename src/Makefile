@@ -32,22 +32,22 @@ FRAMAC_LIBDIR :=$(shell frama-c.byte -print-libpath)
 SOURCES_FILES   := ast_goodies.ml cautomata.ml c2cautomatanalys.ml flatac_vistor.ml intermediate_language.ml flata_language.ml flatac_plugin.ml
 F_SRC:= ~/FRAMAC
 
-PLUGIN_NAME	= Flatac
-PLUGIN_CMO	= self semAndLogicFrontEnd trueLogicFrontEnd ecfg flatac_ep 
+PLUGIN_NAME= Flatac
+PLUGIN_CMO= self semAndLogicFrontEnd trueLogicFrontEnd ecfg flatac_ep 
 
 include $(FRAMAC_SHARE)/Makefile.dynamic
 
 FRAMA_C_DOC_DIR=-I /usr/lib/ocaml \
-	-I $(F_SRC)/src/kernel \
-	-I $(F_SRC)/src/project \
-	-I $(F_SRC)/cil/ocamlutil \
-	-I $(F_SRC)/cil/src/logic \
-	-I $(F_SRC)/cil/src \
-	-I $(F_SRC)/cil/src/ext \
-	-I $(F_SRC)/src/lib \
-	-I $(F_SRC)/src/lib/fc
+			-I $(F_SRC)/src/kernel \
+			-I $(F_SRC)/src/project \
+			-I $(F_SRC)/cil/ocamlutil \
+			-I $(F_SRC)/cil/src/logic \
+			-I $(F_SRC)/cil/src \
+			-I $(F_SRC)/cil/src/ext \
+			-I $(F_SRC)/src/lib \
+			-I $(F_SRC)/src/lib/fc
 
-DOC_OPTIONS= -g $(F_SRC)/doc/code/docgen.cmo
+			DOC_OPTIONS= -g $(F_SRC)/doc/code/docgen.cmo
 
 STDLIB_FILES:=printf list string 
 STDLIB_FILES:=$(patsubst %, $(OCAMLLIB)/%.mli, $(STDLIB_FILES))
