@@ -46,6 +46,12 @@ let main () =
     left = (star_sep biabduct_res.enunciate.left biabduct_res.frame_antiframe.right ) ;
     right = (star_sep biabduct_res.enunciate.right biabduct_res.frame_antiframe.left ) 
   } in
+  begin
+    if sat_ssl etpf.left && sat_ssl etpf.right then
+      Format.fprintf form " Biabduction is satifiable \n %!"
+    else
+      Format.fprintf form " Biabduction is unsat \n %!"
+  end;
   pprint_entailproblem form etpf;
   Format.fprintf form " computing the entailement of the previous entailement \n";
   ssl_entailement etpf;
