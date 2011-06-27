@@ -257,7 +257,8 @@ them yv. This is done by iterating on tabl and by iterating on each subtables .*
   let pprint_ssl_formula (out: Format.formatter)(sslf :  ssl_formula) =
     if ( ((Hashtbl.length sslf.pure.affectations)
 	   + (Hashtbl.length sslf.pure.ptnil )
-	     +(List.length sslf.pure.equations ))>0
+	     +(List.length sslf.pure.equations )
+	 +(Hashtbl.length sslf.quant_vars ))>0
     )
     then 
       begin
