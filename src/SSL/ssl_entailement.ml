@@ -199,26 +199,26 @@ let entail_r2 ( etp : entail_problem ) =
 
 
 let entail_r6 (etp : entail_problem ) =
-  let del_garbage_iterator table_g table_d garbage_d lvar () =
-      (*if not ( Hashtbl.mem table_g lvar) then ()*)
-      (* else *)
-    let occurences = Hashtbl.find table_g lvar in
+(*  Used to iterate on the garbage variables of the right h.s. of the 
+entailement.*)
+  let del_garbage_iterator table_g table_d garbage_g lvar () =
+    let occurences = Hashtbl.find table_d lvar in
     if occurences != 1 then ()
     else 
-      if ( Hashtbl.length table_d ) == 0
+      if ( Hashtbl.length table_g ) == 0
       then raise No_more_vars
       else 
-	let lvar_d = pick_first_lvar garbage_d in
+	let lvar_g = pick_first_lvar garbage_g in
 	begin
-	  match lvar_d with 
+	  match lvar_g with 
 	      LVar("") -> ()
 	    | LVar(value) ->
-	      let occ_lvard = Hashtbl.find table_d lvar_d in
+	      let occ_lvard = Hashtbl.find table_g lvar_g in
 	      if occ_lvard == 1 then
 		begin
-		  Hashtbl.remove table_g lvar;
-		  Hashtbl.remove table_d lvar_d;
-		  Hashtbl.remove garbage_d lvar_d
+		  Hashtbl.remove table_d lvar;
+		  Hashtbl.remove table_g lvar_g;
+		  Hashtbl.remove garbage_g lvar_g
 		end
 	      else ()
 	end
@@ -231,7 +231,7 @@ let entail_r6 (etp : entail_problem ) =
       (Space (table_g) , Space (table_d)) ->
 	begin
 	  try
-	    Hashtbl.iter (del_garbage_iterator table_g table_d garb_right) garb_left; Ssl_normalization.var_elim etp.left; Ssl_normalization.var_elim etp.right
+	    Hashtbl.iter (del_garbage_iterator table_g table_d garb_left) garb_right (* Ssl_normalization.var_elim etp.left; Ssl_normalization.var_elim etp.right*)
 	  with
 	      No_more_vars -> ()
 	end
