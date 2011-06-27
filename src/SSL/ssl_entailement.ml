@@ -51,8 +51,9 @@ that are not pointed at by any pointer variables. *)
 let garbage_exists_lvar_heap ( sslf : ssl_formula ) =
   let ret = Hashtbl.create SSL_lex.size_hash in
   let garb_iterator lvar _ =
-    if (not (free_var sslf lvar)) && (not (is_locvar_pointed_at lvar sslf.pure ))
-    then Hashtbl.add ret lvar ()
+    if (is_exists_quantified lvar sslf) && (not (is_locvar_pointed_at lvar sslf.pure )) && space_contains_locvar lvar sslf.space
+    then
+      Hashtbl.add ret lvar ()
   in
     match sslf.space with
 	Space (space_table ) ->

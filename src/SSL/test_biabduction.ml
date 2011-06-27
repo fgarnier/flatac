@@ -53,11 +53,13 @@ let main () =
   pprint_entailproblem form biabduct_res.enunciate;
   Format.fprintf form "********* Frame and antiframe ********* \n";
   pprint_entailproblem form biabduct_res.frame_antiframe;
+  var_elim  biabduct_res.frame_antiframe.left;
+  var_elim  biabduct_res.frame_antiframe.right;
     let left_garbage =  garbage_exists_lvar_heap biabduct_res.frame_antiframe.left in
   let right_garbage = garbage_exists_lvar_heap biabduct_res.frame_antiframe.right in
   pprint_garbage form left_garbage;
    Format.fprintf form "Garbage of rhds \n";
-   pprint_garbage form left_garbage;
+   pprint_garbage form right_garbage;
 
   Format.fprintf form " Star of Frame * left and Antiframe * right \n";
   let etpf = { 

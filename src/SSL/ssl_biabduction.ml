@@ -39,7 +39,7 @@ let biabduction (etp : entail_problem ) =
   entail_r1 etp;
   entail_r2 etp;
   entail_ptnil etp;
- (* entail_r6 etp; *) 
+  (*entail_r6 etp; *)  
   
    let ret = {
     enunciate = enun;

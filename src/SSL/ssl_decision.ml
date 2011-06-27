@@ -13,9 +13,9 @@ exception Lvar_present
 exception Not_pointed
 
 (** This function returns true if lvar isn't a bounded var
-of sslf.*)
+of sslf and has at least on occurence of lvar*)
 let free_var (sslf : ssl_formula)(lvar : locvar ) =
-  not ( Hashtbl.mem sslf.quant_vars lvar )
+  not ( Hashtbl.mem sslf.quant_vars lvar )  && ssl_contains_locvar lvar sslf
 
 (** A SSL formula in normal form is sat iff 
 _ Each loc var that appears on the heap appears once
@@ -35,7 +35,7 @@ let sat_ssl (sslf : ssl_formula ) =
   with
       SSL_unsat -> false
 	
-
+  
 
 (** A formula is garbage if it contains an allocated cell which
 base address is not pointed by a pointer variable*)
