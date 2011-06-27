@@ -2,7 +2,6 @@
 *.log
 *.bbl
 *.blg
-*.pdf
 *.dvi
 
 *.cmi
@@ -16,4 +15,6 @@
 *.out
 
 *.swp
-~*
+*~
+
+*.dot

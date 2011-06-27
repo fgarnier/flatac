@@ -28,6 +28,19 @@ let flvar_to_locvar fvar =
 let fresh_flvar (flvar : fresh_loc_var ) =
   match flvar with
       FLVar  (name , c ) ->  FLVar (name , (c+1))
+
+(** Pick an element of a ( locvar , unit ) t if it contains any. Raises
+Not_Empty if empty. *)
+let pick_first_lvar ( loctable : ( locvar , unit ) t) =
+  let it_table lvar () =
+    raise ( Get_a_locvar ( lvar ) )
+  in
+  try 
+    Hashtbl.iter it_table loctable; (LVar(""))
+  with
+      Get_a_locvar ( lvar ) -> lvar
+ 
+
   
 (** Computes the name of a location variable, that is fresh for both
 SSL formulae of the entailement problem
@@ -35,7 +48,6 @@ SSL formulae of the entailement problem
 
 (** returns the set of the existencially quantified locvar of the heap,
 that are not pointed at by any pointer variables. *)
-
 let garbage_exists_lvar_heap ( sslf : ssl_formula ) =
   let ret = Hashtbl.create SSL_lex.size_hash in
   let garb_iterator lvar _ =
@@ -92,7 +104,7 @@ let varname_folder lvar () lvar_arg =
 let entail_r1  ( etp : entail_problem ) = 
   let r1_iterator pvar loctable  =
     if Hashtbl.mem etp.right.pure.affectations pvar then
-    let lvar_rel = Hashtbl.fold varname_folder loctable (LVar("")) in
+    let lvar_rel = pick_first_lvar loctable  in
     let pvar_right = Hashtbl.find etp.right.pure.affectations pvar in
     if Hashtbl.mem pvar_right lvar_rel then
       if  ( not ( Hashtbl.mem etp.right.quant_vars lvar_rel )  ) &&  ( not ( Hashtbl.mem etp.left.quant_vars lvar_rel ) ) 
@@ -106,37 +118,27 @@ let entail_r1  ( etp : entail_problem ) =
   Hashtbl.iter r1_iterator etp.left.pure.affectations
   
 
-let pick_first_lvar ( loctable : ( locvar , unit ) t) =
-  let it_table lvar () =
-    raise ( Get_a_locvar ( lvar ) )
-  in
-  try 
-    Hashtbl.iter it_table loctable; (LVar(""))
-  with
-      Get_a_locvar ( lvar ) -> lvar
- 
+
 
 (** The first optional parameter can be used to compute the composition
 of all the substitutions used to reduce the entailement problem. This
 information is needed by the biabduction procedure.
  *)
-
 let entail_r4 ( subst_ref : (loc_subst ref) option )( etp : entail_problem ) =
   let r4_iterator pvar loctable  =
-    if Hashtbl.mem etp.right.pure.affectations pvar then
+    if Hashtbl.mem etp.left.pure.affectations pvar then
     (*let lvar_rel = Hashtbl.fold varname_folder loctable (LVar("")) in*)
     (*begin match lvar_rel with 
 	LVar(varname ) ->
 	  Format.printf " lvar_rel = %s \n" varname 
     end;*)
-    let pvar_right_table = Hashtbl.find etp.right.pure.affectations pvar in
-    let locv_left =  pick_first_lvar (Hashtbl.find etp.left.pure.affectations pvar) in
-    let locv_right =  pick_first_lvar (pvar_right_table) in
-      if  ( Hashtbl.mem etp.right.quant_vars locv_right ) && (  Hashtbl.mem etp.left.quant_vars locv_left )
+    let pvar_left_table = Hashtbl.find etp.left.pure.affectations pvar in
+    let locv_right =  pick_first_lvar  loctable in
+    let locv_left =  pick_first_lvar (pvar_left_table) in
+      if   not ( free_var  etp.right locv_right)  &&   not (free_var etp.left locv_left) 
       then
 	let fresh_flvar = fresh_locvar_name_from_etp etp in
 	let fresh_lvar = flvar_to_locvar fresh_flvar in
-
 	let subst_table = Hashtbl.create SSL_lex.size_hash in
 	Hashtbl.add subst_table locv_left fresh_lvar;
 	Hashtbl.add subst_table locv_right fresh_lvar;
@@ -150,7 +152,7 @@ let entail_r4 ( subst_ref : (loc_subst ref) option )( etp : entail_problem ) =
 	      overall_subst := (Ssl_substitution.compose_subst subst !overall_subst )
 	  | None -> ()
   in
-  Hashtbl.iter r4_iterator etp.left.pure.affectations;
+  Hashtbl.iter r4_iterator etp.right.pure.affectations;
   var_elim etp.left;
   var_elim etp.right
 
@@ -197,26 +199,26 @@ let entail_r2 ( etp : entail_problem ) =
 
 
 let entail_r6 (etp : entail_problem ) =
-  let del_garbage_iterator table_g table_d garbage_d lvar () =
-      (*if not ( Hashtbl.mem table_g lvar) then ()*)
-      (* else *)
-    let occurences = Hashtbl.find table_g lvar in
+(*  Used to iterate on the garbage variables of the right h.s. of the 
+entailement.*)
+  let del_garbage_iterator table_g table_d garbage_g lvar () =
+    let occurences = Hashtbl.find table_d lvar in
     if occurences != 1 then ()
     else 
-      if ( Hashtbl.length table_d ) == 0
+      if ( Hashtbl.length table_g ) == 0
       then raise No_more_vars
       else 
-	let lvar_d = pick_first_lvar garbage_d in
+	let lvar_g = pick_first_lvar garbage_g in
 	begin
-	  match lvar_d with 
+	  match lvar_g with 
 	      LVar("") -> ()
 	    | LVar(value) ->
-	      let occ_lvard = Hashtbl.find table_d lvar_d in
+	      let occ_lvard = Hashtbl.find table_g lvar_g in
 	      if occ_lvard == 1 then
 		begin
-		  Hashtbl.remove table_g lvar;
-		  Hashtbl.remove table_d lvar_d;
-		  Hashtbl.remove garbage_d lvar_d
+		  Hashtbl.remove table_d lvar;
+		  Hashtbl.remove table_g lvar_g;
+		  Hashtbl.remove garbage_g lvar_g
 		end
 	      else ()
 	end
@@ -229,7 +231,7 @@ let entail_r6 (etp : entail_problem ) =
       (Space (table_g) , Space (table_d)) ->
 	begin
 	  try
-	    Hashtbl.iter (del_garbage_iterator table_g table_d garb_right) garb_left; Ssl_normalization.var_elim etp.left; Ssl_normalization.var_elim etp.right
+	    Hashtbl.iter (del_garbage_iterator table_g table_d garb_left) garb_right (* Ssl_normalization.var_elim etp.left; Ssl_normalization.var_elim etp.right*)
 	  with
 	      No_more_vars -> ()
 	end
@@ -240,9 +242,13 @@ let entail_r6 (etp : entail_problem ) =
 
 
 let ssl_entailement (etp : entail_problem ) =
+ 
+  let overall_subst =  ref (subst_id) in
   normalize_ssl etp.left;
   normalize_ssl etp.right;
-  entail_r4 None etp;
+  entail_r4 (Some(overall_subst)) etp;
+  subst_against_ssl !overall_subst etp.left;
+  subst_against_ssl !overall_subst etp.right;
   entail_r6 etp;
   entail_r1 etp;
   entail_r2 etp;

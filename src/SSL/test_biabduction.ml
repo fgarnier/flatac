@@ -15,6 +15,19 @@ open Debug_printers
 open Ssl_entailement
 open Ssl_biabduction
 
+
+let pprint_garbage out garbage_table =
+  let garbage_printer_it out lvar () =
+    match lvar with 
+	LVar(name) -> Format.fprintf out " %s ;" name
+  in
+  Format.fprintf out "Garbage list : [";
+  Hashtbl.iter (garbage_printer_it out ) garbage_table;
+  Format.fprintf out "] \n %!"
+
+
+
+
 let main () =   	 
   let form = formatter_of_out_channel Pervasives.stdout in
   let phi_g = create_ssl_f () in
@@ -40,14 +53,27 @@ let main () =
   pprint_entailproblem form biabduct_res.enunciate;
   Format.fprintf form "********* Frame and antiframe ********* \n";
   pprint_entailproblem form biabduct_res.frame_antiframe;
-  
+    let left_garbage =  garbage_exists_lvar_heap biabduct_res.frame_antiframe.left in
+  let right_garbage = garbage_exists_lvar_heap biabduct_res.frame_antiframe.right in
+  pprint_garbage form left_garbage;
+   Format.fprintf form "Garbage of rhds \n";
+   pprint_garbage form left_garbage;
+
   Format.fprintf form " Star of Frame * left and Antiframe * right \n";
   let etpf = { 
     left = (star_sep biabduct_res.enunciate.left biabduct_res.frame_antiframe.right ) ;
     right = (star_sep biabduct_res.enunciate.right biabduct_res.frame_antiframe.left ) 
   } in
+  begin
+    if sat_ssl etpf.left && sat_ssl etpf.right then
+      Format.fprintf form " Biabduction is satifiable \n %!"
+    else
+      Format.fprintf form " Biabduction is unsat \n %!"
+  end;
   pprint_entailproblem form etpf;
   Format.fprintf form " computing the entailement of the previous entailement \n";
+  Format.fprintf form "Garbage of left \n";
+
   ssl_entailement etpf;
   pprint_entailproblem form etpf
   

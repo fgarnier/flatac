@@ -1,0 +1,33 @@
+%!TEX TS-program = xetex 
+%!TEX encoding = UTF-8 Unicode
+
+\input{../build/shapeperfect/sp}
+\input{../build/shapeperfect/utils}
+\input{../build/shapeperfect/extra}
+
+\usepackage{tikz}
+\usepackage{scalefnt}
+
+\def\flatac {\tsl{Flata-C} }
+
+\title{\flatac}
+\authors{Florent \tsc{Garnier} \& Maxime \tsc{Gaudin}}
+\shorttitle{\flatac}
+
+\begin{document}
+\maketitle
+
+\section{eCFG}
+\input{ecfg}
+
+\section{How to \ldots ?}
+\input{uc_connect_logic}
+\input{sample_logic}
+
+\newpage
+\printglossaries
+\vfill
+\tableofcontents
+%\bibliography{references}
+\end{document}
+

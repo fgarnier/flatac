@@ -26,17 +26,22 @@ let biabduction (etp : entail_problem ) =
   normalize_ssl etp.left;
   normalize_ssl etp.right;
   let enun = { left = (Ssl.copy etp.left) ; right =( Ssl.copy etp.right) } in
+ 
+  (*Format.printf "Debug :  %s \n %!" ( subst_to_string !overall_subst );*)
+  
   entail_r4 (Some(overall_subst)) etp;
-  Format.printf "Debug :  %s \n %!" ( subst_to_string !overall_subst );
-  entail_r6 etp;
+  subst_against_ssl !overall_subst enun.left;
+  subst_against_ssl !overall_subst enun.right;
+ 
+  subst_against_ssl !overall_subst etp.left;
+  subst_against_ssl !overall_subst etp.right;
+ 
   entail_r1 etp;
   entail_r2 etp;
   entail_ptnil etp;
-  subst_against_ssl !overall_subst enun.left;
-  subst_against_ssl !overall_subst enun.right;
+ (* entail_r6 etp; *) 
   
-
-  let ret = {
+   let ret = {
     enunciate = enun;
     frame_antiframe = etp
   } in ret

@@ -1,0 +1,2 @@
+rm -f output.dot output.pdf && make && make install && frama-c.byte -flatac $1 && \
+dot -Tpdf -o output.pdf output.dot && open output.pdf && make clean

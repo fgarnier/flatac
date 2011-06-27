@@ -447,9 +447,11 @@ of the pure part if a SSL formula*)
   let pure_contains_locvar ( lvar : locvar )( pformula : pure_formula ) =
  
     let fold_pure ( lvar : locvar ) _ (table_locvar : ( locvar , unit ) t ) _ =
-      if ( Hashtbl.mem table_locvar lvar) ==true 
-      then raise Lvar_found
-      else false
+      if  Hashtbl.mem table_locvar lvar 
+      then 
+	raise Lvar_found
+      else 
+	false
     in
     try
       Hashtbl.fold ( fold_pure lvar ) pformula.affectations false
