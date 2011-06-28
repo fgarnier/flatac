@@ -103,7 +103,6 @@ let fresh_locvar_name_from_etp (etp : entail_problem ) =
 
 (** Used to compute the biggest location variabl in a (locvar, unit ) t 
 Hash table.*)
-  
 let varname_folder lvar () lvar_arg =
   if cmp_lex_lvar lvar lvar_arg then
     lvar 
@@ -127,6 +126,23 @@ let entail_r1  ( etp : entail_problem ) =
   
 
 
+(** For all x->l, where l is free, of the lhs, r_3 seeks a x->l' of
+the rhs, where l' is bounded. If such an affectation exists then 
+x->l, resp x->l' are removed from their respective equations,
+and l' is substituted by a fresh varible in the reminder of the
+rhs of the entailement.*)
+let entail_r3 (etp : entail_problem ) =
+  let left_aff_iterator pvar ltable =
+    let lvar_left = pick_first_var ltable in
+    if free_var lvar_left etp.left then
+      try 
+	let lvar_right = Hashtbl.find etp.right.affectations pvar in
+	if is_exists_quantified lvar_right etp.right then
+	  
+      with
+	  Not_Found -> ()
+    else ()
+  in
 
 (** The first optional parameter can be used to compute the composition
 of all the substitutions used to reduce the entailement problem. This
