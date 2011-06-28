@@ -14,8 +14,15 @@ open Ssl_decision
 exception Get_a_locvar of locvar
 exception No_more_vars
 
+
 type entail_problem = {left : ssl_formula ; right : ssl_formula ;}
+type entail_subst = {lsubst : loc_subst ; rsubst : loc_subst ;}
 type fresh_loc_var = FLVar of string * int
+
+let entail_subst_id  =
+  { rsubst = subst_id;
+    lsubst = subst_id;
+  }
 
 
 let flvar_to_locvar fvar = 
@@ -125,7 +132,7 @@ let entail_r1  ( etp : entail_problem ) =
 of all the substitutions used to reduce the entailement problem. This
 information is needed by the biabduction procedure.
  *)
-let entail_r4 ( subst_ref : (loc_subst ref) option )( etp : entail_problem ) =
+let entail_r4 ( subst_ref : (entail_subst ref) option )( etp : entail_problem ) =
   let r4_iterator pvar loctable  =
     if Hashtbl.mem etp.left.pure.affectations pvar then
     (*let lvar_rel = Hashtbl.fold varname_folder loctable (LVar("")) in*)
@@ -136,21 +143,27 @@ let entail_r4 ( subst_ref : (loc_subst ref) option )( etp : entail_problem ) =
     let pvar_left_table = Hashtbl.find etp.left.pure.affectations pvar in
     let locv_right =  pick_first_lvar  loctable in
     let locv_left =  pick_first_lvar (pvar_left_table) in
-      if   not ( free_var  etp.right locv_right)  &&   not (free_var etp.left locv_left) 
+      if   ((is_exists_quantified  locv_right etp.right)
+	&&   ( is_exists_quantified  locv_left etp.left) )
       then
 	let fresh_flvar = fresh_locvar_name_from_etp etp in
 	let fresh_lvar = flvar_to_locvar fresh_flvar in
-	let subst_table = Hashtbl.create SSL_lex.size_hash in
-	Hashtbl.add subst_table locv_left fresh_lvar;
-	Hashtbl.add subst_table locv_right fresh_lvar;
-	let subst = Subst ( subst_table ) in
+	let subst_table_left = Hashtbl.create SSL_lex.size_hash in
+	let subst_table_right = Hashtbl.create SSL_lex.size_hash in
+	Hashtbl.add subst_table_left locv_left fresh_lvar;
+	Hashtbl.add subst_table_right locv_right fresh_lvar;
+	let subst_left = Subst ( subst_table_left ) in
+	let subst_right = Subst ( subst_table_right ) in
 	Hashtbl.remove etp.right.pure.affectations pvar; 
 	Hashtbl.remove etp.left.pure.affectations pvar ;
-	subst_against_ssl subst etp.right;
-	subst_against_ssl subst etp.left;
+	subst_against_ssl subst_right etp.right;
+	subst_against_ssl subst_left etp.left;
 	match subst_ref with 
 	    Some ( overall_subst ) -> 
-	      overall_subst := (Ssl_substitution.compose_subst subst !overall_subst )
+	      overall_subst := 
+		{lsubst = (Ssl_substitution.compose_subst subst_left !overall_subst.rsubst );
+	      rsubst = (Ssl_substitution.compose_subst subst_right !overall_subst.lsubst );
+}
 	  | None -> ()
   in
   Hashtbl.iter r4_iterator etp.right.pure.affectations;
@@ -244,12 +257,12 @@ entailement.*)
 
 let ssl_entailement (etp : entail_problem ) =
  
-  let overall_subst =  ref (subst_id) in
+  let overall_subst =  ref (entail_subst_id) in
   normalize_ssl etp.left;
   normalize_ssl etp.right;
   entail_r4 (Some(overall_subst)) etp;
-  subst_against_ssl !overall_subst etp.left;
-  subst_against_ssl !overall_subst etp.right;
+  subst_against_ssl !overall_subst.lsubst etp.left;
+  subst_against_ssl !overall_subst.rsubst etp.right;
   entail_r6 etp;
   entail_r1 etp;
   entail_r2 etp;
