@@ -207,14 +207,40 @@ let entail_r4 ( subst_ref : (entail_subst ref) option )( etp : entail_problem ) 
     lhs and alloc(l') is in  the rhs, and when l is a FV 
 *)
 let entail_r5 (entp : entail_problem ) =
-  let lhs_heap_iterator rhs_garbage_table rhd_heap_table lvar occurences =
-    if (free_var entp.left lvar) &&  not ( is_pointed_at lvar entp.left ) then && ( occurence == 1 )
+  let lhs_heap_iterator rhs_garbage_table lhs_heap_table rhs_heap_table lvar occurences =
+    if Hashtbl.length rhs_garbage_table == 0
+    then raise No_more_vars 
+    else
+      if (free_var entp.left lvar) &&  not ( is_locvar_pointed_at lvar entp.left.pure ) && ( occurences == 1 )
       then
 	try
-	  
+	  let garb_lvar = pick_first_lvar rhs_garbage_table in
+	  if (Hashtbl.find rhs_heap_table garb_lvar)!=1
+	  then raise Top_heap_exception
+	  else
+	    begin
+	      Hashtbl.remove rhs_garbage_table garb_lvar;
+	      Hashtbl.remove lhs_heap_table lvar;
+	      Hashtbl.remove rhs_heap_table garb_lvar
+	    end
 	with
 	    Not_found -> ()
-      
+in
+let right_garbage = garbage_exists_lvar_heap entp.right in
+match entp.left.space,  entp.right.space with
+    ( Space ( space_table_left ) , Space (space_table_right) )-> 
+      begin
+	try
+	  Hashtbl.iter (lhs_heap_iterator right_garbage space_table_left space_table_right) space_table_left
+	with
+	    No_more_vars -> ()
+	  | Top_heap_exception -> raise Top_heap_exception
+	  (* The iterator can raise a Top_heap_exception. We propagate
+	  the exception in this case.*)
+      end
+  | (_,_) -> raise Top_heap_exception
+    (* In this case, at leat on of the heap are corrupted, hence we
+    raise an exception to note that one can't infer a new heap.*)
 
 let entail_ptnil ( etp : entail_problem ) =
   (* one iterates on rhs equation*)
