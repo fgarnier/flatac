@@ -29,7 +29,8 @@
 FRAMAC_SHARE  :=$(shell frama-c.byte -print-path)
 FRAMAC_LIBDIR :=$(shell frama-c.byte -print-libpath)
 
-SOURCES_FILES   := ast_goodies.ml cautomata.ml c2cautomatanalys.ml flatac_vistor.ml intermediate_language.ml flata_language.ml flatac_plugin.ml
+SOURCES_FILES   := ast_goodies.ml cautomata.ml c2cautomatanalys.ml flatac_vistor.ml intermediate_language.ml flata_language.ml flatac_plugin.ml SSL/ssl_types.ml SSL/ssl.ml 
+
 F_SRC:= ~/FRAMAC
 
 PLUGIN_NAME= Flatac
