@@ -135,14 +135,12 @@ let rec cil_expr_2_bool (expr : Cil_types.exp) =
 
 
 
-(*******************************************************************)
+(********************************************************************)
 
-(* This function transforms a list of cil expression into a list
+(** This function transforms a list of cil expression into a list
 of scalar expression, whenever possible. It raises a Bad_expression_type
 exception if something wrong occured.  *)
-
 (*******************************************************************)
-
 let cil_expr_list_2_scalar_list (expr_list : Cil_types.exp list ) =
   let rec rec_call (ret_list : c_scal list) (expr_list: Cil_types.exp list )= 
     match expr_list with

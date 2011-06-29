@@ -14,16 +14,14 @@ type counterExpression = string
 
 class virtual ['a] semAndLogicFrontEnd = 
 object 
-	method virtual getEntryPointAbstraction : unit -> 'a
-	method virtual getEntryPointPrecondition : unit -> counterExpression 
+  method virtual getEntryPointAbstraction : unit -> 'a
+  method virtual getEntryPointPrecondition : unit -> counterExpression 
 
-	(** Returns true if the given state is an error state. *)
-	method virtual isErrorState: 'a -> bool
-
-	(** Returns a the next couple of abstract interpretation and counter automata label based 
-	 on the current abstraction, the current counter, and the statement kind. 
-	 The process must be markovian though. *)
-	method virtual next : 'a -> counterExpression -> stmtkind -> ('a * counterExpression)
-
-	method virtual pretty : 'a -> string
+  (** Returns true if the given state is an error state. *)
+  method virtual isErrorState: 'a -> bool
+  (** Returns a the next couple of abstract interpretation and counter automata label based on the current abstraction, the current counter, and the statement kind. *)
+  method virtual next : 'a -> counterExpression -> stmtkind -> ('a * counterExpression)
+  
+  (** Shall we add some fix point decision procedure at this place ?*)  
+  method virtual pretty : 'a -> string
 end
