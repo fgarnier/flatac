@@ -133,16 +133,24 @@ and l' is substituted by a fresh varible in the reminder of the
 rhs of the entailement.*)
 let entail_r3 (etp : entail_problem ) =
   let left_aff_iterator pvar ltable =
-    let lvar_left = pick_first_var ltable in
-    if free_var lvar_left etp.left then
+    let lvar_left = pick_first_lvar ltable in
+    if free_var  etp.left lvar_left then
       try 
-	let lvar_right = Hashtbl.find etp.right.affectations pvar in
+	let lvar_table_right = Hashtbl.find etp.right.pure.affectations pvar
+	in
+	let lvar_right = pick_first_lvar lvar_table_right in
 	if is_exists_quantified lvar_right etp.right then
-	  
+	  let subst_table = Hashtbl.create size_hash in
+	  Hashtbl.add subst_table lvar_right lvar_left;
+	  Hashtbl.remove etp.right.pure.affectations pvar;
+	  Hashtbl.remove etp.left.pure.affectations pvar;
+	  let right_subst = (Subst(subst_table)) in
+	  subst_against_ssl right_subst etp.right
       with
-	  Not_Found -> ()
+	  Not_found -> ()
     else ()
   in
+  Hashtbl.iter left_aff_iterator etp.left.pure.affectations
 
 (** The first optional parameter can be used to compute the composition
 of all the substitutions used to reduce the entailement problem. This
