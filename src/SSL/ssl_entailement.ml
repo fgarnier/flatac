@@ -152,6 +152,12 @@ let entail_r3 (etp : entail_problem ) =
   in
   Hashtbl.iter left_aff_iterator etp.left.pure.affectations
 
+
+
+
+
+
+
 (** The first optional parameter can be used to compute the composition
 of all the substitutions used to reduce the entailement problem. This
 information is needed by the biabduction procedure.
@@ -195,6 +201,20 @@ let entail_r4 ( subst_ref : (entail_subst ref) option )( etp : entail_problem ) 
   var_elim etp.right
 
 
+(** rule r_5 : 
+   Removes any couples alloc(l) , \exists l' alloc(l') where alloc(l) is
+    a garbage of the
+    lhs and alloc(l') is in  the rhs, and when l is a FV 
+*)
+let entail_r5 (entp : entail_problem ) =
+  let lhs_heap_iterator rhs_garbage_table rhd_heap_table lvar occurences =
+    if (free_var entp.left lvar) &&  not ( is_pointed_at lvar entp.left ) then && ( occurence == 1 )
+      then
+	try
+	  
+	with
+	    Not_found -> ()
+      
 
 let entail_ptnil ( etp : entail_problem ) =
   (* one iterates on rhs equation*)
