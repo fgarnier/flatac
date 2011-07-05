@@ -15,6 +15,11 @@ module Ecfg :
 
                 val compute_ecfgs : Project.t -> Cil_types.file 
                 -> A.t sem_and_logic_front_end -> ecfg list
+  
+                val visite_ecfgs : ecfg list ->
+                (string -> 'a) -> (string -> unit) ->
+                (string -> ecfg_node -> unit)
+                -> unit
 
                 val export_dot : ecfg list -> string -> A.t
                 sem_and_logic_front_end -> unit 
