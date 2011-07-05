@@ -34,7 +34,7 @@ SOURCES_FILES   := ast_goodies.ml cautomata.ml c2cautomatanalys.ml flatac_vistor
 F_SRC:= ~/FRAMAC
 
 PLUGIN_NAME= Flatac
-PLUGIN_CMO= self semAndLogicFrontEnd trueLogicFrontEnd ecfg flatac_ep 
+PLUGIN_CMO= self sem_and_logic_front_end true_logic_front_end ecfg flatac_ep 
 
 include $(FRAMAC_SHARE)/Makefile.dynamic
 
@@ -54,7 +54,7 @@ STDLIB_FILES:=printf list string
 STDLIB_FILES:=$(patsubst %, $(OCAMLLIB)/%.mli, $(STDLIB_FILES))
 
 html_doc: 
-	ocamldoc -html -d doc/html/ $(FRAMA_C_DOC_DIR) self.ml semAndLogicFrontEnd.ml trueLogicFrontEnd.ml ecfg.ml flatac_ep.ml
+	ocamldoc -html -d doc/html/ $(FRAMA_C_DOC_DIR) self.ml sem_and_logic_front_end.ml true_logic_front_end.ml ecfg.ml flatac_ep.ml
 
 latex_doc: 
-	ocamldoc -latex -d doc/latex/ $(FRAMA_C_DOC_DIR) self.ml semAndLogicFrontEnd.ml trueLogicFrontEnd.ml ecfg.ml flatac_ep.ml
+	ocamldoc -latex -d doc/html/ $(FRAMA_C_DOC_DIR) self.ml sem_and_logic_front_end.ml true_logic_front_end.ml ecfg.ml flatac_ep.ml

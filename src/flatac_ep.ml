@@ -11,8 +11,8 @@
 *)
 open Self
 open Ecfg
-open SemAndLogicFrontEnd
-open TrueLogicFrontEnd
+open Sem_and_logic_front_end
+open True_logic_front_end
 
 module Enabled =
 	Self.False
@@ -27,9 +27,9 @@ module BoolCFG = Ecfg ( CfgExtension )
 
 let print () = 
 	Self.feedback ~level:0 "Welcome to Flata-C !";
-	let frontEnd = new trueLogicFrontEnd in
-	let eCFGs = BoolCFG.computeECFGs (Project.current()) (Ast.get()) ( frontEnd ) in
-		BoolCFG.exportDot eCFGs "output.dot" frontEnd
+	let frontEnd = new true_logic_front_end in
+	let eCFGs = BoolCFG.compute_ecfgs (Project.current()) (Ast.get()) ( frontEnd ) in
+		BoolCFG.export_dot eCFGs "output.dot" frontEnd
 
 let run () = if Enabled.get () then print ()
 let () = Db.Main.extend run
