@@ -15,6 +15,7 @@ and 'b is the type used to encode the transition label of the automaton.*)
 class virtual ['a, 'b] sem_and_logic_front_end = 
 object 
   method virtual get_entry_point_abstraction : unit -> 'a
+  (** get_entry_point_precondition may have to vanish*)
   method virtual get_entry_point_precondition : unit -> 'b 
 
   (** Returns true if the given state is an error state. *)

@@ -22,11 +22,15 @@ module Enabled =
 			let kind= `Correctness
 		 end)
 
+
+(** This module is used as a parameter of the Ecfg functor *)
 module CfgExtension = 
         struct 
                 type abstract_type = bool
                 type label_type = string
         end;;
+
+(** Creation of an Ecfg which abstract domain is {true,false}*)
 module BoolCFG = Ecfg ( CfgExtension ) 
 
 let print () = 

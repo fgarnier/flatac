@@ -15,6 +15,9 @@ open Cautomata
 class ssl_flatac_front_end = object (self)
   inherit [SSL_lex.formula , Cautomata.trans_label list ]  sem_and_logic_front_end
 
+  method get_entry_point_abstraction () =
+    
+
     
 end
 
