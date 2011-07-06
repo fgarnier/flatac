@@ -293,8 +293,6 @@ let rec c_bool_to_string ( b_exp :  c_bool) =
 
 
 
-
-
 let pretty_print_c_bool ( out_channel :Format.formatter) (b_exp : c_bool ) =
   Format.fprintf  out_channel "%s" (c_bool_to_string b_exp)
 

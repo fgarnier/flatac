@@ -48,10 +48,10 @@ to make a distinction between the new value (primed) and the
 former value (unprimed) of the same identifier during a transition.
 *)
 
-
+(*
 type id = Prime of string 
 	 | Unprimed of string
-
+*)
 (*type id = Id of baseid*) 
 type number = Num of int (* number must be an unsigned value. Must be cheched
 		  during the construction of the automaton, or specified

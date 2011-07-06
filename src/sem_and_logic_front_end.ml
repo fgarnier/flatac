@@ -9,6 +9,9 @@
 open Self
 open Cil_types
 
+(** First type variable -- i.e. 'a -- is the type of the abstract domain
+and 'b is the type used to encode the transition label of the automaton.*)
+
 class virtual ['a, 'b] sem_and_logic_front_end = 
 object 
   method virtual get_entry_point_abstraction : unit -> 'a
