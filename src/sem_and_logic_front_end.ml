@@ -9,9 +9,6 @@
 open Self
 open Cil_types
 
-(* Changer le type string en CounterLabel ou un truc générique dans le genre *)
-type counter_expression = string
-
 class virtual ['a, 'b] sem_and_logic_front_end = 
 object 
   method virtual get_entry_point_abstraction : unit -> 'a
