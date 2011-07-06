@@ -79,12 +79,6 @@ type state_table_element = { control : control_state ; mutable incoming : string
 
 
 
-
-
-
-
-
-
  (******************************************************************)
 
 (*            Version 0.1 pretty printing                         *)
