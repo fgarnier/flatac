@@ -12,22 +12,25 @@
 <link title="Index of classes" rel=Appendix href="index_classes.html">
 <link title="Index of modules" rel=Appendix href="index_modules.html">
 <link title="Self" rel="Chapter" href="Self.html">
-<link title="SemAndLogicFrontEnd" rel="Chapter" href="SemAndLogicFrontEnd.html">
-<link title="TrueLogicFrontEnd" rel="Chapter" href="TrueLogicFrontEnd.html">
-<link title="Ecfg" rel="Chapter" href="Ecfg.html"><title>Ecfg.Ecfg</title>
+<link title="Sem_and_logic_front_end" rel="Chapter" href="Sem_and_logic_front_end.html">
+<link title="True_logic_front_end" rel="Chapter" href="True_logic_front_end.html">
+<link title="Ecfg" rel="Chapter" href="Ecfg.html">
+<link title="Flatac_ep" rel="Chapter" href="Flatac_ep.html"><title>Ecfg.Ecfg</title>
 </head>
 <body>
 <div class="navbar">&nbsp;<a href="Ecfg.html">Up</a>
 &nbsp;</div>
 <center><h1>Functor <a href="type_Ecfg.Ecfg.html">Ecfg.Ecfg</a></h1></center>
 <br>
-<pre><span class="keyword">module</span> Ecfg: <div class="sig_block"><code class="code">functor (</code><code class="code">A</code><code class="code"> : </code><code class="code">sig</code><div class="sig_block"><pre><span id="TYPEt"><span class="keyword">type</span> <code class="type"></code>t</span> </pre>
+<pre><span class="keyword">module</span> Ecfg: <div class="sig_block"><code class="code">functor (</code><code class="code">A</code><code class="code"> : </code><code class="code">sig</code><div class="sig_block"><pre><span id="TYPEabstract_type"><span class="keyword">type</span> <code class="type"></code>abstract_type</span> </pre>
+
+<pre><span id="TYPElabel_type"><span class="keyword">type</span> <code class="type"></code>label_type</span> </pre>
 
 </div><code class="code">end</code><code class="code">) -&gt; </code><code class="code">sig</code> <a href="Ecfg.Ecfg.html">..</a> <code class="code">end</code></div></pre>This module contains every structures and algorithms
-	 relatives to eCFG. It's parametrized by the type of the 
-	 abstract interpretation. 
-	 Obviously, this type must match with the front-end inherited
-	 type.<br>
+    relatives to ecfg. It's parametrized by the type of the 
+    abstract interpretation. 
+    Obviously, this type must match with the front-end inherited
+    type.<br>
 <table border="0" cellpadding="3" width="100%">
 <tr>
 <td align="left" valign="top" width="1%%"><b>Parameters: </b></td>
@@ -37,53 +40,58 @@
 <td align="center" valign="top" width="15%">
 <code>A</code></td>
 <td align="center" valign="top">:</td>
-<td><code class="type">sig type t end</code>
+<td><code class="type">sig 
+                        type abstract_type 
+                        type label_type
+                      end</code>
 </table>
 </td>
 </tr>
 </table>
 <hr width="100%">
-<pre><span id="TYPEsemanticAbstraction"><span class="keyword">type</span> <code class="type"></code>semanticAbstraction</span> = <code class="type">A.t</code> </pre>
+<pre><span id="TYPEsemantic_abstraction"><span class="keyword">type</span> <code class="type"></code>semantic_abstraction</span> = <code class="type">A.abstract_type</code> </pre>
 <div class="info">
 A.t represents the data type of the abstraction.<br>
 </div>
+
+<pre><span id="TYPEcounter_expression"><span class="keyword">type</span> <code class="type"></code>counter_expression</span> = <code class="type">A.label_type</code> </pre>
 
 <br><code><span id="TYPEsemantic"><span class="keyword">type</span> <code class="type"></code>semantic</span> = </code><table class="typetable">
 <tr>
 <td align="left" valign="top" >
 <code><span class="keyword">|</span></code></td>
 <td align="left" valign="top" >
-<code><span class="constructor">Semantic</span> <span class="keyword">of</span> <code class="type">Cil_types.stmt * <a href="Ecfg.Ecfg.html#TYPEsemanticAbstraction">semanticAbstraction</a></code></code></td>
+<code><span class="constructor">Semantic</span> <span class="keyword">of</span> <code class="type">Cil_types.stmt * <a href="Ecfg.Ecfg.html#TYPEsemantic_abstraction">semantic_abstraction</a></code></code></td>
 
 </tr></table>
 
 
-<br><code><span id="TYPEeCFGEdge"><span class="keyword">type</span> <code class="type"></code>eCFGEdge</span> = </code><table class="typetable">
+<br><code><span id="TYPEecfg_edge"><span class="keyword">type</span> <code class="type"></code>ecfg_edge</span> = </code><table class="typetable">
 <tr>
 <td align="left" valign="top" >
 <code><span class="keyword">|</span></code></td>
 <td align="left" valign="top" >
-<code><span class="constructor">Edge</span> <span class="keyword">of</span> <code class="type">int * <a href="SemAndLogicFrontEnd.html#TYPEcounterExpression">SemAndLogicFrontEnd.counterExpression</a></code></code></td>
+<code><span class="constructor">Edge</span> <span class="keyword">of</span> <code class="type">int * <a href="Ecfg.Ecfg.html#TYPEcounter_expression">counter_expression</a></code></code></td>
 
 </tr></table>
 
 
-<br><code><span id="TYPEeCFGNode"><span class="keyword">type</span> <code class="type"></code>eCFGNode</span> = </code><table class="typetable">
+<br><code><span id="TYPEecfg_node"><span class="keyword">type</span> <code class="type"></code>ecfg_node</span> = </code><table class="typetable">
 <tr>
 <td align="left" valign="top" >
 <code><span class="keyword">|</span></code></td>
 <td align="left" valign="top" >
-<code><span class="constructor">Node</span> <span class="keyword">of</span> <code class="type">int * <a href="Ecfg.Ecfg.html#TYPEsemantic">semantic</a> * <a href="Ecfg.Ecfg.html#TYPEeCFGEdge">eCFGEdge</a> list</code></code></td>
+<code><span class="constructor">Node</span> <span class="keyword">of</span> <code class="type">int * <a href="Ecfg.Ecfg.html#TYPEsemantic">semantic</a> * <a href="Ecfg.Ecfg.html#TYPEecfg_edge">ecfg_edge</a> list</code></code></td>
 
 </tr></table>
 
 
-<br><code><span id="TYPEeCFG"><span class="keyword">type</span> <code class="type"></code>eCFG</span> = </code><table class="typetable">
+<br><code><span id="TYPEecfg"><span class="keyword">type</span> <code class="type"></code>ecfg</span> = </code><table class="typetable">
 <tr>
 <td align="left" valign="top" >
 <code><span class="keyword">|</span></code></td>
 <td align="left" valign="top" >
-<code><span class="constructor">CGraph</span> <span class="keyword">of</span> <code class="type">string * <a href="Ecfg.Ecfg.html#TYPEeCFGNode">eCFGNode</a> list</code></code></td>
+<code><span class="constructor">CGraph</span> <span class="keyword">of</span> <code class="type">string * <a href="Ecfg.Ecfg.html#TYPEecfg_node">ecfg_node</a> list</code></code></td>
 
 </tr>
 <tr>
@@ -95,19 +103,19 @@ A.t represents the data type of the abstraction.<br>
 </tr></table>
 
 
-<pre><span name="TYPEcfgVisitor"><span class="keyword">class</span> <a href="Ecfg.Ecfg.cfgVisitor-c.html">cfgVisitor</a></span> : <code class="type">Project.t -> </code><code class="code">object</code> <a href="Ecfg.Ecfg.cfgVisitor-c.html">..</a> <code class="code">end</code></pre><div class="info">
+<pre><span name="TYPEcfg_visitor"><span class="keyword">class</span> <a href="Ecfg.Ecfg.cfg_visitor-c.html">cfg_visitor</a></span> : <code class="type">Project.t -> </code><code class="code">object</code> <a href="Ecfg.Ecfg.cfg_visitor-c.html">..</a> <code class="code">end</code></pre><div class="info">
 This visitor handle global function and trigger the build 
-	 of a new Cfg for each function.
+	    of a new Cfg for each function.
 </div>
-<pre><span id="VALcomputeECFGs"><span class="keyword">val</span> <a href="code_VALEcfg.Ecfg.computeECFGs.html">computeECFGs</a></span> : <code class="type">Project.t -><br>       Cil_types.file -><br>       <a href="Ecfg.Ecfg.html#TYPEsemanticAbstraction">semanticAbstraction</a> <a href="SemAndLogicFrontEnd.semAndLogicFrontEnd-c.html">SemAndLogicFrontEnd.semAndLogicFrontEnd</a> -><br>       <a href="Ecfg.Ecfg.html#TYPEeCFG">eCFG</a> list</code></pre><div class="info">
-Compute the eCFG and fill the structures.<br>
+<pre><span id="VALcompute_ecfgs"><span class="keyword">val</span> <a href="code_VALEcfg.Ecfg.compute_ecfgs.html">compute_ecfgs</a></span> : <code class="type">Project.t -><br>       Cil_types.file -><br>       (<a href="Ecfg.Ecfg.html#TYPEsemantic_abstraction">semantic_abstraction</a>, <a href="Ecfg.Ecfg.html#TYPEcounter_expression">counter_expression</a>)<br>       <a href="Sem_and_logic_front_end.sem_and_logic_front_end-c.html">Sem_and_logic_front_end.sem_and_logic_front_end</a> -> <a href="Ecfg.Ecfg.html#TYPEecfg">ecfg</a> list</code></pre><div class="info">
+Compute the ecfg and fill the structures.<br>
 </div>
-<pre><span id="VALvisiteCFGs"><span class="keyword">val</span> <a href="code_VALEcfg.Ecfg.visiteCFGs.html">visiteCFGs</a></span> : <code class="type"><a href="Ecfg.Ecfg.html#TYPEeCFG">eCFG</a> list -><br>       (string -> 'a) -><br>       (string -> unit) -> (string -> <a href="Ecfg.Ecfg.html#TYPEeCFGNode">eCFGNode</a> -> unit) -> unit</code></pre><div class="info">
-An eCFG visitor with a callback function. You must use this method if you 
-	 want to gather eCFG datas.<br>
+<pre><span id="VALvisite_ecfgs"><span class="keyword">val</span> <a href="code_VALEcfg.Ecfg.visite_ecfgs.html">visite_ecfgs</a></span> : <code class="type"><a href="Ecfg.Ecfg.html#TYPEecfg">ecfg</a> list -><br>       (string -> 'a) -><br>       (string -> unit) -> (string -> <a href="Ecfg.Ecfg.html#TYPEecfg_node">ecfg_node</a> -> unit) -> unit</code></pre><div class="info">
+An ecfg visitor with a callback function. You must use this method if you 
+	    want to gather ecfg datas.<br>
 </div>
-<pre><span id="VALstmtToString"><span class="keyword">val</span> <a href="code_VALEcfg.Ecfg.stmtToString.html">stmtToString</a></span> : <code class="type">Cil_types.stmt -> string</code></pre><pre><span id="VALprintDot"><span class="keyword">val</span> <a href="code_VALEcfg.Ecfg.printDot.html">printDot</a></span> : <code class="type">Format.formatter -><br>       < pretty : <a href="Ecfg.Ecfg.html#TYPEsemanticAbstraction">semanticAbstraction</a> -> string; .. > -><br>       'a -> <a href="Ecfg.Ecfg.html#TYPEeCFGNode">eCFGNode</a> -> unit</code></pre><pre><span id="VALexportDot"><span class="keyword">val</span> <a href="code_VALEcfg.Ecfg.exportDot.html">exportDot</a></span> : <code class="type"><a href="Ecfg.Ecfg.html#TYPEeCFG">eCFG</a> list -><br>       string -> < pretty : <a href="Ecfg.Ecfg.html#TYPEsemanticAbstraction">semanticAbstraction</a> -> string; .. > -> unit</code></pre><div class="info">
-This function export the given eCFG in dot format into the given file.
-	 If the file does not exist, it is created. It is overwritten otherwise.<br>
+<pre><span id="VALstmt_to_string"><span class="keyword">val</span> <a href="code_VALEcfg.Ecfg.stmt_to_string.html">stmt_to_string</a></span> : <code class="type">Cil_types.stmt -> string</code></pre><pre><span id="VALprint_dot"><span class="keyword">val</span> <a href="code_VALEcfg.Ecfg.print_dot.html">print_dot</a></span> : <code class="type">Format.formatter -><br>       < pretty : <a href="Ecfg.Ecfg.html#TYPEsemantic_abstraction">semantic_abstraction</a> -> string;<br>         pretty_label : <a href="Ecfg.Ecfg.html#TYPEcounter_expression">counter_expression</a> -> string; .. > -><br>       'a -> <a href="Ecfg.Ecfg.html#TYPEecfg_node">ecfg_node</a> -> unit</code></pre><pre><span id="VALexport_dot"><span class="keyword">val</span> <a href="code_VALEcfg.Ecfg.export_dot.html">export_dot</a></span> : <code class="type"><a href="Ecfg.Ecfg.html#TYPEecfg">ecfg</a> list -><br>       string -><br>       < pretty : <a href="Ecfg.Ecfg.html#TYPEsemantic_abstraction">semantic_abstraction</a> -> string;<br>         pretty_label : <a href="Ecfg.Ecfg.html#TYPEcounter_expression">counter_expression</a> -> string; .. > -><br>       unit</code></pre><div class="info">
+This function export the given ecfg in dot format into the given file.
+If the file does not exist, it is created. It is overwritten otherwise.<br>
 </div>
 </body></html>
