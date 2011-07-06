@@ -85,7 +85,8 @@ struct
 	let rootStmt = (List.hd funInfo.sallstmts) in
 				(* Let is there to get rid of the warning *)
 	let _ = self#_build_node_list rootStmt
-        (front_end#get_entry_point_abstraction ()) (front_end#get_entry_point_precondition ()) front_end in
+        (front_end#get_entry_point_abstraction ())
+        (front_end#get_empty_transition_label ()) front_end in
 	CGraph (funInfo.svar.vname, current_ecfg)
 	  
       method vglob_aux (g :Cil_types.global ) =
