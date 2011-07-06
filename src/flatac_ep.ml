@@ -22,7 +22,11 @@ module Enabled =
 			let kind= `Correctness
 		 end)
 
-module CfgExtension = struct type t = bool end;;
+module CfgExtension = 
+        struct 
+                type abstract_type = bool
+                type label_type = string
+        end;;
 module BoolCFG = Ecfg ( CfgExtension ) 
 
 let print () = 

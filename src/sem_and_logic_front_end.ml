@@ -12,16 +12,17 @@ open Cil_types
 (* Changer le type string en CounterLabel ou un truc générique dans le genre *)
 type counter_expression = string
 
-class virtual ['a] sem_and_logic_front_end = 
+class virtual ['a, 'b] sem_and_logic_front_end = 
 object 
   method virtual get_entry_point_abstraction : unit -> 'a
-  method virtual get_entry_point_precondition : unit -> counter_expression 
+  method virtual get_entry_point_precondition : unit -> 'b 
 
   (** Returns true if the given state is an error state. *)
   method virtual is_error_state: 'a -> bool
   (** Returns a the next couple of abstract interpretation and counter automata label based on the current abstraction, the current counter, and the statement kind. *)
-  method virtual next : 'a -> counter_expression -> stmtkind -> ('a * counter_expression)
+  method virtual next : 'a -> 'b -> stmtkind -> ('a * 'b)
   
   (** Shall we add some fix point decision procedure at this place ?*)  
   method virtual pretty : 'a -> string
+  method virtual pretty_label : 'b -> string
 end

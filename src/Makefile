@@ -54,7 +54,7 @@ STDLIB_FILES:=printf list string
 STDLIB_FILES:=$(patsubst %, $(OCAMLLIB)/%.mli, $(STDLIB_FILES))
 
 annot:
-	ocamlc $(FRAMA_C_DOC_DIR) -annot *.ml
+	ocamlc $(FRAMA_C_DOC_DIR) -i *.ml
 
 html_doc: 
 	ocamldoc -html -d doc/html/ $(FRAMA_C_DOC_DIR) self.ml sem_and_logic_front_end.ml true_logic_front_end.ml ecfg.ml flatac_ep.ml

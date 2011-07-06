@@ -2,9 +2,14 @@ open Cil_types
 open Sem_and_logic_front_end
 
 module Ecfg : 
-        functor ( A : sig type t end ) ->
+        functor ( A : sig 
+                        type abstract_type 
+                        type label_type
+                      end ) ->
         sig
-                type semantic_abstraction = A.t
+                type semantic_abstraction = A.abstract_type
+                type counter_expression = A.label_type
+
                 type semantic = Semantic of stmt * semantic_abstraction
       
                 type ecfg_edge = Edge of int * counter_expression
@@ -14,15 +19,15 @@ module Ecfg :
                 | EmptyGraph
 
                 val compute_ecfgs : Project.t -> Cil_types.file 
-                -> A.t sem_and_logic_front_end -> ecfg list
+                -> (semantic_abstraction, counter_expression) sem_and_logic_front_end -> ecfg list
   
                 val visite_ecfgs : ecfg list ->
                 (string -> 'a) -> (string -> unit) ->
                 (string -> ecfg_node -> unit)
                 -> unit
 
-                val export_dot : ecfg list -> string -> A.t
-                sem_and_logic_front_end -> unit 
+                val export_dot : ecfg list -> string ->
+                (semantic_abstraction, counter_expression) sem_and_logic_front_end -> unit 
         end
 
   

@@ -23,10 +23,16 @@ open Buffer
     Obviously, this type must match with the front-end inherited
     type.
  *)
-module Ecfg = functor ( A : sig type t end ) ->
+module Ecfg = 
+        functor ( A : sig 
+                        type abstract_type 
+                        type label_type
+                      end ) ->
 struct
   (** A.t represents the data type of the abstraction. *)
-  type semantic_abstraction = A.t
+  type semantic_abstraction = A.abstract_type
+  type counter_expression = A.label_type
+
   type semantic = Semantic of stmt * semantic_abstraction
       
   type ecfg_edge = Edge of int * counter_expression
@@ -41,7 +47,7 @@ struct
     = object(self)
       inherit Visitor.generic_frama_c_visitor (prj) (Cil.inplace_visit())
       val mutable is_computed = false
-      val mutable _front_end : ( (A.t sem_and_logic_front_end) option ) = None
+      val mutable _front_end : ( ((semantic_abstraction, counter_expression) sem_and_logic_front_end) option ) = None
       val mutable ecfgs : ( ecfg list ) = []
 	
       val mutable current_ecfg : ( ecfg_node list ) = []
@@ -95,7 +101,7 @@ struct
 
 (** Compute the ecfg and fill the structures. *)
   let compute_ecfgs ( prj : Project.t ) ( ast : Cil_types.file ) ( front_end :
-          A.t sem_and_logic_front_end ) = 
+          (semantic_abstraction, counter_expression) sem_and_logic_front_end ) = 
     let cfg_visitorInst = new cfg_visitor ( prj ) in	
     cfg_visitorInst#set_front_end front_end; 
     visitFramacFile ( cfg_visitorInst :> frama_c_copy ) ast;
@@ -153,7 +159,8 @@ struct
 	Format.fprintf foc "\t\t%d [label=\"%d/%d\\nCode : %s\\nAbstraction : %s\"]\n" 
 	  uid uid statement.sid (stmt_to_string statement) (front_end#pretty abstraction);
 	List.iter ( fun (Edge(toUid, counterValue))  -> 
-	  Format.fprintf foc "\t\t%d -> %d [label=\"%s\"]\n\n" uid toUid counterValue
+	  Format.fprintf foc "\t\t%d -> %d [label=\"%s\"]\n\n" uid toUid
+          (front_end#pretty_label counterValue)
 	) listOfEdges
 
 (** This function export the given ecfg in dot format into the given file.
