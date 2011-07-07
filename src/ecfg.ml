@@ -56,16 +56,16 @@ struct
 
     val current_ecfg : ecfg = Hashtbl.create 97
     val visited_nodes : ((ecfg_node_id * semantic_abstraction), int) Hashtbl.t 
-                                                      = Hashtbl.create 97
+                                = Hashtbl.create 97
 
     method get_uid sid abstraction = 
       if Hashtbl.mem visited_nodes (sid, abstraction) 
       then Hashtbl.find visited_nodes (sid, abstraction)
       else
         begin
-        Hashtbl.add visited_nodes (sid, abstraction) 
-          ((Hashtbl.length visited_nodes) + 1);
-      Hashtbl.length visited_nodes 
+          Hashtbl.add visited_nodes (sid, abstraction) 
+            ((Hashtbl.length visited_nodes) + 1);
+          Hashtbl.length visited_nodes 
         end
 
     method add_visited_node sid abstraction = 
@@ -78,15 +78,15 @@ struct
           self#add_visited_node statement.sid abstraction;
           let subEdges = Hashtbl.create 12 in
           let _ = List.map ( fun succ -> 
-                       let abstractions_and_labels = 
-                         front_end#next abstraction
-                           guardCounter succ.skind in
-                         List.map ( fun (succ_abs, succ_lbl) ->
-                                      let edgeUID = 
-                                        self#_build_node_list succ 
-                                          succ_abs succ_lbl front_end in
-                                        Hashtbl.add subEdges edgeUID succ_lbl
-                         ) abstractions_and_labels;
+                               let abstractions_and_labels = 
+                                 front_end#next abstraction
+                                   guardCounter succ.skind in
+                                 List.map ( fun (succ_abs, succ_lbl) ->
+                                              let edgeUID = 
+                                                self#_build_node_list succ 
+                                                  succ_abs succ_lbl front_end in
+                                                Hashtbl.add subEdges edgeUID succ_lbl
+                                 ) abstractions_and_labels;
           ) statement.succs in
           let currentUID = self#get_uid statement.sid abstraction in
             Hashtbl.add current_ecfg currentUID 
@@ -96,18 +96,20 @@ struct
       else (self#get_uid statement.sid abstraction)
 
     method build_node_list ( funInfo : Cil_types.fundec ) front_end =
+      Hashtbl.clear current_ecfg;
       let rootStmt = (List.hd funInfo.sallstmts) in
       let _ = self#_build_node_list rootStmt
                 (front_end#get_entry_point_abstraction ())
                 (front_end#get_empty_transition_label ()) front_end in
-        current_ecfg
+        Hashtbl.copy current_ecfg
 
     method vglob_aux (g :Cil_types.global ) =
       is_computed <- true;
       match (g, _front_end) with 
         | ( GFun ( funInfo, _ ), Some ( front_end ) ) -> 
             Hashtbl.add ecfgs funInfo.svar.vname 
-              (self#build_node_list funInfo front_end); DoChildren
+              (self#build_node_list funInfo front_end); 
+            DoChildren
         | _ -> DoChildren
 
     method set_front_end front_end = _front_end <- Some ( front_end ) 
@@ -126,10 +128,11 @@ struct
     want to gather ecfg datas. *)
   let visite_ecfgs (ecfgs : (string, ecfg) Hashtbl.t) 
         pre_callback post_callback callback =
-    Hashtbl.iter( fun fname current_ecfg ->
-                     pre_callback fname;
-                     Hashtbl.iter ( callback fname ) current_ecfg;
-                     post_callback fname;
+    Hashtbl.iter( fun fname func_ecfg ->
+                    Self.feedback ~level:0 "Export of %s (%d nodes)" fname (Hashtbl.length func_ecfg) ;
+                    pre_callback fname;
+                    Hashtbl.iter ( callback fname ) func_ecfg;
+                    post_callback fname;
     ) ecfgs
 
   let stmt_to_string stmt =
@@ -173,9 +176,9 @@ struct
             uid uid statement.sid (stmt_to_string statement) 
             (front_end#pretty abstraction);
           Hashtbl.iter ( fun toUid counterValue  -> 
-                        Format.fprintf foc 
-                          "\t\t%d -> %d [label=\"%s\"]\n\n" uid toUid
-                          (front_end#pretty_label counterValue)
+                           Format.fprintf foc 
+                             "\t\t%d -> %d [label=\"%s\"]\n\n" uid toUid
+                             (front_end#pretty_label counterValue)
           ) listOfEdges
 
   (** This function export the given ecfg in dot format into the given file.
