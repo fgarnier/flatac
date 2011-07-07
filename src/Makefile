@@ -46,6 +46,7 @@ FRAMA_C_DOC_DIR=-I /usr/lib/ocaml \
 			-I $(F_SRC)/cil/src \
 			-I $(F_SRC)/cil/src/ext \
 			-I $(F_SRC)/src/lib \
+			-I . \
 			-I $(F_SRC)/src/lib/fc
 
 			DOC_OPTIONS= -g $(F_SRC)/doc/code/docgen.cmo
@@ -54,7 +55,7 @@ STDLIB_FILES:=printf list string
 STDLIB_FILES:=$(patsubst %, $(OCAMLLIB)/%.mli, $(STDLIB_FILES))
 
 annot:
-	ocamlc $(FRAMA_C_DOC_DIR) -i *.ml
+	ocamlc $(FRAMA_C_DOC_DIR) -i self.ml ecfg.ml
 
 html_doc: 
 	ocamldoc -html -d doc/html/ $(FRAMA_C_DOC_DIR) self.ml sem_and_logic_front_end.ml true_logic_front_end.ml ecfg.ml flatac_ep.ml
