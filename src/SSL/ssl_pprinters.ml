@@ -1,6 +1,12 @@
-
 (** This files contains the functions that allows to pretty print
-any part of a SSL formula into a string of charcater.*)
+any part of a SSL formula into a string of charcater.
+*)
+
+open Ssl_types
+open Ssl
+open SSL_lex
+open Printf
+open List
 
 (** Prints an equation in a string*)
 let pprint_ssl_eq eq =
@@ -61,3 +67,21 @@ let pprint_space_formula sformula =
     | Top_heap -> "Top_heap" 
   
 
+let pprint_quant_vars quant_vars_table = 
+  let accu = "Exists [ " in
+  let locvar_table_fold lvar () accu =
+    match   lvar with 
+	LVar (lv) ->  ( accu + ";" + lv)
+  in
+  let ret_string = (Hashtbl.fold locvar_table_fold quant_vars_table accu)
+  in
+  (ret_string + "]")
+
+let pprint_ssl_formula (sslf : ssl_formula ) =
+  let ret_str =
+    (pprint_quant_vars sslf.quant_vars)+"Pure{"+
+    (pprint_ssl_eqlist sslf.pure.equations)
+    +(pprint_ssl_affectation sslf.pure.affectations)
+    +(pprint_ssl_ptnil sslf.pure.ptnil)
+    +"} || Space{"+(pprint_space_formul sslf.space)+"}" in
+  ret_str
