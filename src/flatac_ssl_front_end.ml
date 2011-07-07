@@ -24,7 +24,6 @@ class ssl_flatac_front_end = object (self)
       | _ -> not (Ssl_decision.sat_ssl sslf)
     
 
-  method next (sslf :  ssl_formula ) ( labels :trans_label list ) (skind :  Cil.types.stmtkind) =
     
     
 end

@@ -16,4 +16,11 @@ To be generic, the module is parametrized by :
 Because the module encapsulate all the complexity, the only way to access to the stored data is to use the visitor.
 
 \subsection{eCFG's visitor}
-The visito>
+The visitor return each node of the given eCFGs, one after another. Please do not assume any order.
+
+The visitor method take three callbacks in parameter :
+\begin{enumerate}
+	\item Precallback : The callback function called before each \gls{eCFG} is browsed.
+	\item Callback : The callback function called at each node.
+	\item Postcallbacl : The callback function called after each \gls{eCFG} is browsed.
+\end{enumerate}

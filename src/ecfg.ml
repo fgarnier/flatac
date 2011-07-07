@@ -68,14 +68,21 @@ struct
 	    visited_nodes <- visited_nodes @ [nodeSemantic];
 	    (* Volontary @ to keep list order *)
 	    let subEdges = List.map ( fun e -> 
-	      let newAbstraction, newGuardCounter = 
-		front_end#next abstraction guardCounter e.skind 
-	      in
-	      let edgeUID = self#_build_node_list e newAbstraction newGuardCounter front_end in
-	      Edge (edgeUID, newGuardCounter) 
+                    let abstractions_and_labels = front_end#next abstraction
+                    guardCounter e.skind in
+
+                    List.map ( fun (a, l) ->
+	                let edgeUID = self#_build_node_list e a l front_end in
+	                        Edge (edgeUID, l)
+                    ) abstractions_and_labels;
+                    
+	      (* let newAbstraction, newGuardCounter = front_end#next abstraction guardCounter e.skind in
+	        let edgeUID = self#_build_node_list e newAbstraction newGuardCounter front_end in
+	        Edge (edgeUID, newGuardCounter)  *)
 	    ) statement.succs in
 	    let currentUID = self#get_uid statement.sid abstraction in
-	    current_ecfg <-  Node ( currentUID, Semantic ( statement, abstraction ), subEdges ) :: current_ecfg;
+	    current_ecfg <-  Node ( currentUID, Semantic ( statement,
+            abstraction ), List.flatten subEdges ) :: current_ecfg;
 	    currentUID
 	  end
 	else (self#get_uid statement.sid abstraction)

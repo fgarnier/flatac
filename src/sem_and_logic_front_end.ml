@@ -22,7 +22,7 @@ object
   (** Returns true if the given state is an error state. *)
   method virtual is_error_state: 'a -> bool
   (** Returns a the next couple of abstract interpretation and counter automata label based on the current abstraction, the current counter, and the statement kind. *)
-  method virtual next : 'a -> 'b -> stmtkind -> ('a * 'b)
+  method virtual next : 'a -> 'b -> stmtkind -> ('a * 'b) list
   
   (** Shall we add some fix point decision procedure at this place ?*)  
   method virtual pretty : 'a -> string
