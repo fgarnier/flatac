@@ -14,6 +14,10 @@ open Ssl_decision
 
 class ssl_flatac_front_end = object (self)
   inherit [SSL_lex.formula , Cautomata.trans_label list ]  sem_and_logic_front_end
+    
+
+  method get_empty_transition_label () =
+    []
 
   method get_entry_point_abstraction () =
     Ssl_lex.create_ssl_f ()
@@ -22,6 +26,7 @@ class ssl_flatac_front_end = object (self)
     match ssl_formula.space with
 	Top_heap -> true
       | _ -> not (Ssl_decision.sat_ssl sslf)
+
     
 
     
