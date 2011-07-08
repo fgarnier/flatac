@@ -42,17 +42,15 @@ exception Bad_expression_type of string
 (** The type of integers scalar expressions*)
 type c_scal = LiVar of primed * c_int_var
 	      | LiConst of c_int_cst
-	      | LiSymConst of c_int_sym_const (*Like sizeof(char)*)
-	      (*| LiPtr of c_int_ptr*)
+	      | LiSymConst of c_int_sym_const  (*Like sizeof(char)*)
 	      | LiProd of c_scal * c_scal
 	      | LiSum of c_scal * c_scal
 	      | LiMinus of c_scal * c_scal
 	      | LiUnMin of c_scal
-	      | LiMod of c_scal * c_scal (*Modulo operator*)
-	      (*| LiIndexPI of *)
+	      | LiMod of c_scal * c_scal   (*Modulo operator*)
 	      | LiMinusPP of c_ptrexp * c_ptrexp
-		  (** Type of pointer variables *)
-and c_ptrexp = LiPVar of primed * c_ptr
+		  
+and c_ptrexp = LiPVar of primed * c_ptr (* Type of pointer variables *)
 	       | LiPlusPI of c_ptrexp * c_scal
 	       | LiIndexPI of c_ptrexp * c_scal 
 	       
@@ -178,6 +176,9 @@ let rec cil_expr_2_bool (expr : Cil_types.exp) =
 (** This function transforms a list of cil expression into a list
 of scalar expression, whenever possible. It raises a Bad_expression_type
 exception if something wrong occured.  *)
+
+
+     (** Replace that by a List.map*)
 (*******************************************************************)
 let cil_expr_list_2_scalar_list (expr_list : Cil_types.exp list ) =
   let rec rec_call (ret_list : c_scal list) (expr_list: Cil_types.exp list )= 
@@ -191,44 +192,13 @@ let cil_expr_list_2_scalar_list (expr_list : Cil_types.exp list ) =
 
 
 
-(*
-  
-  The following piece of code is compliant with ANSI-C.
-  The command :
-  gcc -Wall -pedantic -o example example.c 
-  produces non warning and the binary executes accordingly to
-  the expectations.
-
-  int *ptr=NULL;
-
-  int j;
-  if (ptr){
-  printf ("Failure, ptr is NULL \n");
-  }
-
-  ptr=(int * )(300*(((int)ptr==2)));
-  j=(int)ptr;
-
-*)
 
 
-
-
-(* One need to translate C-boolean evaluation into the language of FLATA
+(** One need to translate C-boolean evaluation into the language of FLATA
 constrainsts. That's to say : 
-Translating C-booleans expressions in the  "intermediate lanuage " 
-into the FLATA grammar, if there exists a matching transformation.*)
-
-
-(* example: scalars of the form :
-
- Cst <=> Cst != 0
-IntVar (x) <=> x!=0
-
-*)
-
-
-(* Takes a c_bool expression as parameter then returns its negation.
+Translating C-booleans expressions in the  "intermediate language " 
+into the FLATA grammar, if there exists a matching transformation.
+ Takes a c_bool expression as parameter then returns its negation.
 The negation unary operators are pushed in the bottmost position
 in the expression tree.
 *)
@@ -255,7 +225,6 @@ let rec negate_bool_bot ( b_exp : c_bool ) =
 on the root of the term, removing neg fun symbol if present.
  We use this function when it comes to let flata to deal with simplifying
 logical expressions*)
-
 let negate_bool_sym ( b_exp : c_bool ) =
    match b_exp with
        LiBNot ( exp ) -> exp
@@ -264,10 +233,10 @@ let negate_bool_sym ( b_exp : c_bool ) =
      | _ -> LiBNot ( b_exp )
 
 
-(*Ajouter une fonction prenant en compte l'arité/distributivité des sous termes
-pour effectuer (ou non) un parentésage.*)
-
-
+(**Ajouter une fonction prenant en compte l'arité/distributivité des sous termes
+pour effectuer (ou non) un parentésage.
+It is essential, that the output syntax complies with the NTS-comp library.
+*)
 
 let rec scal_to_string ( b_exp : c_scal ) =
   match b_exp with 
@@ -305,7 +274,8 @@ let rec scal_to_string ( b_exp : c_scal ) =
     | LiUnMin ( s ) -> "-"^(scal_to_string s)
     | LiMod ( sg , sd ) ->  (scal_to_string sg)^"%"^(scal_to_string sd)
   
- 
+(** One need to make sure that the output syntax complies with the NTS-lib
+syntax.*) 
 let rec c_bool_to_string ( b_exp :  c_bool) = 
   match b_exp with
         LiBNot ( b ) -> 
@@ -329,8 +299,7 @@ let rec c_bool_to_string ( b_exp :  c_bool) =
     | LiBGeq ( bg , bd ) ->  "("^(scal_to_string bg) ^">="^(scal_to_string bd) ^")" 
     | LiBScal ( c_scal ) ->  "("^(scal_to_string c_scal)^")!=0"(* true iff != 0 *)
 
-
-
+(** Call the function above and prints the output in the out formater.*)
 let pretty_print_c_bool ( out_channel :Format.formatter) (b_exp : c_bool ) =
   Format.fprintf  out_channel "%s" (c_bool_to_string b_exp)
 
