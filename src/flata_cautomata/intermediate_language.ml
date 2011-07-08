@@ -39,7 +39,7 @@ and integers constants.
 
 exception Bad_expression_type of string
 
-
+(** The type of integers scalar expressions*)
 type c_scal = LiVar of primed * c_int_var
 	      | LiConst of c_int_cst
 	      | LiSymConst of c_int_sym_const (*Like sizeof(char)*)
@@ -50,14 +50,14 @@ type c_scal = LiVar of primed * c_int_var
 	      | LiUnMin of c_scal
 	      | LiMod of c_scal * c_scal (*Modulo operator*)
 	      (*| LiIndexPI of *)
-	      | MinusPP of c_ptrexp * c_ptrexp
-
+	      | LiMinusPP of c_ptrexp * c_ptrexp
+		  (** Type of pointer variables *)
 and c_ptrexp = LiPVar of primed * c_ptr
 	       | LiPlusPI of c_ptrexp * c_scal
 	       | LiIndexPI of c_ptrexp * c_scal 
 	       
 
-(**)
+
 type c_bool = LiBNot of c_bool 
  	      | LiBAnd of c_bool * c_bool 
 	      | LiBOr of c_bool * c_bool  
@@ -76,32 +76,65 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
   match expr.enode with 
       Const(CInt64(i,_,_))-> LiConst( LiIConst(Int64.to_int i))
     | Lval(Var(f),_)->
-	begin
-	  match f.vtype with
-	     TInt(_,_) -> LiVar(Unprimed,LiIntVar(f.vname))
-	    | _-> begin 
-	      let msg = "This variable : "^f.vname ^"isn't of type TInt, but appears in a scalar expression \n" in let exc =  Bad_expression_type msg in
-	      raise  exc
-	    end
-	end	
-	  
-    | BinOp (PlusA, expg, expd, TInt(_,_) ) ->
-	LiSum (cil_expr_2_scalar expg , cil_expr_2_scalar expd)
-
-    | BinOp (MinusA, expg, expd, TInt(_,_) ) ->
-	LiMinus (cil_expr_2_scalar expg ,cil_expr_2_scalar  expd)
-
-    | BinOp (Mult, expg, expd, TInt(_,_) ) -> 
-	LiProd (cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
-
-    | BinOp (Mod, expg, expd, TInt(_,_)) -> 
-	LiMod(cil_expr_2_scalar expg ,cil_expr_2_scalar expd )
-
-    | UnOp (Neg, exp , TInt(_,_)) ->
-	LiUnMin ( cil_expr_2_scalar exp)
+      begin
+	match f.vtype with
+	    TInt(_,_) -> LiVar(Unprimed,LiIntVar(f.vname))
+	  | _-> begin 
+	    let msg = "This variable : "^f.vname ^"isn't of type TInt, but appears in a scalar expression \n" in let exc =  Bad_expression_type msg in
+														 raise  exc
+	  end
+      end	
 	
+    | BinOp (PlusA, expg, expd, TInt(_,_) ) ->
+      LiSum (cil_expr_2_scalar expg , cil_expr_2_scalar expd)
+	
+    | BinOp (MinusA, expg, expd, TInt(_,_) ) ->
+      LiMinus (cil_expr_2_scalar expg ,cil_expr_2_scalar  expd)
+	
+    | BinOp (Mult, expg, expd, TInt(_,_) ) -> 
+      LiProd (cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
+	  
+    | BinOp (Mod, expg, expd, TInt(_,_)) -> 
+      LiMod(cil_expr_2_scalar expg ,cil_expr_2_scalar expd )
 
+    | Binop (MinusPP , expg , expd , _ ) ->
+      LiMinusPP(cil_expr_2_ptr expg , cil_expr_2_scalar expd)
+    
+    | UnOp (Neg, exp , TInt(_,_)) ->
+      LiUnMin ( cil_expr_2_scalar exp)
+       
     | _ -> raise( Bad_expression_type "'Can't parse expression in cil_expr_2_scalar \n")
+
+and cil_expr_2_ptr expr =
+  match expr.enode with
+    
+      BinOp (PlusPI, expg, expd , _ ) ->
+	LiPlusPI(cil_expr_2_ptr expg, cil_expr_2_scal expd )
+    
+    | BinOp (IndexPI , expg , expd , _ ) ->
+      LiIndexPI ( cil_expr_2_ptr expg, cil_expr_2_scal expd)
+    
+    | BinOp ( MinusPI , expg , expd , _ ) ->
+      LiMinusPI ( cil_scal_2_ptr expg , cil_expr_2_scal expd )
+	
+    |  Lval (Var(vinfo)) ->
+      begin
+	match vinfo.vtype with
+	    TPtr( TInt(_,_) ) -> LiPtvar(Unprimed, LiIntPtr(vinfo.vname))
+	  | _ ->  begin 
+	    let msg = "This variable : "^f.vname ^"is a pointer which isn't of  type TInt, but that appears in a scalar expression \n" 
+	    in let exc =  Bad_expression_type msg in 
+	       raise exc
+	  end
+      end
+
+    |  (_) ->    begin 
+	    let msg = " There is something I was unable to properly
+parse in the ci_expr_2_ptr function" 
+	    in let exc =  Bad_expression_type msg in 
+	       raise exc
+	  end
+      
 
 
 let rec cil_expr_2_bool (expr : Cil_types.exp) =
