@@ -26,7 +26,7 @@ type primed = Primed
 type c_int_var = LiIntVar of string
 type c_int_cst = LiIConst of int
 type c_int_sym_const = LiSymIConst of string
-type c_int_ptr = LiIntPtr of string (*The represented type is indeed an int*)
+type c_ptr = LiIntPtr of string (*The represented type is indeed an int*)
 
 
 (* We define the type of  the scalars as follows.
@@ -43,13 +43,19 @@ exception Bad_expression_type of string
 type c_scal = LiVar of primed * c_int_var
 	      | LiConst of c_int_cst
 	      | LiSymConst of c_int_sym_const (*Like sizeof(char)*)
-	      | LiPtr of c_int_ptr
+	      (*| LiPtr of c_int_ptr*)
 	      | LiProd of c_scal * c_scal
 	      | LiSum of c_scal * c_scal
 	      | LiMinus of c_scal * c_scal
 	      | LiUnMin of c_scal
 	      | LiMod of c_scal * c_scal (*Modulo operator*)
-	      
+	      (*| LiIndexPI of *)
+	      | MinusPP of c_ptrexp * c_ptrexp
+
+and c_ptrexp = LiPVar of primed * c_ptr
+	       | LiPlusPI of c_ptrexp * c_scal
+	       | LiIndexPI of c_ptrexp * c_scal 
+	       
 
 (**)
 type c_bool = LiBNot of c_bool 
