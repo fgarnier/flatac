@@ -14,6 +14,7 @@ open Format
 
 
 exception Lvar_found 
+exception Get_a_locvar of locvar
 
 let cmp_lex_lvar (g : locvar ) (d : locvar ) =
   match g , d with
@@ -110,6 +111,22 @@ let cmp_lex_lvar (g : locvar ) (d : locvar ) =
  (** This fuction is used to remove trivial equalities, such as l1=l1*)
   let del_tautologies (l : eq list ) =
       _del_tautologies [] l
+
+
+(** Pick an element of a ( locvar , unit ) t if it contains any. Raises
+Not_Empty if empty. *)
+let pick_first_lvar ( loctable : ( locvar , unit ) t) =
+  let it_table lvar () =
+    raise ( Get_a_locvar ( lvar ) )
+  in
+  try 
+    Hashtbl.iter it_table loctable; (LVar(""))
+  with
+      Get_a_locvar ( lvar ) -> lvar
+ 
+
+  
+
 
 
 (**********************************************************************)
@@ -512,3 +529,21 @@ quantified in the formula, false in any other cases *)
     space = ret_spacef ;
   }
   
+
+
+(** This function takes as input a ssl formula, sslf, and a pointer variable
+name ptvar and returns a location variable l s.t. ptvar->l appears in the
+pure part of sslf. An exception is raised if  ptvar doesn't belong to
+the pure part of sslf*)
+  let get_ptr_affectation (sslf : ssl_formula ) ( pvar : ptvar ) =
+    try
+    let pvar_table = Hashtbl.find sslf.pure.affectations pvar in
+    let retv = pick_first_lvar pvar_table in
+    retv
+    with
+	Not_found -> 
+	  if Hashtbl.mem sslf.pure.ptnil pvar then
+	    (LVar(""))
+	  else
+	    raise Not_found
+	  
