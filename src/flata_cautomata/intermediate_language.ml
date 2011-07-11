@@ -204,43 +204,6 @@ let cil_expr_list_2_scalar_list (expr_list : Cil_types.exp list ) =
 
 
 
-
-
-(** One need to translate C-boolean evaluation into the language of FLATA
-constrainsts. That's to say : 
-Translating C-booleans expressions in the  "intermediate language " 
-into the FLATA grammar, if there exists a matching transformation.
- Takes a c_bool expression as parameter then returns its negation.
-The negation unary operators are pushed in the bottmost position
-in the expression tree.
-*)
-(*
-let rec negate_bool_bot ( b_exp : c_bool ) =
-  match b_exp with
-      LiBNot ( exp ) -> exp
-    |  LiBAnd( expg , expd ) -> 
-      LiBOr ( negate_bool_bot( expg ), negate_bool_bot( expd ))
-    |  LiBOr( expg , expd ) -> 
-      LiBAnd ( negate_bool_bot( expg ), negate_bool_bot( expd ))
-    | LiBTrue -> LiBFalse
-    | LiBFalse -> LiBTrue
-    | LiBEq( expg , expd ) ->  LiBNeq ( expg, expd )
-    | LiBNeq( expg , expd ) ->  LiBEq ( expg, expd )
-    | LiBLt( expg , expd ) ->  LiBGeq ( expg, expd )
-    | LiBGt( expg , expd ) ->  LiBLeq ( expg, expd ) 
-    | LiBLeq( expg , expd ) ->  LiBGt ( expg, expd ) 
-    | LiBGeq( expg , expd ) ->  LiBLt ( expg, expd )
-    | LiBScal( exp ) -> LiBEq ( exp, LiConst(LiIConst(0) ))
-    | LiBPtrEq ( expg , expd ) -> LiBPtrNeq ( expg , expd )
-    | LiBPtrNeq  ( expg , expd ) ->  LiBPtrEq ( expg , expd )
-*)
-(*
-    | LiBPtrGt of c_ptrexp * c_ptrexp
-	      | LiBPtrLt of c_ptrexp * c_ptrexp
-	      | LiBPtrGeq of c_ptrexp * c_ptrexp
-	      | LiBPtrLeq of c_ptrexp * c_ptrexp
-*)
- 
 let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
   match expr.enode with 
       Const(CInt64(i,_,_))-> LiConst( LiIConst(Int64.to_int i))
