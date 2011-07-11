@@ -53,6 +53,7 @@ type c_scal = LiVar of primed * c_int_var
 and c_ptrexp = LiPVar of primed * c_ptr (* Type of pointer variables *)
 	       | LiPlusPI of c_ptrexp * c_scal
 	       | LiIndexPI of c_ptrexp * c_scal 
+	       | LiMinusPI of c_ptrexp * c_scal
 	       
 
 
@@ -95,8 +96,8 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
     | BinOp (Mod, expg, expd, TInt(_,_)) -> 
       LiMod(cil_expr_2_scalar expg ,cil_expr_2_scalar expd )
 
-    | Binop (MinusPP , expg , expd , _ ) ->
-      LiMinusPP(cil_expr_2_ptr expg , cil_expr_2_scalar expd)
+    | BinOp (MinusPP , expg , expd , _ ) ->
+      LiMinusPP(cil_expr_2_ptr expg , cil_expr_2_ptr expd)
     
     | UnOp (Neg, exp , TInt(_,_)) ->
       LiUnMin ( cil_expr_2_scalar exp)
@@ -107,20 +108,20 @@ and cil_expr_2_ptr expr =
   match expr.enode with
     
       BinOp (PlusPI, expg, expd , _ ) ->
-	LiPlusPI(cil_expr_2_ptr expg, cil_expr_2_scal expd )
+	LiPlusPI(cil_expr_2_ptr expg, cil_expr_2_scalar expd )
     
     | BinOp (IndexPI , expg , expd , _ ) ->
-      LiIndexPI ( cil_expr_2_ptr expg, cil_expr_2_scal expd)
+      LiIndexPI ( cil_expr_2_ptr expg, cil_expr_2_scalar expd)
     
     | BinOp ( MinusPI , expg , expd , _ ) ->
-      LiMinusPI ( cil_scal_2_ptr expg , cil_expr_2_scal expd )
+      LiMinusPI ( cil_expr_2_ptr expg , cil_expr_2_scalar expd )
 	
-    |  Lval (Var(vinfo)) ->
+    |  Lval (Var(vinfo), _ ) ->
       begin
 	match vinfo.vtype with
-	    TPtr( TInt(_,_) ) -> LiPtvar(Unprimed, LiIntPtr(vinfo.vname))
+	    TPtr( TInt(_,_), _ ) -> LiPVar(Unprimed, LiIntPtr(vinfo.vname))
 	  | _ ->  begin 
-	    let msg = "This variable : "^f.vname ^"is a pointer which isn't of  type TInt, but that appears in a scalar expression \n" 
+	    let msg = "This variable : "^vinfo.vname ^"is a pointer which isn't of  type TInt, but that appears in a scalar expression \n" 
 	    in let exc =  Bad_expression_type msg in 
 	       raise exc
 	  end
@@ -238,14 +239,13 @@ pour effectuer (ou non) un parentésage.
 It is essential, that the output syntax complies with the NTS-comp library.
 *)
 
+
 let rec scal_to_string ( b_exp : c_scal ) =
   match b_exp with 
       LiVar(Unprimed,LiIntVar(vname)) -> vname (* returns the name of the variable*)
     | LiVar(Primed,LiIntVar(vname)) -> vname^"'" 
     | LiConst(LiIConst(i)) -> (Printf.sprintf "%d" i )
     | LiSymConst(LiSymIConst(const_name)) -> const_name   
-    | LiPtr ( LiIntPtr( ptr_name )) ->  ptr_name 
- 
     | LiProd( sg , sd ) ->
       let rhs= ref "" in
       let lhs = ref "" in
@@ -266,13 +266,38 @@ let rec scal_to_string ( b_exp : c_scal ) =
     | LiMinus( sg , sd ) -> 
      begin
       match sd with
-	  LiConst(_) | LiSymConst (_) | LiVar(_,_) | LiPtr(_) ->
+	  LiConst(_) | LiSymConst (_) | LiVar(_,_) ->
 	    (scal_to_string sg) ^"-" ^ (scal_to_string sd)
 	| _ ->(scal_to_string sg )^"-("^(scal_to_string sd)^")"
      end
      
     | LiUnMin ( s ) -> "-"^(scal_to_string s)
+    
     | LiMod ( sg , sd ) ->  (scal_to_string sg)^"%"^(scal_to_string sd)
+    
+    | LiMinusPP (ptrg , ptrd ) ->
+      "("^( ptrexp_to_str  ptrg )^"-"^ ( ptrexp_to_str  ptrd )^")"
+
+and ptrexp_to_str ( cptr : c_ptrexp ) =
+  match cptr with 
+    
+      LiPVar ( Primed , LiIntPtr ( vname) ) ->
+	vname^"'"
+    
+    | LiPVar ( Unprimed , LiIntPtr ( vname )) ->
+      vname
+    
+    | LiPlusPI ( ptr_in , offset ) ->
+      ( ptrexp_to_str  ptr_in )^"["^(scal_to_string offset)^"]"
+    
+    | LiIndexPI ( ptr_in , offset ) ->
+       ( ptrexp_to_str  ptr_in )^"["^(scal_to_string offset)^"]"
+    
+    | LiMinusPI (ptr_in , offset ) ->
+      ( ptrexp_to_str  ptr_in )^"["^(scal_to_string offset)^"]"
+    
+   
+
   
 (** One need to make sure that the output syntax complies with the NTS-lib
 syntax.*) 
