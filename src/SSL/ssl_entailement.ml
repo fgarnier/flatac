@@ -11,7 +11,7 @@ open Ssl_substitution
 open Ssl_decision
 
 
-exception Get_a_locvar of locvar
+
 exception No_more_vars
 
 
@@ -36,19 +36,6 @@ let fresh_flvar (flvar : fresh_loc_var ) =
   match flvar with
       FLVar  (name , c ) ->  FLVar (name , (c+1))
 
-(** Pick an element of a ( locvar , unit ) t if it contains any. Raises
-Not_Empty if empty. *)
-let pick_first_lvar ( loctable : ( locvar , unit ) t) =
-  let it_table lvar () =
-    raise ( Get_a_locvar ( lvar ) )
-  in
-  try 
-    Hashtbl.iter it_table loctable; (LVar(""))
-  with
-      Get_a_locvar ( lvar ) -> lvar
- 
-
-  
 (** Computes the name of a location variable, that is fresh for both
 SSL formulae of the entailement problem
 *)
