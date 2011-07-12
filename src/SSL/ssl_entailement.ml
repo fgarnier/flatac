@@ -311,7 +311,7 @@ entailement.*)
 
 
 
-
+(** Reduces an entailement problem.*)
 let ssl_entailement (etp : entail_problem ) =
  
   let overall_subst =  ref (entail_subst_id) in
@@ -325,6 +325,45 @@ let ssl_entailement (etp : entail_problem ) =
   entail_r2 etp;
   entail_ptnil etp
 
+
+(** decides whether a f |- g is true, that's to say
+that f |- g reduces to 
+(Pure[...]|| Emp ) |- (true || Emp)
+
+the entailement problem and their associated SSL formula
+are copied, and the parameter remain unaffected by the
+computation.
+*)
+
+let does_entail (etp : entail_problem ) =
+  let etp_prime = { 
+    left = (Ssl.copy etp.left) ;
+    right = (Ssl.copy etp.right) ;
+  } 
+  in
+  ssl_entailement etp_prime;
+  match etp_prime.left.space , etp_prime.right.space with 
+      ( Space ( space_table_l) , Space(space_table_r)) ->
+	begin
+	  if ( Hashtbl.length space_table_l > 0 ) ||
+	    (Hashtbl.length space_table_r > 0 ) then
+	    false
+	  else
+	    begin
+	      if (Hashtbl.length etp.right.pure.affectations == 0 )
+		&& (Hashtbl.length etp.right.pure.ptnil == 0)
+	      then
+		true
+	    else
+		false
+	    end
+	end
+	  | (_,_) -> false
+
+	  
+  
+  
+  
 
 
 
