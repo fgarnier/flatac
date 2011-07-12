@@ -334,7 +334,6 @@ the entailement problem and their associated SSL formula
 are copied, and the parameter remain unaffected by the
 computation.
 *)
-
 let does_entail (etp : entail_problem ) =
   let etp_prime = { 
     left = (Ssl.copy etp.left) ;
