@@ -34,7 +34,7 @@ SOURCES_FILES   := ast_goodies.ml cautomata.ml c2cautomatanalys.ml flatac_vistor
 F_SRC:= ~/FRAMAC
 
 PLUGIN_NAME= Flatac
-PLUGIN_CMO= self sem_and_logic_front_end true_logic_front_end ecfg flatac_ep 
+PLUGIN_CMO= self sem_and_logic_front_end trivalue_logic_front_end true_logic_front_end ecfg flatac_ep 
 
 include $(FRAMAC_SHARE)/Makefile.dynamic
 
