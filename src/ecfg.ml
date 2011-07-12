@@ -74,6 +74,9 @@ struct
     method add_visited_node sid abstraction = 
       let _ = self#get_uid sid abstraction in ()
 
+(*    method is_accepted sid abstraction =
+              Hashtbl.find_all visited_nodes (sid, _) *)
+
     method _build_node_list ( statement : stmt ) abstraction 
                                                 guardCounter front_end =
       if not (Hashtbl.mem visited_nodes (statement.sid, abstraction)) then 
