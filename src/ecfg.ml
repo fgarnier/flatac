@@ -57,12 +57,15 @@ struct
     val current_ecfg : ecfg = Hashtbl.create 97
     val visited_nodes : ((ecfg_node_id * semantic_abstraction), int) Hashtbl.t 
                                 = Hashtbl.create 97
+    val mutable nodeCount = 0
+    val mutable transitionCount = 0
 
     method get_uid sid abstraction = 
       if Hashtbl.mem visited_nodes (sid, abstraction) 
       then Hashtbl.find visited_nodes (sid, abstraction)
       else
         begin
+          nodeCount <- nodeCount + 1;
           Hashtbl.add visited_nodes (sid, abstraction) 
             ((Hashtbl.length visited_nodes) + 1);
           Hashtbl.length visited_nodes 
@@ -114,6 +117,7 @@ struct
 
     method set_front_end front_end = _front_end <- Some ( front_end ) 
     method get_ecfgs = ecfgs
+    method get_node_count = nodeCount
   end
 
   (** Compute the ecfg and fill the structures. *)
@@ -129,7 +133,8 @@ struct
   let visite_ecfgs (ecfgs : (string, ecfg) Hashtbl.t) 
         pre_callback post_callback callback =
     Hashtbl.iter( fun fname func_ecfg ->
-                    Self.feedback ~level:0 "Export of %s (%d nodes)" fname (Hashtbl.length func_ecfg) ;
+                    (* Self.feedback ~level:0 "Export of %s (%d nodes)" fname
+                     * (Hashtbl.length func_ecfg) ; *)
                     pre_callback fname;
                     Hashtbl.iter ( callback fname ) func_ecfg;
                     post_callback fname;
