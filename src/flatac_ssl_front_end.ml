@@ -11,11 +11,13 @@ open Ssl_types
 open Cautomata
 open Ssl_decision
 open Ssl_printers
+open C_upon_ssl_domain (* Contains the semantic tranformation
+		       of the C instruction on the SSL formulae*)
 
 
 class ssl_flatac_front_end = object (self)
-  inherit [SSL_lex.formula , Cautomata.trans_label list ]  sem_and_logic_front_end
-    
+ (* inherit [SSL_lex.formula , Cautomata.trans_label list ]  sem_and_logic_front_end*)
+  inherit [SSL_lex.formula , () ]  sem_and_logic_front_end 
 
   method get_empty_transition_label () =
     []
@@ -32,6 +34,11 @@ class ssl_flatac_front_end = object (self)
   method pretty (sslf : ssl_formula ) =
     Ssl_pprinters.pprint_ssl_formula sslf
 
+    (*  
+  method next (sslf : ssl_formula)()(skind : Cil_types.stmtkind) =
+    *)
+
+      
     
 
     
