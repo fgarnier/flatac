@@ -7,6 +7,7 @@ open Ssl_types.SSL_lex
 open Ssl_substitution
 open Ssl_normalization
 
+
 exception SSL_unsat
 exception No_locvars_left
 exception Lvar_present
@@ -70,3 +71,7 @@ let garbage_ssl (sslf : ssl_formula ) =
 
 	      (* However, in this case there is one unreferenced
 	      var in the heap*)
+
+
+
+  

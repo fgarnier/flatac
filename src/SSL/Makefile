@@ -28,10 +28,10 @@ debug_printers.cmo : ssl_types.cmo ssl.cmo  ssl_entailement.cmo debug_printers.m
 ssl_normalization.cmo : ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo
 		ocamlc $(CFLAGS)  -c ssl_normalization.ml
 
-ssl_decision.cmo :  ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo
+ssl_decision.cmo :  ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo 
 	ocamlc $(CFLAGS)  -c ssl_decision.ml
 
-ssl_entailement.cmo : ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo ssl_decision.cmo  ssl_entailement.ml 
+ssl_entailement.cmo : ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo ssl_decision.cmo ssl_entailement.ml 
 	ocamlc $(CFLAGS)  -c ssl_entailement.ml
 
 ssl_biabduction.cmo : ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo ssl_decision.cmo  ssl_entailement.cmo ssl_biabduction.ml
