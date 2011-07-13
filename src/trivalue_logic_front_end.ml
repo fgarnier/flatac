@@ -15,7 +15,7 @@ inherit [string, string] sem_and_logic_front_end
       | _ -> false
   method next current_abstraction _ _ = 
     match current_abstraction with
-      | "A" -> [("B", "NONE"); ("C", "NONE")]
+      | "A" -> [("B", "NONE"); ("C", "NONE"); ("D", "NONE")]
       | "B" -> [("C", "NONE")]
       | "C" -> [("B", "NONE")]
       | _ -> [("X", "NONE")]

@@ -79,19 +79,19 @@ struct
                            (semantic_abstraction, counter_expression) 
                            sem_and_logic_front_end)  =
       if not (Hashtbl.mem visited_sids sid)
-      then begin Hashtbl.add visited_sids sid [abstraction]; true end 
+      then begin Hashtbl.add visited_sids sid [abstraction]; true end
       else begin 
         let visited_abstractions = Hashtbl.find visited_sids sid in
-        let entailed = List.exists ( fun abs -> 
+        if List.exists ( fun abs -> 
                                if abs = abstraction then true
                                else front_end#entails abs abstraction
-          ) visited_abstractions in
-          if entailed then begin
+          ) visited_abstractions then begin
             Self.feedback ~level:0 "ENTAILED !";
             false
-              end else begin
+              end 
+        else begin
             Hashtbl.add visited_sids sid 
-                 ( abstraction :: Hashtbl.find visited_sids sid ) ;
+                 ( abstraction :: (Hashtbl.find visited_sids sid) ) ;
             true
           end
       end
@@ -107,7 +107,7 @@ struct
                                  front_end#next abstraction
                                    guardCounter succ.skind in
                                  List.map ( fun (succ_abs, succ_lbl) ->
-                                  if self#is_accepted statement.sid abstraction front_end then
+                                  if self#is_accepted succ.sid succ_abs front_end then
                                               let edgeUID = 
                                                 self#_build_node_list succ 
                                                   succ_abs succ_lbl front_end in
