@@ -1,37 +1,81 @@
+(** This file  contains aims encodes the semantic of some C-functions
+over the SSL formula. Those one are currently hard coded, which is
+not satisfactory in a long term view.
 
+Question & remarks : Address to florent dot garnier AT imag dot fr.
+*)
 open Cil_types
 open Ssl_types
 open Ssl_decision
 open Ssl_printers
+open Global_mem
+open Option
+
+
+exception No_pvar_in_free_expression
 
 
 
+(** This function aims at getting the first variable name
+of the list of parameters. Might be useful if some parameter
+expressions are prefixed by a cast or any other ugly stuff so
+pecuiliar to the C-language.
+*)
+let rec get_first_ptvar_from_lparam ( lparam : Cil.exp list ) =
+ match lparam with 
+     [] -> raise No_pvar_in_free_expression 
+   |  (Lval(Var(varinf),_))::l -> (PVar(varinf.vname))
+   | _::l' -> get_first_ptvar_from_lparam l' 
 
+
+
+(** This function modifies the sslf formula that abstracts the current
+heap and stack when a call to malloc is performed.*)
+let malloc_upon_ssl  ( v : Cil_types.varinfo Option ) (mid : global_mem_manager)(sslf : ssl_formula ) =
+  match v with Some (vinfo) ->
+    let lvar = mid#lvar_from_malloc in
+    let pvar = (PVar(vinfo.vname)) in
+    let affect = Pointsto (pvar,lvar) in
+    Ssl.add_quant_var lvar sslf;
+    Ssl.and_atomic_affect affect sslf;
+    Ssl.and_alloc_cell lvar sslf
+    
+    | None ->
+       let lvar = mid#lvar_from_malloc in
+       Ssl.and_alloc_cell lvar sslf
+      
+(** Effect of a free(x),  where x is a pointer variable, on an ssl
+formula.*)
+let free_upon_ssl (pvar : ptvar)(sslf : ssl_formula) =
+  let lvar = get_pointer_affectation pvar sslf in
+  if not (space_contains_locvar lvar  sslf )
+  then set_top_heap sslf 
+  else
+    try_remove_segment lvar sslf
 
 
 (** Modifies the ssl formual that abstracts the current stack
 and heap.  *)
-let next_on_ssl (sslf : ssl_formula ) (skind : Cil_types.stmtkind ) =
+let next_on_ssl (mid : global_mem_manager)(sslf : ssl_formula ) (skind : Cil_types.stmtkind ) ()  =
   match skind with 
-      Instr ( instruction ) ->  next_on_ssl_instr sslf instruction
+      Instr ( instruction ) ->  next_on_ssl_instr  mid sslf instruction
     | _ -> ssl_formula 
 
 
-let next_on_ssl_instr (sslf :  ssl_formula) ( instruction : Cil_types.instr)=
+let next_on_ssl_instr ( mid :  global_mem_manager)( sslf :ssl_formula) ( instruction : Cil_types.instr)
     match instruction with 
 	  (*****************************************************************)
 	
        
 	  (*   We consider here the call of function that have an impact
 	  on the heap and the stack, namely :
-	       _malloc
+	       _malloc & calloc
 	       _free
 	  *)
 
 
 	  (*****************************************************************)
 	  
-
       |  Instr(Call( Some(lvo) , exp1, lparam , _ ))->
 	  begin
 	      match lvo , exp1.enode with
@@ -41,7 +85,9 @@ let next_on_ssl_instr (sslf :  ssl_formula) ( instruction : Cil_types.instr)=
 			  (*Returned value has an integer type*)
 			  TPtr(TInt(_,_),_)->
 			    begin
-			      
+			      match f.vname with
+				  "malloc" | "calloc" 
+				    -> malloc_upon_ssl  v mid sslf
 			    end
 			 (*The returned value is a variable that has another
 			 type than an integer type. Tpointer, float for instance*)
@@ -51,5 +97,38 @@ is not of an integer type." )
 		    end
 	  end
 
+
       |  Instr(Call( None , exp1, lparam , _ ))->
-	
+	begin
+	  match  exp1.enode , lparam with
+	      Lval((Var(f),_))->
+		match f.vname with
+		    "free" -> free_upon_ssl ( get_first_ptvar_from_lparam lparam) sslf 
+		  | "malloc" | "calloc" -> 
+		     malloc_upon_ssl  None mid sslf
+	end
+
+
+
+(**  We are mostly considering pointer modfications and affectations in this
+function.*)
+(*
+let next_on_affectations  ( sslf :ssl_formula) ( instruction : Cil_types.instr) =
+  match instruction with 
+     Set( (Var(vinfo), _ ) , exp , _ ) ->
+  
+*)	  
+
+
+
+
+
+
+
+
+
+
+    
+    
+  
+  

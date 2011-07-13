@@ -13,6 +13,7 @@ open Ssl_decision
 open Ssl_printers
 open C_upon_ssl_domain (* Contains the semantic tranformation
 		       of the C instruction on the SSL formulae*)
+open Global_mem
 
 
 class ssl_flatac_front_end = object (self)
@@ -20,7 +21,7 @@ class ssl_flatac_front_end = object (self)
     
   inherit [SSL_lex.formula , unit ]  sem_and_logic_front_end 
 
-  val gmalloc_id = ref 1
+  val mid =  new global_mem ()
 
   method get_empty_transition_label () =
     []

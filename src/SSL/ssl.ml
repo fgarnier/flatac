@@ -545,3 +545,27 @@ the pure part of sslf*)
 	  else
 	    raise Not_found
 	  
+(** sets the heap in the top state*)
+  let set_heap_to_top (sslf : ssl_formula ) =
+    sslf.space := Top_heap
+
+
+(** Removes a segment alloc(l) from the heap, if only one
+occurence of alloc(l) exists, sets the heap to top in all other
+cases*)
+  let try_remove_segment (lvar : locvar ) (sslf : ssl_formula ) =
+    match sslf.space with 
+	Top_heap -> ()
+      | Space (space_table ) ->
+	begin
+	  try
+	  let occurences = Hashtbl.find space_table lvar in
+	  if occurences == 1 then
+	    Hashtbl.remove space_table lvar
+	  else
+	    set_heap_to_top sslf
+	  with
+	      No_found -> set_heap_to_top sslf 
+	end
+
+
