@@ -333,8 +333,9 @@ order relation order *)
 	    Hashtbl.add tble lv (); (* One now add the binding
 				       lv->unit in the new table*)
 	    Hashtbl.add sslf.pure.affectations ptr tble (*And add this
-							 new this table associated
-to the key ptr*)
+							 new this table 
+							 associated 
+							  to the key ptr*)
  
  (** Adds the affectation to NIL to the pure part of sslf*)     
   let and_atomic_ptnil (ptnil : SSL_lex.affectnil )( sslf :SSL_lex.ssl_formula )=
@@ -405,8 +406,7 @@ to the key ptr*)
     Hashtbl.iter affect_nil_iterator fd.pure.ptnil;
     res
 
-
-      (** this function creates a new hashtable that describes the
+ (** this function creates a new hashtable that describes the
  heap that results from the separation of two heap of two ssl logic
 formulae *)
   (*let space_sep (spaceg : space_formula) (spaced : space_formula) =*)
@@ -442,8 +442,6 @@ the two SSL formulae.*)
 
 (** This part contains the main components of the normalisation 
 algorithm. *)
-
-
   let cmp_eq (eq_1 : SSL_lex.eq) (eq_2 : SSL_lex.eq) =
     match eq_1 , eq_2 with
 	 ( Eqloc( LVar(lg_1) , LVar(ld_1) ) , Eqloc(LVar(lg_2),LVar(ld_2))) -> if ((SSL_lex.order_relation lg_1 lg_2) == true)

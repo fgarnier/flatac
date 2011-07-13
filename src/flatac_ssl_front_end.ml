@@ -17,7 +17,10 @@ open C_upon_ssl_domain (* Contains the semantic tranformation
 
 class ssl_flatac_front_end = object (self)
  (* inherit [SSL_lex.formula , Cautomata.trans_label list ]  sem_and_logic_front_end*)
+    
   inherit [SSL_lex.formula , () ]  sem_and_logic_front_end 
+
+  val gmalloc_id = ref 1
 
   method get_empty_transition_label () =
     []

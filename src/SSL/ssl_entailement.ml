@@ -332,7 +332,8 @@ that f |- g reduces to
 
 the entailement problem and their associated SSL formula
 are copied, and the parameter remain unaffected by the
-computation.
+computation. Both formula of the entailement problem must
+be in normal form.
 *)
 let does_entail (etp : entail_problem ) =
   let etp_prime = { 
