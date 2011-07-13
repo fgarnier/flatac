@@ -26,10 +26,7 @@ open Buffer
   type.
   *)
 module Ecfg = 
-  functor ( A : sig 
-              type abstract_type 
-              type label_type
-            end ) ->
+  functor ( A : sig type abstract_type type label_type end ) ->
 struct
   (** A.t represents the data type of the abstraction. *)
   type semantic_abstraction = A.abstract_type
@@ -48,15 +45,17 @@ struct
   class cfg_visitor ( prj : Project.t ) = object(self)
     inherit Visitor.generic_frama_c_visitor (prj) (Cil.inplace_visit())
     val mutable is_computed = false
-    val mutable _front_end : ( (
-      (semantic_abstraction, counter_expression) sem_and_logic_front_end
-    ) option ) = None
+    val mutable _front_end : ( ( (semantic_abstraction, counter_expression)
+                                   sem_and_logic_front_end) option ) = None
 
     val ecfgs : (string, ecfg) Hashtbl.t = Hashtbl.create 12
 
     val current_ecfg : ecfg = Hashtbl.create 97
-    val visited_nodes : ((ecfg_node_id * semantic_abstraction), int) Hashtbl.t 
-                                = Hashtbl.create 97
+    val visited_nodes : ((ecfg_node_id * semantic_abstraction), int) Hashtbl.t =
+      Hashtbl.create 97
+    val visited_sids : (ecfg_node_id, semantic_abstraction list)
+        Hashtbl.t = Hashtbl.create 97
+
     val mutable nodeCount = 0
     val mutable transitionCount = 0
 
@@ -74,12 +73,32 @@ struct
     method add_visited_node sid abstraction = 
       let _ = self#get_uid sid abstraction in ()
 
-(*    method is_accepted sid abstraction =
-              Hashtbl.find_all visited_nodes (sid, _) *)
+    method is_accepted  (sid : ecfg_node_id) 
+                        (abstraction : semantic_abstraction) 
+                        (front_end : 
+                           (semantic_abstraction, counter_expression) 
+                           sem_and_logic_front_end)  =
+      if not (Hashtbl.mem visited_sids sid)
+      then begin Hashtbl.add visited_sids sid [abstraction]; true end 
+      else begin 
+        let visited_abstractions = Hashtbl.find visited_sids sid in
+        let entailed = List.exists ( fun abs -> 
+                               if abs = abstraction then true
+                               else front_end#entails abs abstraction
+          ) visited_abstractions in
+          if entailed then begin
+            Self.feedback ~level:0 "ENTAILED !";
+            false
+              end else begin
+            Hashtbl.add visited_sids sid 
+                 ( abstraction :: Hashtbl.find visited_sids sid ) ;
+            true
+          end
+      end
 
     method _build_node_list ( statement : stmt ) abstraction 
-                                                guardCounter front_end =
-      if not (Hashtbl.mem visited_nodes (statement.sid, abstraction)) then 
+             guardCounter front_end =
+      if not (Hashtbl.mem visited_nodes (statement.sid, abstraction)) then
         begin
           self#add_visited_node statement.sid abstraction;
           let subEdges = Hashtbl.create 12 in
@@ -88,10 +107,12 @@ struct
                                  front_end#next abstraction
                                    guardCounter succ.skind in
                                  List.map ( fun (succ_abs, succ_lbl) ->
+                                  if self#is_accepted statement.sid abstraction front_end then
                                               let edgeUID = 
                                                 self#_build_node_list succ 
                                                   succ_abs succ_lbl front_end in
-                                                Hashtbl.add subEdges edgeUID succ_lbl
+                                                Hashtbl.add subEdges edgeUID
+                                                  succ_lbl
                                  ) abstractions_and_labels;
           ) statement.succs in
           let currentUID = self#get_uid statement.sid abstraction in
@@ -125,7 +146,8 @@ struct
 
   (** Compute the ecfg and fill the structures. *)
   let compute_ecfgs ( prj : Project.t ) ( ast : Cil_types.file ) 
-        ( front_end : (semantic_abstraction, counter_expression) sem_and_logic_front_end ) = 
+        ( front_end : (semantic_abstraction, counter_expression)
+            sem_and_logic_front_end ) = 
     let cfg_visitorInst = new cfg_visitor ( prj ) in	
       cfg_visitorInst#set_front_end front_end; 
       visitFramacFile ( cfg_visitorInst :> frama_c_copy ) ast;
@@ -197,7 +219,10 @@ struct
       Format.fprintf foc "digraph G {\n";
       visite_ecfgs ecfgs 
         ( fun fname -> Format.fprintf foc 
-                         "\tsubgraph cluster_%s {\n\t\tnode [style=filled,color=white]; \n\t\tstyle=filled; \n\t\tcolor=lightgray; \n\t\tlabel = \"%s\"; \n\t\tfontsize=40; \n\n" fname fname )
+                         "\tsubgraph cluster_%s {\n\t\tnode \
+                         [style=filled,color=white]; \n\t\tstyle=filled; \
+                          \n\t\tcolor=lightgray; \n\t\tlabel = \"%s\"; \
+                          \n\t\tfontsize=40; \n\n" fname fname )
         ( fun _ -> Format.fprintf foc "\t}\n" ) 
         (print_dot foc front_end);
       Format.fprintf foc "\n}";
