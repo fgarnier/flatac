@@ -19,8 +19,9 @@ object
   (** Returns a label without any consequence on sub transition label *)
   method virtual get_empty_transition_label : unit -> 'b 
 
-  (* Returns true if the second abstraction is entailed by the first one. *)
-  method virtual entails : 'a -> 'a -> bool
+  (* Returns true if the second abstraction, knowing the first abstraction, the
+  * second one is accepted. *)
+  method virtual accepts: 'a -> 'a -> bool
 
   (** Returns true if the given state is an error state. *)
   method virtual is_error_state: 'a -> bool

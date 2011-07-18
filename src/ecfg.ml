@@ -84,7 +84,7 @@ struct
         let visited_abstractions = Hashtbl.find visited_sids sid in
         if List.exists ( fun abs -> 
                                if abs = abstraction then true
-                               else front_end#entails abs abstraction
+                               else front_end#accepts abs abstraction
           ) visited_abstractions then begin
             Self.feedback ~level:0 "ENTAILED !";
             false
