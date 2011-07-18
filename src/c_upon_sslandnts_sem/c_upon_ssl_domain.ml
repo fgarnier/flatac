@@ -61,15 +61,9 @@ let free_upon_ssl (pvar : ptvar)(sslf : ssl_formula) =
     try_remove_segment lvar sslf
 
 
-(** Modifies the ssl formual that abstracts the current stack
-and heap.  *)
-let next_on_ssl (mid : global_mem_manager)(sslf : ssl_formula ) (skind : Cil_types.stmtkind ) ()  =
-  match skind with 
-      Instr ( instruction ) ->  next_on_ssl_instr  mid sslf instruction
-    | _ -> ssl_formula 
 
-
-let next_on_ssl_instr ( mid :  global_mem_manager)( sslf :ssl_formula) ( instruction : Cil_types.instr) =
+(** mid must be an instance of the class global mem manager*)
+let next_on_ssl_instr  mid ( sslf :ssl_formula) ( instruction : Cil_types.instr) =
     match instruction with 
 	  (*****************************************************************)
 	
@@ -83,7 +77,7 @@ let next_on_ssl_instr ( mid :  global_mem_manager)( sslf :ssl_formula) ( instruc
 
 	  (*****************************************************************)
 	  
-      |  Instr(Call( Some(lvo) , exp1, lparam , _ ))->
+      |  Call( Some(lvo) , exp1, lparam , _ )->
 	  begin
 	      match lvo , exp1.enode with
 		  ((Var(v),_) , Lval((Var(f),_)) ) ->
@@ -93,28 +87,56 @@ let next_on_ssl_instr ( mid :  global_mem_manager)( sslf :ssl_formula) ( instruc
 			  TPtr(TInt(_,_),_)->
 			    begin
 			      match f.vname with
-				  "malloc" | "calloc" 
-				    -> malloc_upon_ssl  v mid sslf
+				  "malloc" | "calloc" -> (malloc_upon_ssl (Some(v)) mid sslf)
+				|  _ -> () (** Plug other functions name
+					   that behaves as malloc in this 
+					   space*)
 			    end
 			 (*The returned value is a variable that has another
 			 type than an integer type. Tpointer, float for instance*)
 
-			| _ ->  self#register_failure stmtp ( "returned value 
-is not of an integer type." )  
+			| _ -> () (** Here the formula is let untouched*)
 		    end
+		| _ -> () (** Here the returned value is not a variable,
+			  the returned value shall be logged in this case.*)
 	  end
 
 
-      |  Instr(Call( None , exp1, lparam , _ ))->
+      |  Call( None , exp1, lparam , _ )->
 	begin
-	  match  exp1.enode , lparam with
+	  match  exp1.enode  with
 	      Lval((Var(f),_))->
+		begin
 		match f.vname with
 		    "free" -> free_upon_ssl ( get_first_ptvar_from_lparam lparam) sslf 
-		  | "malloc" | "calloc" -> 
-		     malloc_upon_ssl  None mid sslf
+		  | "malloc" | "calloc" -> (malloc_upon_ssl  None mid sslf)
+		  | _ -> (** All other function name that are dropped leads 
+			 here*)
+		end
+	    | _ -> () (** Here the formula is let untouched*)
 	end
 
+      | _ -> () (** This is the default case, that's to say when
+		    the parsed operation doesn't match the semantics.
+		    At this point, we shall add some relevant information
+		    dealing with the abstracted part of the ast.
+		*)
+
+
+
+
+
+
+
+(** Modifies the ssl formual that abstracts the current stack
+and heap. 
+The parameter mid shall be an instance of the global_mem_manager class.
+ *)
+
+let next_on_ssl mid (sslf : ssl_formula ) (skind : Cil_types.stmtkind ) ()  =
+  match skind with 
+      Instr ( instruction ) ->  next_on_ssl_instr  mid sslf instruction
+    | _ -> ()
 
 
 (**  We are mostly considering pointer modfications and affectations in this
