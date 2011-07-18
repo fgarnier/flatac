@@ -10,6 +10,7 @@ open Ssl_decision
 open Ssl_printers
 open Global_mem
 open Option
+open List
 
 
 exception No_pvar_in_free_expression
@@ -21,7 +22,9 @@ of the list of parameters. Might be useful if some parameter
 expressions are prefixed by a cast or any other ugly stuff so
 pecuiliar to the C-language.
 *)
-let rec get_first_ptvar_from_lparam ( lparam : Cil.exp list ) =
+
+
+let rec get_first_ptvar_from_lparam ( lparam : Cil_types.exp list ) =
  match lparam with 
      [] -> raise No_pvar_in_free_expression 
    |  (Lval(Var(varinf),_))::l -> (PVar(varinf.vname))
@@ -31,7 +34,7 @@ let rec get_first_ptvar_from_lparam ( lparam : Cil.exp list ) =
 
 (** This function modifies the sslf formula that abstracts the current
 heap and stack when a call to malloc is performed.*)
-let malloc_upon_ssl  ( v : Cil_types.varinfo Option ) (mid : global_mem_manager)(sslf : ssl_formula ) =
+let malloc_upon_ssl  ( v : Cil_types.varinfo option ) ( mid : global_mem_manager)(sslf : ssl_formula ) =
   match v with Some (vinfo) ->
     let lvar = mid#lvar_from_malloc in
     let pvar = (PVar(vinfo.vname)) in
@@ -39,11 +42,11 @@ let malloc_upon_ssl  ( v : Cil_types.varinfo Option ) (mid : global_mem_manager)
     Ssl.add_quant_var lvar sslf;
     Ssl.and_atomic_affect affect sslf;
     Ssl.and_alloc_cell lvar sslf
-    
+      
     | None ->
        let lvar = mid#lvar_from_malloc in
-       Ssl.and_alloc_cell lvar sslf
-      
+       (Ssl.and_alloc_cell lvar sslf)
+	 
 (** Effect of a free(x),  where x is a pointer variable, on an ssl
 formula.*)
 let free_upon_ssl (pvar : ptvar)(sslf : ssl_formula) =
@@ -62,7 +65,7 @@ let next_on_ssl (mid : global_mem_manager)(sslf : ssl_formula ) (skind : Cil_typ
     | _ -> ssl_formula 
 
 
-let next_on_ssl_instr ( mid :  global_mem_manager)( sslf :ssl_formula) ( instruction : Cil_types.instr)
+let next_on_ssl_instr ( mid :  global_mem_manager)( sslf :ssl_formula) ( instruction : Cil_types.instr) =
     match instruction with 
 	  (*****************************************************************)
 	
