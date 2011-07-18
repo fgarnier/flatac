@@ -107,11 +107,11 @@ let next_on_ssl_instr  mid ( sslf :ssl_formula) ( instruction : Cil_types.instr)
 	  match  exp1.enode  with
 	      Lval((Var(f),_))->
 		begin
-		match f.vname with
-		    "free" -> free_upon_ssl ( get_first_ptvar_from_lparam lparam) sslf 
-		  | "malloc" | "calloc" -> (malloc_upon_ssl  None mid sslf)
-		  | _ -> (** All other function name that are dropped leads 
-			 here*)
+		  match f.vname with
+		      "free" -> free_upon_ssl ( get_first_ptvar_from_lparam lparam) sslf 
+		    | "malloc" | "calloc" -> (malloc_upon_ssl  None mid sslf)
+		    | _ -> (** All other function name that are dropped leads 
+			       here*)
 		end
 	    | _ -> () (** Here the formula is let untouched*)
 	end
