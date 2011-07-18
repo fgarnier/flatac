@@ -6,10 +6,11 @@ Question & remarks : Address to florent dot garnier AT imag dot fr.
 *)
 open Cil_types
 open Ssl_types
+open SSL_lex
+open Ssl
 open Ssl_decision
-open Ssl_printers
+open Debug_printers
 open Global_mem
-open Option
 open List
 
 
@@ -26,33 +27,36 @@ pecuiliar to the C-language.
 
 let rec get_first_ptvar_from_lparam ( lparam : Cil_types.exp list ) =
  match lparam with 
-     [] -> raise No_pvar_in_free_expression 
-   |  (Lval(Var(varinf),_))::l -> (PVar(varinf.vname))
-   | _::l' -> get_first_ptvar_from_lparam l' 
-
-
+     [] -> raise No_pvar_in_free_expression
+   | h::l' ->
+	 begin
+	   match h.enode with
+	       (Lval(Var(varinf),_)) -> (PVar(varinf.vname))
+	     | _  -> get_first_ptvar_from_lparam l' 
+	 end
+	   
 
 (** This function modifies the sslf formula that abstracts the current
 heap and stack when a call to malloc is performed.*)
-let malloc_upon_ssl  ( v : Cil_types.varinfo option ) ( mid : global_mem_manager)(sslf : ssl_formula ) =
+let malloc_upon_ssl  ( v : Cil_types.varinfo option )  mid  (sslf : ssl_formula ) =
   match v with Some (vinfo) ->
     let lvar = mid#lvar_from_malloc in
     let pvar = (PVar(vinfo.vname)) in
     let affect = Pointsto (pvar,lvar) in
     Ssl.add_quant_var lvar sslf;
     Ssl.and_atomic_affect affect sslf;
-    Ssl.and_alloc_cell lvar sslf
+    Ssl.add_alloc_cell lvar sslf
       
     | None ->
        let lvar = mid#lvar_from_malloc in
-       (Ssl.and_alloc_cell lvar sslf)
+       (Ssl.add_alloc_cell lvar sslf)
 	 
 (** Effect of a free(x),  where x is a pointer variable, on an ssl
 formula.*)
 let free_upon_ssl (pvar : ptvar)(sslf : ssl_formula) =
-  let lvar = get_pointer_affectation pvar sslf in
-  if not (space_contains_locvar lvar  sslf )
-  then set_top_heap sslf 
+  let lvar = get_ptr_affectation sslf pvar in
+  if not (space_contains_locvar lvar  sslf.space )
+  then set_heap_to_top sslf 
   else
     try_remove_segment lvar sslf
 

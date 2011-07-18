@@ -14,11 +14,11 @@ FRAMA_C_INCLUDES=       -I $(F_SRC)/src/kernel \
                         -I $(F_SRC)/src/lib/fc
 
 SSL_INCLUDES 	= -I $(SSL_SRC)
-GLOBAL_MEM = -I $(FLATAC_SRC_ROOT)/global_mem
+GLOBAL_MEM_INCLUDES = -I $(FLATAC_SRC_ROOT)/global_mem
 
 
 c_upon_ssl_domain.cmo : 
-	ocamlc $(FRAMA_C_INCLUDES) $(GLOBLAL_MEM) $(SSL_INCLUDES) -c c_upon_ssl_domain.ml
+	ocamlc $(FRAMA_C_INCLUDES) $(GLOBAL_MEM_INCLUDES) $(SSL_INCLUDES) -c c_upon_ssl_domain.ml
 
 clean :
 	rm -f *.cmo *.cmi

@@ -547,7 +547,7 @@ the pure part of sslf*)
 	  
 (** sets the heap in the top state*)
   let set_heap_to_top (sslf : ssl_formula ) =
-    sslf.space := Top_heap
+    sslf.space <- Top_heap
 
 
 (** Removes a segment alloc(l) from the heap, if only one
@@ -565,7 +565,7 @@ cases*)
 	  else
 	    set_heap_to_top sslf
 	  with
-	      No_found -> set_heap_to_top sslf 
+	      Not_found -> set_heap_to_top sslf 
 	end
 
 
