@@ -1,0 +1,13 @@
+include makefile.conf
+
+
+all :
+	$(MAKE) -C ./SSL/ install_lib_flatac \
+    	&& $(MAKE) -C ./global_mem/ install_lib_flatac \
+	&& $(MAKE) -C ./c_upon_sslandnts_sem/ install_lib_flatac 
+
+clean :
+	$(MAKE) -C SSL/ clean \
+	&& $(MAKE) -C global_mem/ clean\
+	&& $(MAKE) -C c_upon_sslandnts_sem/ clean\
+	&& rm -f objs/*
