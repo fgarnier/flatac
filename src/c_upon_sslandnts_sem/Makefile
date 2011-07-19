@@ -5,10 +5,12 @@ OBJS = c_upon_ssl_domain.cmo c_upon_ssl_domain.cmx
 all : $(OBJS)
 
 c_upon_ssl_domain.cmo : 
-	ocamlc $(FRAMA_C_INCLUDES) $(GLOBAL_MEM_INCLUDES) $(SSL_INCLUDES) -c c_upon_ssl_domain.ml
+	@echo "Compiling $< to $@"
+	@ocamlc $(FRAMA_C_INCLUDES) $(GLOBAL_MEM_INCLUDES) $(SSL_INCLUDES) -c c_upon_ssl_domain.ml
 
 c_upon_ssl_domain.cmx : 
-	ocamlopt $(FRAMA_C_INCLUDES) $(GLOBAL_MEM_INCLUDES) $(SSL_INCLUDES) -c c_upon_ssl_domain.ml
+	@echo "Compiling $< to $@"
+	@ocamlopt $(FRAMA_C_INCLUDES) $(GLOBAL_MEM_INCLUDES) $(SSL_INCLUDES) -c c_upon_ssl_domain.ml
 
 clean :
 	rm -f *.cmo *.cmi *.o *.cmx

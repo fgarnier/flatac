@@ -1,0 +1,7 @@
+To build Flatac plugin for frama-c, follow the step as described bellow
+
+1) run ./configure.sh
+2) make 
+3) make install
+
+
