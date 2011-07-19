@@ -1,24 +1,17 @@
+include ../makefile.conf
 
-FLATAC_SRC_ROOT = /home/florent/REPOSITORIES/flatac/src/
-SSL_SRC = $(FLATAC_SRC_ROOT)/SSL
-F_SRC:= /home/florent/FRAMAC_LATTEST/frama-c-Carbon-20110201
+OBJS = c_upon_ssl_domain.cmo c_upon_ssl_domain.cmx
 
-FRAMA_C_INCLUDES=       -I $(F_SRC)/src/kernel \
-                        -I $(F_SRC)/src/project \
-                        -I $(F_SRC)/cil/ocamlutil \
-                        -I $(F_SRC)/cil/src/logic \
-                        -I $(F_SRC)/cil/src \
-                        -I $(F_SRC)/cil/src/ext \
-                        -I $(F_SRC)/src/lib \
-                        -I . \
-                        -I $(F_SRC)/src/lib/fc
-
-SSL_INCLUDES 	= -I $(SSL_SRC)
-GLOBAL_MEM_INCLUDES = -I $(FLATAC_SRC_ROOT)/global_mem
-
+all : $(OBJS)
 
 c_upon_ssl_domain.cmo : 
 	ocamlc $(FRAMA_C_INCLUDES) $(GLOBAL_MEM_INCLUDES) $(SSL_INCLUDES) -c c_upon_ssl_domain.ml
 
+c_upon_ssl_domain.cmx : 
+	ocamlopt $(FRAMA_C_INCLUDES) $(GLOBAL_MEM_INCLUDES) $(SSL_INCLUDES) -c c_upon_ssl_domain.ml
+
 clean :
 	rm -f *.cmo *.cmi
+
+install_lib_flatac : all
+	cp *.cmo ../objs && cp *.cmx ../objs && cp *.cmi ../objs

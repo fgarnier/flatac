@@ -8,7 +8,7 @@ COMP_OPT_OBJS =  ssl_types.cmx ssl.cmx union_find.cmx ssl_substitution.cmx ssl_n
 
 all : $(COMPINTERFACES) $(COMP_OPT_OBJS)
 
-install_lib_framac : all
+install_lib_flatac : all
 	cp *.cmo ../objs && cp *.cmx ../objs && cp *.cmi ../objs 
 
 .ml.cmo : $(COMPINTERFACES)
@@ -29,7 +29,6 @@ ssl_substitution.cmo :  ssl_types.cmo ssl.cmo union_find.cmo
 debug_printers.cmo : ssl_types.cmo ssl.cmo  ssl_entailement.cmo debug_printers.ml
 	ocamlc $(CFLAGS)  -c debug_printers.ml
 
-
 ssl_normalization.cmo : ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo
 		ocamlc $(CFLAGS)  -c ssl_normalization.ml
 
@@ -39,7 +38,7 @@ ssl_decision.cmo :  ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo ss
 ssl_entailement.cmo : ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo ssl_decision.cmo ssl_entailement.ml 
 	ocamlc $(CFLAGS)  -c ssl_entailement.ml
 
-ssl_biabduction.cmo : ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo ssl_decision.cmo  ssl_entailement.cmo ssl_biabduction.ml
+ssl_biabduction.cmo : ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo ssl_decision.cmo  ssl_entailement.cmo debug_printers.cmo ssl_biabduction.ml
 	ocamlc $(CFLAGS)  -c ssl_biabduction.ml
 
 
@@ -68,7 +67,7 @@ ssl_decision.cmx :  ssl_types.cmx ssl.cmx union_find.cmx ssl_substitution.cmx ss
 ssl_entailement.cmx : ssl_types.cmx ssl.cmx union_find.cmx ssl_substitution.cmx ssl_normalization.cmx ssl_decision.cmx ssl_entailement.ml 
 	ocamlopt $(CFLAGS)  -c ssl_entailement.ml
 
-ssl_biabduction.cmx : ssl_types.cmx ssl.cmx union_find.cmx ssl_substitution.cmx ssl_normalization.cmx ssl_decision.cmx  ssl_entailement.cmx ssl_biabduction.ml
+ssl_biabduction.cmx : ssl_types.cmx ssl.cmx union_find.cmx ssl_substitution.cmx ssl_normalization.cmx ssl_decision.cmx  ssl_entailement.cmx debug_printers.cmx ssl_biabduction.ml
 	ocamlopt $(CFLAGS)  -c ssl_biabduction.ml
 
 
