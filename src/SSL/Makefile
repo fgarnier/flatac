@@ -1,4 +1,3 @@
-
 CFLAGS = -g -annot
 
 COMPINTERFACES = ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo ssl_decision.cmo ssl_entailement.cmo ssl_biabduction.cmo
@@ -9,7 +8,7 @@ COMP_OPT_OBJS =  ssl_types.cmx ssl.cmx union_find.cmx ssl_substitution.cmx ssl_n
 all : $(COMPINTERFACES) $(COMP_OPT_OBJS)
 
 install_lib_flatac : all
-	cp *.cmo ../objs && cp *.cmx ../objs && cp *.cmi ../objs 
+	-cp *.cmo ../objs && cp *.cmx ../objs && cp *.cmi ../objs 
 
 .ml.cmo : $(COMPINTERFACES)
 	ocmalc $(CFLAGS) $*.ml
@@ -91,5 +90,5 @@ clean :
 	rm -f *.o *.cmo *.cmi *.cmx *.annot > /dev/null ; \
 	rm test > /dev/null ; \
 	rm test_biabduction > /dev/null; \
-	cd api &&\
-	rm -f *.html\
+	cd api && \
+	rm -f *.html >/dev/null \

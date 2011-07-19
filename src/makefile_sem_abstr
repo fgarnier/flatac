@@ -1,9 +1,8 @@
 include makefile.conf
 
-
 all :
 	$(MAKE) -C ./SSL/ install_lib_flatac \
-    	&& $(MAKE) -C ./global_mem/ install_lib_flatac \
+  && $(MAKE) -C ./global_mem/ install_lib_flatac \
 	&& $(MAKE) -C ./c_upon_sslandnts_sem/ install_lib_flatac 
 
 clean :
