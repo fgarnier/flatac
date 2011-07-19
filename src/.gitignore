@@ -1,3 +1,4 @@
+makefile.conf
 *.cmx
 *.cmo
 *.cmi
