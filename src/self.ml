@@ -18,3 +18,13 @@ module Self =
 			let help= "This plugin demonstrate the work of Radu Iosif, Florent Ganier, Marius Bozga \
 			and Maxime Gaudin about the automatic verification on critical embedded softwares."
 		end)
+
+module Enabled =
+	Self.False
+		(struct
+	 		let option_name= "-flatac"
+			let help= ""
+			let kind= `Correctness
+		 end)
+
+

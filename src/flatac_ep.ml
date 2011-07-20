@@ -15,15 +15,6 @@ open Sem_and_logic_front_end
 (* open True_logic_front_end *)
 open Trivalue_logic_front_end
 
-module Enabled =
-	Self.False
-		(struct
-	 		let option_name= "-flatac"
-			let help= ""
-			let kind= `Correctness
-		 end)
-
-
 (** This module is used as a parameter of the Ecfg functor *)
 module CfgExtension = 
         struct 
