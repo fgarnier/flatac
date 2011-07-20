@@ -8,7 +8,7 @@ FRAMA_C_INCLUDES="-I ${F_SRC}/src/kernel -I ${F_SRC}/src/project -I \
 ${F_SRC}/cil/ocamlutil -I ${F_SRC}/cil/src/logic -I ${F_SRC}/cil/src -I \
 ${F_SRC}/cil/src/ext -I ${F_SRC}/src/lib -I .  -I ${F_SRC}/lib/fc -I \
 ${ROOT_PATH}/SSL/ -I ${ROOT_PATH}/global_mem/ -I \
-${ROOT_PATH}/c_upon_SSLandnts_sem/"
+${ROOT_PATH}/c_upon_sslandnts_sem/"
 HEADER=""
 [[ -e ${ROOT_PATH}/${MAKEFILE_CONF} ]] && rm -f ${ROOT_PATH}/${MAKEFILE_CONF}
 echo -e "FRAMA_C_INCLUDES=${FRAMA_C_INCLUDES}" >> ${ROOT_PATH}/${MAKEFILE_CONF}
