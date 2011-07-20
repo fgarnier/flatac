@@ -44,7 +44,8 @@ echo -e "\t@cd ${ROOT_PATH}/ && time make -f Makefile.sub && cd ${ROOT_PATH}" >>
 echo -e "\t@echo \"\"" >> Makefile
 
 echo -e "\t@echo \"Enregistrement du plugin...\"" >> Makefile
-echo -e "\t@cd ${ROOT_PATH}/ && time make -f FC_Makefile && cd ${ROOT_PATH}" >> Makefile
+echo -e "\t@cd ${ROOT_PATH}/ && time make -f FC_Makefile && make -f \
+FC_Makefile install && cd ${ROOT_PATH}" >> Makefile
 echo -e "\t@echo \"\"" >> Makefile
 
 echo -e "\t@echo \"*** Compilation terminée ***\"" >> Makefile
