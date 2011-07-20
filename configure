@@ -51,7 +51,7 @@ echo -e "\t@echo \"*** Compilation terminée ***\"" >> Makefile
 
 echo "clean:" >> Makefile
 echo -e "\t@cd ${ROOT_PATH}/SSL/ && make -f Makefile.sub clean && cd ${ROOT_PATH}" >> Makefile
-echo -e "\t@cd ${ROOT_PATH}/c_upon_SSLandnts_sem/ && make -f Makefile.sub clean && cd ${ROOT_PATH}" >> Makefile
+echo -e "\t@cd ${ROOT_PATH}/c_upon_sslandnts_sem/ && make -f Makefile.sub clean && cd ${ROOT_PATH}" >> Makefile
 echo -e "\t@cd ${ROOT_PATH}/global_mem/ && make -f Makefile.sub clean && cd ${ROOT_PATH}" >> Makefile
 echo -e "\t@cd ${ROOT_PATH}/./ && make -f Makefile.sub clean && cd ${ROOT_PATH}" >> Makefile
 echo -e "\t@cd ${ROOT_PATH}/./ && make -f FC_Makefile clean && cd ${ROOT_PATH}" >> Makefile
