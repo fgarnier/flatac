@@ -17,6 +17,10 @@ OCAMLOPT=`which ocamlopt`
 	@echo "\t * Compilation de l'interface $@..."
 	@$(OCAMLOPT) $(FRAMA_C_INCLUDES) $(CFLAGS) $< -o $@
 
+%.cmi: %.mli
+	@echo "\t * Compilation de l'interface $@..."
+	@$(OCAMLOPT) $(FRAMA_C_INCLUDES) $(CFLAGS) $< -o $@
+
 % : $(COMPILED_INTERFACES) %.ml
 	@ocamlc $(FRAMA_C_INCLUDES) $^ -o $@ 
 
