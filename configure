@@ -26,16 +26,22 @@ echo ".PHONY: clean all" >> Makefile
 
 echo "all:" >> Makefile
 echo -e "\t@echo \"Construction de SSL/...\"" >> Makefile
-echo -e "\t@cd ${ROOT_PATH}/SSL/ && make -f Makefile.sub && cd ${ROOT_PATH}" >> Makefile
+echo -e "\t@cd ${ROOT_PATH}/SSL/ && time make -f Makefile.sub && cd ${ROOT_PATH}" >> Makefile
+echo -e "\t@echo \"\"" >> Makefile
 
 echo -e "\t@echo \"Construction de c_upon_SSL/...\"" >> Makefile
-echo -e "\t@cd ${ROOT_PATH}/c_upon_SSLandnts_sem/ && make -f Makefile.sub && cd ${ROOT_PATH}" >> Makefile
+echo -e "\t@cd ${ROOT_PATH}/c_upon_SSLandnts_sem/ && time make -f Makefile.sub && cd ${ROOT_PATH}" >> Makefile
+echo -e "\t@echo \"\"" >> Makefile
 
 echo -e "\t@echo \"Construction de global_mem/...\"" >> Makefile
-echo -e "\t@cd ${ROOT_PATH}/global_mem/ && make -f Makefile.sub && cd ${ROOT_PATH}" >> Makefile
+echo -e "\t@cd ${ROOT_PATH}/global_mem/ && time make -f Makefile.sub && cd ${ROOT_PATH}" >> Makefile
+echo -e "\t@echo \"\"" >> Makefile
 
 echo -e "\t@echo \"Construction de eCFG/...\"" >> Makefile
-echo -e "\t@cd ${ROOT_PATH}/ && make -f Makefile.sub && cd ${ROOT_PATH}" >> Makefile
+echo -e "\t@cd ${ROOT_PATH}/ && time make -f Makefile.sub && cd ${ROOT_PATH}" >> Makefile
+echo -e "\t@echo \"\"" >> Makefile
+
+echo -e "\t@echo \"*** Compilation terminée ***\"" >> Makefile
 
 echo "clean:" >> Makefile
 echo -e "\t@cd ${ROOT_PATH}/SSL/ && make -f Makefile.sub clean && cd ${ROOT_PATH}" >> Makefile

@@ -3,7 +3,7 @@ EXTRAS= $(ML_FILES:.ml=.cmx)
 BYTECODE_OBJS= $(ML_FILES:.ml=.cmo) 
 NATIVE_OBJS = $(ML_FILES:.ml=.o) 
 
-CFLAGS = -g -annot -c
+CFLAGS =-g -annot -c
 OCAMLC=`which ocamlc`
 OCAMLOPT=`which ocamlopt`
 
@@ -18,13 +18,10 @@ OCAMLOPT=`which ocamlopt`
 	@$(OCAMLOPT) $(FRAMA_C_INCLUDES) $(CFLAGS) $< -o $@
 
 %.cmi: %.mli
-	@echo "\t * Compilation de l'interface $@..."
+	@echo "\t * Export de l'interface $@..."
 	@$(OCAMLOPT) $(FRAMA_C_INCLUDES) $(CFLAGS) $< -o $@
 
-% : $(COMPILED_INTERFACES) %.ml
-	@ocamlc $(FRAMA_C_INCLUDES) $^ -o $@ 
-
-all : $(COMPILED_INTERFACES) $(BYTECODE_OBJS)
+all: $(COMPILED_INTERFACES) $(BYTECODE_OBJS)
 
 .PHONY: clean mrproper
 
