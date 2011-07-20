@@ -10,11 +10,11 @@ OCAMLOPT=`which ocamlopt`
 .SECONDARY:
 
 %.cmo: %.ml
-	@echo "Compilation de $@..."
+	@echo "\t * Compilation de $@..."
 	@$(OCAMLC) $(FRAMA_C_INCLUDES) $(CFLAGS) $< -o $@
 
 %.cmx: %.ml
-	@echo "Compilation de l'interface $@..."
+	@echo "\t * Compilation de l'interface $@..."
 	@$(OCAMLOPT) $(FRAMA_C_INCLUDES) $(CFLAGS) $< -o $@
 
 % : $(COMPILED_INTERFACES) %.ml
