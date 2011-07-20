@@ -38,17 +38,17 @@ let rec get_first_ptvar_from_lparam ( lparam : Cil_types.exp list ) =
 
 (** This function modifies the sslf formula that abstracts the current
 heap and stack when a call to malloc is performed.*)
-let malloc_upon_ssl  ( v : Cil_types.varinfo option )  mid  (sslf : ssl_formula ) =
+let malloc_upon_ssl  ( v : Cil_types.varinfo option ) ( mid : global_mem_manager )  (sslf : ssl_formula ) =
   match v with Some (vinfo) ->
-    let lvar = mid#lvar_from_malloc in
+    let lvar = mid#lvar_from_malloc () in
     let pvar = (PVar(vinfo.vname)) in
-    let affect = Pointsto (pvar,lvar) in
+    let affect = (Pointsto (pvar,lvar)) in
     Ssl.add_quant_var lvar sslf;
     Ssl.and_atomic_affect affect sslf;
     Ssl.add_alloc_cell lvar sslf
       
     | None ->
-       let lvar = mid#lvar_from_malloc in
+       let lvar = mid#lvar_from_malloc () in
        (Ssl.add_alloc_cell lvar sslf)
 	 
 (** Effect of a free(x),  where x is a pointer variable, on an ssl
@@ -63,7 +63,7 @@ let free_upon_ssl (pvar : ptvar)(sslf : ssl_formula) =
 
 
 (** mid must be an instance of the class global mem manager*)
-let next_on_ssl_instr  mid ( sslf :ssl_formula) ( instruction : Cil_types.instr) =
+let next_on_ssl_instr  (mid : global_mem_manager ) ( sslf :ssl_formula) ( instruction : Cil_types.instr) =
     match instruction with 
 	  (*****************************************************************)
 	
@@ -133,7 +133,7 @@ and heap.
 The parameter mid shall be an instance of the global_mem_manager class.
  *)
 
-let next_on_ssl mid (sslf : ssl_formula ) (skind : Cil_types.stmtkind ) ()  =
+let next_on_ssl (mid : global_mem_manager ) (sslf : ssl_formula ) (skind : Cil_types.stmtkind ) ()  =
   match skind with 
       Instr ( instruction ) ->  next_on_ssl_instr  mid sslf instruction
     | _ -> ()

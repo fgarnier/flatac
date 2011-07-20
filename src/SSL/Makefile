@@ -1,8 +1,8 @@
 CFLAGS = -g -annot
 
-COMPINTERFACES = ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo ssl_decision.cmo ssl_entailement.cmo ssl_biabduction.cmo
+COMPINTERFACES = ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo ssl_normalization.cmo ssl_decision.cmo ssl_entailement.cmo ssl_biabduction.cmo ssl_pprinters.cmo
 
-COMP_OPT_OBJS =  ssl_types.cmx ssl.cmx union_find.cmx ssl_substitution.cmx ssl_normalization.cmx ssl_decision.cmx  ssl_entailement.cmx ssl_biabduction.cmx
+COMP_OPT_OBJS =  ssl_types.cmx ssl.cmx union_find.cmx ssl_substitution.cmx ssl_normalization.cmx ssl_decision.cmx  ssl_entailement.cmx ssl_biabduction.cmx ssl_pprinters.cmx
 
 
 all : $(COMPINTERFACES) $(COMP_OPT_OBJS)
@@ -27,6 +27,9 @@ ssl_substitution.cmo :  ssl_types.cmo ssl.cmo union_find.cmo
 
 debug_printers.cmo : ssl_types.cmo ssl.cmo  ssl_entailement.cmo debug_printers.ml
 	ocamlc $(CFLAGS)  -c debug_printers.ml
+
+ssl_pprinters.cmo : ssl_types.cmo ssl.cmo ssl_pprinters.ml
+	ocamlc $(CFLAGS)  -c ssl_pprinters.ml 
 
 ssl_normalization.cmo : ssl_types.cmo ssl.cmo union_find.cmo ssl_substitution.cmo
 		ocamlc $(CFLAGS)  -c ssl_normalization.ml
@@ -56,6 +59,8 @@ ssl_substitution.cmx :  ssl_types.cmx ssl.cmx union_find.cmx
 debug_printers.cmx : ssl_types.cmo ssl.cmx  ssl_entailement.cmx debug_printers.ml
 	ocamlopt $(CFLAGS)  -c debug_printers.ml
 
+ssl_pprinters.cmx : ssl_types.cmx ssl.cmx ssl_pprinters.ml
+	ocamlopt $(CFLAGS)  -c ssl_pprinters.ml 
 
 ssl_normalization.cmx : ssl_types.cmx ssl.cmx union_find.cmx ssl_substitution.cmx
 		ocamlopt $(CFLAGS)  -c ssl_normalization.ml

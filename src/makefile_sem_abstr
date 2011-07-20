@@ -1,5 +1,8 @@
 include makefile.conf
 
+flatac_ssl : all
+	ocamlc $(FRAMA_C_INCLUDES) -I ./objs/ -c flatac_ssl_front_end.ml
+
 all :
 	$(MAKE) -C ./SSL/ install_lib_flatac \
 	&& $(MAKE) -C ./global_mem/ install_lib_flatac \
@@ -10,3 +13,5 @@ clean :
 	&& $(MAKE) -C global_mem/ clean\
 	&& $(MAKE) -C c_upon_sslandnts_sem/ clean\
 	&& rm -f objs/*
+
+
