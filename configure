@@ -32,7 +32,7 @@ echo -e "\t@cd ${ROOT_PATH}/SSL/ && time make -f Makefile.sub && cd ${ROOT_PATH}
 echo -e "\t@echo \"\"" >> Makefile
 
 echo -e "\t@echo \"Construction de c_upon_SSL/...\"" >> Makefile
-echo -e "\t@cd ${ROOT_PATH}/c_upon_SSLandnts_sem/ && time make -f Makefile.sub && cd ${ROOT_PATH}" >> Makefile
+echo -e "\t@cd ${ROOT_PATH}/c_upon_sslandnts_sem/ && time make -f Makefile.sub && cd ${ROOT_PATH}" >> Makefile
 echo -e "\t@echo \"\"" >> Makefile
 
 echo -e "\t@echo \"Construction de global_mem/...\"" >> Makefile
