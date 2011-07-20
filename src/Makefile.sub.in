@@ -1,0 +1,31 @@
+ML_FILES= $(wildcard *.ml)
+EXTRAS= $(ML_FILES:.ml=.cmx)
+BYTECODE_OBJS= $(ML_FILES:.ml=.cmo) 
+NATIVE_OBJS = $(ML_FILES:.ml=.o) 
+
+CFLAGS = -g -annot -c
+OCAMLC=`which ocamlc`
+OCAMLOPT=`which ocamlopt`
+
+.SECONDARY:
+
+%.cmo: %.ml
+	@echo "Compilation de $@..."
+	@$(OCAMLC) $(FRAMA_C_INCLUDES) $(CFLAGS) $< -o $@
+
+%.cmx: %.ml
+	@echo "Compilation de l'interface $@..."
+	@$(OCAMLOPT) $(FRAMA_C_INCLUDES) $(CFLAGS) $< -o $@
+
+% : $(COMPILED_INTERFACES) %.ml
+	@ocamlc $(FRAMA_C_INCLUDES) $^ -o $@ 
+
+all : $(COMPILED_INTERFACES) $(BYTECODE_OBJS)
+
+.PHONY: clean mrproper
+
+clean: 
+	@rm -f *.o *.cmo *.cmx *.annot
+
+mrproper:
+	@rm -f *.cmi

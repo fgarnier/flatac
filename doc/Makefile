@@ -5,7 +5,7 @@ COMPILE_SUCCESS=0
 COMPILE_FAIL=1
 COMPILE=${COMPILE_SUCCESS}
 
-all: check_directory check_git ${BIN_DIRECTORY}${OUTPUT_FILENAME}.pdf clean_latexmk_files
+all: check_directory check_git ${BIN_DIRECTORY}${OUTPUT_FILENAME}.pdf
 
 ${BIN_DIRECTORY}${OUTPUT_FILENAME}.pdf: ${SRC_DIRECTORY}*.tex ${SRC_DIRECTORY}*.bib ${SRC_DIRECTORY}img/*
 	@COMPILE=0; \
