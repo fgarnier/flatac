@@ -89,6 +89,8 @@ build_global_makefile () {
   echo -e "\t@cd ${OBJ_DIR}/ && make -f FC_Makefile clean && cd ${SRC_DIR}" >> Makefile
 }
 
+[[ $# == 0 ]] && echo "type : ./configure PATH_TO_FRAMAC_SOURCE" && exit
+
 build_configuration_file $1
 
 build_global_makefile "SSL/ global_mem/ c_upon_sslandnts_sem/"
