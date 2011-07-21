@@ -1,4 +1,4 @@
-#! /bin/bash               
+#! /bin/bash 
 # FlataC Configure Script. #
 # Maxime Gaudin, 2011.     #
 ############################
@@ -88,6 +88,8 @@ build_global_makefile () {
   done
   echo -e "\t@cd ${OBJ_DIR}/ && make -f FC_Makefile clean && cd ${SRC_DIR}" >> Makefile
 }
+
+[[ $# == 0 ]] && echo "type : ./configure PATH_TO_FRAMAC_SOURCE" && exit
 
 build_configuration_file $1
 
