@@ -1,6 +1,6 @@
 PLUGIN_NAME=Flatac
-PLUGIN_CMO=self sem_and_logic_front_end trivalue_logic_front_end ecfg flatac_ep 
-#PLUGIN_CMO=self sem_and_logic_front_end trivalue_logic_front_end flatac_ssl_front_end ecfg flatac_ep 
+#PLUGIN_CMO=self sem_and_logic_front_end trivalue_logic_front_end ecfg flatac_ep 
+PLUGIN_CMO=self sem_and_logic_front_end trivalue_logic_front_end ssl_types ssl union_find debug_printers ssl_substitution ssl_normalization ssl_decision ssl_entailement ssl_biabduction global_mem c_upon_ssl_domain flatac_ssl_front_end ecfg flatac_ep 
 
 include Makefile.conf
 include $(FRAMAC_SHARE)/Makefile.dynamic
