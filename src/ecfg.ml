@@ -11,6 +11,7 @@
 open Self
 open Cil
 open Cil_types
+open Callgraph
 open Cfg
 open Visitor
 open Sem_and_logic_front_end
@@ -148,6 +149,7 @@ struct
   let compute_ecfgs ( prj : Project.t ) ( ast : Cil_types.file ) 
         ( front_end : (semantic_abstraction, counter_expression)
             sem_and_logic_front_end ) = 
+    let _ = Callgraph.computeGraph ast in
     let cfg_visitorInst = new cfg_visitor ( prj ) in	
       cfg_visitorInst#set_front_end front_end; 
       visitFramacFile ( cfg_visitorInst :> frama_c_copy ) ast;
