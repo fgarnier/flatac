@@ -125,6 +125,8 @@ struct
 
     method build_node_list ( funInfo : Cil_types.fundec ) front_end =
       Hashtbl.clear current_ecfg;
+      prepareCFG funInfo;
+      computeCFGInfo funInfo true;
       let rootStmt = (List.hd funInfo.sallstmts) in
       let _ = self#_build_node_list rootStmt
                 (front_end#get_entry_point_abstraction ())
@@ -149,7 +151,6 @@ struct
   let compute_ecfgs ( prj : Project.t ) ( ast : Cil_types.file ) 
         ( front_end : (semantic_abstraction, counter_expression)
             sem_and_logic_front_end ) = 
-    let _ = Callgraph.computeGraph ast in
     let cfg_visitorInst = new cfg_visitor ( prj ) in	
       cfg_visitorInst#set_front_end front_end; 
       visitFramacFile ( cfg_visitorInst :> frama_c_copy ) ast;
