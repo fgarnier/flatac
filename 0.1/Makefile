@@ -26,7 +26,7 @@
 # Frama-c should be properly installed with "make install" 
 # before any use of this makefile
 
-LIB_OCAML_PATH = /usr/lib/ocaml 
+LIB_OCAML_PATH = /opt/local/lib/ocaml/
 
 
 FRAMAC_SHARE  	:=$(shell frama-c.byte -print-path)
@@ -35,7 +35,7 @@ FRAMAC_LIBDIR 	:=$(shell frama-c.byte -print-libpath)
 
 
 SOURCES_FILES   := cautomata.ml c2cautomatanalys.ml  print_fun.ml fun_info.ml intermediate_language.ml
-F_SRC		:=~/FRAMAC/frama-c-Boron-20100401-why-2.24
+F_SRC		:=~/FRAMAC
 
 PLUGIN_NAME	= Pfun
 PLUGIN_CMO	=  intermediate_language cautomata c2cautomatanalys print_fun fun_info
