@@ -105,7 +105,7 @@ let pprint_quant_vars_tex quant_vars_table =
   let locvar_table_fold lvar () accu =
     match lvar with 
 	LVar (lv) -> 
-	    ( accu ^ "\\exits " ^lv^".")
+	    ( accu ^ "\\exists " ^lv^".")
   in
   let ret_string = (Hashtbl.fold locvar_table_fold quant_vars_table accu)
   in
