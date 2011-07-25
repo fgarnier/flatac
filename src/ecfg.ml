@@ -136,6 +136,8 @@ struct
       is_computed <- true;
       match (g, _front_end) with 
         | ( GFun ( funInfo, _ ), Some ( front_end ) ) -> 
+            if funInfo.svar.vdefined then
+              Self.feedback ~level:0 "Analyse de %s..." funInfo.svar.vname;
             Hashtbl.add ecfgs funInfo.svar.vname 
               (self#build_node_list funInfo front_end); 
             DoChildren
