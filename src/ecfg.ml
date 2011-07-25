@@ -87,7 +87,6 @@ struct
                                if abs = abstraction then true
                                else front_end#accepts abs abstraction
           ) visited_abstractions then begin
-            Self.feedback ~level:0 "ENTAILED !";
             false
               end 
         else begin
@@ -205,12 +204,12 @@ struct
     match node with
       | Node (Semantic ( statement, abstraction ), listOfEdges) -> 
           Format.fprintf foc 
-            "\t\t%d [label=\"%d/%d\\nCode : %s\\nAbstraction : %s\"]\n"
+            "\t\t%d [texlbl=\"%d/%d\\%s\\\\%s\"]\n"
             uid uid statement.sid (stmt_to_string statement) 
             (front_end#pretty abstraction);
           Hashtbl.iter ( fun toUid counterValue  -> 
                            Format.fprintf foc 
-                             "\t\t%d -> %d [label=\"%s\"]\n\n" uid toUid
+                             "\t\t%d -> %d [texlbl=\"%s\"]\n\n" uid toUid
                              (front_end#pretty_label counterValue)
           ) listOfEdges
 
