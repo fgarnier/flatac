@@ -221,10 +221,12 @@ struct
       Format.fprintf foc "digraph G {\n";
       visite_ecfgs ecfgs 
         ( fun fname -> Format.fprintf foc 
-                         "\tsubgraph cluster_%s {\n\t\tnode \
-                         [style=filled,color=white]; \n\t\tstyle=filled; \
-                          \n\t\tcolor=lightgray; \n\t\tlabel = \"%s\"; \
-                          \n\t\tfontsize=40; \n\n" fname fname )
+                         "\tsubgraph cluster_%s {\n \
+                          \t\tnode [style=filled,shape=box,color=white]; \n \
+                          \t\tstyle=filled; \n \
+                          \t\tcolor=lightgray; \n \
+                          \t\tlabel = \"%s\"; \n \
+                          \t\tfontsize=40; \n\n" fname fname )
         ( fun _ -> Format.fprintf foc "\t}\n" ) 
         (print_dot foc front_end);
       Format.fprintf foc "\n}";
