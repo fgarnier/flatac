@@ -89,7 +89,8 @@ let malloc_upon_ssl  ( v : Cil_types.varinfo option ) ( mid : global_mem_manager
       
     | None ->
        let lvar = mid#lvar_from_malloc () in
-       (Ssl.add_alloc_cell lvar sslf)
+       Ssl.add_quant_var lvar sslf;
+       Ssl.add_alloc_cell lvar sslf
 	 
 (** Effect of a free(x),  where x is a pointer variable, on an ssl
 formula.*)
