@@ -41,7 +41,7 @@ let pprint_ssl_affectation_tex table_aff =
   let accu = "" in
   let locvar_table_fold pvar lvar () accu =
     match pvar ,  lvar with 
-	(PVar(pv) , LVar (lv)) ->  (accu^" \\wedge "^pv^" \\mapsto "^lv)
+	(PVar(pv) , LVar (lv)) ->  (accu^" \\wedge ("^pv^" \\mapsto "^lv^")")
   in
   let aff_table_fold pvar lvar_table accu =
     let ret_str = Hashtbl.fold (locvar_table_fold pvar) lvar_table accu
@@ -117,6 +117,10 @@ let pprint_pure_to_latex (sslf : ssl_formula ) =
   begin
     if (Hashtbl.length sslf.quant_vars) > 0 then
       accu := (pprint_quant_vars_tex sslf.quant_vars) ;
+     if  ((Hashtbl.length sslf.pure.affectations)
+	  +( Hashtbl.length sslf.pure.ptnil ) == 0)
+     then
+       accu := !accu^"\\texttt{true}";
     if  Hashtbl.length sslf.pure.affectations > 0 then
       accu := (!accu)^(  pprint_ssl_affectation_tex sslf.pure.affectations) ;
     if  Hashtbl.length sslf.pure.ptnil > 0  then 

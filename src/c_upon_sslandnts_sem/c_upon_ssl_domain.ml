@@ -208,7 +208,7 @@ and heap.
 The parameter mid shall be an instance of the global_mem_manager class.
  *)
 
-let next_on_ssl (mid : global_mem_manager ) (sslf : ssl_formula ) (skind : Cil_types.stmtkind ) ()  =
+let next_on_ssl (mid : global_mem_manager ) (sslf : ssl_formula ) (skind : Cil_types.stmtkind ) _  =
   match skind with 
       Instr ( instruction ) ->  next_on_ssl_instr  mid sslf instruction
     | _ -> ()
