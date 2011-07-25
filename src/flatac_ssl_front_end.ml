@@ -38,7 +38,7 @@ class ssl_flatac_front_end = object (self)
 
 
   method pretty (sslf : ssl_formula ) =
-    Ssl_pprinters.pprint_ssl_formula sslf
+    Ssl_pprinters.pprint_ssl_formula_tex sslf
 
     
   method next (sslf : ssl_formula)()(skind : Cil_types.stmtkind) =
