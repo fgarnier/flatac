@@ -206,7 +206,7 @@ struct
     match node with
       | Node (Semantic ( statement, abstraction ), listOfEdges) -> 
           Format.fprintf foc 
-            "\t\t%d [texlbl=\"%d/%d\\%s\\\\%s\"]\n"
+            "\t\t%d [texlbl=\"%d/%d\\%s\\\\ %s\"]\n"
             uid uid statement.sid (stmt_to_string statement) 
             (front_end#pretty abstraction);
           Hashtbl.iter ( fun toUid counterValue  -> 
