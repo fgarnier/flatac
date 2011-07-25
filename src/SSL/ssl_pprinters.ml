@@ -86,11 +86,11 @@ let pprint_space_to_latex sformula =
 		  if !nbelem != 0 then 
 		    begin
 		    nbelem := !nbelem +1; 
-		    accu ^"\\Unsep"^( sprintf "Alloc(%s,%i)" vname occurence)
+		    accu ^"\\Unsep "^( sprintf "Alloc(%s,%i) " vname occurence)
 		    end
 		  else
 		    (nbelem := !nbelem +1 ;
-		    sprintf "Alloc(%s,%i)" vname occurence)
+		    sprintf " Alloc(%s,%i) " vname occurence)
 		  end
 	  in
 	  let ret_string = Hashtbl.fold heap_print_folder heap_table ""
