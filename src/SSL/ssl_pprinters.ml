@@ -60,10 +60,10 @@ let pprint_ssl_ptnil_tex  ptnil_table =
 	    if !first_visit then 
 	      begin
 		first_visit := false ;
-		(vname^"\\mapsto \\mbox{\\nil}")
+		(vname^"\\mapsto \\nil")
 	      end
 	    else
-	      ( accu ^" \\wedge "^ vname^"\\mapsto \\mbox{\\nil}")
+	      ( accu ^" \\wedge "^ vname^"\\mapsto \\nil")
   in
   let ret_string = (Hashtbl.fold ptnil_folder ptnil_table accu)
   in
@@ -86,11 +86,11 @@ let pprint_space_to_latex sformula =
 		  if !nbelem != 0 then 
 		    begin
 		    nbelem := !nbelem +1; 
-		    accu ^"\\Unsep"^( sprintf "\\mbox{Alloc(%s,%i)}" vname occurence)
+		    accu ^"\\Unsep"^( sprintf "Alloc(%s,%i)" vname occurence)
 		    end
 		  else
 		    (nbelem := !nbelem +1 ;
-		    sprintf "\\mbox{Alloc(%s,%i)}" vname occurence)
+		    sprintf "Alloc(%s,%i)" vname occurence)
 		  end
 	  in
 	  let ret_string = Hashtbl.fold heap_print_folder heap_table ""
