@@ -6,8 +6,7 @@ int inc ( int x) {
 }
 
 int main ( ) { 
-  
-  int x = 0;
+  int x=0;
   int* tab;
   tab = (int*)(malloc(sizeof(int) * 10));
   int* tab2;
