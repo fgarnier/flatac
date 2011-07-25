@@ -1,3 +1,4 @@
+make && make install && \
 frama-c.byte -flatac $1 && \
-dot2tex --docpreamble "\input logic.tex" output.dot > output.tex && \
-pdflatex output.tex && open output.pdf
+dot2tex --preproc output.dot | dot2tex --docpreamble "\input logic.tex" > output.tex && \
+latex output.tex && dvips output.dvi && open output.ps
