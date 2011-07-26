@@ -137,7 +137,7 @@ struct
       is_computed <- true;
       match (g, _front_end) with 
         | ( GFun ( funInfo, _ ), Some ( front_end ) ) -> 
-            if funInfo.svar.vdefined then
+(*            if funInfo.svar.vdefined then *)
               Self.feedback ~level:0 "Analyse de %s..." funInfo.svar.vname;
             Hashtbl.add ecfgs funInfo.svar.vname 
               (self#build_node_list funInfo front_end); 
@@ -163,8 +163,6 @@ struct
   let visite_ecfgs (ecfgs : (string, ecfg) Hashtbl.t) 
         pre_callback post_callback callback =
     Hashtbl.iter( fun fname func_ecfg ->
-                    (* Self.feedback ~level:0 "Export of %s (%d nodes)" fname
-                     * (Hashtbl.length func_ecfg) ; *)
                     pre_callback fname;
                     Hashtbl.iter ( callback fname ) func_ecfg;
                     post_callback fname;
@@ -232,10 +230,7 @@ struct
     match node with
       | Node (Semantic ( statement, abstraction ), listOfEdges) -> 
           Format.fprintf foc 
-           (*  "\t\t%d [texlbl=\"\verb{%d/%d - %s} %s\"]\n" *)
-            (* uid uid statement.sid (stmt_to_string statement)  *)
              "\t\t%d [texlbl=\"\\begin{minipage}{16cm}\\centering %d\\\\  \\lstinline{%s}\\\\ %s\end{minipage}\"]\n" 
-            (* uid statement.sid  (front_end#pretty abstraction); *)
             uid statement.sid (replace_chars (fun c -> 
                                   if c = '{' then "["
                                   else if c = '}' then "]"
