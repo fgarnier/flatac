@@ -82,7 +82,7 @@ build_global_makefile () {
   do
     export_rules $i
   done
-  echo -e "\t@echo \"Enregistrement du plugin...\"" >> Makefile
+  echo -e "\t@echo \"Packing du plugin...\"" >> Makefile
   echo -e "\t@cd ${OBJ_DIR}/ && make -f FC_Makefile && cd ${SRC_DIR}" >> Makefile
   echo -e "\t@echo \"\"" >> Makefile
   echo -e "\t@echo \"*** Compilation terminée ***\"" >> Makefile
