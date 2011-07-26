@@ -74,11 +74,11 @@ struct
     method add_visited_node sid abstraction = 
       let _ = self#get_uid sid abstraction in ()
 
-    method handle_front_end_call f =
-      try f
-      with 
-        | Flatac_exception (_, 0, message) -> () 
-        | Flatac_exception (_, 1, message) -> () 
+    method handle_exception e =
+      match e with 
+        | Flatac_exception (_, 0, message) -> Self.fatal "%s" message; ()
+        | Flatac_exception (_, 1, message) -> Self.warning "%s" message; () 
+        | _ -> ()
 
     method is_accepted  (sid : ecfg_node_id) 
                         (abstraction : semantic_abstraction) 
@@ -91,9 +91,12 @@ struct
         let visited_abstractions = Hashtbl.find visited_sids sid in
         if List.exists ( fun abs -> 
                                if abs = abstraction then true
-                               else front_end#accepts abs abstraction
+                               else 
+                                 try front_end#accepts abs abstraction
+                                 with e -> self#handle_exception e; true
           ) visited_abstractions then begin
-            false
+            (* false *)
+            true
               end 
         else begin
             Hashtbl.add visited_sids sid 
@@ -110,6 +113,7 @@ struct
           self#add_visited_node statement.sid abstraction;
           let subEdges = Hashtbl.create 12 in
           let _ = List.map ( fun succ -> 
+                               try
                                let abstractions_and_labels = 
                                  front_end#next abstraction
                                    guardCounter succ.skind in
@@ -121,6 +125,7 @@ struct
                                                 Hashtbl.add subEdges edgeUID
                                                   succ_lbl
                                  ) abstractions_and_labels;
+                                 with e -> self#handle_exception e; []
           ) statement.succs in
           let currentUID = self#get_uid statement.sid abstraction in
             Hashtbl.add current_ecfg currentUID 
