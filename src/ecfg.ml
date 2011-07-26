@@ -203,15 +203,49 @@ struct
           Cil.printStmt Cil.defaultCilPrinter str_formatter stmt; 
           String.escaped (flush_str_formatter ())
 
+  let replace_chars (f : (char -> string)) (s : string) =
+    let len = String.length s in
+    let tlen = ref 0 in
+    let rec loop i acc =
+      if i = len then
+        acc
+      else 
+        let s = f (String.get s i) in
+          tlen := !tlen + String.length s;
+          loop (i+1) (s :: acc)
+    in
+    let strs = loop 0 [] in
+    let sbuf = String.create !tlen in
+    let pos = ref !tlen in
+    let rec loop2 = function
+      | [] -> ()
+      | s :: acc ->
+          let len = String.length s in
+            pos := !pos - len;
+            String.blit s 0 sbuf !pos len;
+            loop2 acc
+    in
+      loop2 strs;
+      sbuf
+
   let print_dot foc front_end _ uid node =
     match node with
       | Node (Semantic ( statement, abstraction ), listOfEdges) -> 
           Format.fprintf foc 
            (*  "\t\t%d [texlbl=\"\verb{%d/%d - %s} %s\"]\n" *)
             (* uid uid statement.sid (stmt_to_string statement)  *)
-             "\t\t%d [texlbl=\"\\parbox{8cm}{\lstinline{SALUT}\\\\%s}\"]\n" 
-            uid (front_end#pretty abstraction);
-            (* uid (stmt_to_string statement) (front_end#pretty abstraction); *)
+             "\t\t%d [texlbl=\"\\begin{minipage}{16cm}\\centering %d\\\\  \\lstinline{%s}\\\\ %s\end{minipage}\"]\n" 
+            (* uid statement.sid  (front_end#pretty abstraction); *)
+            uid statement.sid (replace_chars (fun c -> 
+                                  if c = '{' then "["
+                                  else if c = '}' then "]"
+                                  else if c = '"' then "'"
+                                  else if c = '%' then ""
+                                  else let newStr = String.create 1 in
+                                    newStr.[0]<- c;
+                                    newStr
+            )
+                   (stmt_to_string statement)) (front_end#pretty abstraction); 
           Hashtbl.iter ( fun toUid counterValue  -> 
                            Format.fprintf foc 
                              "\t\t%d -> %d [texlbl=\"%s\"]\n\n" uid toUid
