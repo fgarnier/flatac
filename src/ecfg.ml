@@ -74,6 +74,12 @@ struct
     method add_visited_node sid abstraction = 
       let _ = self#get_uid sid abstraction in ()
 
+    method handle_front_end_call f =
+      try f
+      with 
+        | Flatac_exception (_, 0, message) -> () 
+        | Flatac_exception (_, 1, message) -> () 
+
     method is_accepted  (sid : ecfg_node_id) 
                         (abstraction : semantic_abstraction) 
                         (front_end : 
