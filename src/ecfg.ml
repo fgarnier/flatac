@@ -98,6 +98,7 @@ struct
 
     method _build_node_list ( statement : stmt ) abstraction 
              guardCounter front_end =
+      Self.feedback ~level:0 "Number of nodes : %d" (Hashtbl.length visited_nodes);
       if not (Hashtbl.mem visited_nodes (statement.sid, abstraction)) then
         begin
           self#add_visited_node statement.sid abstraction;
@@ -208,8 +209,9 @@ struct
           Format.fprintf foc 
            (*  "\t\t%d [texlbl=\"\verb{%d/%d - %s} %s\"]\n" *)
             (* uid uid statement.sid (stmt_to_string statement)  *)
-             "\t\t%d [texlbl=\"%s\"]\n" 
+             "\t\t%d [texlbl=\"\\parbox{8cm}{\lstinline{SALUT}\\\\%s}\"]\n" 
             uid (front_end#pretty abstraction);
+            (* uid (stmt_to_string statement) (front_end#pretty abstraction); *)
           Hashtbl.iter ( fun toUid counterValue  -> 
                            Format.fprintf foc 
                              "\t\t%d -> %d [texlbl=\"%s\"]\n\n" uid toUid
