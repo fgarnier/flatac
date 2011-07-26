@@ -341,24 +341,33 @@ let does_entail (etp : entail_problem ) =
     right = (Ssl.copy etp.right) ;
   } 
   in
-  ssl_entailement etp_prime;
-  match etp_prime.left.space , etp_prime.right.space with 
-      ( Space ( space_table_l) , Space(space_table_r)) ->
-	begin
-	  if ( Hashtbl.length space_table_l > 0 ) ||
-	    (Hashtbl.length space_table_r > 0 ) then
-	    false
-	  else
+  try 
+    begin
+      ssl_entailement etp_prime;
+      match etp_prime.left.space , etp_prime.right.space with 
+	  ( Space ( space_table_l) , Space(space_table_r)) ->
 	    begin
-	      if (Hashtbl.length etp.right.pure.affectations == 0 )
-		&& (Hashtbl.length etp.right.pure.ptnil == 0)
-	      then
-		true
-	    else
+	      if ( Hashtbl.length space_table_l > 0 ) ||
+		(Hashtbl.length space_table_r > 0 ) then
 		false
+	      else
+		begin
+		  if (Hashtbl.length etp.right.pure.affectations == 0 )
+		    && (Hashtbl.length etp.right.pure.ptnil == 0)
+		  then
+		    true
+		  else
+		    false
+		end
 	    end
-	end
-	  | (_,_) -> false
+	| (_,_) -> false
+    end
+  with
+      Top_heap_exception -> true (** We shall not deal with exception
+				 at this point. This treatment is here
+				 for testing purpose, until a proper
+				 exception treatment is added in the
+				 Ecfg computation function/method. *)
 
 	  
   
