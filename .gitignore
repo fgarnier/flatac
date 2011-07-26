@@ -22,3 +22,7 @@
 Makefile
 Makefile.sub
 Makefile.conf
+
+output.pdf
+output.tex
+output.ps

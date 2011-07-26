@@ -19,7 +19,6 @@ let main () =
   let taille_test = 102400 in
   let form = formatter_of_out_channel Pervasives.stdout in
   let phi_g = create_ssl_f () in
-  let phi_d = create_ssl_f () in
   for i=1 to taille_test do 
     let pt_name = sprintf "x_%d" i in
     let lv_name = sprintf "l_%d" i in
