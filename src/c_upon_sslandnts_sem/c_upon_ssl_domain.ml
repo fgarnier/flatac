@@ -14,12 +14,15 @@ open Debug_printers
 open Global_mem
 open List
 open Self
-
+open Int64
 
 exception No_pvar_in_free_expression
 exception Wrong_parameter_type_in_free
 exception Debug_information of string
 exception Contains_no_pvar
+exception Loc_is_nil
+exception Loc_is_a_constant of int64
+
 
 
 
@@ -43,10 +46,16 @@ let rec get_pvar_from_exp (expr : Cil_types.exp ) =
     | CastE (TPtr (_,_), e ) ->
 	get_pvar_from_exp e
 
+    | Const ( CInt64 (i ,_,_)) -> 
+      if (Int64.compare i (Int64.zero)) == 0 then 
+	raise Loc_is_nil
+      else raise (Loc_is_a_constant(i))
+
     | _ ->  raise Contains_no_pvar
 	  
-
+   
 let rec get_first_ptvar_from_lparam ( lparam : Cil_types.exp list ) =
+  Self.debug ~level:0 " I am in get_first_ptvar_from lparam\n"; 
  match lparam with 
      [] -> raise No_pvar_in_free_expression
    | h::l' ->
@@ -66,6 +75,7 @@ des parametres \n" ;
 			  get_pvar_from_exp expr
 			with
 			    Contains_no_pvar -> get_first_ptvar_from_lparam l'
+			      
 		      end
 		(* begin
 		 match param.enode with
@@ -76,6 +86,20 @@ des parametres \n" ;
 		    | _  -> get_first_ptvar_from_lparam l' 
 	 end
 	   
+
+
+let  affect_ptr_upon_ssl (v : Cil_types.varinfo)  (expr : Cil_types.exp) (sslf : ssl_formula ) =
+  Self.debug ~level:0 "Im am in affect_ptr_upon_ssl \n";
+  try
+    let pvar_left = (PVar(v.vname)) in
+    let pvar_right = get_pvar_from_exp expr in
+    let lvar_right = get_ptr_affectation sslf pvar_right  in
+    and_atomic_affect (Pointsto(pvar_left,lvar_right)) sslf 
+  with
+      Not_found -> Self.debug ~level:0 "Undefined right member in affectation, affect_ptr_upon_ssl crash"; raise Not_found
+    | Loc_is_nil -> and_atomic_ptnil (Pointsnil((PVar(v.vname)))) sslf
+  
+
 
 (** This function modifies the sslf formula that abstracts the current
 heap and stack when a call to malloc is performed.*)
@@ -134,9 +158,21 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslf :ssl_formula) ( instru
 
 	  (*****************************************************************)
     
-      | Set () ->      (* Here we handle value 
-		        affectations and pointer 
-			affectations*)
+      | Set ( (lv,_),expr, loc) ->       (* Here we handle value 
+	(*Set(lv,offset), expr , loc) *)        affectations and pointer 
+						 affectations*)
+	begin
+	  Self.debug ~level:0 "Trying to handle an affectation \n"; 
+	  match lv with 
+	      Var(v) ->
+		begin
+		  (Self.debug ~level:0 "The left value is a variablex \n");
+		  match v.vtype with 
+		      TPtr(_,_) -> affect_ptr_upon_ssl v expr sslf 
+		    | _ -> (Self.debug ~level:0 "Unhandled type of variable affectation, skiping it \n")
+		end
+	    | _ ->  Self.debug ~level:0 "The left member of this affectation is not a variable, skiping it \n"; ()	
+	end
      
       |  Call( Some(lvo) , exp1, lparam , _ )->
 	begin
@@ -187,6 +223,7 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslf :ssl_formula) ( instru
 			with
 			    No_pvar_in_free_expression -> 
 			      set_heap_to_top sslf
+			  | Loc_is_nil ->  Self.debug ~level:0 "free on a nil pointer \n"; set_heap_to_top sslf
 			end
 		    | "malloc" | "calloc" -> (malloc_upon_ssl  None mid sslf)
 		    | _ -> () (** All other function name that are dropped leads 
@@ -214,7 +251,8 @@ The parameter mid shall be an instance of the global_mem_manager class.
 
 let next_on_ssl (mid : global_mem_manager ) (sslf : ssl_formula ) (skind : Cil_types.stmtkind ) _  =
   match skind with 
-      Instr ( instruction ) ->  next_on_ssl_instr  mid sslf instruction
+      Instr ( instruction ) ->  next_on_ssl_instr  mid sslf instruction;
+	ssl_normalize sslf
     | _ -> ()
 
 
