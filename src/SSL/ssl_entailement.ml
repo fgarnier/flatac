@@ -360,7 +360,8 @@ let does_entail (etp : entail_problem ) =
 		    false
 		end
 	    end
-	| (_,_) -> false
+	| (_,_) -> true (** One of the heap is broken, shall raise an
+			exception.*)
     end
   with
       Top_heap_exception -> true (** We shall not deal with exception

@@ -13,6 +13,7 @@ open Ssl_decision
 open Debug_printers
 open Global_mem
 open List
+open Self
 
 
 exception No_pvar_in_free_expression
@@ -59,7 +60,7 @@ let rec get_first_ptvar_from_lparam ( lparam : Cil_types.exp list ) =
 		 end
 		    | CastE(_,expr) -> 
 		      begin 
-			printf "J'ai vu un cast dans la liste
+			Self.debug ~level:0 "J'ai vu un cast dans la liste
 des parametres \n" ;
 			try
 			  get_pvar_from_exp expr
@@ -119,7 +120,7 @@ let next_on_ssl_instr_debug  (mid : global_mem_manager ) ( sslf :ssl_formula) ( 
 
 (** mid must be an instance of the class global mem manager*)
 let next_on_ssl_instr  (mid : global_mem_manager ) ( sslf :ssl_formula) ( instruction : Cil_types.instr) =
-   printf "\n Dans next_on_ssl_instr \n" ;
+   	Self.debug ~level:0 "\n Dans next_on_ssl_instr \n" ;
     match instruction with 
 	  (*****************************************************************)
 	
@@ -132,15 +133,18 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslf :ssl_formula) ( instru
 
 
 	  (*****************************************************************)
-	
+    
+      | Set () ->      (* Here we handle value 
+		        affectations and pointer 
+			affectations*)
      
       |  Call( Some(lvo) , exp1, lparam , _ )->
 	begin
-	  printf " I have a call with some affectation to a variable \n" ;
+	  	Self.debug ~level:0 " I have a call with some affectation to a variable \n" ;
 	      match lvo , exp1.enode with
 		  ((Var(v),_) , Lval((Var(f),_)) ) ->
 		    begin
-		       printf "\n Dans Call de %s=%s \n" v.vname f.vname ;
+		       	Self.debug ~level:0 "\n Dans Call de %s=%s \n" v.vname f.vname ;
 		      match v.vtype with
 			  (*Returned value has an integer type*)
 			   
@@ -163,12 +167,12 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslf :ssl_formula) ( instru
 
 
       |  Call( None , exp1, lparam , _ )->
-	printf "I've got a call with no affectation of the returned value \n" ;
+		Self.debug ~level:0 "I've got a call with no affectation of the returned value \n" ;
 	begin
 	  match  exp1.enode  with
 	      Lval((Var(f),_))->
 		begin
-		  printf "Called function is %s \n" f.vname ; 
+		 	Self.debug ~level:0  "Called function is %s \n" f.vname ; 
 		  match f.vname with
 		      "free" -> 
 			begin
@@ -177,7 +181,7 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslf :ssl_formula) ( instru
 			  match pv with
 			      PVar (vname) ->
 				begin
-				  printf "Pvar name is : %s \n" vname ;
+				 	Self.debug ~level:0  "Pvar name is : %s \n" vname ;
 				  free_upon_ssl pv sslf 
 				end			
 			with
