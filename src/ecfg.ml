@@ -230,7 +230,7 @@ struct
     match node with
       | Node (Semantic ( statement, abstraction ), listOfEdges) -> 
           Format.fprintf foc 
-             "\t\t%d [texlbl=\"\\begin{minipage}{16cm}\\centering %d\\\\  \\lstinline{%s}\\\\ %s\end{minipage}\"]\n" 
+             "\t\t%d [texlbl=\"\\begin{minipage}{16cm}\\centering %d\\\\  \\lstinline{%s}\\\\ %s\\end{minipage}\"]\n" 
             uid statement.sid (replace_chars (fun c -> 
                                   if c = '{' then "["
                                   else if c = '}' then "]"

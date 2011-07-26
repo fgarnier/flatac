@@ -18,7 +18,7 @@ open C_upon_ssl_domain (* Contains the semantic tranformation
 open Global_mem
 
 
-class ssl_flatac_front_end = object (self)
+class ssl_flatac_front_end = object 
  (* inherit [SSL_lex.formula , Cautomata.trans_label list ]  sem_and_logic_front_end*)
     
   inherit [ssl_formula , unit ]  sem_and_logic_front_end 
