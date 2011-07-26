@@ -12,6 +12,11 @@ open Cil_types
 (** First type variable -- i.e. 'a -- is the type of the abstract domain
 and 'b is the type used to encode the transition label of the automaton.*)
 
+(** A Flatac exception is composed by an ID, a level and an error message.
+* Level 0 : Fatal
+* Level 1 : Warning *)
+exception Flatac_exception of int * int * string
+
 class virtual ['a, 'b] sem_and_logic_front_end = 
 object 
   method virtual get_entry_point_abstraction : unit -> 'a
