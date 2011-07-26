@@ -254,7 +254,7 @@ let next_on_ssl (mid : global_mem_manager ) (sslf : ssl_formula ) (skind : Cil_t
   match skind with 
       Instr ( instruction ) ->  next_on_ssl_instr  mid sslf instruction;
 	let message = ("\n Formula : "^(Ssl_pprinters.pprint_ssl_formula sslf)^"\n") in
-	Format.printf "%s \n" message;
+	Self.debug "%s \n" message;
 	normalize_ssl sslf
     | _ -> ()
 
