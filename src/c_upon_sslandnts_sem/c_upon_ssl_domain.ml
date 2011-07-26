@@ -89,7 +89,7 @@ des parametres \n" ;
 	   
 
 
-let  affect_ptr_upon_ssl (v : Cil_types.varinfo)  (expr : Cil_types.exp) (sslf : ssl_formula ) =
+let affect_ptr_upon_ssl (v : Cil_types.varinfo)  (expr : Cil_types.exp) (sslf : ssl_formula ) =
   Self.debug ~level:0 "Im am in affect_ptr_upon_ssl \n";
   try
     let pvar_left = (PVar(v.vname)) in
@@ -253,6 +253,7 @@ The parameter mid shall be an instance of the global_mem_manager class.
 let next_on_ssl (mid : global_mem_manager ) (sslf : ssl_formula ) (skind : Cil_types.stmtkind ) _  =
   match skind with 
       Instr ( instruction ) ->  next_on_ssl_instr  mid sslf instruction;
+	Self.debug ~level:0 "\n Formula : "^(pprint_ssl_formula sslf)^"\n";
 	normalize_ssl sslf
     | _ -> ()
 
