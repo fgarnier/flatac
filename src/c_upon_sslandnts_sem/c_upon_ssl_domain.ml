@@ -95,7 +95,7 @@ let  affect_ptr_upon_ssl (v : Cil_types.varinfo)  (expr : Cil_types.exp) (sslf :
     let pvar_left = (PVar(v.vname)) in
     let pvar_right = get_pvar_from_exp expr in
     let lvar_right = get_ptr_affectation sslf pvar_right  in
-    and_atomic_affect (Pointsto(pvar_left,lvar_right)) sslf 
+    Ssl.change_affect_var (Pointsto(pvar_left,lvar_right)) sslf 
   with
       Not_found -> Self.debug ~level:0 "Undefined right member in affectation, affect_ptr_upon_ssl crash"; raise Not_found
     | Loc_is_nil -> and_atomic_ptnil (Pointsnil((PVar(v.vname)))) sslf
@@ -110,7 +110,7 @@ let malloc_upon_ssl  ( v : Cil_types.varinfo option ) ( mid : global_mem_manager
     let pvar = (PVar(vinfo.vname)) in
     let affect = (Pointsto (pvar,lvar)) in
     Ssl.add_quant_var lvar sslf;
-    Ssl.and_atomic_affect affect sslf;
+    Ssl.change_affect_var affect sslf;
     Ssl.add_alloc_cell lvar sslf
       
     | None ->

@@ -115,6 +115,8 @@ let pprint_quant_vars_tex quant_vars_table =
 let pprint_pure_to_latex (sslf : ssl_formula ) =
   let accu = ref "" in
   begin
+    if(List.length sslf.pure.equations) > 0 then
+      accu := !accu^(pprint_ssl_eqlist_tex sslf.pure.equations)^"\\wedge"; 
     if (Hashtbl.length sslf.quant_vars) > 0 then
       accu := (pprint_quant_vars_tex sslf.quant_vars) ;
      if  ((Hashtbl.length sslf.pure.affectations)

@@ -320,10 +320,11 @@ order relation order *)
 		sslf.pure.equations <- (equ::sslf.pure.equations) (*It's damned convenient, isn't it ?*)
 	  else 	sslf.pure.equations <- (equ::sslf.pure.equations)
 
-(** Adds the affectation to pure part of sslf*)
+(** Adds the affectation to pure part of sslf, removes any instance of
+pvar from the set of variables that appears within the Ptnils.*)
   let and_atomic_affect (equ : SSL_lex.affect)(sslf : SSL_lex.ssl_formula) =
     match equ with 
-	Pointsto ( ptr, lv ) ->
+	Pointsto ( ptr, lv ) ->	  
 	  if ( (Hashtbl.mem sslf.pure.affectations ptr) == true )
 	  then
 	    let tble = Hashtbl.find sslf.pure.affectations ptr in
@@ -332,15 +333,38 @@ order relation order *)
 	    let tble = Hashtbl.create size_hash in
 	    Hashtbl.add tble lv (); (* One now add the binding
 				       lv->unit in the new table*)
-	    Hashtbl.add sslf.pure.affectations ptr tble (*And add this
+	    Hashtbl.add sslf.pure.affectations ptr tble; (*And add this
 							 new this table 
 							 associated 
 							  to the key ptr*)
+	    Hashtbl.remove sslf.pure.ptnil ptr
  
+
+
+
+
+
+(**  This function aims at modifying some variable affectation *)
+  let change_affect_var (equ : SSL_lex.affect)(sslf : SSL_lex.ssl_formula) =
+    match equ with 
+	Pointsto ( ptr, lv ) ->
+	  let new_tab = Hashtbl.create size_hash in
+	  Hashtbl.add new_tab lv ();
+	  try 
+	    Hashtbl.replace sslf.pure.affectations ptr new_tab;
+	    Hashtbl.remove sslf.pure.ptnil ptr
+	  with
+	      Not_found -> Hashtbl.add sslf.pure.affectations ptr new_tab 
+  
+	  
+    
+
  (** Adds the affectation to NIL to the pure part of sslf*)     
   let and_atomic_ptnil (ptnil : SSL_lex.affectnil )( sslf :SSL_lex.ssl_formula )=
     match ptnil with 
 	Pointsnil ( ptr ) ->
+	  Hashtbl.remove sslf.pure.affectations ptr; (** Removes any affectations
+					       of ptr to locations variables.*)
 	  if ( (Hashtbl.mem sslf.pure.affectations ptr) == false ) 
 	  then Hashtbl.add sslf.pure.ptnil ptr ()
 	    (*One adds x->nil iff it is not yet present*)
@@ -410,8 +434,12 @@ order relation order *)
  heap that results from the separation of two heap of two ssl logic
 formulae *)
   (*let space_sep (spaceg : space_formula) (spaced : space_formula) =*)
-    
-    
+ 
+
+
+
+
+
  (** Computes a new formula that is equals to the star operation of
 the two SSL formulae.*)     
   let star_sep (fg : ssl_formula )( fd : ssl_formula ) =
