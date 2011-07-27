@@ -168,9 +168,70 @@ let subst_against_space (subst : loc_subst ) (sform : space_formula ) =
 	 Subst(ret_table)
    
    
+
+(**  
+!!! Requires that the formula is in normal form !!!
+ 
+This function deals with the case a location variable need to
+be substituted by NIL. In this particular case, we do the following :
+
+l is substituted by NIL in sslf, has the following semantic :
+Any pointer var x such that x->l, is removed from the set of affectation,
+and is moved into the set ptnil, and Ptnil(x) appears in sslf.pure.ptnils.
+
+All \exists l in the set of quatified location variables are removed.
+
+If alloc(l) apprers in the spacial formula, then the heap shall be
+set to Top_heap, as alloc(NIL) is not a valid predicate.
+*)
    
+(*
+ let subst_var_qvars (lvar : locvar)(sslf : ssl_formula ) =
+   let rec list_min_qvar (banned : locvar) (sorted : locvar list) (reminder : locvar list) =
+     match banned , reminder with
+	 (LVar(banned_var) , LVar(head_name)::l) ->
+	   begin
+	     if String.compare banned_var head_name != 0
+	     then list_min_qvar banned ((LVar(head_name))::sorted) l
+	     else
+	       list_min_qvar banned sorted l
+	   end
+	     
+       | ( l , [] ) -> sorted
+   in
+   list_min_qvar lvar [] sslf.pure.
+*)	 
+ (*let  subst_var_to_nil ( lvar : locvar) (sslf : ssl_formula ) =*)
    
 
 
+let subst_var_qvars_nil (lvar : locvar)(sslf : ssl_formula ) =
+  Hashtbl.remove sslf.quant_vars lvar
 
+(** This function requires that sslf is in normal form.*)
+let subst_lvar_to_nil_in_affect (lvar : locvar)(sslf : ssl_formula ) =
+  let remove_iterator banned_lvar pvar table_lvar =
+    if Hashtbl.mem  table_lvar lvar then
+      begin
+	and_atomic_ptnil (Pointsnil(pvar)) sslf
+      end
+    else ()
+  in
+  Hashtbl.iter (remove_iterator lvar) sslf.pure.affectations
+
+let subst_lvar_to_nil_in_heap (lvar : locvar ) ( sslf : ssl_formula ) =
+  match sslf.space with
+      Space (table) -> 
+	begin
+	  if Hashtbl.mem table lvar then
+	    set_heap_to_top sslf
+	  else ()
+	end
+    | Top_heap -> ()
+
+
+let subst_to_nil_upon_sslf (lvar : locvar ) ( sslf : ssl_formula ) =
+  subst_var_qvars_nil lvar sslf;
+  subst_lvar_to_nil_in_affect lvar sslf;
+  subst_lvar_to_nil_in_heap lvar sslf
 
