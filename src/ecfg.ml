@@ -78,7 +78,7 @@ struct
       match e with 
         | Flatac_exception (_, 1, message) -> Self.warning "%s" message; () 
         | Flatac_exception (_, 0, message) -> Self.fatal "%s" message; ()
-        | _ -> ()
+        | _ -> raise e; ()
 
     method is_accepted  (sid : ecfg_node_id) 
                  (abstraction : semantic_abstraction) 
@@ -86,7 +86,10 @@ struct
                     (semantic_abstraction, counter_expression) 
                     sem_and_logic_front_end)  =
       if not (Hashtbl.mem visited_sids sid)
-      then begin Hashtbl.add visited_sids sid [abstraction]; true end
+      then begin Hashtbl.add visited_sids sid [abstraction]; 
+                 Self.feedback ~level:0 "Accepted %d" sid; 
+                 true 
+      end
 
       else begin 
         let visited_abstractions = Hashtbl.find visited_sids sid in
@@ -96,13 +99,14 @@ struct
                                try not(front_end#accepts abs abstraction)
                                with e -> self#handle_exception e; true
           ) visited_abstractions then begin
-            Self.feedback ~level:0 "Entailed";
+            Self.feedback ~level:0 "Rejected %d" sid; 
             false 
             (* true *)
           end 
           else begin
             Hashtbl.add visited_sids sid 
               ( abstraction :: (Hashtbl.find visited_sids sid) ) ;
+            Self.feedback ~level:0 "Accepted %d" sid; 
             true
           end
       end
@@ -116,6 +120,7 @@ struct
                    let subEdges = Hashtbl.create 12 in
                    let _ = List.map ( fun succ -> 
                      try
+                       Self.feedback ~level:0 "Analyse de %d (%d successors)" succ.sid (List.length succ.succs);
                        let abstractions_and_labels = 
                          front_end#next abstraction guardCounter succ.skind in
 
@@ -124,7 +129,6 @@ struct
                             let edgeUID = 
                               self#_build_node_list succ succ_abs succ_lbl front_end in
                                 Hashtbl.add subEdges edgeUID succ_lbl
-
                            else
                             List.iter ( fun entailed_abs ->
                                 let edgeUID = (self#get_uid succ.sid entailed_abs) in
