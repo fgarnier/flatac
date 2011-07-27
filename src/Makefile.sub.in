@@ -3,7 +3,7 @@ EXTRAS= $(ML_FILES:.ml=.cmx)
 BYTECODE_OBJS= $(ML_FILES:.ml=.cmo) 
 NATIVE_OBJS = $(ML_FILES:.ml=.o) 
 
-.SECONDARY:
+.SECONDARY: *.cmo *.cmx *.cmi
 
 all: $(BYTECODE_OBJS) $(EXTRAS)
 
