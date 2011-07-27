@@ -1,0 +1,16 @@
+
+This is the source files for flata-c pluging. It aims to proves
+that assert conditions, expressed using arithmetic constrainst are
+always satified. The plugin computes a counter example trace if an
+assert condition is not satisfied.
+
+I) Requirements :
+
+ Flata and ANTLR must belong to your classpath
+
+II)  To generate the html API, you need to make sure that
+your ocaml libs are indeed in the path /usr/lib/ocaml. If
+they are not installed in this path then set the variable
+LIB_OCAML_PATH with the proper path.
+
+
