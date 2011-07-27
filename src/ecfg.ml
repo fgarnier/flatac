@@ -87,14 +87,16 @@ struct
                     sem_and_logic_front_end)  =
       if not (Hashtbl.mem visited_sids sid)
       then begin Hashtbl.add visited_sids sid [abstraction]; true end
+
       else begin 
         let visited_abstractions = Hashtbl.find visited_sids sid in
           if List.exists ( fun abs -> 
                              if abs = abstraction then true
                              else 
-                               try front_end#accepts abs abstraction
+                               try not(front_end#accepts abs abstraction)
                                with e -> self#handle_exception e; true
           ) visited_abstractions then begin
+            Self.feedback ~level:0 "Entailed";
             false 
             (* true *)
           end 
@@ -116,11 +118,13 @@ struct
                      try
                        let abstractions_and_labels = 
                          front_end#next abstraction guardCounter succ.skind in
+
                          List.map ( fun (succ_abs, succ_lbl) ->
                            if self#is_accepted succ.sid succ_abs front_end then
                             let edgeUID = 
                               self#_build_node_list succ succ_abs succ_lbl front_end in
                                 Hashtbl.add subEdges edgeUID succ_lbl
+
                            else
                             List.iter ( fun entailed_abs ->
                                 let edgeUID = (self#get_uid succ.sid entailed_abs) in
@@ -128,8 +132,10 @@ struct
                             ) (Hashtbl.find visited_sids succ.sid) 
 
                          ) abstractions_and_labels;
+
                      with e -> self#handle_exception e; []
                    ) statement.succs in
+
                    let currentUID = self#get_uid statement.sid abstraction in
                      Hashtbl.add current_ecfg currentUID 
                        (Node ( Semantic ( statement, abstraction ), subEdges));
