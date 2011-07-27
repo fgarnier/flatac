@@ -76,31 +76,31 @@ struct
 
     method handle_exception e =
       match e with 
-        | Flatac_exception (_, 0, message) -> Self.fatal "%s" message; ()
         | Flatac_exception (_, 1, message) -> Self.warning "%s" message; () 
+        | Flatac_exception (_, 0, message) -> Self.fatal "%s" message; ()
         | _ -> ()
 
     method is_accepted  (sid : ecfg_node_id) 
-                        (abstraction : semantic_abstraction) 
-                        (front_end : 
-                           (semantic_abstraction, counter_expression) 
-                           sem_and_logic_front_end)  =
+                 (abstraction : semantic_abstraction) 
+                 (front_end : 
+                    (semantic_abstraction, counter_expression) 
+                    sem_and_logic_front_end)  =
       if not (Hashtbl.mem visited_sids sid)
       then begin Hashtbl.add visited_sids sid [abstraction]; true end
       else begin 
         let visited_abstractions = Hashtbl.find visited_sids sid in
-        if List.exists ( fun abs -> 
-                               if abs = abstraction then true
-                               else 
-                                 try front_end#accepts abs abstraction
-                                 with e -> self#handle_exception e; true
+          if List.exists ( fun abs -> 
+                             if abs = abstraction then true
+                             else 
+                               try front_end#accepts abs abstraction
+                               with e -> self#handle_exception e; true
           ) visited_abstractions then begin
-            (* false *)
-            true
-              end 
-        else begin
+            false 
+            (* true *)
+          end 
+          else begin
             Hashtbl.add visited_sids sid 
-                 ( abstraction :: (Hashtbl.find visited_sids sid) ) ;
+              ( abstraction :: (Hashtbl.find visited_sids sid) ) ;
             true
           end
       end
@@ -108,31 +108,34 @@ struct
     method _build_node_list ( statement : stmt ) abstraction 
              guardCounter front_end =
       Self.feedback ~level:0 "Number of nodes : %d" (Hashtbl.length visited_nodes);
-      if not (Hashtbl.mem visited_nodes (statement.sid, abstraction)) then
-        begin
-          self#add_visited_node statement.sid abstraction;
-          let subEdges = Hashtbl.create 12 in
-          let _ = List.map ( fun succ -> 
-                               try
-                               let abstractions_and_labels = 
-                                 front_end#next abstraction
-                                   guardCounter succ.skind in
-                                 List.map ( fun (succ_abs, succ_lbl) ->
-                                  if self#is_accepted succ.sid succ_abs front_end then
-                                              let edgeUID = 
-                                                self#_build_node_list succ 
-                                                  succ_abs succ_lbl front_end in
-                                                Hashtbl.add subEdges edgeUID
-                                                  succ_lbl
-                                 ) abstractions_and_labels;
-                                 with e -> self#handle_exception e; []
-          ) statement.succs in
-          let currentUID = self#get_uid statement.sid abstraction in
-            Hashtbl.add current_ecfg currentUID 
-              (Node ( Semantic ( statement, abstraction ), subEdges));
-            currentUID
-        end
-      else (self#get_uid statement.sid abstraction)
+               if not (Hashtbl.mem visited_nodes (statement.sid, abstraction)) then
+                 begin
+                   self#add_visited_node statement.sid abstraction;
+                   let subEdges = Hashtbl.create 12 in
+                   let _ = List.map ( fun succ -> 
+                     try
+                       let abstractions_and_labels = 
+                         front_end#next abstraction guardCounter succ.skind in
+                         List.map ( fun (succ_abs, succ_lbl) ->
+                           if self#is_accepted succ.sid succ_abs front_end then
+                            let edgeUID = 
+                              self#_build_node_list succ succ_abs succ_lbl front_end in
+                                Hashtbl.add subEdges edgeUID succ_lbl
+                           else
+                            List.iter ( fun entailed_abs ->
+                                let edgeUID = (self#get_uid succ.sid entailed_abs) in
+                                Hashtbl.add subEdges edgeUID succ_lbl
+                            ) (Hashtbl.find visited_sids succ.sid) 
+
+                         ) abstractions_and_labels;
+                     with e -> self#handle_exception e; []
+                   ) statement.succs in
+                   let currentUID = self#get_uid statement.sid abstraction in
+                     Hashtbl.add current_ecfg currentUID 
+                       (Node ( Semantic ( statement, abstraction ), subEdges));
+                     currentUID
+                 end
+               else (self#get_uid statement.sid abstraction)
 
     method build_node_list ( funInfo : Cil_types.fundec ) front_end =
       Hashtbl.clear current_ecfg;
@@ -148,8 +151,8 @@ struct
       is_computed <- true;
       match (g, _front_end) with 
         | ( GFun ( funInfo, _ ), Some ( front_end ) ) -> 
-(*            if funInfo.svar.vdefined then *)
-              Self.feedback ~level:0 "Analyse de %s..." funInfo.svar.vname;
+            (*            if funInfo.svar.vdefined then *)
+            Self.feedback ~level:0 "Analyse de %s..." funInfo.svar.vname;
             Hashtbl.add ecfgs funInfo.svar.vname 
               (self#build_node_list funInfo front_end); 
             DoChildren
@@ -241,17 +244,19 @@ struct
     match node with
       | Node (Semantic ( statement, abstraction ), listOfEdges) -> 
           Format.fprintf foc 
-             "\t\t%d [texlbl=\"\\begin{minipage}{16cm}\\centering %d\\\\  \\lstinline{%s}\\\\ %s\\end{minipage}\"]\n" 
+            "\t\t%d [texlbl=\"\\begin{minipage}{16cm}\\centering %d\\\\ \
+             \\lstinline{%s}\\\\ %s\\end{minipage}\"]\n" 
             uid statement.sid (replace_chars (fun c -> 
-                                  if c = '{' then "["
-                                  else if c = '}' then "]"
-                                  else if c = '"' then "'"
-                                  else if c = '%' then ""
-                                  else let newStr = String.create 1 in
-                                    newStr.[0]<- c;
-                                    newStr
+                                                if c = '{' then "["
+                                                else if c = '}' then "]"
+                                                else if c = '"' then "'"
+                                                else if c = '%' then ""
+                                                else let newStr = String.create 1 in
+                                                  newStr.[0]<- c;
+                                                  newStr
             )
-                   (stmt_to_string statement)) (front_end#pretty abstraction); 
+            (stmt_to_string statement)) 
+            (front_end#pretty abstraction); 
           Hashtbl.iter ( fun toUid counterValue  -> 
                            Format.fprintf foc 
                              "\t\t%d -> %d [texlbl=\"%s\"]\n\n" uid toUid
@@ -267,13 +272,13 @@ struct
       visite_ecfgs ecfgs 
         ( fun fname -> Format.fprintf foc 
                          "\tsubgraph cluster_%s {\n \
-                          \t\tnode [style=filled,shape=box,color=white]; \n \
-                          \t\tstyle=filled; \n \
-                          \t\tcolor=lightgray; \n \
-                          \t\tlabel = \"%s\"; \n \
-                          \t\tfontsize=40; \n\n" fname fname )
+                         \t\tnode [style=filled,shape=box,color=white]; \n \
+                                                                  \t\tstyle=filled; \n \
+                                                                              \t\tcolor=lightgray; \n \
+                                                                                          \t\tlabel = \"%s\"; \n \
+                                                                                          \t\tfontsize=40; \n\n" fname fname )
         ( fun _ -> Format.fprintf foc "\t}\n" ) 
-        (print_dot foc front_end);
-      Format.fprintf foc "\n}";
-      Self.feedback ~level:0 "Graph exported!"
+(print_dot foc front_end);
+                        Format.fprintf foc "\n}";
+                        Self.feedback ~level:0 "Graph exported!"
 end;;
