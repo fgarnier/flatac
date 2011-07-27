@@ -140,8 +140,25 @@ let entail_r3 (etp : entail_problem ) =
   in
   Hashtbl.iter left_aff_iterator etp.left.pure.affectations
 
-
-
+(** For all   (x->nil/\ Phi |- \exists l x->l /\Psi) 
+    rewrite to Phi |- Psi[Nil <- l]
+*)
+let entail_r3_nil (etp : entail_problem) = 
+  let pt_nil_remove_iterator pvar _ = 
+     try
+       let lvar_table_right = Hashtbl.find etp.right.pure.affectations pvar in
+       let lvar_right = pick_first_lvar lvar_table_right in
+	if is_exists_quantified lvar_right etp.right then
+	  begin
+	    Hashtbl.remove etp.left.pure.ptnil pvar;
+	    Hashtbl.remove etp.right.pure.affectations pvar;
+	    subst_to_nil_upon_sslf lvar_right etp.right
+	  end
+	else ()
+     with
+	 Not_found ->  ()
+  in 
+  Hashtbl.iter pt_nil_remove_iterator etp.left.pure.ptnil
 
 
 

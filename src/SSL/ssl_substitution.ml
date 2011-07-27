@@ -167,8 +167,6 @@ let subst_against_space (subst : loc_subst ) (sform : space_formula ) =
 	 Hashtbl.iter subst_1_iterator table_1;
 	 Subst(ret_table)
    
-   
-
 (**  
 !!! Requires that the formula is in normal form !!!
  
@@ -184,27 +182,6 @@ All \exists l in the set of quatified location variables are removed.
 If alloc(l) apprers in the spacial formula, then the heap shall be
 set to Top_heap, as alloc(NIL) is not a valid predicate.
 *)
-   
-(*
- let subst_var_qvars (lvar : locvar)(sslf : ssl_formula ) =
-   let rec list_min_qvar (banned : locvar) (sorted : locvar list) (reminder : locvar list) =
-     match banned , reminder with
-	 (LVar(banned_var) , LVar(head_name)::l) ->
-	   begin
-	     if String.compare banned_var head_name != 0
-	     then list_min_qvar banned ((LVar(head_name))::sorted) l
-	     else
-	       list_min_qvar banned sorted l
-	   end
-	     
-       | ( l , [] ) -> sorted
-   in
-   list_min_qvar lvar [] sslf.pure.
-*)	 
- (*let  subst_var_to_nil ( lvar : locvar) (sslf : ssl_formula ) =*)
-   
-
-
 let subst_var_qvars_nil (lvar : locvar)(sslf : ssl_formula ) =
   Hashtbl.remove sslf.quant_vars lvar
 

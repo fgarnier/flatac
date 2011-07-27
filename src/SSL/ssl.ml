@@ -357,8 +357,6 @@ pvar from the set of variables that appears within the Ptnils.*)
 	      Not_found -> Hashtbl.add sslf.pure.affectations ptr new_tab 
   
 	  
-    
-
  (** Adds the affectation to NIL to the pure part of sslf*)     
   let and_atomic_ptnil (ptnil : SSL_lex.affectnil )( sslf :SSL_lex.ssl_formula )=
     match ptnil with 
