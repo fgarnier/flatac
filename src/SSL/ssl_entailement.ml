@@ -113,6 +113,17 @@ let entail_r1  ( etp : entail_problem ) =
   Hashtbl.iter r1_iterator etp.left.pure.affectations
   
 
+let entail_r1_nil (etp : entail_problem ) =
+  let remove_ptnil_iterator pvar _ =
+    if Hashtbl.mem etp.right.pure.ptnil pvar
+    then
+      begin
+	Hashtbl.remove etp.left.pure.ptnil pvar;
+	Hashtbl.remove etp.right.pure.ptnil pvar
+      end
+    else ()
+  in
+  Hashtbl.iter remove_ptnil_iterator etp.left.pure.ptnil
 
 (** For all x->l, where l is free, of the lhs, r_3 seeks a x->l' of
 the rhs, where l' is bounded. If such an affectation exists then 
