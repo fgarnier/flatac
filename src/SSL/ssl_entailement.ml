@@ -351,8 +351,10 @@ let ssl_entailement (etp : entail_problem ) =
   subst_against_ssl !overall_subst.rsubst etp.right;
   entail_r6 etp;
   entail_r1 etp;
-  entail_r2 etp;
-  entail_ptnil etp
+  entail_r1_nil etp;
+  entail_r3 etp;
+  entail_r3_nil etp;
+  entail_r2 etp
 
 
 
