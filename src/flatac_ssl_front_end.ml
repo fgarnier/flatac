@@ -53,10 +53,14 @@ class ssl_flatac_front_end = object
   method pretty_label () = ""
     
   method accepts sslfg sslfd =
+
+    (** One checks that the current abstraction entails the next state
+    abstraction, where the current state abstraction is sslfd and
+    the next state abstraction is sslfg (Inverted order) *)
     Self.feedback ~level:0 "SALUT";
     let etp = {
-      left = sslfg ;
-      right = sslfd;
+      left = sslfd ;
+      right = sslfg;
     }
     in
     not (Ssl_entailement.does_entail etp )
