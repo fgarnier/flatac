@@ -96,13 +96,14 @@ struct
                                try not(front_end#accepts abs abstraction)
                                with e -> self#handle_exception e; true
           ) visited_abstractions then begin
-            Self.feedback ~level:0 "Entailed";
+            Self.feedback ~level:0 "Rejected";
             false 
             (* true *)
           end 
           else begin
             Hashtbl.add visited_sids sid 
               ( abstraction :: (Hashtbl.find visited_sids sid) ) ;
+            Self.feedback ~level:0 "Accepted";
             true
           end
       end
