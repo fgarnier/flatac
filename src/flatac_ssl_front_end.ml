@@ -56,7 +56,7 @@ class ssl_flatac_front_end = object
       right = sslfd;
     }
     in
-    not (does_entail etp )
+    not (Ssl_entailement.does_entail etp )
 
 end
 

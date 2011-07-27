@@ -10,6 +10,7 @@ open SSL_lex
 open Ssl_substitution
 open Ssl_decision
 open Ssl_pprinters
+open Self
 
 
 
@@ -358,11 +359,11 @@ let ssl_entailement (etp : entail_problem ) =
 
 
 
-(*
+
 let pprint_entailement_problem (etp : entail_problem ) =
   let ret_str = "\n******************** \n Left  formula : \n "^(pprint_ssl_formula etp.left)^"\n Right formula  \n"^(pprint_ssl_formula etp.right)^"\n*********************** \n" in
   ret_str
-*)
+
 
 (** decides whether a f |- g is true, that's to say
 that f |- g reduces to 
@@ -379,8 +380,8 @@ let does_entail (etp : entail_problem ) =
     right = (Ssl.copy etp.right) ;
   } 
   in
-
-(*  Format.printf " \n entailement %s " (pprint_entailement_problem etp); *) 
+  Self.feedback ~level:0 "I reached does_entail \n";
+  Format.printf " \n [ does_entail ] %s \n " (pprint_entailement_problem etp);  
   try 
     begin
       ssl_entailement etp_prime;
@@ -389,18 +390,30 @@ let does_entail (etp : entail_problem ) =
 	    begin
 	      if ( Hashtbl.length space_table_l > 0 ) ||
 		(Hashtbl.length space_table_r > 0 ) then
+		begin
+		 Printf.printf " \n [ does_entail ] FALSE, heap of different size \n";
 		false
+		end
 	      else
 		begin
 		  if (Hashtbl.length etp.right.pure.affectations == 0 )
 		    && (Hashtbl.length etp.right.pure.ptnil == 0)
 		  then
-		    true
+		    begin
+		      Printf.printf " \n [ does_entail ] TRUE, empty rigth formula \n";
+		      true
+		    end
 		  else
-		    false
+		    begin
+		      Printf.printf " \n [ does_entail ] FALSE, non empty right formula \n";
+		      false
+		    end
 		end
 	    end
-	| (_,_) -> true (** One of the heap is broken, shall raise an
+	| (_,_) ->
+	  Printf.printf " \n [ does_entail ] TRUE, one of the formula has
+ Top Heap \n";
+	  true (** One of the heap is broken, shall raise an
 			exception.*)
     end
   with
