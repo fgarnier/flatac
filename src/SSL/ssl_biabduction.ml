@@ -6,12 +6,27 @@ open SSL_lex
 open Ssl_entailement
 open Ssl_normalization
 open Ssl_substitution
-open Debug_printers
+
 
 type biabduct_sol = {
 enunciate : entail_problem ;
 frame_antiframe : entail_problem ;
 }
+
+
+
+let fold_substs (lvar : SSL_lex.locvar ) (rvar : SSL_lex.locvar) (previous : string ) =
+  match lvar , rvar with 
+      ( LVar(lname) , LVar(rname) ) ->  lname^"->"^rname^";"^previous
+
+
+let subst_to_string ( subst : Ssl_substitution.loc_subst ) =
+  match subst with
+      Subst (table_subst ) -> 
+	let ret_string = Hashtbl.fold fold_substs table_subst "" in
+	"Subst [ "^ret_string^"]; \n"
+
+
 
 (** Takes as input an entailement problem and returns the
 a biabduction_sol structures such that :

@@ -9,6 +9,7 @@ open Printf
 open List
 
 
+
 (** The fonctions that follow this part are use to pretty print
 a ssl formula into the latex format *)
 
@@ -229,3 +230,6 @@ let pprint_ssl_formula (sslf : ssl_formula ) =
    ^(pprint_ssl_ptnil sslf.pure.ptnil)
     ^"} || Space{"^(pprint_space_formula sslf.space)^"}") in
   ret_str
+
+
+

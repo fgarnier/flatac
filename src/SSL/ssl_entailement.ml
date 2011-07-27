@@ -9,6 +9,7 @@ open Ssl_normalization
 open SSL_lex
 open Ssl_substitution
 open Ssl_decision
+open Ssl_pprinters
 
 
 
@@ -326,6 +327,13 @@ let ssl_entailement (etp : entail_problem ) =
   entail_ptnil etp
 
 
+
+(*
+let pprint_entailement_problem (etp : entail_problem ) =
+  let ret_str = "\n******************** \n Left  formula : \n "^(pprint_ssl_formula etp.left)^"\n Right formula  \n"^(pprint_ssl_formula etp.right)^"\n*********************** \n" in
+  ret_str
+*)
+
 (** decides whether a f |- g is true, that's to say
 that f |- g reduces to 
 (Pure[...]|| Emp ) |- (true || Emp)
@@ -341,6 +349,8 @@ let does_entail (etp : entail_problem ) =
     right = (Ssl.copy etp.right) ;
   } 
   in
+
+(*  Format.printf " \n entailement %s " (pprint_entailement_problem etp); *) 
   try 
     begin
       ssl_entailement etp_prime;
