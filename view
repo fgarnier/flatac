@@ -1,4 +1,4 @@
 make && make install && \
 frama-c.byte -flatac "$1" && \
-dot2tex --preproc output.dot | dot2tex -c --docpreamble "\usepackage{listings} \input logic.tex" > output.tex && \
+dot2tex --preproc output.dot | dot2tex -c --docpreamble "\usepackage{listings} \input src/logic.tex" > output.tex && \
 pdflatex output.tex && open output.pdf
