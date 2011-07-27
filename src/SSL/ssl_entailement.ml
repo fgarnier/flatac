@@ -396,8 +396,8 @@ let does_entail (etp : entail_problem ) =
 		end
 	      else
 		begin
-		  if (Hashtbl.length etp.right.pure.affectations == 0 )
-		    && (Hashtbl.length etp.right.pure.ptnil == 0)
+		  if (Hashtbl.length etp_prime.right.pure.affectations == 0 )
+		    && (Hashtbl.length etp_prime.right.pure.ptnil == 0)
 		  then
 		    begin
 		      Printf.printf " \n [ does_entail ] TRUE, empty rigth formula \n";
@@ -406,6 +406,9 @@ let does_entail (etp : entail_problem ) =
 		  else
 		    begin
 		      Printf.printf " \n [ does_entail ] FALSE, non empty right formula \n";
+		       Format.printf " \n [ False : Post computations : ] %s \n " (pprint_entailement_problem etp_prime);
+
+		      
 		      false
 		    end
 		end
