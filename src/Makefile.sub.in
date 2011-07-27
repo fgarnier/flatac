@@ -5,6 +5,8 @@ NATIVE_OBJS = $(ML_FILES:.ml=.o)
 
 .SECONDARY: *.cmo *.cmx *.cmi
 
+all: $(BYTECODE_OBJS) $(EXTRAS)
+
 %.cmo: %.ml
 	@echo "\t * Compilation de $@..."
 	@$(OCAMLC) $(FRAMA_C_INCLUDES) $(CFLAGS) $< -o $@
