@@ -52,7 +52,7 @@ build_global_makefile () {
   # Special rule for Self module
   echo -e "\t@echo \"Compilation du module Self...\"" >> Makefile
   echo -e "\t@cd ${SRC_DIR}/. && \$(OCAMLC) \$(FRAMA_C_INCLUDES) \$(CFLAGS) \
-  self.ml -o self.cmo" >> Makefile
+    self.ml -o self.cmo && \$(OCAMLOPT) \$(FRAMA_C_INCLUDES) \$(CFLAGS) self.ml -o self.cmx" >> Makefile
   # ----
   # Special rule for deps computing
   echo -e "\t@echo \"Calcul des dépendences...\"" >> Makefile
