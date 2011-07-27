@@ -10,6 +10,7 @@ open SSL_lex
 open Ssl_substitution
 open Ssl_decision
 open Ssl_pprinters
+open Self
 
 
 
@@ -113,6 +114,17 @@ let entail_r1  ( etp : entail_problem ) =
   Hashtbl.iter r1_iterator etp.left.pure.affectations
   
 
+let entail_r1_nil (etp : entail_problem ) =
+  let remove_ptnil_iterator pvar _ =
+    if Hashtbl.mem etp.right.pure.ptnil pvar
+    then
+      begin
+	Hashtbl.remove etp.left.pure.ptnil pvar;
+	Hashtbl.remove etp.right.pure.ptnil pvar
+      end
+    else ()
+  in
+  Hashtbl.iter remove_ptnil_iterator etp.left.pure.ptnil
 
 (** For all x->l, where l is free, of the lhs, r_3 seeks a x->l' of
 the rhs, where l' is bounded. If such an affectation exists then 
@@ -140,8 +152,25 @@ let entail_r3 (etp : entail_problem ) =
   in
   Hashtbl.iter left_aff_iterator etp.left.pure.affectations
 
-
-
+(** For all   (x->nil/\ Phi |- \exists l x->l /\Psi) 
+    rewrite to Phi |- Psi[Nil <- l]
+*)
+let entail_r3_nil (etp : entail_problem) = 
+  let pt_nil_remove_iterator pvar _ = 
+     try
+       let lvar_table_right = Hashtbl.find etp.right.pure.affectations pvar in
+       let lvar_right = pick_first_lvar lvar_table_right in
+	if is_exists_quantified lvar_right etp.right then
+	  begin
+	    Hashtbl.remove etp.left.pure.ptnil pvar;
+	    Hashtbl.remove etp.right.pure.affectations pvar;
+	    subst_to_nil_upon_sslf lvar_right etp.right
+	  end
+	else ()
+     with
+	 Not_found ->  ()
+  in 
+  Hashtbl.iter pt_nil_remove_iterator etp.left.pure.ptnil
 
 
 
@@ -323,16 +352,18 @@ let ssl_entailement (etp : entail_problem ) =
   subst_against_ssl !overall_subst.rsubst etp.right;
   entail_r6 etp;
   entail_r1 etp;
-  entail_r2 etp;
-  entail_ptnil etp
+  entail_r1_nil etp;
+  entail_r3 etp;
+  entail_r3_nil etp;
+  entail_r2 etp
 
 
 
-(*
+
 let pprint_entailement_problem (etp : entail_problem ) =
   let ret_str = "\n******************** \n Left  formula : \n "^(pprint_ssl_formula etp.left)^"\n Right formula  \n"^(pprint_ssl_formula etp.right)^"\n*********************** \n" in
   ret_str
-*)
+
 
 (** decides whether a f |- g is true, that's to say
 that f |- g reduces to 
@@ -349,8 +380,8 @@ let does_entail (etp : entail_problem ) =
     right = (Ssl.copy etp.right) ;
   } 
   in
-
-(*  Format.printf " \n entailement %s " (pprint_entailement_problem etp); *) 
+  Self.feedback ~level:0 "I reached does_entail \n";
+  Format.printf " \n [ does_entail ] %s \n " (pprint_entailement_problem etp);  
   try 
     begin
       ssl_entailement etp_prime;
@@ -359,18 +390,30 @@ let does_entail (etp : entail_problem ) =
 	    begin
 	      if ( Hashtbl.length space_table_l > 0 ) ||
 		(Hashtbl.length space_table_r > 0 ) then
+		begin
+		 Printf.printf " \n [ does_entail ] FALSE, heap of different size \n";
 		false
+		end
 	      else
 		begin
 		  if (Hashtbl.length etp.right.pure.affectations == 0 )
 		    && (Hashtbl.length etp.right.pure.ptnil == 0)
 		  then
-		    true
+		    begin
+		      Printf.printf " \n [ does_entail ] TRUE, empty rigth formula \n";
+		      true
+		    end
 		  else
-		    false
+		    begin
+		      Printf.printf " \n [ does_entail ] FALSE, non empty right formula \n";
+		      false
+		    end
 		end
 	    end
-	| (_,_) -> true (** One of the heap is broken, shall raise an
+	| (_,_) ->
+	  Printf.printf " \n [ does_entail ] TRUE, one of the formula has
+ Top Heap \n";
+	  true (** One of the heap is broken, shall raise an
 			exception.*)
     end
   with
