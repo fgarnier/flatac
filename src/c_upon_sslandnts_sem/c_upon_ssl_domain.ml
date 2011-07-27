@@ -10,12 +10,12 @@ open Ssl_types
 open SSL_lex
 open Ssl
 open Ssl_decision
-open Debug_printers
 open Global_mem
 open List
 open Self
 open Int64
 open Ssl_normalization
+open Ssl_pprinters
 
 exception No_pvar_in_free_expression
 exception Wrong_parameter_type_in_free
@@ -89,13 +89,13 @@ des parametres \n" ;
 	   
 
 
-let  affect_ptr_upon_ssl (v : Cil_types.varinfo)  (expr : Cil_types.exp) (sslf : ssl_formula ) =
+let affect_ptr_upon_ssl (v : Cil_types.varinfo)  (expr : Cil_types.exp) (sslf : ssl_formula ) =
   Self.debug ~level:0 "Im am in affect_ptr_upon_ssl \n";
   try
     let pvar_left = (PVar(v.vname)) in
     let pvar_right = get_pvar_from_exp expr in
     let lvar_right = get_ptr_affectation sslf pvar_right  in
-    and_atomic_affect (Pointsto(pvar_left,lvar_right)) sslf 
+    Ssl.change_affect_var (Pointsto(pvar_left,lvar_right)) sslf 
   with
       Not_found -> Self.debug ~level:0 "Undefined right member in affectation, affect_ptr_upon_ssl crash"; raise Not_found
     | Loc_is_nil -> and_atomic_ptnil (Pointsnil((PVar(v.vname)))) sslf
@@ -110,7 +110,7 @@ let malloc_upon_ssl  ( v : Cil_types.varinfo option ) ( mid : global_mem_manager
     let pvar = (PVar(vinfo.vname)) in
     let affect = (Pointsto (pvar,lvar)) in
     Ssl.add_quant_var lvar sslf;
-    Ssl.and_atomic_affect affect sslf;
+    Ssl.change_affect_var affect sslf;
     Ssl.add_alloc_cell lvar sslf
       
     | None ->
@@ -253,6 +253,8 @@ The parameter mid shall be an instance of the global_mem_manager class.
 let next_on_ssl (mid : global_mem_manager ) (sslf : ssl_formula ) (skind : Cil_types.stmtkind ) _  =
   match skind with 
       Instr ( instruction ) ->  next_on_ssl_instr  mid sslf instruction;
+	let message = ("\n Formula : "^(Ssl_pprinters.pprint_ssl_formula sslf)^"\n") in
+	Format.printf "%s \n" message;
 	normalize_ssl sslf
     | _ -> ()
 
