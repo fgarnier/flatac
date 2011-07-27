@@ -31,7 +31,7 @@ build_configuration_file () {
   echo -e "FRAMAC_LIBDIR:=`frama-c.byte -print-libpath`" >> ${MKCONF}
   echo -e "OCAMLC=`which ocamlc`" >> ${MKCONF}
   echo -e "OCAMLOPT=`which ocamlopt`" >> ${MKCONF}
-  echo -e "CFLAGS =-g -annot -c -for-pack Flatac" >> ${MKCONF}
+  echo -e "CFLAGS =-w -21 -g -annot -c -for-pack Flatac" >> ${MKCONF}
 }
 
 build_sub_makefile () {

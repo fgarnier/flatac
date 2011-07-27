@@ -76,8 +76,8 @@ struct
 
     method handle_exception e =
       match e with 
-        | Flatac_exception (_, 0, message) -> Self.fatal "%s" message; ()
         | Flatac_exception (_, 1, message) -> Self.warning "%s" message; () 
+        | Flatac_exception (_, 0, message) -> Self.fatal "%s" message; ()
         | _ -> ()
 
     method is_accepted  (sid : ecfg_node_id) 
@@ -95,7 +95,8 @@ struct
                                try front_end#accepts abs abstraction
                                with e -> self#handle_exception e; true
           ) visited_abstractions then begin
-            false
+            false 
+            (* true *)
           end 
           else begin
             Hashtbl.add visited_sids sid 
@@ -122,7 +123,7 @@ struct
                                 Hashtbl.add subEdges edgeUID succ_lbl
                            else
                             List.iter ( fun entailed_abs ->
-                                let edgeUID = (self#get_uid succ.sid succ_abs) in
+                                let edgeUID = (self#get_uid succ.sid entailed_abs) in
                                 Hashtbl.add subEdges edgeUID succ_lbl
                             ) (Hashtbl.find visited_sids succ.sid) 
 
