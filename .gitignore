@@ -16,6 +16,7 @@
 
 *.swp
 *~
+*.DS_STORE
 
 *.dot
 
@@ -23,6 +24,6 @@ Makefile
 Makefile.sub
 Makefile.conf
 
-output.pdf
-output.tex
-output.ps
+output.*
+
+doc/
