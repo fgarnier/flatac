@@ -107,12 +107,14 @@ build_global_makefile () {
   echo -e "doc: all" >> Makefile
   echo -e "\t@echo \"Génération de la documentation...\"" >> Makefile
   echo -e "\t-@mkdir ${DOC_DIR} >/dev/null 2>&1" >> Makefile
-  echo -e "\tcd ${SRC_DIR} && ocamldoc -html -dot -d ${DOC_DIR}/html\
-    ${FRAMA_C_INCLUDES} -hide-warnings \
-  *.ml SSL/*.ml global_mem/*.ml c_upon_sslandnts_sem/*.ml" >> Makefile
-  echo -e "\tcd ${SRC_DIR} && ocamldoc -latex -dot -d ${DOC_DIR}/latex\
-    ${FRAMA_C_INCLUDES} -hide-warnings \
-  *.ml SSL/*.ml global_mem/*.ml c_upon_sslandnts_sem/*.ml" >> Makefile
+  echo -e "\t-@mkdir ${DOC_DIR}/html >/dev/null 2>&1" >> Makefile
+  echo -e "\t-@mkdir ${DOC_DIR}/latex >/dev/null 2>&1" >> Makefile
+  echo -e "\tcd ${SRC_DIR} &&\
+    ocamldoc ${FRAMA_C_INCLUDES} -html -d ${DOC_DIR}/html *.ml SSL/*.ml\
+  global_mem/*.ml c_upon_sslandnts_sem/*.ml" >> Makefile
+  echo -e "\tcd ${SRC_DIR} &&\
+    ocamldoc ${FRAMA_C_INCLUDES} -latex -d ${DOC_DIR}/latex *.ml SSL/*.ml\
+  global_mem/*.ml c_upon_sslandnts_sem/*.ml" >> Makefile
 }
 
 [[ $# == 0 ]] && echo "type : ./configure PATH_TO_FRAMAC_SOURCE" && exit
