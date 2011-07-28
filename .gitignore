@@ -20,7 +20,7 @@
 
 *.dot
 
-Makefile
+./Makefile
 Makefile.sub
 Makefile.conf
 

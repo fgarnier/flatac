@@ -1,0 +1,158 @@
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{conjecture}{Conjecture}
+%\newtheorem{claim}{Claim}
+%\newtheorem{property}{Property}
+\newtheorem{example}{Example}
+
+% Marius commands
+\newcommand{\Z}{{\mathbb Z}}
+\newcommand{\N}{{\mathbb N}}
+\newcommand{\relmat}[1] { \{\!\!\{#1\}\!\!\}}
+\newcommand{\matrel}[1] { [\!\![#1]\!\!]}
+\newcommand{\key}[1]{\underline{#1}}
+
+% semantic stuff
+\newcommand{\bi}[1]{{}^\omega\!{#1}^\omega}
+\newcommand{\rbr}{{\bf ]\!]}}
+\newcommand{\lbr}{{\bf [\![}}
+\newcommand{\sem}[1]{\lbr #1 \rbr}
+\newcommand{\model}[2]{\sem{#1}_{#2}}
+\newcommand{\lfp}[1]{\mbox{fix}\ {#1}}
+\newcommand{\wpr}{\widetilde{pre}}
+\newcommand{\cceil}[1]{\lfloor #1 \rfloor + 1}
+
+\renewcommand{\vec}[1]{{\bf {#1}}}
+
+% alias
+\newcommand{\alias}{\Diamond}
+\newcommand{\may}[2]{{\langle #1 \rangle}{#2}}
+\newcommand{\must}[2]{{\lbrack #1 \rbrack}{#2}}
+\newcommand{\defd}[1]{\delta({#1})}
+
+% logic
+\newcommand{\pal}{$pAL$}
+\newcommand{\wal}{$wAL$}
+\newcommand{\kal}{$\kappa AL$}
+
+% cardinal, degree, ...
+\newcommand{\sgn}{\mbox{sgn}}
+%\newcommand{\gcd}{\mbox{gcd}}
+\newcommand{\lcm}{\mbox{lcm}}
+\newcommand{\len}[1]{{|{#1}|}}
+\newcommand{\card}[1]{{|\!|{#1}|\!|}}
+\newcommand{\minimum}[2]{\mbox{min}({#1},{#2})}
+\newcommand{\maximum}[2]{\mbox{max}({#1},{#2})}
+\newcommand{\minset}[2]{\mbox{min}\{{#1}\ |\ {#2}\}}
+\newcommand{\maxset}[2]{\mbox{max}\{{#1}\ |\ {#2}\}}
+\newcommand{\divs}[1]{\mbox{div}({#1})}
+
+% automata and languages
+\newcommand{\auth}[1]{{\mathcal A}_{#1}}
+\newcommand{\lang}[1]{{\mathcal L}({#1})}
+\newcommand{\runs}[1]{{\mathcal R}({#1})}
+\newcommand{\val}[1]{{\mathcal V}({#1})}
+\newcommand{\trace}[1]{{Tr}({#1})}
+\newcommand{\state}[1]{{\Sigma}({#1})}
+\newcommand{\trans}[1]{{\Theta}({#1})}
+\newcommand{\access}[3]{{\mathcal L}_{{#1},{#2}}({#3})}
+\newcommand{\eats}{\rightarrow}
+\newcommand{\Eats}[1]{\stackrel{#1}{\longrightarrow}}
+\newcommand{\arrow}[2]{\xrightarrow[{\scriptstyle #2}]{{\scriptstyle #1}}}
+\newcommand{\larrow}[2]{\xleftarrow[{\scriptstyle #2}]{{\scriptstyle #1}}} 
+
+% numbers
+\newcommand{\nat}{{\bf \mathbb{N}}}
+\newcommand{\zed}{{\bf \mathbb{Z}}}
+\newcommand{\bool}{{\bf \mathbb{B}}}
+\newcommand{\rat}{{\bf \mathbb{Q}}}
+\newcommand{\real}{{\bf \mathbb{R}}}
+\newcommand{\linzed}{{\bf \mathcal{L}\mathbb{Z}}}
+
+% powerset
+\newcommand{\pow}[1]{{\mathcal P}(#1)}
+\newcommand{\pown}[2]{{\mathcal P}^{#1}(#2)}
+
+% by definition
+\newcommand{\bydef}{\stackrel{\Delta}{=}}
+
+% projection, lifting
+\newcommand{\proj}[2]{{#1}\!\!\downarrow_{{#2}}}
+\newcommand{\lift}[2]{{#1}\!\!\uparrow_{{#2}}}
+
+% forward, backward
+\newcommand{\forw}[1]{\stackrel{\rightarrow}{#1}}
+\newcommand{\back}[1]{\stackrel{\leftarrow}{#1}}
+
+% equation figures
+\newcommand{\eqnfigx}[1]{
+\begin{minipage}{3in}
+\begin{center}
+\begin{eqnarray*}#1
+\end{eqnarray*}
+\end{center}
+\end{minipage}}
+
+\newcommand{\twoeqnfigx}[2]{
+\eqnfigx{#1}
+\eqnfigx{#2}
+}
+
+\newcommand{\threeeqnfigx}[3]{
+\eqnfigx{#1}\\
+\eqnfigx{#2}\eqnfigx{#3}
+}
+
+\newcommand{\eqnfig}[1]{
+\begin{minipage}{3in}
+\begin{center}
+\begin{eqnarray}#1
+\end{eqnarray}
+\end{center}
+\end{minipage}}
+
+\newcommand{\twoeqnfig}[2]{
+\eqnfig{#1}
+\eqnfig{#2}
+}
+
+% transitions and SOS rules
+\newcommand{\storetrans}[1]{\stackrel{#1}{\leadsto}}
+\newcommand{\storetransx}[1]{\stackrel{#1}{\leadsto^*}}
+\newcommand{\storetransprime}[3]{{#1} \storetrans{#2} {#3}}
+\newcommand{\gammatrans}[1]{\stackrel{#1}{\hookrightarrow}}
+\newcommand{\gammatransprime}[3]{{#1} \gammatrans{#2} {#3}}
+\newcommand{\gammatransx}[1]{\stackrel{#1}{\hookrightarrow^*}}
+%\newcommand{\trans}[3]{{#1} \stackrel{#2}{\longrightarrow} {#3}}
+\newcommand{\run}[3]{{#1} \stackrel{#2}{\Longrightarrow} {#3}}
+\newcommand{\sosrule}[2]{\frac{\begin{array}{c}#1\end{array}}{#2}}
+\newcommand{\hoare}[3]{\{#1\}\ {\bf #2}\ \{#3\}}
+
+\newcommand{\derivone}[3]{\mbox{\infer[#3]{#2}{#1}}}
+\newcommand{\derivtwo}[4]{\mbox{\infer[#4]{#3}{{#1} & {#2}}}}
+\newcommand{\derivdot}[4]{\mbox{\infer[#4]{#3}
+{\begin{array}{l} {#1} \\ \vdots \\ {#2} \end{array}}}}
+
+% comments, paragraphs
+\newcommand{\comment}[1]{\vspace{\baselineskip}\noindent\fbox{
+\parbox[b][\height][s]{120mm}{#1}}}
+\newcommand{\mypar}[1]{\vspace*{\baselineskip}\noindent\emph{#1}}
+
+% theories
+\newcommand{\arith}{\langle \zed, +, \cdot, 0, 1 \rangle}
+\newcommand{\hilbert}{\langle \zed, +, \cdot, 0, 1 \rangle^\exists}
+\newcommand{\presbg}{\langle \zed, \geq, +, 0, 1 \rangle}
+\newcommand{\divides}{\langle \zed, +, |, 0, 1 \rangle}
+\newcommand{\lipshitz}{\langle \zed, \geq, +, |, 0, 1 \rangle^\exists}
+\newcommand{\dioph}[1]{\mathfrak{D}(#1)}
+
+% proofs
+\newif\ifLongVersion\LongVersionfalse
+%\newcommand{\proof}[1]{\noindent {\em Proof}: {#1}}
+%\renewcommand{\qed}{$\Box$\vspace*{\baselineskip}}
+%\newcommand{\qed}{$\Box$\vspace*{\baselineskip}}
+\newcommand{\inproof}[1]{\ifLongVersion \proof{#1} \fi}
+%\newcommand{\outproof}[2]{\ifLongVersion \else \vspace*{\baselineskip}\noindent Proof of {#1}: \proof{#2} \fi}

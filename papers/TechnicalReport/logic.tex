@@ -1,0 +1,1582 @@
+
+
+
+
+\documentclass[a4paper,twoside,12pt]{report}
+
+
+\usepackage{latexsym}
+\usepackage{amsxtra}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\usepackage{amsthm}
+%\usepackage{stmaryrd} %delimiters \llbracket and \rrbracket
+
+\usepackage{color}
+\usepackage{pslatex}
+
+\usepackage{wrapfig}
+\usepackage{graphics}
+\usepackage{epsfig}
+
+\usepackage{subfig}
+\usepackage{multirow}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+\usepackage{listings}
+\usepackage{proof}
+
+\include{commands}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\newtheorem{definition}{Definition}
+%\newtheorem{lemma}{Lemma}
+\newtheorem{property}{Property}
+%\newtheorem{theorem}{Theorem}
+% Command specific to this section %
+
+\newcommand{\defeq}[0]{:=}
+\newcommand{\syntaxeq}[0]{::=}
+
+\newcommand{\Dom}[1]{\mathcal{D}om(#1)}
+
+\newcommand{\rrule}[2]{\lstinline!#1!  \to \lstinline!#2!}
+\newcommand\Addr{\mathcal{A}ddr} %The set of heap addresses
+\newcommand\LVar{\mathcal{L}Var} %The set of location variables
+\newcommand\PVar{\mathcal{P}Var} %The set of pointer variables.
+
+\newcommand{\Pp}[1]{PP(#1)} %% The set of the atomic propositions that appear inside a formula.
+\newcommand{\Sp}[1]{SP(#1)} %% The set of spacial propositions that appear insde a formula.
+
+
+%Size of a formula.
+\newcommand{\sizef}[1]{|{#1}|}
+%subformula
+\newcommand{\subf}[0]{\triangleright}
+
+\newcommand{\gton}[1]{>_{#1}}
+\newcommand{\gtlvar}[0]{\gton{\LVar}}
+\newcommand{\gtptrvar}[0]{\gton{\PVar}}
+
+\newcommand{\Locvar}[1]{Locvar(#1)} %The set of location variables appearing
+	%in a formula
+\newcommand{\Ptrvar}[1]{Ptrvar(#1)} %same as abovem but for Ptr variables.
+
+\newcommand{\NULL}[0]{\mbox{\texttt{NULL}}}
+
+\newcommand{\Alloc}[1]{alloc(#1)}
+\newcommand{\Emp}{\lstinline{Emp}}
+
+\newcommand{\Unsep}[0]{\ast}
+\newcommand{\Sep}[2]{#1 \Unsep #2}
+\newcommand{\Sepf}[2]{ #1 \star #2}
+
+\newcommand{\EqLoc}[2]{ (#1 = #2) }
+\newcommand{\Andpure}[2]{ #1 \wedge #2}
+\newcommand{\Pointsto}[2]{ #1 \mapsto #2}
+\newcommand{\nil}[0]{\lstinline!nil!}
+\newcommand{\Pointstonil}[1]{ #1 \mapsto \mbox{\nil}}
+\newcommand{\Formula}[2]{ #1  \updownarrow #2}
+\newcommand{\Exists}[2]{ \exists #1. #2}
+
+\newcommand{\Substin}[3]{#1\lbrack #2 \gets #3 \rbrack}
+\newcommand{\NForm}[1]{\mathcal{NF}(#1)}
+
+\newcommand{\Ran}[1]{\mathcal{R}an(#1)}
+
+\newcommand{\Vars}[1]{\mathcal{V}ars(#1)}
+\newcommand{\FVars}[1]{\mathcal{F}Vars(#1)}
+
+
+\newcommand{\Equa}[1]{\mathcal{E}q(#1)}
+\newcommand{\Aff}[1]{\mathcal{A}ff{#1}}
+\newcommand{\Nullptr}[1]{\mathcal{N}ullptr{#1}}
+
+
+\newcommand{\Subst}[3]{#3\lbrack #1\leftarrow #2 \rbrack}
+\newcommand{\fundec}[5]{\begin{array}{llll} {#1}:&{#2} &\mapsto & {#3} \\ &{#4} & \mapsto& #5  \end{array}}
+
+
+% add/replaces A.P. #2 in formula #1.
+\newcommand{\Addrep}[2]{#1 \lbrack #2 \rbrack}
+
+
+%%%%%%%%%%% Compute new name for existential variables %%%%%%%%
+
+\newcommand{\renfresh}[2]{Renfresh(#1,#2)}
+
+
+
+%%%%%%%%%% Order Relation %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\LocOrderIneq}[0]{\sqsubset_{I}}
+\newcommand{\LocOrderIeq}[0]{\sqsubseteq_{I}}
+\newcommand{\PtrOrderIneq}[0]{\sqsubset_{S}}
+\newcommand{\PtrOrderIeq}[0]{\sqsubseteq_{S}}
+\newcommand{\ModOrderIeq}[0]{\sqsubseteq_{I,S}}
+\newcommand{\ModOrderIneq}[0]{\sqsubset_{I,S}}
+
+
+\newcommand{\true}{true}
+\newcommand{\false}{false}
+%% #1 var name, #2 base, size, #4 offset
+\newcommand{\ptrexp}[3]{\left ( \begin{array}{l} 
+\ptrbase{#1}=#2 \\ 
+\ptroffset{#1}=#3
+\end{array} \right )}
+
+
+\newcommand{\base}[2]{base_{#1}(#2)}
+
+\newcommand{\lbase}[1]{#1_{base}}
+\newcommand{\lsize}[1]{#1_{size}}
+
+\newcommand{\locvar}[3]{
+\left ( \begin{array}{l}
+\lbase{#1}=#2 \\
+\lsize{#1}=#3
+\end{array} \right )
+}
+%%%%%%%%%%%%% Hoar triples and sematic transformations %%%%%%%%%%%%%%%%%
+
+%     instr  
+% {P} -----> {Q}
+%     effect
+\newcommand{\transmodel}[4]{\lbrace #1 \rbrace \arrow{#2}{#3} \lbrace #4 \rbrace }
+
+\newcommand{\Pre}[0]{\lbrace P \rbrace}
+\newcommand{\Post}[0]{\lbrace Q \rbrace}
+
+%%%%%%%%%%%% Footprint related stuff %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\newcommand{\ptrbase}[1]{{#1}_{base}}
+\newcommand{\ptrsize}[1]{{#1}_{size}}
+\newcommand{\ptroffset}[1]{{#1}_{off}}
+\newcommand{\gmallocid}[0]{mid}
+
+
+\newcommand{\interpretZ}[1]{\sem{#1}_{\mathbb{Z}}}
+\newcommand{\interpretI}[1]{\sem{#1}_{I}}
+\newcommand{\interpretP}[1]{\sem{#1}_{P}}
+\newcommand{\interpretC}[1]{\sem{#1}_{C}}
+
+\newcommand{\Eval}[1]{Eval(#1)}
+
+%%%%%%%%%%%%%%%%%%% Validity interpretation compters 
+\newcommand{\ival}[1]{{#1}_{\mbox{valid}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Inline text typology and other short notation definitions        %
+
+\newcommand{\nth}[1]{$#1^{\mbox{th}}$}
+\newcommand{\rd}[1]{$#1^{\mbox{rd}}$}
+
+
+\newcommand{\syneq}[0]{::=} %Syntatic definition
+\newcommand{\seq}[0]{\equiv} %Syntactic equality/equivalence
+
+%%%%%%%%% Arithmetic operations
+\newcommand{\intval}[2]{\left ( \begin{array}{l} #1 \\ #2 \end{array} \right )}
+
+\newcommand{\valid}[1]{{#1}_{\mbox{\lstinline!valid!}}}
+\newcommand{\intptr}[2]{\left ( \begin{array}{l} {#1} \\ {#2} 
+
+\end{array} \right )}
+
+\newcommand{\segfault}[0]{\mbox{\lstinline!segfault!}}
+
+
+\newcommand{\congmod}[3]{#1 \equiv #2 \lbrack #3 \rbrack}
+
+\newcommand{\isvalid}[2]{Valid_{#1}(#2)}
+%\newcommand{\interpa}[2]{Tr_{#1}(#2)}
+\newcommand{\interpa}[2]{\sem{#2}_{#1}}
+
+\newcommand{\interpacomp}[2]{Comp_{#1}(#2)}
+\newcommand{\FRAMAC}{FRAMA-C}
+\newcommand{\sizeof}[1]{\mbox{\lstinline!sizeof!}(#1)}
+
+%% Counter associated to an interger variable.
+\newcommand{\icnt}[1]{#1_{\mbox{cnt}}}
+
+%% Access to memory @ pointer address P :
+\newcommand{\accs}[1]{\mbox{\lstinline!access!}(#1)}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{macro_filip}
+\author{Radu Iosif and Florent Garnier}
+\begin{titlepage}
+\title{\Huge\textsc{Simple Separation Logic: Syntax, Semantics and Properties}}
+\maketitle
+\end{titlepage}
+
+
+
+\lstset{
+basicstyle=\footnotesize,
+language=Caml
+}
+
+\chapter{Syntax and Semantic}
+
+In this chapter, we introduce the syntax and the semantic of the "Simple Separation Logic", which is a resticted version of the separation logic, see \cite{Reynolds02separationlogic:}. 
+
+\section{Basic notations and definitions}
+
+Let us denote by $\Addr$ a set of memory addresses, by $\LVar$ a set of memory location variables and  by$\PVar$ a set of pointer variables.
+
+\begin{definition}[Interpretation function]
+An interpretation function $i$ over the set of local variable is a mapping
+$$i: \LVar \mapsto \Addr \cup \lbrace \bot \rbrace.$$
+In the same vein, an interpretation function $s$ over the set of pointer
+variables is a mapping :
+$$s: \PVar \mapsto \Addr \cup \lbrace \bot \rbrace.$$
+Here, $i$ and $s$ are total functions, and $i(l)=\bot$, resp. $s(x)=\bot$, means
+that $i$, resp. $s$, doesn't associate an address to the location variable $l$, resp. to the pointer variable $x$.
+\end{definition}
+
+We define the domain of an interpretation function as :
+\begin{definition}[Domain]
+Given an interpretation function over the set of location variables $i$, 
+the domain of $i$ is the set of variables $l$ such that : 
+$$\Dom{i}\defeq \lbrace l \in \LVar | i(l)\in \Addr \rbrace.$$
+The domain of an interpretation function $s$ over the set of pointer
+variables is the set :
+$$\Dom{s}\defeq \lbrace x \in \PVar | s(x) \in \Addr \rbrace.$$
+\end{definition}
+
+\section{SSL syntax}
+\label{sec:SSLsyntac}
+Let us denote by $\Addr$ a set of memory addresses, by $\LVar$ a set of memory location variables and  by$\PVar$ a set of pointer variables.
+
+The SSL formulae have the following syntax :
+$$
+\begin{array}{lclr}
+\phi & := & \Formula{\pi}{\sigma} \gspace | \gspace \Exists{l}{\phi} & \mbox{Formulae} \\
+\pi & := & \Pointsto{x}{l} \gspace | \gspace \Pointstonil{x} \gspace | \gspace \EqLoc{l_1}{l_2} \gspace | \gspace \Andpure{\pi_1}{\pi_2} & {\mbox{Pure part}} \\
+\sigma &:=& \Emp  \gspace | \gspace \Alloc{l} \gspace | \gspace \Sep{\sigma_1}{\sigma_2} & \mbox{Spatial part}
+\end{array}
+$$
+
+We introduce the following notations, for convenience purpose :
+Given a formula $\phi$, one note by $\LVar(\phi)$ the set of location
+variables that appear in $\phi$. One also denote by $\PVar(\phi)$ the
+set of pointer variables inside of the formula $\phi$.
+
+We will later use the notations $\Pp{\phi}$ to denote the set of litterals
+that appears inside the pure part of the formula $\phi$ and $\Sp{\phi}$ the
+set of litterals that appear in the spacial part of $\phi$.
+
+\section{Semantic}
+
+Let  
+\begin{itemize}
+\item $i : \LVar \mapsto \Addr \cup \lbrace \bot \rbrace $ be an interpretation of location,
+\item $s : \PVar \mapsto \Addr \cup \lbrace \bot \rbrace$ be a store, i.e. an interpretation of pointer
+variables,
+\item $h\subseteq \Addr$ be a heap\footnote{Heaps = $\bigcup_{A\subseteq \Addr}(A \mapsto Values)$}.
+\end{itemize}  
+
+
+A state $<i,s,h>$ is a model for a SSL formula $\phi$, noted $<i,s,h> \models \phi$ iff either of 
+\begin{itemize}
+\item $\phi \equiv \Formula {\pi}{\sigma}$ and $<i,s> \models \pi $ and $< i , h>\models \sigma$.
+\item $\phi \equiv \Exists{l}{\psi}$ and $< \Substin{i}{l}{\lambda},s,h>\models \psi$ for some $\lambda \in \Addr$. 
+\end{itemize}
+
+where :
+
+$$
+\begin{array}{lcl}
+<i,s> \models \Pointsto{x}{l} &\Leftrightarrow & s(x)=i(l) \\
+<i,s> \models \Pointstonil{x} &\Leftrightarrow & s(x)=0 \\
+<i,s> \models \EqLoc{l_1}{l_2} &\Leftrightarrow &  i(l_1)=i(l_2) \\
+<i,s> \models \Andpure{\pi_1}{\pi_2} &\Leftrightarrow & <i,s> \models \pi_1 \mbox{ and }  <i,s> \models \pi_2 \\
+&&\\
+<i,h>\models \Emp & \Leftrightarrow &  h=\emptyset \\
+<i,h> \models \Alloc{l} & \Leftrightarrow &  i(l) \in h \\
+<i,h> \models \Sep{\sigma_1}{\sigma_2}  & \Leftrightarrow & (h=h1 \cup h2) \wedge( h_1\cap h_2 = \emptyset)\wedge (<i,h_1>\models \sigma_1)\wedge(<i,h_2>\models \sigma_2) \\
+\end{array}
+$$
+
+
+\chapter{Satisfiability and Memory Leaks}
+
+
+In this part, we describe a normalizing term rewriting system, that associates
+the same normal form to any simple separation logic formulae, whenever they describe the same stack and the same heap.
+In the fist place, we introduce some notations that will allow to reason
+about the formula syntax, then we present the different steps to apply in order to normalize any simple separation logic formula. We also justify why the considered algorithm terminates and is indeed normalizing, as well as we prove
+that this transformation preserves the formula semantic.
+This algorith is a key point in this work, as in the sequel of this work, we will reason with simple separation logic formula, that are in normal form.
+ 
+\section{Normalization algorithm}
+
+\subsection{Syntax, notations and operations}
+This paragraph describes an algorithm that transforms any couple of equivalent
+formulae into the same normal form. 
+Let us consider a total order on $\LVar$, resp. on $\PVar$, noted $\gtlvar$, resp. $\gtptrvar$. Those orders are purely syntactical and don't take in consideration the variables interpretations. One can consider w.l.o.g. that the lexicographic order can be used to perform this task.
+We denote the set of location variables and the set of pointer variables, using the numbering that follows: $\LVar=\lbrace \nil \rbrace \cup_{i\in\mathbb{N}} l_i$ and $\PVar=\cup_{i\in\mathbb{N}} x_i$.
+
+To deal with the variable indices appearing in the formulae literals, we are using functions from 
+$\mathbb{N} \mapsto \mathbb{N}$. To reason with program transformations, such
+as variables affectations, we are  are using the notation $\phi^{\prime}(i) \leftarrow n$ to represent the fact that $\phi(i)$ now evaluates to the integer $n$.
+
+One use the syntax below to represent any SSL formula $\phi$:
+$$
+\phi := Q. \Formula{\pi}{\sigma},
+$$ 
+where $Q$ is the possibly empty list of the existentially quantified location 
+variables in both $\pi$ and $\sigma$. We denote the syntax of $Q$ as :
+
+$$Q ::= \exists l_{i_1} \ldots \exists l_{i_k}.$$
+
+
+\begin{definition}[Substitution]
+The substitution on the SSL formulae is the syntactical operation defined as below :
+
+$$
+\begin{array}{|lll|}
+\hline
+&&\\
+\Subst{l_1}{l_2}{\phi} &:=& \Subst{l_1}{l_2}{Q}.\Formula{\Subst{l_1}{l_2}{\pi}}{\Subst{l_1}{l_2}{\sigma}} \\
+&&\\
+\Subst{l_1}{l_2}{Q} &:=&
+	 \left \{ 
+		\begin{array} {ll}
+			 Q   & \text{ if } l_1 \not\in \Vars{Q}\\
+			\exists l_2 . Q^{\prime} & \text{ where } Q:=\exists l_1.Q^{\prime} 
+	\end{array}
+	\right .
+\\
+&&\\
+\Subst{l_1}{\lambda}{Q} &:=&
+	 \left \{ 
+		\begin{array} {ll}
+			 Q   & \text{ if } l_1 \not\in \Vars{Q}\\
+			 Q^{\prime} & \text{ where } Q:=\exists l_1.Q^{\prime} 
+	\end{array}
+	\right .
+\\
+&&\\
+\Subst{l_1}{l_2}{(\Andpure{\EqLoc{l}{l^{\prime}}}{\pi})} & := & \left 
+	\{ \begin{array}{ll}
+	\Andpure{\EqLoc{l_2}{l^{\prime}}}{\Subst{l_1}{l_2}{\pi}} & \mbox{ if } l=l_1 \\
+	 \Andpure{\EqLoc{l}{l_2}}{\Subst{l_1}{l_2}{\pi}} & \mbox{ if } l^{\prime}=l_1 \\
+	\Andpure{\EqLoc{l}{l^{\prime}}}{\Subst{l_1}{l_2}{\pi}} & \mbox{ else} 
+	\end{array} \right .
+\\
+&&\\
+\Subst{l_1}{l_2}{(\Andpure{\Pointsto{x}{l}}{\pi})}&:=& \left \{ \begin{array}{ll}
+		\Andpure{\Pointsto{x}{l_2}}{\Subst{l_1}{l_2}{\pi}} & \mbox{if } l=l_1 \\	
+		\Andpure{\Pointsto{x}{l}}{\Subst{l_1}{l_2}{\pi}} & \mbox{ else}
+		\end{array} \right .
+\\
+&&\\
+\Subst{l_1}{l_2}{(\Andpure{\Pointstonil{x}}{\pi})} &:=&  \Andpure{\Pointstonil{x}}{\Subst{l_1}{l_2}{\pi}}  
+\\
+&&\\
+\Subst{l_1}{l_2}{\Sep{\Alloc{l}}{\sigma}} & := & \left \{ 
+	\begin{array}{ll} 
+		\Sep{\Alloc{l_2}}{\Subst{l_1}{l_2}{\sigma}} & \mbox{if } \EqLoc{l}{l_1} \\
+		\Sep{\Alloc{l}}{\Subst{l_1}{l_2}{\sigma}} & \mbox{else } 
+	\end{array} \right . \\
+&&\\
+\hline
+		
+\end{array}
+$$
+
+\end{definition}
+
+
+
+We also define the adjonction-update operations, as the operation
+that adds an atomic proposition in the pure part if the proposition doesn't appear in the pure part, and that substitute the value pointed by a pointer variable
+by the specified one, if the pointer variable already appears inside the
+formula.
+The operation is described as follows :
+$$
+\begin{array}{|lll|}
+\hline
+\Addrep{(\Formula{\pi}{\sigma})}{\Pointsto{x}{l}}&:=& \Formula{(\Addrep{\pi}{\Pointsto{x}{l}})}{\sigma} \\
+\Addrep{\pi}{\Pointsto{x}{l}} &:=& \Pointsto{x}{l}\wedge \pi \mbox{ if } x\not\in \FVars{\pi} \\
+\Addrep{(\Pointsto{x}{l}\wedge \pi)}{\Pointsto{x}{l^{\prime}}} &:=& \Pointsto{x}{l^{\prime}}\wedge \Addrep{\pi}{\Pointsto{x}{l^{\prime}}} \\
+\hline
+\end{array}
+$$   
+\subsection{Order relation on models}
+
+The intended purpose of developping the SSL logic consists in expressing
+abstractions of the heap and the stack. It is essential to know whether
+a SSL formula is satisfiable, and it is also important to get automatic
+procedures that can recognize SSL formula that expresses some errors.
+  
+It is also important, to be able to compute the smallest, resp.
+the greatest, model that satifies a given SSL formula. Here, we define
+some partial well founded order on the set of models.
+
+\begin{definition}[Location variable ordering]
+Consider two variable interpretation functions $i$ and $i^{\prime}$,
+and $s$, resp $h$, an interpretation function over the pointer variables,
+resp. a heap.
+
+
+$$
+\begin{array}{lll}
+<i,s,h>\LocOrderIneq <i^{\prime},s,h> &\Leftrightarrow &\Dom{i} \subset \Dom{i^{\prime}} \\ 
+<i,s,h>\LocOrderIeq <i^{\prime},s,h> &\Leftrightarrow& \Dom{i} \subseteq  \Dom{i^{\prime}} 
+\end{array}
+$$
+\end{definition}
+
+In the same vein, the pointer variable ordering is defined as :
+
+\begin{definition}[Pointer variable ordering]
+Consider two pointer interpretation functions $s$ and $s^{\prime}$,
+and $i$, resp $h$, an interpretation function over the location variables,
+resp. a heap.
+$$
+\begin{array}{lll}
+<i,s,h>\PtrOrderIneq <i,s^{\prime},h> &\Leftrightarrow &\Dom{s} \subset \Dom{s^{\prime}} \\ 
+<i,s,h>\PtrOrderIeq <i,s^{\prime},h> &\Leftrightarrow& \Dom{s} \subseteq  \Dom{s^{\prime}} 
+\end{array}
+$$
+\end{definition}
+
+We use both those partial ordering to the model interpretation ordering  :
+
+\begin{definition}[Model interpretation ordering]
+Two models $<i^{\prime},s^{\prime},h>$ and $<i,s,h>$ satisfies the
+relation : 
+$$ <i^{\prime},s^{\prime},h> \ModOrderIeq <i,s,h> \Leftrightarrow \bigwedge \left \lbrace \begin{array}{l} <i^{\prime},s,h> \LocOrderIeq <i,s,h> \\
+		<i,s^{\prime},h> \PtrOrderIeq <i,s,h>
+\end{array} \right .$$
+The strict part of this ordering is defined as below :
+$$ <i^{\prime},s^{\prime},h> \ModOrderIneq <i,s,h> \Leftrightarrow \bigwedge \left ( \begin{array}{l} <i^{\prime},s,h> \LocOrderIneq <i,s,h> \\
+		<i,s^{\prime},h> \PtrOrderIeq <i,s,h>
+\end{array} \right ) \bigvee \bigwedge \left ( \begin{array}{l} <i^{\prime},s,h> \LocOrderIeq <i,s,h> \\
+		<i,s^{\prime},h> \PtrOrderIneq <i,s,h>
+\end{array} \right ) $$
+
+\end{definition}
+
+
+\begin{lemma}
+The order $\LocOrderIneq,\PtrOrderIneq$ and $\ModOrderIneq$ are well founded.
+\end{lemma}
+
+
+
+\begin{lemma}[ TODO : Check that this result is true]
+Given a formula $\phi$, and $<i,s,h>\models \phi$, there exists unique
+least model $<i^{\prime},s^{\prime},h>\models \phi$, w.r.t. $\ModOrderIneq$.
+\end{lemma}
+
+
+\subsection{Normalisation steps and rules}
+This section describes the normalisation procedure we consider. Each step
+represent the transformation of the input formula, using inference rules,
+which almost matches the rewrite rules we consider to implement this
+algorithm. Each inference step can be inverted, and by such, each step 
+transfor the current formula to an equivalent one.
+
+{\bf Step (1)  Partition :}
+The first step of this normalisation procedure consists in rearranging
+the pure formula $\pi$ such that its syntax matches the pattern below :
+
+$$ \pi ::= \underbrace{\bigwedge_{i=1}^{n_1}(l_{{\phi}_g(i)}=l_{{\phi}_d(i)})}_{\mbox{Equations}} \gspace \underbrace{\bigwedge_{i=1}^{n_2}(\Pointsto{x_{\delta_g(i)}}{l_{\delta_d(i)}})}_{\mbox{Affectations}} \gspace \underbrace{\bigwedge_{i=1}^{n_3}(\Pointstonil{x_{\psi(i)}})}_{\mbox{Null pointers}}, $$
+
+where $\phi_g,\phi_d,\delta_g,\delta_d,\psi$ are some mapping of $\mathbb{N}\mapsto \mathbb{N}$.
+Every tautologies can be removed at this stage, i.e. all remove $n$ occurrences
+of literals that appear $n+1$ times, or occurrences of equations such that $l_k=l_k$.
+The feasibility of this is straightforward, as the logical $\wedge$ is associative and commutative. It comes without saying that those operations produce a formula that is logically equivalent as the input formula.
+
+$$
+\infer{\exists l.Q. \Formula{\pi}{\sigma}}{\exists l.\exists l. Q \Formula{\pi}{\sigma}}$$ 
+We, basically apply the inference rule that follows :
+$$\infer{\Formula{\Andpure{\EqLoc{l_i}{l_j}}{\pi^{\prime}}}{\sigma}}{\Formula{\Andpure{\EqLoc{l_i}{l_j}}{\Andpure{\EqLoc{l_i}{l_j}}{\pi^{\prime}}}}{\sigma}}
+$$
+
+
+{\bf Step (2) Unifying affectation :}
+If some pointer varialbles $x$ points to two different location variables, $l_1$ and $l_2$ then we deduce that those two pointer variables are in fact the same.
+
+
+For all $i\neq j$ s.t. $\delta_{g}(i)=\delta_{g}(j)$ do 
+	remove  $\Pointsto{x_{\delta_g(j)}}{l_{\delta_d(j)}}$ from
+	the Affectation part, then add the $l_{\delta_g(i)}=l_{\delta_g(j)}$
+	equation inside the equation part.
+
+$$ \infer[\mbox{\textbf{Unif Loc Var}}]{ \EqLoc{l_i}{l_j} \wedge \Pointsto{x}{l_i}}{ l_j \gtlvar l_i & \Pointsto{x}{l_i}\wedge \Pointsto{x}{l_j}}$$
+
+{\bf Step (3) Quantificator Elimination}
+
+At this stage, we can eliminate all the bounded variables $l_i$ such that there
+exists a free variable $l_j$ that satisfy : $(l_i=l_j)$ or $(l_j=l_i)$
+
+$$
+\infer[\mbox{\textbf{Q-elim}}]{Q^{\prime} .\Subst{l_i}{l_j}{(\Formula{\pi^{\prime}}{\sigma})}}{l_j \in \FVars{Q^{\prime} } & \exists l_i.Q^{\prime} \gspace (\EqLoc{l_i}{l_j} \vee \EqLoc{l_j}{l_i})\wedge \Formula{\pi^{\prime}}{\sigma}}
+$$
+
+{\bf Step (4) Orienting Equations :}
+Basically, this step aims to write equations with the smallest variable (w.r.t. 
+$\gtlvar$) in the left hand side of the equation.
+
+For any $l_{\phi_g(i)}\gtlvar l_{\phi_d(i)}$ do 
+	$\phi^{\prime}_g(i)\leftarrow  \phi_d(i)$ and $\phi^{\prime}_d(i) \leftarrow \phi_g(i)$.
+
+
+$$ \infer[\mbox{\textbf{Orient Equations}}]{(l_j=l_i)\wedge \pi^{\prime}} {(l_i=l_j)\wedge \pi^{\prime} & l_i \gtlvar l_j}$$	
+
+{\bf Step (5) Quotient :}
+For any $i\neq j$ s.t. $\phi_g(i)=\phi_d(j)$  set 
+$\phi_g^{\prime}(i)\leftarrow \phi_g^{\prime}(j)$.
+
+Let notice that the number of different variables referenced before and
+after the transformation is the same.  
+
+$$
+\infer[\mbox{\textbf{Quotient}}]{\EqLoc{l_i}{l_j} \wedge \EqLoc{l_i}{l_k}}{\EqLoc{l_i}{l_j} \wedge \EqLoc{l_j}{l_k}} 
+$$
+
+{\bf Step (6) Normalization of $\pi$ and $\sigma$ :}
+For all literal appearing in the Affectations part of $\pi$ and in $\sigma$,
+substitute each instance of the  variables that appear in the right hand side of
+an equation --in the Equation part of $\pi$-- by the left hand side variable in the left hand side of this same equation.
+
+$$
+\infer[\mbox{\textbf{Var regroup}}]{\Subst{l_k}{l_j}{(\Formula{\pi^{\prime}}{\sigma})}}{\Formula{(\EqLoc{l_j}{l_k}\wedge \pi^{\prime}) }{\sigma}} 
+$$
+
+{\bf Step (7) Elimin :}
+This step removes every instance of variables of $Q$ that neither appears in  the pure nor inside the spatial part of the formula.
+
+$$\infer[\mbox{\textbf{Var Elim}}]{Q^{\prime}.\Formula{\pi}{\sigma}}{\exists l_i.Q^{\prime}.\Formula{\pi}{\sigma} & l_i \not\in \Vars{\Formula{\pi}{\sigma}}}
+$$
+
+{\bf Step (8) Theories Cleanup :}
+
+At this stage, all variables instantiated in $\pi$ and $\sigma$, appears
+in the left hand side of the equation. Every equation describes some information
+that are now irrelevant, as all the instances of the variables that appear in the right hand side of the equations don't appear anywhere in the formula.  
+
+$$\infer[\mbox{\textbf{Theories Elim}}]{\Formula{\pi}{\sigma}}{\EqLoc{l_i}{l_j} & \Formula{\pi}{\sigma}}$$
+
+
+In the sequel of this report, the notation $\NForm{\phi}$ will denote the
+value returned by a call of the normalization procedure against the SSL formula $\phi$.
+We note that the set of SSL formula $\phi$ in normal form are the set of
+fixpoints for $\NForm$, namely $\phi=\NForm{\phi}$. 
+
+\begin{property}
+A formula $\phi$ and its normal form $\NForm{\phi}$ are logically equivalent.
+\end{property}
+\begin{proof}
+For all rules $$r\in \left \lbrace \begin{array}{lll}
+ \mbox{\textbf{Unif Loc Var}}, & \mbox{\textbf{Q-Elim}}, & \mbox{\textbf{Orient Equations}} \\  \mbox{\textbf{Quotient}} & \mbox{\textbf{Var regroup}}, & \mbox{\textbf{Var Elim}} \\ \mbox{\textbf{Theories Elim}}  &&\\ \end{array} \right \rbrace,$$ 
+and for any $\phi \stackrel{r}{\to} \phi^{\prime}$ such that the rule is applied
+with respect to the algorithm order, we have that $\phi \Leftrightarrow \phi^{\prime}.$
+\end{proof}
+
+\section{Deciding Satisfiability}
+
+
+\begin{lemma}
+\label{lemma:syntaxNF}
+
+For any formula $\phi::= \exists l_1 \ldots l_k \gspace \Formula{\pi}{\sigma}$,
+the formula $\NForm{\phi}$ has the following syntax :
+
+$$ \NForm{\phi}=\exists l_1\ldots l_k^{\prime}, \Formula{\bigwedge_{i=1}^{n_1}(\Pointsto{x_{\delta_g(i)}}{l_{\delta_d(i)}}) \gspace \bigwedge_{i=1}^{n_2}(\Pointstonil{x_{\psi(i)}})}{\Unsep^{n_3}_{i=1} \Alloc{l_{\omega(i)}}}$$
+with $k^{\prime}\leq k$.
+\end{lemma}
+
+\begin{lemma}
+Given a location variable $l$, if a formula have at least two occurrences of the predicate $\Alloc{l}$ in its spacial formula, then it is inconsistent.
+\end{lemma}
+\begin{proof}
+Let consider $<i,s,h>$ and $\phi \equiv \Formula{\pi}{\phi}$ such that $<i,s,h>\models \phi$ and that $\Alloc{l}$ appears twice in $\phi$.
+Considering the structure of SSL formulae, $\Alloc{l}$ only appears in the spacial part of such formula, besides, both predicated are necessarily separated by
+a star symbol.
+
+\begin{eqnarray*}
+<i,h>\models \Sep{\Alloc{l}}{\Sep{\ldots}{\Alloc{l}}} &\Rightarrow&
+	h = h_1 \cup h_2 \cup h_3 \wedge (h_1 \cap h_2 = \emptyset) \wedge (i(l)\in h_1 \wedge i(l) \in h_2 ) \\
+	&\Rightarrow& i(l) \neq i(l) \Rightarrow \bot.
+\end{eqnarray*}
+
+If this appears in the normal form of a formula $\phi$, this means that 
+either the formula $\phi$ has a spatial form $\sigma$ such that $\sigma \Rightarrow \Sep{\Alloc{l}}{\Alloc{l}}$ or $\phi \equiv \Formula{l=l_1 \wedge l=l_2}{ \Sep{\Alloc{l_1}}{\Alloc{l_2}}}$.  
+\end{proof}
+
+The converse of the previous lemma is false.
+
+Formulae that contains the "pattern" : $\Formula{\Andpure{\Pointsto{x}{l}}{\Pointstonil{x}}}{\Alloc{l}}$ are also inconsistent.
+Lemma \label{lemma:syntaxNF}~can be generalized by : 
+
+\begin{lemma}[Syntaxic characterization of un-satisfiable formulae ]
+A formula $\phi$ is inconsistent iff $\NForm{\phi}$  either : 
+\begin{enumerate}
+\item Contains two instances the predicate $\Alloc{l_i}$ for some  $l_i\in \LVar$,
+\item  $\Pointsto{x}{l}\in \Pp{\phi}$ and $\Pointstonil{x}\in \Pp{\phi}$ and $\Alloc{l}\in \Sp{\phi}.$
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+
+
+Let consider $\phi$ a SSL formula. Let suppose that the formula $\NForm{\phi}$
+doesn't complies with both conditions above.
+Using lemma \ref{lemma:syntaxNF} notations, and the negations of both condition 1 and 2, we deduce the following points :
+\begin{itemize}
+\item The function $\omega$ is injective.  
+\item The second condition entails that :
+$$\forall (i,j,k) \gspace \delta_g(i)\neq \psi(j) \gspace \vee \gspace \delta_d(i) \neq \omega(k).$$ 
+\end{itemize} 
+
+Consider the $<i,s,h>$ such that :
+\begin{itemize}
+\item The heap $h=\cup_{k=1}^{n_3} \{\omega(k)\},$
+\item the variable interpretation function $i(l_k):= \omega(k),$
+\item the pointer interpretation $$s(x_i) := 
+	\left \{ 
+	\begin{array}{ll} 
+	0 & \text{ if } \exists j \gspace \delta_g(i) = \psi(j) \\
+	\omega(k) & \text{ if } \exists k \gspace \delta_d(i) = \omega(k)
+	\end{array}
+	\right .$$
+At least one of the conditions above is satisfied, as $x_i$ 
+appears in the normal form, thus either in the null pointer part or
+in the affectation part of the pure formula.
+\end{itemize}
+
+We actually built a  model $<i,s,h>$  such that
+that $$<i,s,h> \models \NForm{\phi}.$$
+\end{proof}
+
+\section{Memory leaks}
+
+Besides the set of inconsistent formulae, we also consider another "family" of formulae,
+that represent heaps and stacks where some allocated memory cells are not referenced by a pointer variable. This kind of formula abstracts the heap and stack where
+there is some memory leaks. We define the set of garbage formula as the set
+of formulae that defines some memory cells allocated on the spatial part, that
+are not referenced from the pure part. 
+
+
+\begin{definition}[Garbage formula]
+\label{def:garbageformula}
+A formula $\phi$ is said to be garbage if in every model $<i,s,h>\models \phi$
+there exists :
+\begin{itemize} 
+\item An address $\lambda \in h$,
+\item a model $<i^{\prime},s^{\prime},h> \ModOrderIeq <i,s,h>$,
+\end{itemize}
+ such that $<i^{\prime},s^{\prime},h>\models \phi$ and $\lambda \not\in \Ran{i^{\prime}}\cup\Ran{s^{\prime}}$.
+\end{definition}
+
+The set of the garbage formula can be caracterized using a syntactic criterion, which is described by the two next lemma :
+
+\begin{lemma}
+\label{lemma:garbagebasic}
+If $\phi$ is a garbage formula, then
+it has the following syntax :
+$$\phi:= \exists l. \Formula{\pi}{\Sep{\Alloc{l}}{\sigma^{\prime}}}, l\not\in \FVars{\phi}.$$
+\end{lemma}
+
+\begin{proof}
+Consider $\phi =\Formula{\pi}{\sigma}$ and a model $<i,s,h>$ in which $\phi$ is valid.
+Definition \ref{def:garbageformula} entails that there exists some $\lambda \in \Addr$ and $<i^{\prime},s,h>$ such that $\lambda\in h$, and that for all $l\in \LVar$ $i^{\prime}(l)\neq \lambda$ as well as for all $x \in \PVar$ we have that $s(x)\neq \lambda$.
+
+
+The fact that $\lambda\in h$ means that the heap cell at address $\lambda$ is allocated. The SSL logic syntax doesn't allow to write things like $\Alloc{\lambda}$ for some $\lambda \in \Addr$, however it is possible (and it is the only way
+to do it) to write $\exists l_s, \Formula{\pi}{\Sep{\Alloc{l}}{\sigma^{\prime}}}$, where the $l_s=\lambda$ is implicit.
+To do so, let set $i(l_s)=\lambda$, (by doing $\Subst{l_s}{\lambda}{i}$) and that $\sigma=\Sep{\Alloc{l_s}}{\sigma^{\prime}}$. 
+Let's now prove that the variable $l_s$ doesn't belong to the set of
+the free variables of $\pi$.
+Let us show it is impossible, by supposing that $l_s$ belongs to the set of
+ the free variables of $\Pp{\phi}$. In this case, $l_s$ appears at least once in the literals bellow :
+
+\begin{itemize}
+\item either in a literal $\Pointsto{x}{l_s}$,
+\item or in an equation $\EqLoc{l}{l_s}$.
+\end{itemize}
+ The first case entails that $<i,s,h>\models \Pointsto{x}{l_s} \Rightarrow s(x)=i(l_s)$, where $i(l_s)=\lambda$, therefore $\lambda\in \Ran{s}$, which contradicts the initial hypothesis.
+
+Let consider the second case: The variable $l_s$ appears in a equation alongside with some free variable $l$. In this case one have that $i^{\prime}(l)=i(l_s)$, which entails that $\lambda=i^{\prime}(l)$, thus $l\in \Ran{i^{\prime}}$,
+which again contradicts the hypothesis.
+
+%
+%Consider $l_s\in \LVar$ a fresh variable, and $i^{\prime}: \LVar \mapsto \Addr$ such that : 
+%$$i^{\prime}(l) = \left \lbrace 
+%\begin{array}{ll} 
+%\lambda & \mbox{ if } l_s=l \\
+%i(l) & \mbox{ otherwise}
+%\end{array} 
+%\right .$$
+
+We indeed proved that if $\phi$ is a garbage formula then its syntax "matches"
+the pattern that follows:
+$$
+\exists l, \Formula{\pi}{\Sep{\Alloc{l}}{\sigma^{\prime}}}, \gspace l\not\in \FVars{\pi}.
+$$
+\end{proof}
+
+\begin{lemma}[Syntactical characterisation of garbage formulae]
+\label{lemma:garbage}
+A formula $\phi$ is garbage iff $\NForm{\phi}$ is of the form 
+$$\exists l \gspace \Formula{\pi}{\Sep{\Alloc{l}}{\sigma}} \mbox{ with } l \not\in \FVars{\pi}$$
+\end{lemma} 
+
+\begin{proof}
+Let $\phi$ be a garbage formula. Using lemma \ref{lemma:garbagebasic}, we have
+that $$\phi \syntaxeq \exists l. \Formula{\pi}{\Sep{\Alloc{l}}{\sigma^{\prime}}}, \gspace l\not\in\FVars{\pi}.$$
+
+Let be $\phi_{\mathcal{NF}}:=\NForm{\pi}$. And let us note the syntax of
+$\phi_{\mathcal{NF}}:=Q_{\mathcal{NF}}.\Formula{\pi_{\mathcal{NF}}}{\sigma_{\mathcal{NF}}}$.
+
+Let's first notice that alongside the transformation steps, the variable $l$
+is neither eliminated, nor substituted.
+
+The rule that can remove, substitute or introduce new instance of $l$ in the formula are :
+\begin{itemize}
+\item Rule \textbf{Unif Loc Var} of step 2,
+\item Rule \textbf{Q-Elim} of step 3,
+\item Rule \textbf{Quotient} of step 5,
+\item Rule \textbf{Var regroup} of step 6,
+\item Rule \textbf{Var Elimin} of step 7.
+\end{itemize}
+
+The variable $l$ is not introduced in an equation at step $2$, as $l$ not 
+pointed by any pointer variables. All the other rules, but \textbf{Var Elim}, requires that $l$ appears in an equation to perform a transformation that can
+eliminate or substitute $l$ by another variable name in the formula. Their 
+application can't modify any occurence of $l$. At step $7$, $l$ belongs to 
+the set of $\Vars{\sigma}$, thus $l$ is not eliminated.
+
+Therefore, we got that $$\NForm{\phi}:=\exists l. \Formula{\pi_{\mathcal{NF}}}{\Sep{\Alloc{l}}{\sigma^{\prime}_{\mathcal{NF}}}}.$$
+
+Now, prove that if a formula $\pi$ has a normal form such that $\NForm{\phi}:= \exists l.Q. \Formula{\pi}{\Sep{\Alloc{l}}{\sigma}}, \gspace l\not\in \FVars{\pi}$ then $\phi$ is garbage.
+
+Let consider a model $<i,s,h>$ such that $<i,s,h> \models \phi$. 
+Here, $l$ represents a constant address $\lambda$, and this address
+is expressed within the formula. Therefore, there is no more need
+to interpret it using $i$. For instance, if $l$ belongs to
+the domain of $i$, i.e. $i(l)=\lambda$, one can define the interpretation
+over the location variable $i^{\prime}$ such that :
+
+$$
+i^{\prime}(l^{\prime})= \left \lbrace 
+\begin{array}{ll} 
+ \bot & \mbox{if } l^{\prime}=l \\
+ i(l^{\prime}) & \mbox{otherwise }
+\end{array} \right .
+$$  
+
+At this point, we proved that there exists $<i^{\prime},s,h>\LocOrderIeq <i,s,h>$ such that $<i^{\prime},s,h>\models \phi$ and $\lambda \not \in \Ran{i}$.The fact that $l\not\in \FVars{\pi}$ entails that there is no pointer variable $x$ such that $\pi$ contains a literal $\Pointsto{x}{l}$. Therefore, if
+the interpretation of pointer variable $s$ was set up such as $s(l)=\lambda^{\prime}$, 
+one can consider
+ $$s^{\prime}(l^{\prime}) = 
+	\left \lbrace \begin{array}{ll}
+	\bot & \mbox{if } l^{\prime} = l \\
+	s(l^{\prime}) & \mbox{ oterwise.}		
+	\end{array} \right .
+$$
+Here, $\lambda \not\in \Ran{s}$.
+In this case, we have that $<i^{\prime},s^{\prime},h>\ModOrderIneq <i,s,h>$,
+and $\lambda \not\in \Ran{i}\cup\Ran{s}$. Therefore the converse holds.
+\end{proof}
+
+
+\begin{theorem}[TODO : Check and prove]
+Computing $\NForm{\phi}$ is equivalent to compute the least model
+$<i,s,h>\models \phi$, w.r.t. the $\ModOrderIneq$ ordering.
+\end{theorem}
+
+\chapter{Infering and proving properties}
+
+
+In this chapter we present syntactical means to compare the semantic
+related  
+properties of SSL formulae. We present a set of inference rules, that
+can be used to show wheter the set of the models that satisfy a SSL
+formula is included in the set of model of another SSL formula. We also use
+this system to eliminate the set of equivalent term two formulae. 
+We claim that this inference system can be modeled as a rewriting system
+and used to mecanicaly prove the aforementionned properties.
+
+\label{sec:entailement}
+\begin{definition}[Entailement]
+Consider two SSL formulae, $\phi$ and $\psi$. The formula $\phi$ entails the
+formula $\psi$, noted $\phi \vdash \psi$, iff for all models $<i,s,h>\models \phi$, we get  $<i,s,h>\models \psi$.
+\end{definition}
+
+We define the system formed by the inference rules below, in order to define an algorithm that decide whether a formula $\phi$ entails an other formula $\psi$.
+
+$$
+\begin{array}{|cc|}
+\hline
+&\\
+\infer[r_1]{ \phi_1 \vdash \phi_2}{\Pointsto{x}{l}\wedge \phi_1 \vdash \Pointsto{x}{l}\wedge \phi_2}
+&
+\infer[r_2]{ \phi_1 \vdash \phi_2}{\Sep{ \phi_1}{\Alloc{l}}\vdash \Sep{\phi_2}{\Alloc{l}}} \\
+&\\
+\infer[r_3]{ \phi_1 \vdash \Substin{\phi_2}{l^{\prime}}{l}}{\Pointsto{x}{l}\wedge \phi_1 \vdash \exists l^{\prime} \Pointsto{x}{l^{\prime}}\wedge \phi_2}
+&
+\infer[r_4]{ \Substin{\phi_1}{l}{\overline{l}} \vdash \Substin{\phi_2}{l^{\prime}}{\overline{l}}}{\exists l.\Pointsto{x}{l}\wedge \phi_1 \vdash \exists l^{\prime} \Pointsto{x}{l^{\prime}}\wedge \phi_2}
+\\
+&\\
+\infer[\Pointsto{x}{l} \not\in \Pp{\phi_1}, \forall x, r_5]{ \phi_1 \vdash \phi_2}{\Sep{ \phi_1}{\Alloc{l}}\vdash \Sep{\phi_2}{\exists l^{\prime}. \Alloc{l^{\prime}}}}
+&
+\infer[ r_6]{ \phi_1 \vdash \phi_2}{\Sep{ \phi_1}{\exists l. \Alloc{l}}\vdash \Sep{\phi_2}{\exists l^{\prime}. \Alloc{l^{\prime}}}}
+\\
+&\\
+\hline
+\end{array}
+$$
+
+Considering two entailement formulae, one note by $(\phi \vdash \psi) \leadsto (\phi^{\prime} \vdash \psi^{\prime})$ the fact that the two entailement formulae belong to the transitive symetric closure of the inference rules system above.
+
+One need to define the meaning of $\phi_1 \models \phi_2$ before we enunciate
+further results dealing with the soundness and the completeness of the inference system.
+
+\begin{definition}[Models inclusion]
+We define $\phi \models \psi$ as the following : 
+$$ \phi \models \psi \Leftrightarrow \lbrace <i,s,h> | <i,s,h>\models \phi \rbrace \subseteq \lbrace <i,s,h> | <i,s,h>\models \psi \rbrace$$
+\end{definition}
+
+Since there is no more room left for ambiguity, about the definition
+of $\phi\models \psi$, we can enunciate two very important results :
+We claim and prove that, given two SSL formulae $\phi$ and $\psi$,
+\begin{itemize}
+\item if we have that $(\phi \vdash \psi) \leadsto (\Formula{\true}{\Emp}\vdash\Formula{\true}{\Emp})$ then $\phi \models \psi$ (Soundness),  
+\item if $\phi \models \psi$ then $(\phi \vdash \psi) \leadsto (\Formula{\true}{\Emp}\vdash\Formula{\true}{\Emp})$ (Completeness).
+\end{itemize}
+
+
+Let us first enunciate and prove the soundness property :
+
+\begin{theorem}[Soundness]
+\label{th:soundness}
+If there exists a reduction path that starts from the term/proposition $\phi \vdash \psi$ and that reaches the term/proposition $(\Formula{\true}{\Emp}) \vdash( \Formula{\true}{\Emp})$, then $\phi \models \psi$ holds.
+\end{theorem}
+\begin{proof}
+TODO
+\end{proof}
+
+
+%
+%\begin{lemma}
+%\label{lemma:numlittentailement}
+%Consider $\phi_1$ and $\phi_2$, two SSL formulae, such that $\phi_1 \vdash \phi_2$ and such that $\phi_1=\NForm{\phi_1}$ and $\phi_2=\NForm{\phi_2}$.
+%The number of litterals $\Pointsto{.}{.}$ in $\phi_1$ is greater or equal
+%than the number of litterals $\Pointsto{.}{.}$ in $\phi_2$  and the number of litterals $\Alloc{.}$ is the same in both $\phi_1$ and $\phi_2$.
+%\end{lemma}
+%\begin{proof}
+%\end{proof}
+%
+
+The competeness property, states that if $\phi \models \psi$ then there is
+a way to prove it using the inference rules of the entailement.
+
+
+\begin{theorem}[Completeness]
+\label{th:completeness}
+For any couple of formulae $\phi$ , $\psi$ such that $\phi \models \psi$
+there exists a reduction path that starts from the term/proposition $\phi \vdash \psi$ and that reaches the term/propostion $\Formula{\true}{\Emp} \vdash \Formula{\true}{\Emp}$.
+\end{theorem}
+We actually prove that if a formula $\phi_1$ entails another formula $\phi_2$, then it is possible to eliminate any litteral of the term $\phi_1 \vdash \phi_2$ in both formula using the inferences rules.
+We consider the litterals $\Pointsto{x}{l}$, in the case $l$ is free and in the case $l$ is existentially quantified. We consider the litterals $\Pointstonil{x}$ and the litterals $\Alloc{l}$ in the case $l$ is pointed by a pointer variable, and in the case it is not, combined with the case $l$ is quantified and the case
+where $l$ is a free variable.
+We prove, that for each litteral  that appears within  the left hand side formula, there is a rule that allows to eliminate this litteral and a corresponding one
+in the right hand side of the entailement symbol.
+
+
+
+Before proving the theorem \ref{th:completeness}, we present some intermediate lemmas, that will ease the reading of the final proof.
+\input{entailcomplete}
+
+
+
+%\section{Implantation in the OCaml language}
+%
+%We define the following signature using OCaml syntax/type definition, to represent the set of simple separation logic formulae.
+%
+%\begin{lstlisting}
+%
+%type pure = And of pure * pure
+%	| Points_to p_var * v_loc
+%	| Eq_loc of p_var * p_var
+%	| Points_to_nil of v_loc
+%
+%type space = Emp 
+%	| Alloc of v_loc
+%	| Sep of space * space
+%
+%
+%type formula = Formula of pure * space
+%		| Exists of v_loc * formula
+%
+%\end{lstlisting}
+%
+%We transform the logical formulae using the rewrite system that follows :
+%
+%$$
+%\begin{array}{l}
+%	\rrule{And( X , Eq_loc( l , l ))}{X} \\
+%	\rrule{And( Eq_loc( l , l ), X )}{X} \\
+%	\rrule{And( Points_to( X, l1), Points_to(x , l2) )}{ And (Points_to (X, l1), Eq_loc(l1,l2))} \\
+%
+%	\rrule{Sep( Emp ,  X )}{X} \\
+%	\rrule{Sep( X , Emp)}{X} \\ 
+%	\rrule{Formula(Pure( And(Eq_loc(l1,l2)), X ),Space(S) )}{
+%	Formula( Pure(Subst([l2,l1],X)),Space(Subst([l2,l1],S))}	
+%\end{array}
+%$$
+%
+%\begin{lemma}
+%This TRS is terminating because each rule reduces the number of function
+%symbols by at least one.
+%\end{lemma}
+%
+%\begin{lemma}
+%The TRS above is confluent.
+%\end{lemma}
+%\begin{proof}
+%There is one single critical pair (Modulo Commutativity), namely :
+%
+%  	$$< \lstinline!Formula(Pure( And(Eq_loc(l1,l2)), X ),Space(S) )! , \lstinline!And( Eq_loc( l , l ), X ) -> X!>$$
+%
+%	This critical pair terms is joinable
+% 	thus, see theorem 6.2.4 of \cite{TRAT}, the TRS is locally confluent $\lbrace (l_i=l_j) | \lstinline! Eq_loc (! l_i=l_j\lstinline!)! $ appearing in the formula.
+%
+%This TRS is both locally confluent and terminating, therefore, see corollary 6.2.6 of \cite{TRAT}, it is confluent. 
+%\end{proof}
+%It is also normalizing, as it is confluent and terminating.
+%This being said, one must pay attention to the fact, that for a given formula,
+%there exists one unique normal form. However, given two "equivalent" formulae,
+%the TRS can reduce both term into two different normal forms. 
+%
+%We have here to find a TRS that reduce any couples of "equivalent" formulae
+%into an unique normal form.
+%This kind of reduction is the dealt with in the section that follows.
+%
+
+%\section{Note on using footprint techniques for computing precondition/memory
+%error detection.}
+%
+%In \cite{RazaG08}, the author present an automatic technique that allows to compute
+%the smallest pre condition so that a program will not generate a memory fault. 
+%
+%\lstset{
+%language=C
+%}
+%
+%
+%Let us consider the small C language function :
+%
+%\begin{lstlisting}
+%
+%void foo(int * x){ //l0
+% int *y,*z; // l1
+% z=y;  	    // l2	
+% x=y;       // l3
+% free(x);   // l4
+%}
+%
+%\end{lstlisting}
+%
+%At the entry point of this function, we have the following :
+%
+%\begin{tabular}{|l|l|l|}
+%\hline
+%offset & SSL & Footprint \\
+%\hline
+%l0 & $\Formula{\Pointsto{x}{l}}{\Emp}$& $\emptyset$ \\
+%l1 & $\Formula{\exists l_1,l_2,\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l_2}}}{\Emp}$& \\
+%l2 & $\Formula{\exists l_1,\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l_1}}}{\Emp}$& \\
+%l4 & $\Formula{\exists l_1,\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l_1}}}{\Emp}$ & $\Alloc{l}$\\
+%\hline
+%\end{tabular} 
+%
+%From control state l3 to l4, one need to add the predicate $\Alloc{l}$ to the
+%Footprint, as the call to the \lstinline!free! function demands that the value
+%pointed by \lstinline!x!, i.e. \lstinline!l! is indeed an allocated memory cell. At this point, usual separation logic inference rules allow to detect a 
+%memory error, as one try to perform a free when the heap is empty.
+%
+%
+%\subsection{Detecting double free on the same memory address :}
+%
+%\begin{lstlisting}
+%
+%void foo(int * x){ //l0
+% int *y,*z; // l1
+% z=y;  	    // l2	
+% x=y;       // l3
+% free(x);   // l4
+% free(y);   // l5
+%}
+%\end{lstlisting}
+%
+%Let's summarize the same analysis as in the previous paragraph :
+%
+%\begin{tabular}{|l|l|l|}
+%\hline
+%offset & SSL & Footprint \\
+%\hline
+%$\vdots$ &\vdots& \vdots \\
+%l4 & $\Formula{\exists l_1,\Andpure{\Pointsto{x}{l_1}}{\Andpure{\Pointsto{y}{l_1}{\Pointsto{z}{l_1}}}}}{\Emp}$ & $\Alloc{l}$\\
+%l5 & "$\ldots$" & $\Sep{\Alloc{l}}{\Alloc{l}}$ \\
+%\hline
+%\end{tabular} 
+%
+%Besides of the usual memory faults, an unsatisfied formula appears in the  
+%footprint, i.e. this function requires a unsatisfied precondition. (Whatever
+%the model, no valid run is possible).
+%
+
+\chapter{Proving memory faults}
+In this chapter, we consider different techniques that allow to prove that
+a given program is free from :
+
+\begin{itemize}
+\item  Double freeing  a same memory cell,
+\item freeing a non allocated memory cell,
+\item accesses on non-alligned addresses,
+\item accessing a memory segment out its bounds. 
+\end{itemize}
+
+
+The properties we want to check can be divided into two different categories : The first kind are property that are related to the shape of the heap, that are expressible using the Simple Separation Logic. The second kind of properties are more
+related to checking some arithemtic properties. Checking if an address is well alligned is nothing more than checking that the pointed address is a multiple of the
+size of the type of the pointer, the same holds for checking if an address belongs
+to a segment bounds. 
+
+We currently have defined the syntax, the semantic and some properties that
+deals with the simple separation logic, which allows to reason with an
+abstraction of the heap and the stack of a program. To reason with arithmetical
+properties, we need to generate another kind of abstraction of the program we
+wish to analyse. Such an abstraction must take in considerations the operations that must comply with arithemtical constrainsts. We chose abstract the program we consider, using counter automata. The arithemtical properties we want to check are translated into transitions guards, and is some are violated, then an error state 
+becomes reachable. The choice of such an abstraction was motivated by the fact
+that an effient tool used to prove the reachability of error state on counter
+automata is available and improved on a daily basis \cite{Bozga06flata}. 
+
+In the next sections, we present how we transform some \lstinline!C! function
+calls, and some pointer arithmetic operation, into a transition of a counter
+automata, and how the abstraction of the stack and the heap are affected in
+the mean time.
+
+
+\section{Pointer representation and arithmetic}
+
+
+
+\label{sec:pointermodel}
+
+In the C language, a pointer is a typed variable that contains some memory address, and which is typed in accordance to the type of the value it is supposed
+to point.
+The pointer arithmetics allows to use pointer addresses to access some
+memory zones, for instance to access the \nth{n} element of the \nth{m}
+line of a matrix, knowing its base address, its number of rows and by
+supposing the matrix is stored in one single contiguous block of memory.
+
+The valid pointer arithmetic expressions defined by the ANSI C language, corresponds to the expressions described in the BNF grammar below :
+
+$$
+\begin{array}{lll}
+
+I &:=& n \in \mathbb{Z} \gspace | \gspace i\in IVar \gspace | \gspace P - P \gspace | \gspace I + I \gspace | \gspace I \times I \\
+P &:=& p\in PVar \gspace | \gspace P + I \gspace | \gspace  \NULL \gspace| \gspace \texttt{\&} Exp\\
+C&:=& P \bowtie P, \gspace \bowtie \in \lbrace \texttt{<},\texttt{>},\texttt{==},\texttt{!=}\rbrace
+\end{array}
+$$
+ 
+A pointer variable $x$ is represented as a tuple
+$(x.name,\sizeof{\tau},\ptroffset{x})$, where $\tau$ is the type of the pointed values, stored at addresse $x$, $x.name$ is the name of the variable, i.e. $x$, $\sizeof{\tau}$ is the amount in bytes needed to represent a single element of type $\tau$ and $\ptroffset{x}$ represents the offset of the address pointed from the base address.
+
+\input{arithmpointeval}
+
+\section{Memory allocation and deallocation}
+\label{sec:memalloc}
+Consider a typical C language memory allocation operation :
+
+\lstset{
+language=C
+}
+
+\begin{lstlisting}
+int *x;
+x=(int *) malloc( 100 * sizeof(int));
+\end{lstlisting}
+
+One must be able to reason with the fact that this operation creates a
+memory block that contains space for 100 "int" memory cells. Therefore,
+we model any allocated heap segment as tuple of values, containing its size and its base address.
+The memory block representation, as described in section \ref{sec:pointermodel},
+contains the size of the memory block pointed by \lstinline!x!.
+In this example, a successful call to the malloc standard library function 
+result in the  creation of a memory block $l$, where : 
+$$
+l = \locvar{l}{\gmallocid}{\interpa{}{\mbox{\lstinline!100*sizeof(int)!}}}, 
+%\left (
+%\begin{array}{l}
+%\lbase{\gmallocid} \\ 
+%\interpretZ{\mbox{100*sizeof(int)}} 
+%\end{array}
+%\right )
+$$
+and
+$$
+\left (
+\begin{array}{l}
+x \\ 
+\ptrsize{x} \\
+\ptroffset{x}
+\end{array}
+\right )
+= 
+\left (
+\begin{array}{l}
+x \\
+\interpa{}{\mbox{\lstinline!sizeof(int)!}} \\
+0
+\end{array} \right ),
+$$
+where $$\Pointsto{x}{l}.$$
+
+In this work we abstract the behaviour of the malloc function, by supposing that \lstinline!malloc! returns an unique "\lstinline!malloc! base address" at each execution. Each time a call to \lstinline!malloc! is performed, one add one to the value of a counter named \gmallocid.
+We latter show that this hypothesis is sound with the
+specification of the \lstinline!malloc! standard library function.
+
+An invocation to \lstinline!x=(int *)malloc(10*sizeof(int))! shall 
+result in the creation of a memory block of size \lstinline!10*sizeof(int)!
+at address \gmallocid. In case of success, one can state the following :
+$$\exists l, \locvar{l}{\gmallocid}{\interpa{}{\mbox{\lstinline!10*sizeof(int)!}}},$$
+then the value of \gmallocid~is increased by one.
+This invocation might fail, for various reasons, such as a lack of free
+memory space available. But, in this work, we suppose that \lstinline!malloc!
+always succeed, provided its argument are both valid and positive. After the previous call completes, the offset of $x$ is set to zero, i.e. $\ptroffset{x}=0$.
+%%
+%$$
+%\left (
+%\begin{array}{l}
+%\ptrbase{x} \\ 
+%\ptrsize{x} \\
+%\ptroffset{x}
+%\end{array}
+%\right )
+%= 
+%\left (
+%\begin{array}{l}
+%\gmallocid \\
+%\interpretZ{\mbox{\lstinline!100*sizeof(int)!}} \\
+%0
+%\end{array} \right )
+%$$
+%
+
+We then summary the memory allocation with the following pre and post-conditions and counter constraints.
+
+\textbf{Memory affectation :}
+
+This rule models allocation of a memory block, which size is specified by the
+integer expression $I$, and which base address is then affected to the
+pointer variable \lstinline!x!.
+
+$$
+\begin{array}{|l|}
+\hline
+\transmodel{\phi}{\mbox{\lstinline!x=malloc(!} I \mbox{\lstinline!)!}}{\isvalid{\phi}{I} \wedge \interpa{\phi}{I} > 0 \wedge \locvar{l^{\prime}}{\gmallocid}{\interpa{\phi}{I}} \wedge \ptroffset{x^{\prime}}=0 \wedge \gmallocid^{\prime}+=1}{\Sep{\exists l. \Addrep{\phi}{\Pointsto{x}{l}}}{\Alloc{l}}} \\
+\hline
+\end{array}
+$$ 
+
+If the expression $I$ evaluates to some negative value then malloc will return a null pointer :
+
+$$
+\begin{array}{|l|}
+\hline
+\transmodel{\phi}{\mbox{\lstinline!x=malloc(!} I \mbox{\lstinline!)!}}{\isvalid{\phi}{I} \wedge \interpa{\phi}{I} \leq 0 \wedge \valid{x}^{\prime}= \bot}{\Addrep{\phi}{\Pointsto{x}{\nil}}} \\
+\hline
+\end{array}
+$$ 
+
+Allocating a memory segment using some integer value that is the result of some
+invalid operation is considered as an error :
+
+$$
+\begin{array}{|l|}
+\hline
+\transmodel{\phi}{\mbox{\lstinline!x=malloc(!} I \mbox{\lstinline!)!}}{\neg \isvalid{\phi}{I}}{\bot} \\
+\hline
+\end{array}
+$$ 
+
+
+\textbf{Pointer arithmetical operations :}
+
+Consider $\phi$ a SSL formula and $P$ a pointer expression :
+
+$$
+\begin{array}{|l|}
+\hline
+\transmodel{\phi}{\mbox{x=P}}{\ptroffset{x}^{\prime}=\interpa{\phi}{P} \wedge \valid{x}^{\prime}=\isvalid{\phi}{P}}{\Addrep{\phi}{\Pointsto{x}{\base{\phi}{\mbox{\lstinline!P!}}}}} \\
+\hline
+\end{array}
+$$ 
+
+
+
+%
+%In this framework, we represent the constant that appears inside a pointer
+%arithmetic expression  as a couple of an integer value and a boolean.
+% The latter is used as a witness that the considered constant is indeed the result of a valid operation, or that some error occured. In the sequel of this section, we describe which are the operations that can lead to get some "invalid" constants.
+%
+%An integer value $t$, or the evaluation of an integer expression $t$, is
+%represented as $$t\syneq \left (  \begin{array}{l} \interpretZ{t} \\ v \end{array}\right ), \gspace v\in \lbrace  true, false \rbrace.$$
+%Here, $\interpretZ{t}$ denotes the evaluation of the expression $t$ into the
+%set of interger values. For the sake of clarity, in the sequel of this document, we will use the notation $t.v$, resp. $\interpretZ{t}$, to denote the validity of $t$, resp the evaluation of $t$.
+%
+%If a pointer $x$, has its offset modified by some arithmetical operation, in
+%wich an invalid constant is used, then we consider that $x$ points to an
+%invalid address, and we note this as follows : $\Pointsto{x}{\top}$ and
+%$\ptrexp{x}{\top}{0}$. 
+%
+%\textbf{Addition of a pointer and some integer values :}
+%%
+%%Additioning two pointers that don't refer to the same segment might result in
+%%an error state, if the result of this addition is either used to retrieve
+%%some value at this address or to perform a writing operation at this same
+%%address.
+%%
+%%
+%% **** TODO, discution ****
+%% 
+%%How about genrating a warning, or add some special value to mark that
+%%pointer \lstinline!x! contains a possibly illegal address ?
+%%
+%% ************************
+%%$$
+%%\transmodel{\Formula{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l_2}}}{\Emp}}{\mbox{z:=x+y}}{l_1 \neq l_2}{\Formula{\Andpure{\Pointsto{z}{\top}}{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l_2}}}}{\Emp}}
+%%$$
+%%
+%Adding a pointer and an integer value returns a pointer that
+%have the same base address and which offset equals to the sum of the 
+%the pointer offset and the integer value times the size of the type of the pointers. The heap shape isn't affected by such an operation.
+%
+%%$$
+%%\transmodel{\Formula{\Andpure{\Pointsto{x}{\top}}{\Pointsto{y}{l_2}}}{\Emp}}{\mbox{z:=x+y}}{ \ptrexp{z}{\lbase{ \top}}{0}}{\Formula{\Andpure{\Pointsto{z}{\top}}{\Andpure{\Pointsto{x}{\top}}{\Pointsto{y}{l_1}}}}{\Emp}}
+%%$$
+%%
+%$$
+%\transmodel{\Formula{\Pointsto{x}{l_1}}{\Emp}}{\mbox{z:=x+t}}{ t.v = true \wedge \ptrexp{z^{\prime}}{\lbase{{l_1}}}{\ptroffset{x}+\interpretZ{t}\times \ptrsize{x}}}{\Formula{\Andpure{\Pointsto{z}{l_1}}{\Pointsto{x}{l_1}}}{\Emp}}
+%$$
+%
+%$$
+%\transmodel{\Formula{\Pointsto{x}{l_1}}{\Emp}}{\mbox{z:=x+t}}{ t.v = false \wedge \ptrexp{z^{\prime}}{\top}{0}}{\Formula{\Andpure{\Pointsto{z}{\top}}{\Pointsto{x}{l_1}}}{\Emp}}
+%$$
+%
+%
+%
+%
+%\textbf{Difference between two pointers }
+%
+%We have to distinguish two cases : The first one, in which substraction is
+%performed between two pointers that both point to the same allocated zone, and
+%the second case, where the substration is performed between two pointers 
+%that haven't the same base address.
+%In the latter case, the specifaction doesn't guarantee that the result is
+%the same from an execution to an other, or from a system to another. To
+%propagate the fact that a constant is the result of a substraction between
+%two pointers, we represent any constant that appears in a pointer arithmetic expression as an integer and a boolean. The boolean is set to true for any constant, or new expression that represent some integers, 
+%and it is set to false if it is either the result of the substraction between two pointers that does't point to the same base address or if the expression contains an invalid constant expression.
+%
+%Here is the case where everything goes well :
+%
+%$$
+%\transmodel{\Formula{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l_2}}}{\Emp}}{\mbox{c=x-y}}{ l_1 = l_2 ;  c^{\prime}=\intptr{\ptroffset{x} -\ptroffset{y}}{true}}{\Formula{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l_1}}}{\Emp}}
+%$$
+%
+%The rule that follows deals with the difference between two pointers that
+%don't have the same base address :
+%
+%$$
+%\transmodel{\Formula{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l_2}}}{\Emp}}{\mbox{c=x-y}}{ ! \EqLoc{l_1}{l_2};  c^{\prime}=\intptr{0}{false}}{\Formula{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l_1}}}{\Emp}}
+%$$
+%
+\textbf{Memory access :}
+
+Both reading and writing operation shall be performed on  addresses that are both alligned and
+such that there is enougth memory between the offset of the pointer and the end of the segment to store at least one instance of the value. If one, or both, of those conditions is not satisfied, then the program generates a memory error. By $\accs{P}$, we denote that the program performs a reading or a writing operation at the address pointed by $P$.
+
+This rule models a memory access that complies with both of the aforementionned conditions :
+
+$$
+\begin{array}{|l|}
+\hline
+\transmodel{\phi}{\accs{P}}{
+\begin{array}{l}
+0 \leq \interpa{\phi}{x}+\sizeof{\tau}\leq \lsize{l} \\
+ \wedge \congmod{(\interpa{\phi}{P}+\base{\phi}{P})
+}{0}{\sizeof{\tau}}
+\end{array}
+}{\phi} \gspace \Alloc{l}\in \Sp{\phi} \gspace \mbox{where } \left \lbrace \begin{array}{l} P:\tau *, \\l\seq \base{\phi}{P}.\\ \end{array} \right.\\
+\hline
+\end{array}
+$$
+
+Let's now express the cases that generate a memory fault :
+An access to a address that doesn't belong to an allocated zone, and
+an access to a non aligned address.
+
+This rule models the fact that an access to a non allocated memory zone generates a memory fault :
+$$
+\begin{array}{|l|}
+\hline
+\transmodel{\exists l. \phi}{\accs{P}}{}{\bot} \gspace  \Alloc{l}\not \in \Sp{\phi}, l\not\in \FVars{\phi}, \mbox{ where } l \seq \base{\phi}{P} \\
+\hline
+\end{array}
+$$
+
+The rule that follows models that an unaligned access to an allocated segment
+or an access out of the bounds of an allocated segment generates a memory fault.
+$$
+\begin{array}{|l|}
+\hline
+\transmodel{\phi}{\accs{P}}{
+\begin{array}{l}
+\interpa{\phi}{P}+\sizeof{\tau}< 0  \\ 
+\vee  \interpa{\phi}{P}+\sizeof{x} > \lsize{l} \\
+\vee \neg \congmod{(\interpa{\phi}{P}+\sizeof{\tau})}{0}{\sizeof{\tau}}
+\end{array}
+}{\bot} \gspace \Alloc{l}\in \Sp{\phi} \left \lbrace  \begin{array}{l} \mbox{where } P:\tau *,\\ l\seq\base{\phi}{P},\\ \end{array} \right . \\
+\hline
+\end{array}
+$$
+
+
+%$$
+%\begin{array}{|l|}
+%\hline
+%\transmodel{\Formula{\Pointsto{x}{l}}{\Alloc{l}}}{*x=val}{ ! (\congmod{(\ptroffset{x}+\ptrbase{x})}{0}{\ptrsize{x}})}{\Formula{\Pointsto{x}{l}}{\top}}
+%\\
+%\hline
+%\end{array}
+%$$
+%
+%Writing outside an allocated zone, is a segmentation fault.
+%$$
+%\begin{array}{|l|}
+%\hline
+%\transmodel{\Formula{\Pointsto{x}{l}}{\Alloc{l}}}{*x=val}{\ptroffset{x}+\ptrsize{x} > \lsize{l}}{\Formula{\Pointsto{x}{l}}{\top}} \\
+%\hline
+%\end{array}
+%$$
+%
+%
+%Writing at some address that is the result of an invalid pointer arithmetic
+%operation is a bad thing as well.
+%$$
+%\begin{array}{|l|}
+%\hline
+%\transmodel{\Formula{\Pointsto{x}{\top}}{\Emp}}{*x=val}{}{\Formula{\Pointsto{x}{\top}}{\top}} \\
+%\hline
+%\end{array}
+%$$
+%
+%Writing in some address that corresponds to no allocated segment generates a segmentation fault.
+%$$
+%\begin{array}{|l|}
+%\hline
+%\transmodel{\Formula{\Pointsto{x}{l}}{\Emp}}{*x=val}{}{\Formula{\Pointsto{x}{l}}{\top}} \\
+%\hline
+%\end{array}
+%$$
+%
+%Reading some value with a pointer that has an ill alligned address :
+%
+%$$
+%\begin{array}{|l|}
+%\hline
+%\transmodel{\Formula{\Pointsto{x}{l}}{\Alloc{l}}}{i=*x}{ ! (\congmod{(\ptroffset{x}+\ptrbase{x})}{0}{\ptrsize{x}}) }{\segfault \wedge \Formula{\Pointsto{x}{l}}{\top}}
+%\\
+%\hline
+%\end{array}
+%$$
+%
+%
+%Any reading operation that either occurs at a non allocated zone or that uses a pointer that points to a non alligned address  or  that uses an invalid pointer , generates a reading error.
+%
+%
+%
+%$$
+%\begin{array}{|l|}
+%\hline
+%\transmodel{\Formula{\Pointsto{x}{l}}{\Emp}}{i=*x}{\valid{x}^{\prime}=\false \wedge }{\segfault \wedge \Formula{\Pointsto{x}{l}}{\Emp}} \\
+%\hline
+%\end{array}
+%$$
+%
+%Reading outside an allocated zone, is a segmentation fault.
+%
+%$$
+%\begin{array}{|l|}
+%\hline
+%\transmodel{\Formula{\Pointsto{x}{l}}{\Alloc{l}}}{i=*x}{\ptroffset{x}+\ptrsize{x} > \lsize{l}\wedge \valid{i}^{\prime}=\false }{\segfault \wedge \Formula{\Pointsto{x}{l}}{\Alloc{l}}} \\
+%\hline
+%\end{array}
+%$$
+%
+%
+
+%
+%\textbf{Comparison between pointers :}
+%
+%**** TODO : FIX THE SEMANTIC. SHALL ONE SAY THAT A COMPARISON  btw x and y IS
+%UNSOUND if  x and y don't share the same base address ? ***
+%
+%$$
+%\transmodel{\Formula{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l_2}}}{\Emp}}{x\bowtie y}{\ptrbase{x}+\ptroffset{x}\bowtie \ptrbase{y}+\ptroffset{y}}{\Formula{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l_2}}}{\Emp}}
+%$$
+%
+\textbf{Memory deallocation :}
+
+In C, \lstinline!free! must be called on the exact address returned by the
+\lstinline!malloc! standard library function. Besides, it must be called at most one time after each allocation.
+In our model, it means that \lstinline!free(x)! behaves correctly. If any of those two conditions is not satisfied then the heap gets corrupted.
+
+Call to free :
+
+$$
+\begin{array}{|l|}
+\hline
+\transmodel{\Sep{\phi}{\Alloc{l}}}{\mbox{\lstinline!free(P)!}}{
+\interpa{\phi}{P}=0}{\phi} \mbox{ where } l\seq\base{\phi}{P} \\
+\hline
+\end{array}
+$$
+
+If the offset of the pointer expression is non zero, then \lstinline!free!
+cannot perform well and generates a memory fault.
+
+$$
+\begin{array}{|l|}
+\hline
+\transmodel{\Sep{\phi}{\Alloc{l}}}{\mbox{\lstinline!free(P)!}}{
+\interpa{\phi}{P}!=0}{\top} \\
+\hline
+\end{array}
+$$
+
+Calling free upon a pointer which base address isn't on the heap generates
+a memory fault.
+
+$$
+\begin{array}{|l|}
+\hline
+\transmodel{\exists l. \phi}{\mbox{\lstinline!free(P)!}}{}{\top} \gspace \Alloc{l}\not\in \Sp{\phi} \gspace \mbox{where }l\seq\base{\phi}{P} \\
+\hline
+\end{array}
+$$
+
+
+
+\chapter{Towards the general case : Computing specs}
+
+In this part, one deal with the problem of mecanically computing a function specification in  Simple Separtion Logic. The basic idea, consists in expressiong pre and post conditions \`{a} la Hoare, using SSL logic.
+The discussed method used the smallest --most general -- safe specification given a function. In the previous section, allocation and deallocation of
+memory zones has been presented when the memory cells are allocated and freed 
+in the current context. We now need to discuss the general case, that is to
+say when the program may perform calls to some functions that can allocate and
+free memory cells on the heap.
+
+To describe this approach, one will suppose that in order to compute the specification of a function \lstinline!foo!, all the functions that \lstinline!foo! calls have a known specification.
+This hypothesis is reasonable, provided that one can compute the function 
+calling graph of the set of the function used in the considered program. 
+The collaborative Framework \FRAMAC~provides the necessary tools that enable
+to performs such a task.
+
+
+
+\section{The separation logic frame rule}
+
+The techniques used to detect the following memory faults :
+\begin{itemize}
+\item Freeing a non allocated memory address.
+\item Double free a single memory address.
+\item Generating a memory leak. 
+\end{itemize}
+
+The techniques that will be presented in the sequel of this document
+are mostly based upon the seminal ideas from the separation logic. 
+Recall that at the current stage of this work, the goal consists in
+being able to compute the smallest constrainst on the heap shape
+so that a call to a given function doesn't lead to some error state.
+We also want to compute the heap shape after a function  call. 
+The frame rule allows to  perform this task, and can be used to
+compute the heap shape using some syntactical mecanism.
+
+We need to define the semantic of an extended version of the separation
+operator, that can be used to define a SSL logic formula from two other
+one. Basicaly, this operator takes as input two SSL formulae and
+computes the SSL formula which pure part is the conjonction of the pure part
+of both formula and which spatial part results from the separation
+of both spatial formulae. This combination needs to take care of renaming
+all the bounded variables, that are called using the same name in both
+formula, but that are possibly different.
+
+Consider two lists of existentially quatificators and their 
+associated variables, $Q_1$ and $Q_2$,  we define by 
+$$
+Q_1 \cap Q_2 \defeq \lbrace l \in \LVar \gspace | \gspace l \in Q_1 \land l \in Q_2 \rbrace,
+$$
+and the renaming substitution :
+$$
+\fundec{\renfresh{Q_1}{Q_2}}{l}{
+	\left \lbrace \begin{array}{lll} l^{\prime} &\mbox{if }& l \in Q_1 \cap Q_2 \\ 
+h
+ &\mbox{else}& 
+	\end{array} \right . .}{\LVar}{\LVar} 
+$$
+
+We use the aforementionned function to define the separation of two whole SSL formulae :
+
+$$
+\Sepf{(\Formula{Q_1 \pi_1}{\sigma_1})}{(\Formula{Q_2 \pi_2}{\sigma_2})} := \Formula{(Q_1.Q_2\lbrack \renfresh{Q_1}{Q_2}\rbrack)}{(\Sep{\sigma_1}{\sigma_2\lbrack \renfresh{Q_1}{Q_2}\rbrack})}
+$$ 
+
+$$
+\infer[\mbox{Modifies}(foo) \cap \FVars{R}=\emptyset.
+]{\lbrace \Sepf{P}{R} \rbrace foo \lbrace \Sepf{Q}{R}\rbrace}{\lbrace P \rbrace foo \lbrace Q\rbrace} \gspace $$
+
+
+The use of the frame rule is completed by using bi-abduction \cite{BiAbduction09}, an approach that generalizes the footprint technique, i.e. that computes the
+smallest safe pre-condition for a function to be called, and that also computes
+the frame on the post-condition.
+
+\section{Bi-abduction}
+\input{biabduction}
+
+\subsection{Procedure call}
+
+\subsection{Function call}
+
+\subsection{Implantation} 
+
+
+\bibliographystyle{alpha}
+\bibliography{logic}
+
+\end{document}
+
+
+	
