@@ -15,6 +15,7 @@ open Cfg
 open Visitor
 open Sem_and_logic_front_end
 
+open Ecfg_types
 (** 
   This module contains every structures and algorithms
   relatives to ecfg. It's parametrized by the type of the 
