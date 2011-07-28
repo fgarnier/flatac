@@ -25,12 +25,8 @@ open Ecfg_types
 module Ecfg = 
   functor ( A : sig type abstract_type type label_type end ) ->
 struct
-  module AbstractDomain = 
-        struct 
-                type abstract_type = ssl_formula
-                type label_type = unit
-        end;;
-  module P_ecfg_types = Ecfg_types ( AbstractDomain ) 
+  module P_ecfg_types = Ecfg_types ( A ) 
+  open P_ecfg_types
 
   class cfg_visitor ( prj : Project.t ) = object(self)
     inherit Visitor.generic_frama_c_visitor (prj) (Cil.inplace_visit())
@@ -197,7 +193,7 @@ struct
 
   (** An ecfg visitor with a callback function. You must use this method if you 
     want to gather ecfg datas. *)
-  let visite_ecfgs (ecfgs : (string, ecfg) Hashtbl.t) 
+  let visit (ecfgs : (string, ecfg) Hashtbl.t) 
         pre_callback post_callback callback =
     Hashtbl.iter( fun fname func_ecfg ->
                     pre_callback fname;

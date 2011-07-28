@@ -1,3 +1,6 @@
+open Cil
+open Cil_types
+
 module Ecfg_types = 
   functor ( A : sig type abstract_type type label_type end ) ->
 struct

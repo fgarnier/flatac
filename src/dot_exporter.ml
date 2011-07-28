@@ -4,23 +4,21 @@ open Cil
 open Cil_types
 open Visitor
 
+open Ecfg_types
 open Ecfg
 open Sem_and_logic_front_end
 
 open Format
 open Buffer
 
+
 module Dot_exporter =
   functor ( A : sig type abstract_type type label_type end ) ->
 struct
-  type semantic_abstraction = A.abstract_type
-  type counter_expression = A.label_type
-
-  type semantic = Semantic of stmt * semantic_abstraction
-
-  type ecfg_node_id = int
-  type ecfg_edge = counter_expression
-  type ecfg_node = Node of semantic * (ecfg_node_id, ecfg_edge) Hashtbl.t
+  module P_ecfg_types = Ecfg_types ( A ) 
+  module P_ecfg = Ecfg (A)
+  open P_ecfg_types
+  open P_ecfg
 
   let stmt_to_string stmt =
     Buffer.reset stdbuf;
@@ -105,11 +103,11 @@ struct
 
   (** This function export the given ecfg in dot format into the given file.
     If the file does not exist, it is created. It is overwritten otherwise. *)
-  let export_dot visitor_fun ecfgs filename front_end= 
+  let export_dot ecfgs filename front_end= 
     let oc = open_out filename in
     let foc = formatter_of_out_channel( oc ) in
       Format.fprintf foc "digraph G {\n";
-      visitor_fun ecfgs 
+      P_ecfg.visit ecfgs 
         ( fun fname -> Format.fprintf foc 
                          "\tsubgraph cluster_%s {\n \
                          \t\tnode [style=filled,shape=box,color=white]; \n \

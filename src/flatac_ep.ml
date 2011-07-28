@@ -45,7 +45,7 @@ let print () =
 	Self.feedback ~level:0 "Welcome to Flata-C !";
 	let frontEnd = new ssl_flatac_front_end in
 	let eCFGs = Parametrized_cfg.compute_ecfgs (Project.current()) (Ast.get()) ( frontEnd ) in
-	  Parametrized_dot_exporter.export_dot Parametrized_cfg.visite_ecfgs eCFGs "output.dot" frontEnd 
+	  Parametrized_dot_exporter.export_dot eCFGs "output.dot" frontEnd 
 
 let run () = if Enabled.get () then print ()
 let () = Db.Main.extend run
