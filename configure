@@ -32,6 +32,10 @@ build_configuration_file () {
   echo -e "OCAMLC=`which ocamlc`" >> ${MKCONF}
   echo -e "OCAMLOPT=`which ocamlopt`" >> ${MKCONF}
   echo -e "CFLAGS =-w -21 -g -annot -c -for-pack Flatac" >> ${MKCONF}
+  echo -e "VERSION=0.2" >> ${MKCONF}
+  echo -e "PACKAGE=flata-c" >> ${MKCONF}
+  echo -e "TAR_NAME=\$(PACKAGE)-\$(VERSION)" >> ${MKCONF}
+  echo -e "DIST_DIR=\$(TAR_NAME)" >> ${MKCONF}
 }
 
 export_rules () {
@@ -66,16 +70,36 @@ build_global_makefile () {
   echo -e "\t@cd ${OBJ_DIR}/ && make -f FC_Makefile && cd ${SRC_DIR}" >> Makefile
   echo -e "\t@echo \"\"" >> Makefile
   echo -e "\t@echo \"*** Compilation terminée ***\"" >> Makefile
+  echo "" >> Makefile
 
   echo "install:" >> Makefile
   echo -e "\t@cd ${OBJ_DIR}/ && make -f FC_Makefile install && cd ${SRC_DIR}" >> Makefile
 
   echo "clean:" >> Makefile
+  echo -e "\trm -f output.* >/dev/null" >> Makefile
   for i in $1
   do
     echo -e "\t@cd ${SRC_DIR}/$i && make -f Makefile.sub clean && cd ${SRC_DIR}" >> Makefile
   done
   echo -e "\t@cd ${OBJ_DIR}/ && make -f FC_Makefile clean && cd ${SRC_DIR}" >> Makefile
+  echo "" >> Makefile
+
+  echo -e "dist:\$(TAR_NAME).tar.gz" >> Makefile
+  echo "" >> Makefile
+
+  echo -e "\$(TAR_NAME).tar.gz: \$(DIST_DIR)" >> Makefile
+  echo -e "\ttar chof - \$(DIST_DIR) | gzip -9 -c > \$@" >> Makefile
+  echo -e "\trm -rf releases/\$(TAR_NAME).tar.gz && mv \$(TAR_NAME).tar.gz \
+  releases/" >> Makefile
+  echo -e "\t@rm -rf \$(TAR_NAME)" >> Makefile
+  echo "" >> Makefile
+ 
+  echo -e "\$(DIST_DIR):" >> Makefile
+  echo -e "\t@make clean" >> Makefile
+  echo -e "\t@mkdir \$(DIST_DIR)" >> Makefile
+  echo -e "\t@cp configure README \$(DIST_DIR)" >> Makefile
+  echo -e "\t@cp -r src \$(DIST_DIR)" >> Makefile
+  echo "" >> Makefile
 }
 
 [[ $# == 0 ]] && echo "type : ./configure PATH_TO_FRAMAC_SOURCE" && exit
