@@ -1,2 +1,0 @@
-global_mem.cmo: global_mem.cmx
-global_mem.cmx: global_mem.ml

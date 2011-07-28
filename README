@@ -1,35 +1,16 @@
 
-****** Content of the folder and summary of FLATAC purpose *********
+This is the source files for flata-c pluging. It aims to proves
+that assert conditions, expressed using arithmetic constrainst are
+always satified. The plugin computes a counter example trace if an
+assert condition is not satisfied.
 
-The following folder contains the source files and building scripts
-used to compile the front-end of the flatac tool chain.
-This front-end is a FRAMA-C plugin, which aims at extracting 
-a model of C programs, based on nunerical transitions systems
-which control states are labelled using Simple Separation Logic
-formulae.  Those models are latter anaysez by the FLATA tool,  
-which checks whether there exists some executions
-of the NTS that leads to a states that abstracts some program
-states whose memory is corrupted ( Segmentation fault, alignement
-error, etc ...)
+I) Requirements :
 
-Prior trying to compile this module, make sure you did compile
-FRAMAC version Carbon or latter, and that you have in hands the
-name of the source path of the current installed version of FRAMA-C.
- 
-To use the flatac toolchain, you must get the FLATA tool, available
-here, with a fully and comprehensive installation procedure :
+ Flata and ANTLR must belong to your classpath
 
-http://www-verimag.imag.fr/FLATA.html
+II)  To generate the html API, you need to make sure that
+your ocaml libs are indeed in the path /usr/lib/ocaml. If
+they are not installed in this path then set the variable
+LIB_OCAML_PATH with the proper path.
 
-              ********* Building FLATAC **********
-
-To build Flatac plugin for frama-c, follow the step as described bellow
-
-1) run ./configure FRAMAC_CARBON_SOURCE_PATH (e.g. ./configure ~/FRAMAC )
-2) run make 
-3) run make install
-
-(c) 
-
-Verimag 2011
 

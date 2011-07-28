@@ -20,9 +20,6 @@
 
 *.dot
 
-Makefile
-Makefile.sub
-Makefile.conf
 
 output.*
 
