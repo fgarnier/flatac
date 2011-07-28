@@ -1,8 +1,6 @@
 open Self
 
-open Cil
 open Cil_types
-open Visitor
 
 open Ecfg_types
 open Ecfg
@@ -10,7 +8,6 @@ open Sem_and_logic_front_end
 
 open Format
 open Buffer
-
 
 module Dot_exporter =
   functor ( A : sig type abstract_type type label_type end ) ->
