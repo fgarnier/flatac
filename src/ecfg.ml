@@ -11,146 +11,154 @@
 open Self
 open Cil
 open Cil_types
-open Callgraph
 open Cfg
 open Visitor
 open Sem_and_logic_front_end
 
-open Format
-open Buffer
-
 (** 
   This module contains every structures and algorithms
   relatives to ecfg. It's parametrized by the type of the 
-  abstract interpretation. 
-  Obviously, this type must match with the front-end inherited
-  type.
+  abstract interpretation.  Obviously, this type must match 
+  with the front-end inherited type.
   *)
 module Ecfg = 
   functor ( A : sig type abstract_type type label_type end ) ->
 struct
-  (** A.t represents the data type of the abstraction. *)
-  type semantic_abstraction = A.abstract_type
-  type counter_expression = A.label_type
+  module AbstractDomain = 
+        struct 
+                type abstract_type = ssl_formula
+                type label_type = unit
+        end;;
+  module P_ecfg_types = Ecfg_types ( AbstractDomain ) 
 
-  type semantic = Semantic of stmt * semantic_abstraction
-
-  type ecfg_node_id = int
-  type ecfg_edge = counter_expression
-  type ecfg_node = Node of semantic * (ecfg_node_id, ecfg_edge) Hashtbl.t
-
-  type ecfg = (ecfg_node_id, ecfg_node) Hashtbl.t
-
-  (** This visitor handle global function and trigger the build 
-    of a new Cfg for each function. *)
   class cfg_visitor ( prj : Project.t ) = object(self)
     inherit Visitor.generic_frama_c_visitor (prj) (Cil.inplace_visit())
+    (** Frama-C related ** TO CHECK IF USED ANYWHERE *)
     val mutable is_computed = false
+   
     val mutable _front_end : ( ( (semantic_abstraction, counter_expression)
                                    sem_and_logic_front_end) option ) = None
 
+    (** This hash table contains the already built eCFGs *)
     val ecfgs : (string, ecfg) Hashtbl.t = Hashtbl.create 12
 
+    (** This one contains every node associeted to the eCFG in construction.
+    * After it's construction, it will be added to the previously defined 
+    * ecfgs hash table.*)
     val current_ecfg : ecfg = Hashtbl.create 97
+
+    (** For speed purpose, we had to duplicate datas along two structures. 
+    * The first one contains the computed uid (if it was computed yet),
+    * the second one contains every abstractions associated to sids. *)
     val visited_nodes : ((ecfg_node_id * semantic_abstraction), int) Hashtbl.t =
       Hashtbl.create 97
     val visited_sids : (ecfg_node_id, semantic_abstraction list)
         Hashtbl.t = Hashtbl.create 97
 
-    val mutable nodeCount = 0
-    val mutable transitionCount = 0
+    val mutable node_count = 0
+    val mutable transition_count = 0
 
+    (** This methods return a uid based on the current node's
+      * sid and abstraction.
+      * Warning, if the node was not visited_yet, it's 
+      * added to the visited node list and therefor, will
+      * be considered as visited.
+      *)
     method get_uid sid abstraction = 
       if Hashtbl.mem visited_nodes (sid, abstraction) 
-      then Hashtbl.find visited_nodes (sid, abstraction)
-      else
+        then Hashtbl.find visited_nodes (sid, abstraction)
+        else
         begin
-          nodeCount <- nodeCount + 1;
-          Hashtbl.add visited_nodes (sid, abstraction) 
-            ((Hashtbl.length visited_nodes) + 1);
-          Hashtbl.length visited_nodes 
+          node_count <- node_count + 1; 
+          Hashtbl.add visited_nodes (sid, abstraction) node_count;
+          node_count
         end
 
+    (** Tool method to encapsulate the get_uid behavior 
+    * ( uid + add node to visited node list ) *)
     method add_visited_node sid abstraction = 
       let _ = self#get_uid sid abstraction in ()
 
-    method handle_exception e =
-      match e with 
-        | Flatac_exception (_, 1, message) -> Self.warning "%s" message; () 
-        | Flatac_exception (_, 0, message) -> Self.fatal "%s" message; ()
-        | _ -> raise e; ()
-
-    method is_accepted  (sid : ecfg_node_id) 
-                 (abstraction : semantic_abstraction) 
-                 (front_end : 
-                    (semantic_abstraction, counter_expression) 
-                    sem_and_logic_front_end)  =
+    (** This method returns true if the node is accepted, false otherwise.
+      * The condition for acceptation is documented bellow. *)
+    method is_accepted  
+     (sid : ecfg_node_id) 
+     (abstraction : semantic_abstraction) 
+     (front_end : (semantic_abstraction, counter_expression) 
+        sem_and_logic_front_end)  =
+      (** If the node's sid was unseen yet, accept it *)
       if not (Hashtbl.mem visited_sids sid)
-      then begin Hashtbl.add visited_sids sid [abstraction]; 
-                 Self.feedback ~level:0 "Accepted %d" sid; 
-                 true 
+      then begin 
+        Hashtbl.add visited_sids sid [abstraction]; 
+        true 
       end
-
-      else begin 
+      else 
+      begin 
         let visited_abstractions = Hashtbl.find visited_sids sid in
+          (** Is there any node such as for this sid, it's abstraction is
+          * the current one, or is more general (i.e. entails) the current one
+          *)
           if List.exists ( fun abs -> 
+                             (** Already accepted *)
                              if abs = abstraction then true
                              else 
+                               (** Entails ? *)
                                try not(front_end#accepts abs abstraction)
                                with e -> self#handle_exception e; true
-          ) visited_abstractions then begin
-            Self.feedback ~level:0 "Rejected %d" sid; 
-            false 
-            (* true *)
-          end 
-          else begin
+          ) visited_abstractions then false 
+          else 
+          begin
             Hashtbl.add visited_sids sid 
               ( abstraction :: (Hashtbl.find visited_sids sid) ) ;
-            Self.feedback ~level:0 "Accepted %d" sid; 
             true
           end
       end
 
-    method _build_node_list ( statement : stmt ) abstraction 
-             guardCounter front_end =
-      Self.feedback ~level:0 "Number of nodes : %d" (Hashtbl.length visited_nodes);
-               if not (Hashtbl.mem visited_nodes (statement.sid, abstraction)) then
-                 begin
-                   self#add_visited_node statement.sid abstraction;
-                   let subEdges = Hashtbl.create 12 in
-                   let _ = List.map ( fun succ -> 
-                     try
-                       Self.feedback ~level:0 "Analyse de %d (%d successors)" succ.sid (List.length succ.succs);
-                       let abstractions_and_labels = 
-                         front_end#next abstraction guardCounter succ.skind in
+    (** The main "loop" of this module, this function builds the current eCFG
+      * starting from the root, and browsing every accepted successors,
+      * recursively *)
+    method _build_node_list 
+      ( statement : stmt ) abstraction 
+      guardCounter 
+      front_end =
+        if not (Hashtbl.mem visited_nodes (statement.sid, abstraction)) then
+        begin
+          self#add_visited_node statement.sid abstraction;
+          let subEdges = Hashtbl.create 12 in
+          let _ = List.map 
+            ( fun succ -> 
+            try
+             let abstractions_and_labels = 
+              front_end#next abstraction guardCounter succ.skind in
 
-                         List.map ( fun (succ_abs, succ_lbl) ->
-                           if self#is_accepted succ.sid succ_abs front_end then
-                            let edgeUID = 
-                              self#_build_node_list succ succ_abs succ_lbl front_end in
-                                Hashtbl.add subEdges edgeUID succ_lbl
-                           else
-                            List.iter ( fun entailed_abs ->
-                                let edgeUID = (self#get_uid succ.sid entailed_abs) in
-                                Hashtbl.add subEdges edgeUID succ_lbl
-                            ) (Hashtbl.find visited_sids succ.sid) 
+             List.map 
+              ( fun (succ_abs, succ_lbl) ->
+                if self#is_accepted succ.sid succ_abs front_end then
+                  let edgeUID = 
+                  self#_build_node_list succ succ_abs succ_lbl front_end in
+                    Hashtbl.add subEdges edgeUID succ_lbl
+                else
+                  List.iter 
+                    ( fun entailed_abs ->
+                      let edgeUID = (self#get_uid succ.sid entailed_abs) in
+                        Hashtbl.add subEdges edgeUID succ_lbl
+                     ) (Hashtbl.find visited_sids succ.sid) 
+               ) abstractions_and_labels;
 
-                         ) abstractions_and_labels;
+            with e -> self#handle_exception e; []
+            ) statement.succs in
 
-                     with e -> self#handle_exception e; []
-                   ) statement.succs in
+            let currentUID = self#get_uid statement.sid abstraction in
+              Hashtbl.add current_ecfg currentUID 
+                (Node ( Semantic ( statement, abstraction ), subEdges));
+                currentUID
+        end
+        else (self#get_uid statement.sid abstraction)
 
-                   let currentUID = self#get_uid statement.sid abstraction in
-                     Hashtbl.add current_ecfg currentUID 
-                       (Node ( Semantic ( statement, abstraction ), subEdges));
-                     currentUID
-                 end
-               else (self#get_uid statement.sid abstraction)
-
+    (** This method is only the accessor to _build_node_list *)
     method build_node_list ( funInfo : Cil_types.fundec ) front_end =
       Hashtbl.clear current_ecfg;
-      prepareCFG funInfo;
-      computeCFGInfo funInfo true;
+      prepareCFG funInfo; computeCFGInfo funInfo true;
       let rootStmt = (List.hd funInfo.sallstmts) in
       let _ = self#_build_node_list rootStmt
                 (front_end#get_entry_point_abstraction ())
@@ -158,19 +166,23 @@ struct
         Hashtbl.copy current_ecfg
 
     method vglob_aux (g :Cil_types.global ) =
-      is_computed <- true;
       match (g, _front_end) with 
         | ( GFun ( funInfo, _ ), Some ( front_end ) ) -> 
-            (*            if funInfo.svar.vdefined then *)
-            Self.feedback ~level:0 "Analyse de %s..." funInfo.svar.vname;
             Hashtbl.add ecfgs funInfo.svar.vname 
               (self#build_node_list funInfo front_end); 
             DoChildren
         | _ -> DoChildren
 
+    method handle_exception e =
+      match e with 
+        | Flatac_exception (_, 1, message) -> Self.warning "%s" message; () 
+        | Flatac_exception (_, 0, message) -> Self.fatal "%s" message; ()
+        | _ -> raise e; ()
+
+    (* Some getters & setters *)
     method set_front_end front_end = _front_end <- Some ( front_end ) 
     method get_ecfgs = ecfgs
-    method get_node_count = nodeCount
+    method get_node_count = node_count
   end
 
   (** Compute the ecfg and fill the structures. *)
@@ -192,103 +204,4 @@ struct
                     post_callback fname;
     ) ecfgs
 
-  let stmt_to_string stmt =
-    Buffer.reset stdbuf;
-    match stmt.skind with
-      | Instr ( Set ( (Var ( lvalueInfo ), _) , expression, _ ) ) ->
-          let vname = lvalueInfo.vname in
-            add_string stdbuf vname; add_string stdbuf " = ";
-            Cil.printExp Cil.defaultCilPrinter str_formatter expression; 
-            String.escaped (flush_str_formatter ())
-      | If ( expression, _, _, _) -> 
-          add_string stdbuf " IF ";
-          Cil.printExp Cil.defaultCilPrinter str_formatter expression; 
-          String.escaped (flush_str_formatter ())
-      | Loop ( _, _, _, _, _ ) ->
-          add_string stdbuf " WHILE ( 1 )";
-          String.escaped (flush_str_formatter ())
-      | Return ( Some ( expression ), _ ) ->
-          add_string stdbuf " RETURN ";
-          Cil.printExp Cil.defaultCilPrinter str_formatter expression; 
-          String.escaped (flush_str_formatter ())
-      | Return ( None, _ ) ->
-          add_string stdbuf " RETURN ;";
-          String.escaped (flush_str_formatter ())
-      | UnspecifiedSequence _ ->
-          add_string stdbuf " UNSPECIFIED :  ";
-          Cil.printStmt Cil.defaultCilPrinter str_formatter stmt; 
-          String.escaped (flush_str_formatter ())
-      | Block (_) ->
-          add_string stdbuf " BLOCK ";
-          String.escaped (flush_str_formatter ())
-      | _ -> 
-          Cil.printStmt Cil.defaultCilPrinter str_formatter stmt; 
-          String.escaped (flush_str_formatter ())
-
-  let replace_chars (f : (char -> string)) (s : string) =
-    let len = String.length s in
-    let tlen = ref 0 in
-    let rec loop i acc =
-      if i = len then
-        acc
-      else 
-        let s = f (String.get s i) in
-          tlen := !tlen + String.length s;
-          loop (i+1) (s :: acc)
-    in
-    let strs = loop 0 [] in
-    let sbuf = String.create !tlen in
-    let pos = ref !tlen in
-    let rec loop2 = function
-      | [] -> ()
-      | s :: acc ->
-          let len = String.length s in
-            pos := !pos - len;
-            String.blit s 0 sbuf !pos len;
-            loop2 acc
-    in
-      loop2 strs;
-      sbuf
-
-  let print_dot foc front_end _ uid node =
-    match node with
-      | Node (Semantic ( statement, abstraction ), listOfEdges) -> 
-          Format.fprintf foc 
-            "\t\t%d [texlbl=\"\\begin{minipage}{16cm}\\centering %d\\\\ \
-             \\lstinline{%s}\\\\ %s\\end{minipage}\"]\n" 
-            uid statement.sid (replace_chars (fun c -> 
-                                                if c = '{' then "["
-                                                else if c = '}' then "]"
-                                                else if c = '"' then "'"
-                                                else if c = '%' then ""
-                                                else let newStr = String.create 1 in
-                                                  newStr.[0]<- c;
-                                                  newStr
-            )
-            (stmt_to_string statement)) 
-            (front_end#pretty abstraction); 
-          Hashtbl.iter ( fun toUid counterValue  -> 
-                           Format.fprintf foc 
-                             "\t\t%d -> %d [texlbl=\"%s\"]\n\n" uid toUid
-                             (front_end#pretty_label counterValue)
-          ) listOfEdges
-
-  (** This function export the given ecfg in dot format into the given file.
-    If the file does not exist, it is created. It is overwritten otherwise. *)
-  let export_dot ecfgs filename front_end= 
-    let oc = open_out filename in
-    let foc = formatter_of_out_channel( oc ) in
-      Format.fprintf foc "digraph G {\n";
-      visite_ecfgs ecfgs 
-        ( fun fname -> Format.fprintf foc 
-                         "\tsubgraph cluster_%s {\n \
-                         \t\tnode [style=filled,shape=box,color=white]; \n \
-                                                                  \t\tstyle=filled; \n \
-                                                                              \t\tcolor=lightgray; \n \
-                                                                                          \t\tlabel = \"%s\"; \n \
-                                                                                          \t\tfontsize=40; \n\n" fname fname )
-        ( fun _ -> Format.fprintf foc "\t}\n" ) 
-(print_dot foc front_end);
-                        Format.fprintf foc "\n}";
-                        Self.feedback ~level:0 "Graph exported!"
 end;;

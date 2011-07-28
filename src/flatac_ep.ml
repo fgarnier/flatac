@@ -20,6 +20,7 @@ open Ssl_types
 open Ssl
 open SSL_lex
 open Flatac_ssl_front_end
+open Dot_exporter
 
 module Enabled =
 	Self.False
@@ -37,13 +38,14 @@ module CfgExtension =
         end;;
 
 (** Creation of an Ecfg which abstract domain is {true,false}*)
-module BoolCFG = Ecfg ( CfgExtension ) 
+module Parametrized_cfg = Ecfg ( CfgExtension ) 
+module Parametrized_dot_exporter = Dot_exporter ( CfgExtension )
 
 let print () = 
 	Self.feedback ~level:0 "Welcome to Flata-C !";
 	let frontEnd = new ssl_flatac_front_end in
-	let eCFGs = BoolCFG.compute_ecfgs (Project.current()) (Ast.get()) ( frontEnd ) in
-		BoolCFG.export_dot eCFGs "output.dot" frontEnd
+	let eCFGs = Parametrized_cfg.compute_ecfgs (Project.current()) (Ast.get()) ( frontEnd ) in
+	  Parametrized_dot_exporter.export_dot Parametrized_cfg.visite_ecfgs eCFGs "output.dot" frontEnd 
 
 let run () = if Enabled.get () then print ()
 let () = Db.Main.extend run

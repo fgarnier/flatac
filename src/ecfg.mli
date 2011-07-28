@@ -25,9 +25,6 @@ module Ecfg :
                 (string -> 'a) -> (string -> unit) ->
                 (string -> int -> ecfg_node -> unit)
                 -> unit
-
-                val export_dot : (string, ecfg) Hashtbl.t -> string ->
-                (semantic_abstraction, counter_expression) sem_and_logic_front_end -> unit 
         end
 
   

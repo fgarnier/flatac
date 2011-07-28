@@ -3,7 +3,8 @@
 
 	** THIS MODULE IS A PART OF FLATA-C, DEVELOPED AT VERIMAG (2011)
 
-	This module declares the plugin into Frama-C.
+	This module declares the plugin into Frama-C and allow
+ other plugin to access to the logging system.
 
 	For any question mail us to :
 	- maxime.gaudin@imag.fr

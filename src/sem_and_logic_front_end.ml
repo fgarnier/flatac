@@ -24,16 +24,21 @@ object
   (** Returns a label without any consequence on sub transition label *)
   method virtual get_empty_transition_label : unit -> 'b 
 
-  (* Returns true if the second abstraction, knowing the first abstraction, the
-  * second one is accepted. *)
+  (* Returns true if, knowing the first abstraction, the second one is
+  * accepted *)
   method virtual accepts: 'a -> 'a -> bool
 
   (** Returns true if the given state is an error state. *)
   method virtual is_error_state: 'a -> bool
-  (** Returns a the next couple of abstract interpretation and counter automata label based on the current abstraction, the current counter, and the statement kind. *)
+
+  (** Returns a list of abstract interpretation and counter automata label
+  * couple based on the current abstraction, the current counter, and the 
+  * statement kind. *)
   method virtual next : 'a -> 'b -> stmtkind -> ('a * 'b) list
   
-  (** Shall we add some fix point decision procedure at this place ?*)  
+  (** Abstraction pretty printer *)
   method virtual pretty : 'a -> string
+
+  (** Label pretty printer *)
   method virtual pretty_label : 'b -> string
 end
