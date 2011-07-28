@@ -116,18 +116,26 @@ let pprint_quant_vars_tex quant_vars_table =
 let pprint_pure_to_latex (sslf : ssl_formula ) =
   let accu = ref "" in
   begin
-    if(List.length sslf.pure.equations) > 0 then
+    let leneq = List.length sslf.pure.equations in
+    let lenqvars = Hashtbl.length sslf.quant_vars in
+    let lenaffect = Hashtbl.length sslf.pure.affectations in
+    let len_ptnil =  Hashtbl.length sslf.pure.ptnil in
+    if leneq > 0 then
       accu := !accu^(pprint_ssl_eqlist_tex sslf.pure.equations)^"\\wedge"; 
-    if (Hashtbl.length sslf.quant_vars) > 0 then
+    if lenqvars > 0 then
       accu := (pprint_quant_vars_tex sslf.quant_vars) ;
-     if  ((Hashtbl.length sslf.pure.affectations)
-	  +( Hashtbl.length sslf.pure.ptnil ) == 0)
+     if  lenaffect+len_ptnil == 0
      then
        accu := !accu^"\\texttt{true}";
-    if  Hashtbl.length sslf.pure.affectations > 0 then
+    if lenaffect > 0 then
       accu := (!accu)^(  pprint_ssl_affectation_tex sslf.pure.affectations) ;
-    if  Hashtbl.length sslf.pure.ptnil > 0  then 
-      accu := (!accu)^(  pprint_ssl_ptnil_tex sslf.pure.ptnil)
+    if len_ptnil > 0 then 
+      begin 
+	if lenaffect > 0 then
+	  accu := (!accu)^"\\wedge "^(  pprint_ssl_ptnil_tex sslf.pure.ptnil)
+	else
+	  accu := (!accu)^(  pprint_ssl_ptnil_tex sslf.pure.ptnil)
+      end
   end;
   !accu
   
