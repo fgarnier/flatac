@@ -5,6 +5,7 @@
 
 SRC_DIR=`pwd`/src
 OBJ_DIR=${SRC_DIR}
+DOC_DIR=`pwd`/doc/
 
 MAKEFILE_CONF_NAME=Makefile.conf
 MKCONF=${SRC_DIR}/${MAKEFILE_CONF_NAME}
@@ -50,12 +51,12 @@ build_global_makefile () {
 
   [[ -e Makefile ]] && rm -f Makefile 
   echo "include ${MKCONF}" >> Makefile
-  echo ".PHONY: clean all" >> Makefile
+  echo ".PHONY: clean all dist doc" >> Makefile
 
   echo "all:" >> Makefile
   # Special rule for deps computing
   echo -e "\t@echo \"Calcul des dépendences...\"" >> Makefile
-  echo -e "\t@./build_deps" >> Makefile
+  echo -e "\t@./compute_deps" >> Makefile
   # ----
   # Special rule for Self module
   echo -e "\t@echo \"Compilation du module Self...\"" >> Makefile
@@ -76,7 +77,8 @@ build_global_makefile () {
   echo -e "\t@cd ${OBJ_DIR}/ && make -f FC_Makefile install && cd ${SRC_DIR}" >> Makefile
 
   echo "clean:" >> Makefile
-  echo -e "\trm -f output.* >/dev/null" >> Makefile
+  echo -e "\t@rm -rf ${DOC_DIR} >/dev/null 2>&1" >> Makefile
+  echo -e "\t@rm -f output.* >/dev/null" >> Makefile
   for i in $1
   do
     echo -e "\t@cd ${SRC_DIR}/$i && make -f Makefile.sub clean && cd ${SRC_DIR}" >> Makefile
@@ -98,8 +100,19 @@ build_global_makefile () {
   echo -e "\t@make clean" >> Makefile
   echo -e "\t@mkdir \$(DIST_DIR)" >> Makefile
   echo -e "\t@cp configure README \$(DIST_DIR)" >> Makefile
-  echo -e "\t@cp -r src \$(DIST_DIR)" >> Makefile
+  echo -e "\t@cp -r ${SRC_DIR} \$(DIST_DIR)" >> Makefile
+  echo -e "\t@cp -r ${DOC_DIR} \$(DIST_DIR)" >> Makefile
   echo "" >> Makefile
+
+  echo -e "doc: all" >> Makefile
+  echo -e "\t@echo \"Génération de la documentation...\"" >> Makefile
+  echo -e "\t-@mkdir ${DOC_DIR} >/dev/null 2>&1" >> Makefile
+  echo -e "\tcd ${SRC_DIR} && ocamldoc -html -dot -d ${DOC_DIR}/html\
+    ${FRAMA_C_INCLUDES} -hide-warnings \
+  *.ml SSL/*.ml global_mem/*.ml c_upon_sslandnts_sem/*.ml" >> Makefile
+  echo -e "\tcd ${SRC_DIR} && ocamldoc -latex -dot -d ${DOC_DIR}/latex\
+    ${FRAMA_C_INCLUDES} -hide-warnings \
+  *.ml SSL/*.ml global_mem/*.ml c_upon_sslandnts_sem/*.ml" >> Makefile
 }
 
 [[ $# == 0 ]] && echo "type : ./configure PATH_TO_FRAMAC_SOURCE" && exit

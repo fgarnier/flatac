@@ -18,16 +18,16 @@ build_sub_makefile () {
   cd ${SRC_DIR}/$1 && ocamldep -native ${FRAMA_C_INCLUDES} *.mli *.ml >> ${SUB_MAKEFILE_NAME} &&\
   echo "##############################################" >> ${SUB_MAKEFILE} &&\
   echo "include custom.deps" >> ${SUB_MAKEFILE} 
-
   cd ${SRC_DIR}
 }
 
 build_sub_makefiles () {
   for i in $1
   do
-      build_sub_makefile $i
+    build_sub_makefile $i
   done
 }
 
-build_sub_makefiles "SSL/ global_mem/ c_upon_sslandnts_sem/"
+build_sub_makefiles "SSL/ global_mem/
+c_upon_sslandnts_sem/"
 echo ""
