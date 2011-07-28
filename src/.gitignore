@@ -1,0 +1,7 @@
+makefile.conf
+*.cmx
+*.cmo
+*.cmi
+*.cmxs
+*.annot
+#*

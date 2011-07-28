@@ -1,0 +1,132 @@
+#! /bin/bash 
+# FlataC Configure Script. 
+# Maxime Gaudin, 2011.     #
+############################
+
+SRC_DIR=`pwd`/src
+OBJ_DIR=${SRC_DIR}
+DOC_DIR=`pwd`/doc
+
+MAKEFILE_CONF_NAME=Makefile.conf
+MKCONF=${SRC_DIR}/${MAKEFILE_CONF_NAME}
+
+SUB_MAKEFILE_NAME=Makefile.sub
+SUBMK=${SRC_DIR}/${SUB_MAKEFILE_NAME}.in
+
+build_configuration_file () {
+  echo "* Configuring build pipeline ..."
+
+  FRAMA_C_INCLUDES="-I $1/src/kernel \
+    -I $1/src/project \
+    -I $1/cil/ocamlutil \
+    -I $1/cil/src/logic \
+    -I $1/cil/src \
+    -I $1/cil/src/ext \
+    -I $1/src/lib \
+    -I . \
+    -I $1/lib/fc \
+    -I ${SRC_DIR}/"
+
+  echo -e "FRAMA_C_INCLUDES=${FRAMA_C_INCLUDES}" > ${MKCONF}
+  echo -e "FRAMAC_SHARE:=`frama-c.byte -print-path`" >> ${MKCONF}
+  echo -e "FRAMAC_LIBDIR:=`frama-c.byte -print-libpath`" >> ${MKCONF}
+  echo -e "OCAMLC=`which ocamlc`" >> ${MKCONF}
+  echo -e "OCAMLOPT=`which ocamlopt`" >> ${MKCONF}
+  echo -e "CFLAGS =-w -21 -g -annot -c -for-pack Flatac" >> ${MKCONF}
+  echo -e "VERSION=0.2" >> ${MKCONF}
+  echo -e "PACKAGE=flata-c" >> ${MKCONF}
+  echo -e "TAR_NAME=\$(PACKAGE)-\$(VERSION)" >> ${MKCONF}
+  echo -e "DIST_DIR=\$(TAR_NAME)" >> ${MKCONF}
+}
+
+export_rules () {
+  echo -e "\t@echo \"Construction de $1...\"" >> Makefile
+  echo -e "\t@cd ${SRC_DIR}/$1 && make -f Makefile.sub" >> Makefile
+  echo -e "\t@cd ${SRC_DIR}/$1 && cp -f *.cmo *.cmx *.cmi *.o ${OBJ_DIR} 2>/dev/null ; cd ${SRC_DIR}" >> Makefile
+  echo -e "\t@echo \"\"" >> Makefile
+}
+
+build_global_makefile () {
+  echo "* Building global makefile ..."
+
+  [[ -e Makefile ]] && rm -f Makefile 
+  echo "include ${MKCONF}" >> Makefile
+  echo "" >> Makefile
+
+  echo ".PHONY: clean all dist doc" >> Makefile
+  echo ".SECONDARY: doc" >> Makefile
+  echo "" >> Makefile
+
+  echo "all:" >> Makefile
+  # Special rule for deps computing
+  echo -e "\t@echo \"Calcul des dépendences...\"" >> Makefile
+  echo -e "\t@./compute_deps" >> Makefile
+  # ----
+  # Special rule for Self module
+  echo -e "\t@echo \"Compilation du module Self...\"" >> Makefile
+  echo -e "\t@cd ${SRC_DIR}/. && \$(OCAMLC) \$(FRAMA_C_INCLUDES) \$(CFLAGS) \
+    self.ml -o self.cmo && \$(OCAMLOPT) \$(FRAMA_C_INCLUDES) \$(CFLAGS) self.ml -o self.cmx" >> Makefile
+  # ----
+  for i in $1
+  do
+    export_rules $i
+  done
+  echo -e "\t@echo \"Packing du plugin...\"" >> Makefile
+  echo -e "\t@cd ${OBJ_DIR}/ && make -f FC_Makefile && cd ${SRC_DIR}" >> Makefile
+  echo -e "\t@echo \"\"" >> Makefile
+  echo -e "\t@echo \"*** Compilation terminée ***\"" >> Makefile
+  echo "" >> Makefile
+
+  echo "install:" >> Makefile
+  echo -e "\t@cd ${OBJ_DIR}/ && make -f FC_Makefile install && cd ${SRC_DIR}" >> Makefile
+  echo "" >> Makefile
+
+  echo "clean:" >> Makefile
+  echo -e "\t@rm -f output.* >/dev/null" >> Makefile
+  echo -e "\t@rm -f ${SRC_DIR}/ocamldoc.* >/dev/null" >> Makefile
+  for i in $1
+  do
+    echo -e "\t@cd ${SRC_DIR}/$i && make -f Makefile.sub clean && cd ${SRC_DIR}" >> Makefile
+  done
+  echo -e "\t@cd ${OBJ_DIR}/ && make -f FC_Makefile clean && cd ${SRC_DIR}" >> Makefile
+  echo "" >> Makefile
+
+  echo "mrproper:" >> Makefile
+  echo -e "\t@rm -rf ${DOC_DIR} >/dev/null 2>&1" >> Makefile
+  echo "" >> Makefile 
+
+  echo -e "dist:doc \$(TAR_NAME).tar.gz" >> Makefile
+  echo "" >> Makefile
+
+  echo -e "\$(TAR_NAME).tar.gz: \$(DIST_DIR)" >> Makefile
+  echo -e "\ttar chof - \$(DIST_DIR) | gzip -9 -c > \$@" >> Makefile
+  echo -e "\trm -rf releases/\$(TAR_NAME).tar.gz && mv \$(TAR_NAME).tar.gz \
+  releases/" >> Makefile
+  echo -e "\t@rm -rf \$(TAR_NAME)" >> Makefile
+  echo "" >> Makefile
+ 
+  echo -e "\$(DIST_DIR): clean" >> Makefile
+  echo -e "\t@mkdir \$(DIST_DIR)" >> Makefile
+  echo -e "\t@cp configure README \$(DIST_DIR)" >> Makefile
+  echo -e "\t@cp -r ${SRC_DIR} \$(DIST_DIR)" >> Makefile
+  echo -e "\t@cp -r ${DOC_DIR} \$(DIST_DIR)" >> Makefile
+  echo "" >> Makefile
+
+  echo -e "doc: all" >> Makefile
+  echo -e "\t@echo \"Génération de la documentation...\"" >> Makefile
+  echo -e "\t-@mkdir ${DOC_DIR} >/dev/null 2>&1" >> Makefile
+  echo -e "\t-@mkdir ${DOC_DIR}/html >/dev/null 2>&1" >> Makefile
+  echo -e "\t-@mkdir ${DOC_DIR}/latex >/dev/null 2>&1" >> Makefile
+  echo -e "\t@cd ${SRC_DIR} &&\
+    ocamldoc ${FRAMA_C_INCLUDES} -html -d ${DOC_DIR}/html *.ml SSL/*.ml\
+  global_mem/*.ml c_upon_sslandnts_sem/*.ml" >> Makefile
+}
+
+[[ $# == 0 ]] && echo "type : ./configure PATH_TO_FRAMAC_SOURCE" && exit
+
+build_configuration_file $1
+build_global_makefile "SSL/ global_mem/ c_upon_sslandnts_sem/"
+
+echo ""
+echo "Configuration done."
+echo "type : make && make install"

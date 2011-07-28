@@ -2,7 +2,6 @@
 *.log
 *.bbl
 *.blg
-*.pdf
 *.dvi
 
 *.cmi
@@ -16,3 +15,15 @@
 *.out
 
 *.swp
+*~
+*.DS_STORE
+
+*.dot
+
+Makefile
+Makefile.sub
+Makefile.conf
+
+output.*
+
+doc/
