@@ -5,8 +5,14 @@ open Ssl
 open SSL_lex
 
 
-
-
+type valid_counter = PtValid of string
+		     | IntValid of string
+		     | AndValid of valid_counter * valid_counter
+		     | TrueValid
+		     | FalseValid
+(** returns the location variable l which models the base address
+of the pointer expression.
+*)
 let rec base_ptrexp (sslf : ssl_formula )( ptr_exp : c_ptrexp ) =
   match ptr_exp with 
       LiPVar ( _ , LiIntPtr(vname)) ->
@@ -16,7 +22,80 @@ let rec base_ptrexp (sslf : ssl_formula )( ptr_exp : c_ptrexp ) =
     | LiIndexPI ( cptr , _ ) -> base_ptrexp sslf cptr
     | LiMinusPI ( cptr , _ ) -> base_ptrexp sslf cptr
   
+(** Generates counter based expression that allows to determinate
+wheter an arithmetical expression is valid or not.
+TODO : Faire remonter les constructeurs faux jusqu'a la
+racine de l'arbre.
+*)
 
-let rec valid_ptrexp ( ptrexp :  c_ptrexp ) =
+let rec valid_cscal (sslf : ssl_formula ) ( scal : c_scal) =
+  match scal with
+      LiVar(_ , LiIntVar(vname)) -> IntValid(vname)
+    | LiConst(_) -> TrueValid
+    | LiSymConst(_) -> TrueValid
+    
+    | LiProd ( cscalg, cscald ) ->
+	begin
+	  let fg = valid_cscal sslf cscalg in
+	  let fd = valid_cscal sslf cscald in
+	    (AndValid(fg ,fd))
+	end
+    
+    | LiSum (cscalg , cscald ) -> 
+	begin
+	  let fg = valid_cscal sslf cscalg in
+	  let fd = valid_cscal sslf cscald in
+	    (AndValid(fg ,fd))
+	end	  
+    
+    | LiMinus (cscalg , cscald ) -> 
+	begin
+	  let fg = valid_cscal sslf cscalg in
+	  let fd = valid_cscal sslf cscald in
+	    (AndValid(fg ,fd))
+	end
+    
+    |  LiUnMin (cscalg) -> valid_cscal sslf cscalg
+    
+    |  LiMod(cscalg, cscald ) ->
+	 begin
+	  let fg = valid_cscal sslf cscalg in
+	  let fd = valid_cscal sslf cscald in
+	    (AndValid(fg ,fd))
+	 end 
+	 
+    | LiMinusPP ( ptrexpg , ptrexpd ) ->
+	begin
+	  if not ( (base_ptrexp sslf ptrexpg)==(base_ptrexp sslf ptrexpd) )
+	  then FalseValid
+	  else 
+	    begin
+	      let fg = valid_ptrexp sslf ptrexpg in
+	      let fd = valid_ptrexp sslf ptrexpd in
+		(AndValid(fg ,fd))
+	    end
+	end
+	  
+and valid_ptrexp (sslf : ssl_formula ) ( ptrexp :  c_ptrexp ) =
   match ptrexp with 
-      LiPvar
+      LiPVar ( _ , LiIntPtr(vname) ) ->  (PtValid(vname)) 
+    | LiPlusPI ( ptrexpprime , cscal) -> 
+	begin
+	  let fg = valid_ptrexp sslf ptrexpprime in
+	  let fd = valid_cscal sslf cscal in
+	    (AndValid( fg, fd ))
+	end
+	  
+    | LiIndexPI ( ptrexpprime , cscal) -> 
+	begin
+	  let fg = valid_ptrexp sslf ptrexpprime in
+	  let fd = valid_cscal sslf cscal in
+	    (AndValid( fg, fd ))
+	end
+
+    |  LiMinusPI ( ptrexpprime , cscal) -> 
+	begin
+	  let fg = valid_ptrexp sslf ptrexpprime in
+	  let fd = valid_cscal sslf cscal in
+	    (AndValid( fg, fd ))
+	end
