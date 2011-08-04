@@ -76,6 +76,15 @@ type c_bool = LiBNot of c_bool
 	      | LiBPtrGeq of c_ptrexp * c_ptrexp
 	      | LiBPtrLeq of c_ptrexp * c_ptrexp
 
+
+
+type valid_counter = PtValid of string
+		     | IntValid of string
+		     | AndValid of valid_counter * valid_counter
+		     | TrueValid
+		     | FalseValid
+
+
  
 let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
   match expr.enode with 

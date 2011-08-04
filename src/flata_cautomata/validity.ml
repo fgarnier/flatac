@@ -5,11 +5,7 @@ open Ssl
 open SSL_lex
 
 
-type valid_counter = PtValid of string
-		     | IntValid of string
-		     | AndValid of valid_counter * valid_counter
-		     | TrueValid
-		     | FalseValid
+
 (** returns the location variable l which models the base address
 of the pointer expression.
 *)
@@ -32,8 +28,6 @@ let rec base_ptrexp (sslf : ssl_formula )( ptr_exp : c_ptrexp ) =
   
 (** Generates counter based expression that allows to determinate
 wheter an arithmetical expression is valid or not.
-TODO : Faire remonter les constructeurs faux jusqu'a la
-racine de l'arbre.
 *)
 let rec valid_cscal (sslf : ssl_formula ) ( scal : c_scal) =
   match scal with
