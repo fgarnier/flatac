@@ -1,3 +1,11 @@
+(***********************************************************************)
+(* This files contains the functions that allows to determine wheter
+some aritmetic expressions that might contain pointers are valid w.r.t.
+the notion of validity introduced in the technical report. 
+
+Questions and/or remarks : mail to florent dot garnier At imag dot fr
+(**********************************************************************)
+
 open Cil_types
 open Intermediate_language
 open Ssl_types
