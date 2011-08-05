@@ -85,6 +85,8 @@ type valid_counter = PtValid of string
 		     | FalseValid
 
 
+type cnt_interpretation = 
+    
  
 let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
   match expr.enode with 

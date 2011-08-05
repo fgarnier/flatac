@@ -4,7 +4,7 @@ some aritmetic expressions that might contain pointers are valid w.r.t.
 the notion of validity introduced in the technical report. 
 
 Questions and/or remarks : mail to florent dot garnier At imag dot fr
-(**********************************************************************)
+**********************************************************************)
 
 open Cil_types
 open Intermediate_language
@@ -17,7 +17,6 @@ open SSL_lex
 (** returns the location variable l which models the base address
 of the pointer expression.
 *)
-
 let and_valid fg fd =
   match fg , fd with
       ( FalseValid , _ ) -> FalseValid
