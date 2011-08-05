@@ -26,6 +26,7 @@ type cnt_binop = CntEq
 		 | CntGeq
 
 type cnt_arithm_exp = CntCst of int
+		      | CntSymCst of string
 		      | CntVar of string
 		      | CntMinus of cnt_arithm_exp * cnt_arithm_exp
 		      | CntSum of cnt_arithm_exp * cnt_arithm_exp
@@ -90,7 +91,9 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
 		CntMinus ( lg , ld )
 	    end
 	  else CntInvalidExp
-
+    
+    | LiSymConst ( LiSymIConst(const_name)) -> CntSymCst(const_name)
+	    
 and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
   match ptrexp with 
       LiPVar( _ , LiIntPtr(vname)) -> CntVar(vname)
