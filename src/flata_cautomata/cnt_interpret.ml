@@ -31,58 +31,58 @@ type cnt_arithm_exp = CntCst of int
 		      | CntSum of cnt_arithm_exp * cnt_arithm_exp
 		      | CntProd of cnt_arithm_exp * cnt_arithm_exp
 		      | CntMod of cnt_arithm_exp * cnt_arithm_exp
-		      | CntUnmin of cnt_aritme_exp (* I want to remove that*)
+		      | CntUnMin of cnt_arithm_exp (* I want to remove that*)
 		      | CntInvalidExp
 
 (** This function aims at computing the name of the couter var name
 associated to the offset of a pointer variable*)
 let offset_cnt_name ( ptvar : c_ptrexp ) =  
   match ptvar with
-      LiPVar(_,LiIntPtr(vname)) -> CntVar( (sprintf "offset(%s)" vname) )
+      LiPVar(_,LiIntPtr(vname)) -> CntVar ( "offset("^vname^")" )
     | _ -> raise Not_LiPVar
   
 let int_var_cnt_name ( cexpr : c_scal) =
-   match ptvar with
-      LiVar(_,LiIntVar(vname)) -> CntVar( (sprintf "intvar(%s)" vname) )
+   match cexpr with
+      LiVar(_,LiIntVar(vname)) -> CntVar( "intvar("^vname^")" )
     | _ -> raise Not_LiVar
 
 let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
   match scalexp with 
       LiVar(_) -> int_var_cnt_name scalexp
-    | LiConst(i) ->  CntCst(i)
+    | LiConst(LiIConst(i)) ->  CntCst(i)
     | LiProd ( l , r ) ->
 	begin
-	  let lg = interpret_c_scal_to_cnt l in
-	  let ld = interpret_c_scal_to_cnt r in
+	  let lg = interpret_c_scal_to_cnt sslf l in
+	  let ld = interpret_c_scal_to_cnt sslf r in
 	    CntProd ( lg , ld )
 	end
-    |  LiSum  LiProd ( l , r ) ->
+    |  LiSum  ( l , r ) ->
 	 begin
-	   let lg = interpret_c_scal_to_cnt l in
-	   let ld = interpret_c_scal_to_cnt r in
+	   let lg = interpret_c_scal_to_cnt sslf l in
+	   let ld = interpret_c_scal_to_cnt sslf r in
 	     CntProd ( lg , ld )
 	 end
     | LiMinus ( l , r ) ->
 	begin
-	  let lg = interpret_c_scal_to_cnt l in
-	  let ld = interpret_c_scal_to_cnt r in
+	  let lg = interpret_c_scal_to_cnt sslf l in
+	  let ld = interpret_c_scal_to_cnt sslf r in
 	    CntMinus ( lg , ld )
 	end
 	  
     | LiMod ( l , r ) ->
 	begin
-	  let lg = interpret_c_scal_to_cnt l in
-	  let ld = interpret_c_scal_to_cnt r in
+	  let lg = interpret_c_scal_to_cnt sslf l in
+	  let ld = interpret_c_scal_to_cnt sslf r in
 	    CntMod ( lg , ld )
 	end
 	  
     | LiUnMin( t ) -> 
-	let tin = interpret_c_scal_to_cnt t in
-	  CunUnMin( tin)
+	let tin = interpret_c_scal_to_cnt sslf t in
+	  CntUnMin( tin)
 	    
     | LiMinusPP ( l , r ) ->
-	let basel = Validity.base_ptrexp sslf l in
-	let baser = Validity.base_ptrexp sslf r in
+	let basel = base_ptrexp sslf l in
+	let baser = base_ptrexp sslf r in
 	  if basel = baser then
 	    begin
 	      let lg = interpret_c_ptrexp_to_cnt sslf l in
@@ -92,4 +92,24 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
 	  else CntInvalidExp
 
 and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
-  
+  match ptrexp with 
+      LiPVar( _ , LiIntPtr(vname)) -> CntVar(vname)
+    | LiPlusPI ( cptrexp , scalv ) -> 
+	begin
+	  let ll = interpret_c_ptrexp_to_cnt sslf cptrexp in
+	  let lr = interpret_c_scal_to_cnt sslf scalv in
+	    CntSum(ll,lr)
+	end
+    | LiMinusPI ( cptrexp , scalv ) ->
+	begin
+	  let ll = interpret_c_ptrexp_to_cnt sslf cptrexp in
+	  let lr = interpret_c_scal_to_cnt sslf scalv in
+	    CntMinus(ll,lr)
+	end
+    | LiIndexPI ( cptrexp , scalv ) ->
+	begin
+	  let ll = interpret_c_ptrexp_to_cnt sslf cptrexp in
+	  let lr = interpret_c_scal_to_cnt sslf scalv in
+	    CntSum(ll,lr) (*One shall the size of the type of
+			  the pointer variable*)
+	end
