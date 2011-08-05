@@ -55,8 +55,6 @@ and c_ptrexp = LiPVar of primed * c_ptr (* Type of pointer variables *)
 	       | LiIndexPI of c_ptrexp * c_scal 
 	       | LiMinusPI of c_ptrexp * c_scal
 	       
-
-
 type c_bool = LiBNot of c_bool 
  	      | LiBAnd of c_bool * c_bool 
 	      | LiBOr of c_bool * c_bool  
@@ -85,7 +83,7 @@ type valid_counter = PtValid of string
 		     | FalseValid
 
 
-type cnt_interpretation = 
+(*type cnt_interpretation = *)
     
  
 let rec cil_expr_2_scalar (expr : Cil_types.exp ) =

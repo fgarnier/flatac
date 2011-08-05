@@ -13,6 +13,7 @@ open Ssl_types
 open Ssl
 open SSL_lex
 open Global_mem
+open Validity
 
 exception Not_LiPVar
 exception Not_LiVar
@@ -27,10 +28,11 @@ type cnt_binop = CntEq
 type cnt_arithm_exp = CntCst of int
 		      | CntVar of string
 		      | CntMinus of cnt_arithm_exp * cnt_arithm_exp
-		      | CntPlus of cnt_arithm_exp * cnt_arithm_exp
-		      | CntTimes of cnt_arithm_exp * cnt_arithm_exp
-		      | CntModulo of cnt_arithm_exp * cnt_arithm_exp
-		      | InvalidExp
+		      | CntSum of cnt_arithm_exp * cnt_arithm_exp
+		      | CntProd of cnt_arithm_exp * cnt_arithm_exp
+		      | CntMod of cnt_arithm_exp * cnt_arithm_exp
+		      | CntUnmin of cnt_aritme_exp (* I want to remove that*)
+		      | CntInvalidExp
 
 (** This function aims at computing the name of the couter var name
 associated to the offset of a pointer variable*)
@@ -48,4 +50,46 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
   match scalexp with 
       LiVar(_) -> int_var_cnt_name scalexp
     | LiConst(i) ->  CntCst(i)
-    | 
+    | LiProd ( l , r ) ->
+	begin
+	  let lg = interpret_c_scal_to_cnt l in
+	  let ld = interpret_c_scal_to_cnt r in
+	    CntProd ( lg , ld )
+	end
+    |  LiSum  LiProd ( l , r ) ->
+	 begin
+	   let lg = interpret_c_scal_to_cnt l in
+	   let ld = interpret_c_scal_to_cnt r in
+	     CntProd ( lg , ld )
+	 end
+    | LiMinus ( l , r ) ->
+	begin
+	  let lg = interpret_c_scal_to_cnt l in
+	  let ld = interpret_c_scal_to_cnt r in
+	    CntMinus ( lg , ld )
+	end
+	  
+    | LiMod ( l , r ) ->
+	begin
+	  let lg = interpret_c_scal_to_cnt l in
+	  let ld = interpret_c_scal_to_cnt r in
+	    CntMod ( lg , ld )
+	end
+	  
+    | LiUnMin( t ) -> 
+	let tin = interpret_c_scal_to_cnt t in
+	  CunUnMin( tin)
+	    
+    | LiMinusPP ( l , r ) ->
+	let basel = Validity.base_ptrexp sslf l in
+	let baser = Validity.base_ptrexp sslf r in
+	  if basel = baser then
+	    begin
+	      let lg = interpret_c_ptrexp_to_cnt sslf l in
+	      let ld = interpret_c_ptrexp_to_cnt sslf r in
+		CntMinus ( lg , ld )
+	    end
+	  else CntInvalidExp
+
+and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
+  
