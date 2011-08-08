@@ -1,6 +1,6 @@
 
 SSL_SRC = /home/florent/REPOSITORIES/flatac/src/ 
-F_SRC:= /home/florent/FRAMAC/frama-c-Carbon-20110201
+F_SRC:= /home/florent/FRAMAC_LATTEST/frama-c-Carbon-20110201
 
 FRAMA_C_INCLUDES=       -I $(F_SRC)/src/kernel \
                         -I $(F_SRC)/src/project \

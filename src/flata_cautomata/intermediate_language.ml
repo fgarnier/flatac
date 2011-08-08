@@ -340,8 +340,6 @@ let cil_expr_list_2_scalar_list (expr_list : Cil_types.exp list ) =
 
 
 
-
-
 (** One need to translate C-boolean evaluation into the language of FLATA
 constrainsts. That's to say : 
 Translating C-booleans expressions in the  "intermediate language " 
