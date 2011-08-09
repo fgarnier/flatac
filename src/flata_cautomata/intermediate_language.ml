@@ -48,13 +48,13 @@ type c_scal = LiVar of primed * c_int_var
 	      | LiMinus of c_scal * c_scal
 	      | LiUnMin of c_scal
 	      | LiMod of c_scal * c_scal   (*Modulo operator*)
-	      | LiMinusPP of c_ptrexp * c_ptrexp
+	      | LiMinusPP of c_ptrexp * c_ptrexp *  Cil_types.typ
 		  
 and c_ptrexp = LiPVar of primed * c_ptr *  Cil_types.typ
   (* Type of pointer variables *)
-	       | LiPlusPI of c_ptrexp * c_scal
-	       | LiIndexPI of c_ptrexp * c_scal 
-	       | LiMinusPI of c_ptrexp * c_scal
+	       | LiPlusPI of c_ptrexp * c_scal  * Cil_types.typ
+	       | LiIndexPI of c_ptrexp * c_scal * Cil_types.typ
+	       | LiMinusPI of c_ptrexp * c_scal * Cil_types.typ
 	       
 type c_bool = LiBNot of c_bool 
  	      | LiBAnd of c_bool * c_bool 
@@ -113,8 +113,8 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
     | BinOp (Mod, expg, expd, TInt(_,_)) -> 
       LiMod(cil_expr_2_scalar expg ,cil_expr_2_scalar expd )
 
-    | BinOp (MinusPP , expg , expd , _ ) ->
-      LiMinusPP(cil_expr_2_ptr expg , cil_expr_2_ptr expd)
+    | BinOp (MinusPP , expg , expd , optype) ->
+      LiMinusPP(cil_expr_2_ptr expg , cil_expr_2_ptr expd,optype)
     
     | UnOp (Neg, exp , TInt(_,_)) ->
       LiUnMin ( cil_expr_2_scalar exp)
@@ -124,14 +124,14 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 and cil_expr_2_ptr expr =
   match expr.enode with
     
-      BinOp (PlusPI, expg, expd , _ ) ->
-	LiPlusPI(cil_expr_2_ptr expg, cil_expr_2_scalar expd )
+      BinOp (PlusPI, expg, expd , optype ) ->
+	LiPlusPI(cil_expr_2_ptr expg, cil_expr_2_scalar expd , optype )
     
-    | BinOp (IndexPI , expg , expd , _ ) ->
-      LiIndexPI ( cil_expr_2_ptr expg, cil_expr_2_scalar expd)
+    | BinOp (IndexPI , expg , expd ,  optype ) ->
+      LiIndexPI ( cil_expr_2_ptr expg, cil_expr_2_scalar expd, optype )
     
-    | BinOp ( MinusPI , expg , expd , _ ) ->
-      LiMinusPI ( cil_expr_2_ptr expg , cil_expr_2_scalar expd )
+    | BinOp ( MinusPI , expg , expd , optype ) ->
+      LiMinusPI ( cil_expr_2_ptr expg , cil_expr_2_scalar expd, optype )
 	
     |  Lval (Var(vinfo), _ ) ->
       begin
@@ -273,8 +273,8 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
     | BinOp (Mod, expg, expd, TInt(_,_)) -> 
       LiMod(cil_expr_2_scalar expg ,cil_expr_2_scalar expd )
 
-    | BinOp (MinusPP , expg , expd , _ ) ->
-      LiMinusPP(cil_expr_2_ptr expg , cil_expr_2_ptr expd)
+    | BinOp (MinusPP , expg , expd , optype ) ->
+      LiMinusPP(cil_expr_2_ptr expg , cil_expr_2_ptr expd, optype)
     
     | UnOp (Neg, exp , TInt(_,_)) ->
       LiUnMin ( cil_expr_2_scalar exp)
@@ -284,14 +284,14 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 and cil_expr_2_ptr expr =
   match expr.enode with
     
-      BinOp (PlusPI, expg, expd , _ ) ->
-	LiPlusPI(cil_expr_2_ptr expg, cil_expr_2_scalar expd )
+      BinOp (PlusPI, expg, expd , optype ) ->
+	LiPlusPI(cil_expr_2_ptr expg, cil_expr_2_scalar expd , optype )
     
-    | BinOp (IndexPI , expg , expd , _ ) ->
-      LiIndexPI ( cil_expr_2_ptr expg, cil_expr_2_scalar expd)
+    | BinOp (IndexPI , expg , expd ,  optype ) ->
+      LiIndexPI ( cil_expr_2_ptr expg, cil_expr_2_scalar expd, optype )
     
-    | BinOp ( MinusPI , expg , expd , _ ) ->
-      LiMinusPI ( cil_expr_2_ptr expg , cil_expr_2_scalar expd )
+    | BinOp ( MinusPI , expg , expd , optype ) ->
+      LiMinusPI ( cil_expr_2_ptr expg , cil_expr_2_scalar expd , optype )
 	
     |  Lval (Var(vinfo), _ ) ->
       begin
@@ -464,7 +464,7 @@ let rec scal_to_string ( b_exp : c_scal ) =
     
     | LiMod ( sg , sd ) ->  (scal_to_string sg)^"%"^(scal_to_string sd)
     
-    | LiMinusPP (ptrg , ptrd ) ->
+    | LiMinusPP (ptrg , ptrd, _ ) ->
       "("^( ptrexp_to_str  ptrg )^"-"^ ( ptrexp_to_str  ptrd )^")"
 
 and ptrexp_to_str ( cptr : c_ptrexp ) =
@@ -476,13 +476,13 @@ and ptrexp_to_str ( cptr : c_ptrexp ) =
     | LiPVar ( Unprimed , LiIntPtr ( vname ), _) ->
       vname
     
-    | LiPlusPI ( ptr_in , offset ) ->
+    | LiPlusPI ( ptr_in , offset, _ ) ->
       ( ptrexp_to_str  ptr_in )^"["^(scal_to_string offset)^"]"
     
-    | LiIndexPI ( ptr_in , offset ) ->
+    | LiIndexPI ( ptr_in , offset , _ ) ->
        ( ptrexp_to_str  ptr_in )^"["^(scal_to_string offset)^"]"
     
-    | LiMinusPI (ptr_in , offset ) ->
+    | LiMinusPI (ptr_in , offset , _ ) ->
       ( ptrexp_to_str  ptr_in )^"["^(scal_to_string offset)^"]"
     
    

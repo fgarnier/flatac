@@ -14,6 +14,7 @@ open Ssl
 open SSL_lex
 open Global_mem
 open Validity
+open Cil_types
 
 exception Not_LiPVar
 exception Not_LiVar
@@ -25,9 +26,6 @@ type cnt_binop = CntEq
 		 | CntGt
 		 | CntGeq
 		 
-		 
-
-		     
 
 type cnt_arithm_exp = CntCst of int
 		      | CntSymCst of string
@@ -37,6 +35,7 @@ type cnt_arithm_exp = CntCst of int
 		      | CntProd of cnt_arithm_exp * cnt_arithm_exp
 		      | CntMod of cnt_arithm_exp * cnt_arithm_exp
 		      | CntUnMin of cnt_arithm_exp (* I want to remove that*)
+		      | CntDiv of cnt_arithm_exp * cnt_arithm_exp
 		      | CntInvalidExp
 
 type cnt_bool = CntBool of cnt_binop *  cnt_arithm_exp * cnt_arithm_exp
@@ -45,6 +44,12 @@ type cnt_bool = CntBool of cnt_binop *  cnt_arithm_exp * cnt_arithm_exp
 		| CntBFalse
 		| CntBAnd of  cnt_bool * cnt_bool
 		| CntBOr of cnt_bool * cnt_bool
+
+
+(** Needs to be duely completed.*)
+let interpret_ciltypes_size (ciltype : Cil_types.typ ) =
+  match ciltype with
+      _ -> CntSymCst ("It's a sizeof")
 
 
 
@@ -94,7 +99,7 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
 	let tin = interpret_c_scal_to_cnt sslf t in
 	  CntUnMin( tin)
 	    
-    | LiMinusPP ( l , r ) ->
+    | LiMinusPP ( l , r , optype) ->
 	let basel = base_ptrexp sslf l in
 	let baser = base_ptrexp sslf r in
 	  if basel = baser then
@@ -110,39 +115,49 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
 and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
   match ptrexp with 
       LiPVar( _ , LiIntPtr(vname), _) -> CntVar(vname)
-    | LiPlusPI ( cptrexp , scalv ) -> 
+    | LiPlusPI ( cptrexp , scalv, optype ) -> 
 	begin
 	  let ll = interpret_c_ptrexp_to_cnt sslf cptrexp in
 	  let lr = interpret_c_scal_to_cnt sslf scalv in
-	    CntSum(ll,lr)
+	  let sizeof_ptr_type = interpret_ciltypes_size optype in
+	  let lr = CntProd( lr , sizeof_ptr_type ) in
+	    CntSum(ll, lr)
 	end
-    | LiMinusPI ( cptrexp , scalv ) ->
+    | LiMinusPI ( cptrexp , scalv , optype ) ->
 	begin
 	  let ll = interpret_c_ptrexp_to_cnt sslf cptrexp in
 	  let lr = interpret_c_scal_to_cnt sslf scalv in
-	    CntMinus(ll,lr)
+	  let sizeof_ptr_type = interpret_ciltypes_size optype in
+	    CntDiv(CntMinus(ll,lr),sizeof_ptr_type)
 	end
-    | LiIndexPI ( cptrexp , scalv ) ->
+    | LiIndexPI ( cptrexp , scalv, optype ) ->
 	begin
 	  let ll = interpret_c_ptrexp_to_cnt sslf cptrexp in
 	  let lr = interpret_c_scal_to_cnt sslf scalv in
+	  let  sizeof_ptr_type = interpret_ciltypes_size optype in
+	  let lr = CntProd ( lr , sizeof_ptr_type ) in
 	    CntSum(ll,lr) (*One shall the size of the type of
-			  the pointer variable*)
+			  the pointer variable.
+
+			  Done*)
 	end
 
 
 (** Returns the type of the pointer expression, that is
 basically the type of the varname. Returns the type of the
-innermost pointer variable the expression tree.*)
+innermost pointer variable the expression tree.
 
+One need to check that this procedure is sufficient, but
+it may not be.
+*)
 let rec type_of_ptrexp ptrexp =
    match ptrexp with 
       LiPVar( _ , LiIntPtr(vname), vtype) -> vtype
-    | LiPlusPI ( cptrexp , _ ) -> 
+    | LiPlusPI ( cptrexp , _ ,_) -> 
 	type_of_ptrexp cptrexp
-    | LiMinusPI ( cptrexp , scalv ) ->
+    | LiMinusPI ( cptrexp , scalv,_ ) ->
 	type_of_ptrexp cptrexp
-    | LiIndexPI ( cptrexp , scalv ) ->
+    | LiIndexPI ( cptrexp , scalv,_ ) ->
 	type_of_ptrexp cptrexp
 
 

@@ -29,9 +29,9 @@ let rec base_ptrexp (sslf : ssl_formula )( ptr_exp : c_ptrexp ) =
       LiPVar ( _ , LiIntPtr(vname), _ ) ->
 	get_ptr_affectation sslf (PVar(vname))
 
-    | LiPlusPI ( cptr , _ ) -> base_ptrexp sslf cptr
-    | LiIndexPI ( cptr , _ ) -> base_ptrexp sslf cptr
-    | LiMinusPI ( cptr , _ ) -> base_ptrexp sslf cptr
+    | LiPlusPI ( cptr , _ , _) -> base_ptrexp sslf cptr
+    | LiIndexPI ( cptr , _ , _) -> base_ptrexp sslf cptr
+    | LiMinusPI ( cptr , _ , _) -> base_ptrexp sslf cptr
   
 (** Generates counter based expression that allows to determinate
 wheter an arithmetical expression is valid or not.
@@ -72,7 +72,7 @@ let rec valid_cscal (sslf : ssl_formula ) ( scal : c_scal) =
 	    and_valid fg  fd 
 	 end 
 	 
-    | LiMinusPP ( ptrexpg , ptrexpd ) ->
+    | LiMinusPP ( ptrexpg , ptrexpd, _ ) ->
 	begin
 	  if not ( (base_ptrexp sslf ptrexpg)==(base_ptrexp sslf ptrexpd) )
 	  then FalseValid
@@ -87,21 +87,21 @@ let rec valid_cscal (sslf : ssl_formula ) ( scal : c_scal) =
 and valid_ptrexp (sslf : ssl_formula ) ( ptrexp :  c_ptrexp ) =
   match ptrexp with 
       LiPVar ( _ , LiIntPtr(vname), _ ) ->  (PtValid(vname)) 
-    | LiPlusPI ( ptrexpprime , cscal) -> 
+    | LiPlusPI ( ptrexpprime , cscal , _) -> 
 	begin
 	  let fg = valid_ptrexp sslf ptrexpprime in
 	  let fd = valid_cscal sslf cscal in
 	    and_valid fg fd 
 	end
 	  
-    | LiIndexPI ( ptrexpprime , cscal) -> 
+    | LiIndexPI ( ptrexpprime , cscal , _) -> 
 	begin
 	  let fg = valid_ptrexp sslf ptrexpprime in
 	  let fd = valid_cscal sslf cscal in
 	    and_valid fg fd 
 	end
 
-    |  LiMinusPI ( ptrexpprime , cscal) -> 
+    |  LiMinusPI ( ptrexpprime , cscal, _) -> 
 	begin
 	  let fg = valid_ptrexp sslf ptrexpprime in
 	  let fd = valid_cscal sslf cscal in
