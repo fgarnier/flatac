@@ -46,11 +46,13 @@ type cnt_bool = CntBool of cnt_binop *  cnt_arithm_exp * cnt_arithm_exp
 		| CntBAnd of  cnt_bool * cnt_bool
 		| CntBOr of cnt_bool * cnt_bool
 
+
+
 (** This function aims at computing the name of the couter var name
 associated to the offset of a pointer variable*)
 let offset_cnt_name ( ptvar : c_ptrexp ) =  
   match ptvar with
-      LiPVar(_,LiIntPtr(vname)) -> CntVar ( "offset("^vname^")" )
+      LiPVar(_,LiIntPtr(vname),_) -> CntVar ( "offset("^vname^")" )
     | _ -> raise Not_LiPVar
   
 let int_var_cnt_name ( cexpr : c_scal) =
@@ -107,7 +109,7 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
 	    
 and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
   match ptrexp with 
-      LiPVar( _ , LiIntPtr(vname)) -> CntVar(vname)
+      LiPVar( _ , LiIntPtr(vname), _) -> CntVar(vname)
     | LiPlusPI ( cptrexp , scalv ) -> 
 	begin
 	  let ll = interpret_c_ptrexp_to_cnt sslf cptrexp in
@@ -127,6 +129,21 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
 	    CntSum(ll,lr) (*One shall the size of the type of
 			  the pointer variable*)
 	end
+
+
+(** Returns the type of the pointer expression, that is
+basically the type of the varname. Returns the type of the
+innermost pointer variable the expression tree.*)
+
+let rec type_of_ptrexp ptrexp =
+   match ptrexp with 
+      LiPVar( _ , LiIntPtr(vname), vtype) -> vtype
+    | LiPlusPI ( cptrexp , _ ) -> 
+	type_of_ptrexp cptrexp
+    | LiMinusPI ( cptrexp , scalv ) ->
+	type_of_ptrexp cptrexp
+    | LiIndexPI ( cptrexp , scalv ) ->
+	type_of_ptrexp cptrexp
 
 
 let rec c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool ) = 
@@ -193,3 +210,5 @@ let rec c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool ) =
 	  let argd =  interpret_c_scal_to_cnt sslf cscald in
 	     CntBool ( CntGeq , argg , argd )
 	end
+
+    

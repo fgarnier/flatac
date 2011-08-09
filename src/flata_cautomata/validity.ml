@@ -26,7 +26,7 @@ let and_valid fg fd =
 
 let rec base_ptrexp (sslf : ssl_formula )( ptr_exp : c_ptrexp ) =
   match ptr_exp with 
-      LiPVar ( _ , LiIntPtr(vname)) ->
+      LiPVar ( _ , LiIntPtr(vname), _ ) ->
 	get_ptr_affectation sslf (PVar(vname))
 
     | LiPlusPI ( cptr , _ ) -> base_ptrexp sslf cptr
@@ -86,7 +86,7 @@ let rec valid_cscal (sslf : ssl_formula ) ( scal : c_scal) =
 	  
 and valid_ptrexp (sslf : ssl_formula ) ( ptrexp :  c_ptrexp ) =
   match ptrexp with 
-      LiPVar ( _ , LiIntPtr(vname) ) ->  (PtValid(vname)) 
+      LiPVar ( _ , LiIntPtr(vname), _ ) ->  (PtValid(vname)) 
     | LiPlusPI ( ptrexpprime , cscal) -> 
 	begin
 	  let fg = valid_ptrexp sslf ptrexpprime in

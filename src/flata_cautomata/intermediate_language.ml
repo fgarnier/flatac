@@ -50,7 +50,8 @@ type c_scal = LiVar of primed * c_int_var
 	      | LiMod of c_scal * c_scal   (*Modulo operator*)
 	      | LiMinusPP of c_ptrexp * c_ptrexp
 		  
-and c_ptrexp = LiPVar of primed * c_ptr (* Type of pointer variables *)
+and c_ptrexp = LiPVar of primed * c_ptr *  Cil_types.typ
+  (* Type of pointer variables *)
 	       | LiPlusPI of c_ptrexp * c_scal
 	       | LiIndexPI of c_ptrexp * c_scal 
 	       | LiMinusPI of c_ptrexp * c_scal
@@ -85,132 +86,6 @@ type valid_counter = PtValid of string
 
 (*type cnt_interpretation = *)
     
- 
-let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
-  match expr.enode with 
-      Const(CInt64(i,_,_))-> LiConst( LiIConst(Int64.to_int i))
-    | Lval(Var(f),_)->
-      begin
-	match f.vtype with
-	    TInt(_,_) -> LiVar(Unprimed,LiIntVar(f.vname))
-	  | _-> begin 
-	    let msg = "This variable : "^f.vname ^"isn't of type TInt, but appears in a scalar expression \n" in let exc =  Bad_expression_type msg in
-														 raise  exc
-	  end
-      end	
-	
-    | BinOp (PlusA, expg, expd, TInt(_,_) ) ->
-      LiSum (cil_expr_2_scalar expg , cil_expr_2_scalar expd)
-	
-    | BinOp (MinusA, expg, expd, TInt(_,_) ) ->
-      LiMinus (cil_expr_2_scalar expg ,cil_expr_2_scalar  expd)
-	
-    | BinOp (Mult, expg, expd, TInt(_,_) ) -> 
-      LiProd (cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
-	  
-    | BinOp (Mod, expg, expd, TInt(_,_)) -> 
-      LiMod(cil_expr_2_scalar expg ,cil_expr_2_scalar expd )
-
-    | BinOp (MinusPP , expg , expd , _ ) ->
-      LiMinusPP(cil_expr_2_ptr expg , cil_expr_2_ptr expd)
-    
-    | UnOp (Neg, exp , TInt(_,_)) ->
-      LiUnMin ( cil_expr_2_scalar exp)
-       
-    | _ -> raise( Bad_expression_type "'Can't parse expression in cil_expr_2_scalar \n")
-
-and cil_expr_2_ptr expr =
-  match expr.enode with
-    
-      BinOp (PlusPI, expg, expd , _ ) ->
-	LiPlusPI(cil_expr_2_ptr expg, cil_expr_2_scalar expd )
-    
-    | BinOp (IndexPI , expg , expd , _ ) ->
-      LiIndexPI ( cil_expr_2_ptr expg, cil_expr_2_scalar expd)
-    
-    | BinOp ( MinusPI , expg , expd , _ ) ->
-      LiMinusPI ( cil_expr_2_ptr expg , cil_expr_2_scalar expd )
-	
-    |  Lval (Var(vinfo), _ ) ->
-      begin
-	match vinfo.vtype with
-	    TPtr( TInt(_,_), _ ) -> LiPVar(Unprimed, LiIntPtr(vinfo.vname))
-	  | _ ->  begin 
-	    let msg = "This variable : "^vinfo.vname ^"is a pointer which isn't of  type TInt, but that appears in a scalar expression \n" 
-	    in let exc =  Bad_expression_type msg in 
-	       raise exc
-	  end
-      end
-
-    |  (_) ->    begin 
-	    let msg = " There is something I was unable to properly
-parse in the ci_expr_2_ptr function" 
-	    in let exc =  Bad_expression_type msg in 
-	       raise exc
-	  end
-      
-
-
-let rec cil_expr_2_bool (expr : Cil_types.exp) =
-  match expr.enode with 
-       BinOp(LAnd,expg ,expd , _) ->
-	 LiBAnd( cil_expr_2_bool expg, cil_expr_2_bool expd)
-       
-    |  BinOp(LOr, expg, expd , _) ->
-	 LiBOr( cil_expr_2_bool expg, cil_expr_2_bool expd )
-    |  UnOp(LNot , exp , TInt(IBool,_) ) ->
-	 LiBNot(cil_expr_2_bool exp)
-	 
-    | BinOp(Lt,expg,expd,_) -> 
-	LiBLt(cil_expr_2_scalar expg ,cil_expr_2_scalar expd) 
-	
-    | BinOp(Gt,expg,expd,_) ->
-	LiBGt(cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
-
-    | BinOp(Le,expg,expd,_) ->
-	LiBLeq(cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
-
-    | BinOp(Ge,expg,expd,_) ->
-	LiBGeq(cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
-
-    | BinOp(Ne,expg,expd,_) ->
-	LiBNeq(cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
-
-    | BinOp (Eq , expg , expd , TPtr (TInt(_,_) , _)) ->
-      LiBPtrEq ( cil_expr_2_ptr expg ,  cil_expr_2_ptr expd )
-	
-    | BinOp(Eq,expg,expd,_) ->
-      LiBEq(cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
-	
-    | Const(CInt64(value,_,_)) ->  
-      LiBScal(LiConst( LiIConst (Int64.to_int value)))
-    
-    | _-> raise ( Bad_expression_type "Trying to parse an expression \
- that can't be evaluated as a boolean \n")
-
-
-
-
-
-(********************************************************************)
-
-(** This function transforms a list of cil expression into a list
-of scalar expression, whenever possible. It raises a Bad_expression_type
-exception if something wrong occured.  *)
-
-
-     (** Replace that by a List.map*)
-(*******************************************************************)
-let cil_expr_list_2_scalar_list (expr_list : Cil_types.exp list ) =
-  let rec rec_call (ret_list : c_scal list) (expr_list: Cil_types.exp list )= 
-    match expr_list with
-	[] -> ret_list
-      | l::l' -> rec_call ( (cil_expr_2_scalar l)::ret_list ) l'
-  in
-  List.rev (rec_call [] expr_list) (* The args have been added in head, therefore the list need to be reversed to respect argument order.
- List reversal O(n) whereas adding elements on list tail costs 0(n²).
-*)
-
 
 
 let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
@@ -261,7 +136,7 @@ and cil_expr_2_ptr expr =
     |  Lval (Var(vinfo), _ ) ->
       begin
 	match vinfo.vtype with
-	    TPtr( TInt(_,_), _ ) -> LiPVar(Unprimed, LiIntPtr(vinfo.vname))
+	    TPtr( vtypeptr , _ ) -> LiPVar(Unprimed, LiIntPtr(vinfo.vname), vtypeptr)
 	  | _ ->  begin 
 	    let msg = "This variable : "^vinfo.vname ^"is a pointer which isn't of  type TInt, but that appears in a scalar expression \n" 
 	    in let exc =  Bad_expression_type msg in 
@@ -421,7 +296,7 @@ and cil_expr_2_ptr expr =
     |  Lval (Var(vinfo), _ ) ->
       begin
 	match vinfo.vtype with
-	    TPtr( TInt(_,_), _ ) -> LiPVar(Unprimed, LiIntPtr(vinfo.vname))
+	    TPtr( vtypeptr, _ ) -> LiPVar(Unprimed, LiIntPtr(vinfo.vname),vtypeptr)
 	  | _ ->  begin 
 	    let msg = "This variable : "^vinfo.vname ^"is a pointer which isn't of  type TInt, but that appears in a scalar expression \n" 
 	    in let exc =  Bad_expression_type msg in 
@@ -595,10 +470,10 @@ let rec scal_to_string ( b_exp : c_scal ) =
 and ptrexp_to_str ( cptr : c_ptrexp ) =
   match cptr with 
     
-      LiPVar ( Primed , LiIntPtr ( vname) ) ->
+      LiPVar ( Primed , LiIntPtr ( vname), _ ) ->
 	vname^"'"
     
-    | LiPVar ( Unprimed , LiIntPtr ( vname )) ->
+    | LiPVar ( Unprimed , LiIntPtr ( vname ), _) ->
       vname
     
     | LiPlusPI ( ptr_in , offset ) ->
