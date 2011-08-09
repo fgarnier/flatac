@@ -222,7 +222,14 @@ let rec c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool ) =
 	  let argd =  interpret_c_scal_to_cnt sslf cscald in
 	     CntBool ( CntGeq , argg , argd )
 	end
-	  (* Pointer comparisons match cases start here*)
+    
+    |LiBScal (cscal) ->
+       begin
+	 let arg = interpret_c_scal_to_cnt sslf cscal in
+	   CntBool (CntEq , arg , (CntCst(0)))
+       end
+
+    (* Pointer comparisons match cases start here*)
     | LiBPtrEq ( cptrg ,  cptrd ) ->
 	begin
 	  let argg =  interpret_c_ptrexp_to_cnt sslf cptrg in
@@ -268,3 +275,4 @@ let rec c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool ) =
 	    CntBool (CntLeq , argg , argd )
 	end	  
 	  
+    
