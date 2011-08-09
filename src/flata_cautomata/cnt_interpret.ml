@@ -136,10 +136,7 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
 	  let lr = interpret_c_scal_to_cnt sslf scalv in
 	  let  sizeof_ptr_type = interpret_ciltypes_size optype in
 	  let lr = CntProd ( lr , sizeof_ptr_type ) in
-	    CntSum(ll,lr) (*One shall the size of the type of
-			  the pointer variable.
-
-			  Done*)
+	    CntSum(ll,lr) 
 	end
 
 
@@ -225,5 +222,49 @@ let rec c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool ) =
 	  let argd =  interpret_c_scal_to_cnt sslf cscald in
 	     CntBool ( CntGeq , argg , argd )
 	end
+	  (* Pointer comparisons match cases start here*)
+    | LiBPtrEq ( cptrg ,  cptrd ) ->
+	begin
+	  let argg =  interpret_c_ptrexp_to_cnt sslf cptrg in
+	  let argd =  interpret_c_ptrexp_to_cnt sslf cptrd in
+	     CntBool (CntEq , argg , argd )
+	end
+	     
+
+    | LiBPtrNeq ( cptrg , cptrd ) ->
+	begin
+	  let argg =  interpret_c_ptrexp_to_cnt sslf cptrg in
+	  let argd =  interpret_c_ptrexp_to_cnt sslf cptrd in
+	     CntBool (CntNeq , argg , argd )
+	end
 
     
+    | LiBPtrGeq ( cptrg , cptrd ) ->
+	begin
+	  let argg =  interpret_c_ptrexp_to_cnt sslf cptrg in
+	  let argd =  interpret_c_ptrexp_to_cnt sslf cptrd in
+	     CntBool ( CntGeq , argg , argd )
+	end
+	
+	
+    | LiBPtrGt ( cptrg , cptrd ) ->
+	begin
+	  let argg =  interpret_c_ptrexp_to_cnt sslf cptrg in
+	  let argd =  interpret_c_ptrexp_to_cnt sslf cptrd in
+	     CntBool ( CntGt , argg , argd )
+	end
+
+    | LiBPtrLt ( cptrg , cptrd ) ->
+	begin
+	  let argg =  interpret_c_ptrexp_to_cnt sslf cptrg in
+	  let argd =  interpret_c_ptrexp_to_cnt sslf cptrd in
+	    CntBool ( CntLt , argg , argd )
+	end	  
+	  
+    | LiBPtrLeq ( cptrg , cptrd ) ->
+	begin
+	  let argg =  interpret_c_ptrexp_to_cnt sslf cptrg in
+	  let argd =  interpret_c_ptrexp_to_cnt sslf cptrd in
+	    CntBool (CntLeq , argg , argd )
+	end	  
+	  
