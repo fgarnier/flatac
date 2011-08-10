@@ -110,3 +110,23 @@ and valid_ptrexp (sslf : ssl_formula ) ( ptrexp :  c_ptrexp ) =
 	end
 
 
+let rec negate_valid valexp  =
+  match valexp with
+      PtValid(e) -> NotValid(PtValid(e))
+    | IntValid (i) -> NotValid(IntValid(i))
+    | TrueValid -> FalseValid
+    | FalseValid -> TrueValid
+    | OrValid ( fg , fd ) ->
+	begin
+	  let fgr = negate_valid fg in
+	  let fgd = negate_valid fd in
+	    AndValid( fgr  , fgd )
+	end
+      
+    | AndValid ( fg , fd ) ->
+	begin
+	  let fgr = negate_valid fg in
+	  let fgd = negate_valid fd in
+	    OrValid( fgr  , fgd )
+	end
+    | NotValid( p ) -> p
