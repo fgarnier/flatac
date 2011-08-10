@@ -14,13 +14,16 @@ FRAMA_C_INCLUDES=       -I $(F_SRC)/src/kernel \
 
 SSL_INCLUDES 	= -I $(SSL_SRC)
 
-intermediate_language.cmo : intermediate_language.ml
+validity_types.cmo : validity_types.ml
+	ocamlc -c validity_types.ml
+
+intermediate_language.cmo : validity_types.cmo intermediate_language.ml 
 	ocamlc $(FRAMA_C_INCLUDES)  -c intermediate_language.ml
 
 nts_types.cmo : nts_types.ml
 	ocamlc  -c  nts_types.ml
 
-validity.cmo : intermediate_language.cmo validity.ml
+validity.cmo : intermediate_language.cmo validity_types.cmo validity.ml
 	ocamlc $(FRAMA_C_INCLUDES) $(SSL_INCLUDES) -c validity.ml
 
 cnt_interpret.cmo : intermediate_language.cmo validity.cmo nts_types.cmo cnt_interpret.ml

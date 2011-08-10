@@ -26,6 +26,12 @@ open Nts_types
 
 exception Unhandled_valuetype_in_interpretciltypesize
 
+(** Creates the sizeof variable from the name stored
+in tinfo.tname.*)
+let sizeof_cil_tinfo ( tinfo : Cil_types.typeinfo ) =
+  let typename = "sizeof_"^tinfo.tname in
+    CntSymCst( typename )
+
 (** Needs to be duely completed.*)
 let interpret_ciltypes_size (ciltype : Cil_types.typ ) =
   match ciltype with
@@ -44,6 +50,7 @@ let interpret_ciltypes_size (ciltype : Cil_types.typ ) =
     | TFloat(FFloat,_) -> CntSymCst ("sizeof_float")
     | TFloat(FDouble,_) -> CntSymCst ("sizeof_double")
     | TFloat(FLongDouble,_) -> CntSymCst ("sizeof_long_double")
+    | TNamed(tinfo, _ ) -> sizeof_cil_tinfo tinfo 
     | _ -> raise  Unhandled_valuetype_in_interpretciltypesize
 
 (** This function aims at computing the name of the couter var name
@@ -216,7 +223,7 @@ let rec c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool ) =
 	     CntBool ( CntGeq , argg , argd )
 	end
     
-    |LiBScal (cscal) ->
+    | LiBScal (cscal) ->
        begin
 	 let arg = interpret_c_scal_to_cnt sslf cscal in
 	   CntBool (CntEq , arg , (CntCst(0)))

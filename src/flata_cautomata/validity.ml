@@ -11,6 +11,7 @@ open Intermediate_language
 open Ssl_types
 open Ssl
 open SSL_lex
+open Validity_types
 
 
 
@@ -33,7 +34,7 @@ let rec base_ptrexp (sslf : ssl_formula )( ptr_exp : c_ptrexp ) =
     | LiIndexPI ( cptr , _ , _) -> base_ptrexp sslf cptr
     | LiMinusPI ( cptr , _ , _) -> base_ptrexp sslf cptr
   
-(** Generates counter based expression that allows to determinate
+(** Generates counter based expressions that allow to determinate
 wheter an arithmetical expression is valid or not.
 *)
 let rec valid_cscal (sslf : ssl_formula ) ( scal : c_scal) =
@@ -107,3 +108,5 @@ and valid_ptrexp (sslf : ssl_formula ) ( ptrexp :  c_ptrexp ) =
 	  let fd = valid_cscal sslf cscal in
 	    and_valid fg fd 
 	end
+
+

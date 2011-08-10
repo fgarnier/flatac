@@ -11,7 +11,7 @@ For questions or remarks, contact florent.garnier__at__imag__dot__fr
 
 open Cil_types
 open Int64
-
+open Validity_types
 
 (* 
 Boolean doesn't have a peculiar type in ANSI C. 
@@ -77,11 +77,8 @@ type c_bool = LiBNot of c_bool
 
 
 
-type valid_counter = PtValid of string
-		     | IntValid of string
-		     | AndValid of valid_counter * valid_counter
-		     | TrueValid
-		     | FalseValid
+
+
 
 
 (*type cnt_interpretation = *)
