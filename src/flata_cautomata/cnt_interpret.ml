@@ -1,10 +1,17 @@
 (**********************************************************************)
 (* 
 This file contains the functions that translates the arithmetics
-expression from CIL into counter automata based one. The focus is maid
-on pointer arithmetic, especialy for int * pointer arithmetics
+expression from the intermediate language into counter automata arithmetic
+expressions. The focus is maid
+on pointer arithmetic.
 
 Questions and/or remarks : mail to florent dot garnier At imag dot fr
+
+The value that are translated into counter automata arithmetics are
+expression that have type :
+
+_ int
+and Type *, where Type ranges on char, int, long, float, double etc ...
 *) 
 
 open Cil_types
@@ -17,13 +24,27 @@ open Validity
 open Cil_types
 open Nts_types
 
+exception Unhandled_valuetype_in_interpretciltypesize
 
 (** Needs to be duely completed.*)
 let interpret_ciltypes_size (ciltype : Cil_types.typ ) =
   match ciltype with
-      _ -> CntSymCst ("It's a sizeof")
-
-
+      TInt(IBool,_) -> CntSymCst ("sizeof_bool")
+    | TInt(IChar,_) -> CntSymCst ("sizeof_char")
+    | TInt(ISChar,_) -> CntSymCst ("sizeof_signed_char")
+    | TInt(IUChar,_) -> CntSymCst ("sizeof_unsigned_char")	
+    | TInt(IInt,_) -> CntSymCst ("sizeof_int")
+    | TInt(IUInt,_) -> CntSymCst ("sizeof_unsigned_int")
+    | TInt(IShort,_) -> CntSymCst ("sizeof_short")
+    | TInt(IUShort,_) -> CntSymCst ("sizeof_unsigned_short")
+    | TInt(ILong,_) -> CntSymCst ("sizeof_long")
+    | TInt(IULong,_) -> CntSymCst ("sizeof_unsigned_long")
+    | TInt(ILongLong,_) -> CntSymCst ("sizeof_long_long")
+    | TInt(IULongLong,_) -> CntSymCst ("sizeof_unsigned_long_long")	
+    | TFloat(FFloat,_) -> CntSymCst ("sizeof_float")
+    | TFloat(FDouble,_) -> CntSymCst ("sizeof_double")
+    | TFloat(FLongDouble,_) -> CntSymCst ("sizeof_long_double")
+    | _ -> raise  Unhandled_valuetype_in_interpretciltypesize
 
 (** This function aims at computing the name of the couter var name
 associated to the offset of a pointer variable*)
