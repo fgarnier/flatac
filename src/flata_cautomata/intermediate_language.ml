@@ -226,17 +226,19 @@ exception if something wrong occured.  *)
 
      (** Replace that by a List.map*)
 (*******************************************************************)
-let cil_expr_list_2_scalar_list (expr_list : Cil_types.exp list ) =
+(*let cil_expr_list_2_scalar_list (expr_list : Cil_types.exp list ) =
   let rec rec_call (ret_list : c_scal list) (expr_list: Cil_types.exp list )= 
     match expr_list with
 	[] -> ret_list
       | l::l' -> rec_call ( (cil_expr_2_scalar l)::ret_list ) l'
   in
-  List.rev (rec_call [] expr_list) (* The args have been added in head, therefore the list need to be reversed to respect argument order.
+  List.rev (rec_call [] expr_list)*)
+ (* The args have been added in head, therefore the list need to be reversed to respect argument order.
  List reversal O(n) whereas adding elements on list tail costs 0(n²).
 *)
 
-
+let cil_expr_list_2_scalar_list (expr_list : Cil_types.exp list ) =
+  List.map cil_expr_2_scalar expr_list
 
 
 
