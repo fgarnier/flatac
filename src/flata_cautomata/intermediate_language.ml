@@ -84,7 +84,7 @@ type c_bool = LiBNot of c_bool
 (*type cnt_interpretation = *)
     
 
-
+(*
 let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
   match expr.enode with 
       Const(CInt64(i,_,_))-> LiConst( LiIConst(Int64.to_int i))
@@ -187,7 +187,7 @@ let rec cil_expr_2_bool (expr : Cil_types.exp) =
     | _-> raise ( Bad_expression_type "Trying to parse an expression \
  that can't be evaluated as a boolean \n")
 
-
+	*)
 
 
 
@@ -200,6 +200,8 @@ exception if something wrong occured.  *)
 
      (** Replace that by a List.map*)
 (*******************************************************************)
+
+(*
 let cil_expr_list_2_scalar_list (expr_list : Cil_types.exp list ) =
   let rec rec_call (ret_list : c_scal list) (expr_list: Cil_types.exp list )= 
     match expr_list with
@@ -210,7 +212,7 @@ let cil_expr_list_2_scalar_list (expr_list : Cil_types.exp list ) =
  List reversal O(n) whereas adding elements on list tail costs 0(n²).
 *)
 
-
+*)
 
 (** One need to translate C-boolean evaluation into the language of FLATA
 constrainsts. That's to say : 

@@ -16,7 +16,6 @@ exception Not_LiVar
 
 type nts_var = NtsIVar of string
 
-
 type cnt_binop = CntEq
 		 | CntNeq
 		 | CntLeq
@@ -24,7 +23,6 @@ type cnt_binop = CntEq
 		 | CntGt
 		 | CntGeq
 		 
-
 type cnt_arithm_exp = CntCst of int
 		      | CntSymCst of string
 		      | CntVar of nts_var
