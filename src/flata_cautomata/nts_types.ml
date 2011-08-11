@@ -8,8 +8,14 @@ Questions, remarks, suggestions : y.x@imag.fr, substitute x with garnier and
 y with florent.
 *)
 
+
 exception Not_LiPVar
 exception Not_LiVar
+
+(* That type describes **)
+
+type nts_var = NtsIVar of string
+
 
 type cnt_binop = CntEq
 		 | CntNeq
@@ -21,7 +27,7 @@ type cnt_binop = CntEq
 
 type cnt_arithm_exp = CntCst of int
 		      | CntSymCst of string
-		      | CntVar of string
+		      | CntVar of nts_var
 		      | CntMinus of cnt_arithm_exp * cnt_arithm_exp
 		      | CntSum of cnt_arithm_exp * cnt_arithm_exp
 		      | CntProd of cnt_arithm_exp * cnt_arithm_exp
@@ -36,3 +42,8 @@ type cnt_bool = CntBool of cnt_binop *  cnt_arithm_exp * cnt_arithm_exp
 		| CntBFalse
 		| CntBAnd of  cnt_bool * cnt_bool
 		| CntBOr of cnt_bool * cnt_bool
+
+type cnt_trans_label = CntGuard of cnt_bool
+		   | CntFunCall of string * cnt_arithm_exp list
+		   | CntAffect of nts_var * cnt_arithm_exp
+

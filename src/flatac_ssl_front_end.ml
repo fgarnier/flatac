@@ -4,15 +4,13 @@ counter automata based model which nodes are labelled with values
 of the SSL logic. 
 *)
 (*open Intermediate_language*)
-(*open Cautomata*)
 open Cil_types
-open Sem_and_logic_front_end
+open Sem_and_logic_front_end 
 open Ssl_types
 open SSL_lex
 open Ssl_entailement
-(*open Cautomata*)
 open Ssl_decision
-open Ssl_pprinters
+open Ssl_pprinters 
 open C_upon_ssl_domain (* Contains the semantic tranformation
 		       of the C instruction on the SSL formulae*)
 open Global_mem

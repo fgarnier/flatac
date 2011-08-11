@@ -57,12 +57,12 @@ let interpret_ciltypes_size (ciltype : Cil_types.typ ) =
 associated to the offset of a pointer variable*)
 let offset_cnt_name ( ptvar : c_ptrexp ) =  
   match ptvar with
-      LiPVar(_,LiIntPtr(vname),_) -> CntVar ( "offset("^vname^")" )
+      LiPVar(_,LiIntPtr(vname),_) -> CntVar ( NtsIVar("offset("^vname^")") )
     | _ -> raise Not_LiPVar
   
 let int_var_cnt_name ( cexpr : c_scal) =
    match cexpr with
-      LiVar(_,LiIntVar(vname)) -> CntVar( "intvar("^vname^")" )
+      LiVar(_,LiIntVar(vname)) -> CntVar(NtsIVar( "intvar("^vname^")" ))
     | _ -> raise Not_LiVar
 
 let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
@@ -114,7 +114,7 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
 	    
 and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
   match ptrexp with 
-      LiPVar( _ , LiIntPtr(vname), _) -> CntVar(vname)
+      LiPVar( _ , LiIntPtr(vname), _) -> CntVar(NtsIVar(vname))
     | LiPlusPI ( cptrexp , scalv, optype ) -> 
 	begin
 	  let ll = interpret_c_ptrexp_to_cnt sslf cptrexp in
