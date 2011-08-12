@@ -125,7 +125,7 @@ build_global_makefile () {
 [[ $# == 0 ]] && echo "type : ./configure PATH_TO_FRAMAC_SOURCE" && exit
 
 build_configuration_file $1
-build_global_makefile "SSL/ global_mem/ c_upon_sslandnts_sem/"
+build_global_makefile "SSL/ global_mem/ c_upon_sslandnts_sem/ flata_cautomata/"
 
 echo ""
 echo "Configuration done."
