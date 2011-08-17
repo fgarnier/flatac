@@ -30,4 +30,4 @@ cnt_interpret.cmo : intermediate_language.cmo validity.cmo nts_types.cmo cnt_int
 	ocamlc  $(FRAMA_C_INCLUDES) $(SSL_INCLUDES)$ -c cnt_interpret.ml
 
 clean :
-	rm -f *.cmo *.cmi
+	rm -f *.cmo *.cmi *.o *~
