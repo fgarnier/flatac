@@ -55,7 +55,7 @@ class ssl_flatac_front_end = object
     (** One checks that the current abstraction entails the next state
     abstraction, where the current state abstraction is sslfd and
     the next state abstraction is sslfg (Inverted order) *)
-    Self.feedback ~level:0 "SALUT";
+   
     let etp = {
       left = sslfd ;
       right = sslfg;
