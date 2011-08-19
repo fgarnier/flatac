@@ -58,7 +58,7 @@ struct
     (** This methods return a uid based on the current node's
       * sid and abstraction.
       * Warning, if the node was not visited_yet, it's 
-      * added to the visited node list and therefor, will
+      * added to the visited node list and therefore, will
       * be considered as visited.
       *)
     method get_uid sid abstraction = 
