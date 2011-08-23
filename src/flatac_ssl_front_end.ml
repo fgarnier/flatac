@@ -19,14 +19,13 @@ open Global_mem
 open Self
 
 class ssl_flatac_front_end = object 
- (* inherit [SSL_lex.formula , Cautomata.trans_label list ]  sem_and_logic_front_end*)
-    
-  inherit [ssl_formula , unit ]  sem_and_logic_front_end 
+  inherit [SSL_lex.formula , Cautomata.trans_label list ]  sem_and_logic_front_end
+   
 
   val mid =  (new global_mem_manager )
 
   method get_empty_transition_label () =
-    ()
+    []
 
   method get_entry_point_abstraction () =
     Ssl.create_ssl_f ()
@@ -41,9 +40,10 @@ class ssl_flatac_front_end = object
     Ssl_pprinters.pprint_ssl_formula_tex sslf
 
     
-  method next (sslf : ssl_formula)()(skind : Cil_types.stmtkind) =
+  method next (sslf : ssl_formula)(translist : trans_lanel list)
+    (skind : Cil_types.stmtkind) =
     let sslf_local = Ssl.copy sslf in
-    C_upon_ssl_domain.next_on_ssl mid sslf_local skind ();
+    C_upon_ssl_domain.next_on_ssl mid sslf_local skind trans_list;
     (sslf_local , ())::[]
     
 
