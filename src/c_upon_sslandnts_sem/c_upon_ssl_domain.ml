@@ -27,6 +27,16 @@ exception Loc_is_a_constant of int64
 
 
 
+let make_offset_locpvar (v : SSL_types.pvar ) =
+  match  v  with 
+      PVar ( s ) -> let soff =
+	s^"_off" in
+	CntVar(NtsIVar(soff))
+
+let make_size_
+	
+
+
 (** This function aims at getting the first variable name
 of the list of parameters. Might be useful if some parameter
 expressions are prefixed by a cast or any other ugly stuff so
@@ -269,11 +279,21 @@ let next_on_affectations  ( sslf :ssl_formula) ( instruction : Cil_types.instr) 
 *)	  
 
 
-
-
-let malloc_ssl_nts_transition sslf  lparam  = 
+(** The evaluation of the abstract prior the application
+of malloc is needed to compute the guards on the
+transition. This value is passed as the sslf_pre paramater,
+and the value sslf_post is used to express the successful
+application of the malloc call. i.e. when the condition
+expressed by the guards are met.*)
+let malloc_ssl_nts_transition ( v : Cil_types.varinfo option ) sslf_pre sslf_post  lparam  = 
   (** Case of a malloc success *)
-  let trans_list_succ = 
+  let l = List.hd lparam in
+  let scal_param = cil_expr_2_scalar l in
+  let interpret_param_malloc = interpret_c_scal_to_cnt sslf_pre scal_param in
+  let valid_paral_malloc = valid_cscal sslf_pre scal_param in
+  let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
+  let good_precondition = 
+
     
 
 let  generate_list_of_transitions sslf  instr =
