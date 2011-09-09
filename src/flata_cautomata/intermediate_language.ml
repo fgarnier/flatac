@@ -300,13 +300,34 @@ pour effectuer (ou non) un parentésage.
 It is essential, that the output syntax complies with the NTS-comp library.
 *)
 
+let pprint_ciltypes_size (ciltype : Cil_types.typ ) =
+  match ciltype with
+      TInt(IBool,_) -> "sizeof_bool"
+    | TInt(IChar,_) -> "sizeof_char"
+    | TInt(ISChar,_) -> "sizeof_signed_char"
+    | TInt(IUChar,_) -> "sizeof_unsigned_char"	
+    | TInt(IInt,_) -> "sizeof_int"
+    | TInt(IUInt,_) -> "sizeof_unsigned_int"
+    | TInt(IShort,_) -> "sizeof_short"
+    | TInt(IUShort,_) -> "sizeof_unsigned_short"
+    | TInt(ILong,_) -> "sizeof_long"
+    | TInt(IULong,_) -> "sizeof_unsigned_long"
+    | TInt(ILongLong,_) -> "sizeof_long_long"
+    | TInt(IULongLong,_) -> "sizeof_unsigned_long_long"	
+    | TFloat(FFloat,_) -> "sizeof_float"
+    | TFloat(FDouble,_) -> "sizeof_double"
+    | TFloat(FLongDouble,_) -> "sizeof_long_double"
+   (* | TNamed(tinfo, _ ) -> sizeof_cil_tinfo tinfo *)
+    | _ -> " Unhandled_valuetype_in_interpretciltypesize"
+
 
 let rec scal_to_string ( b_exp : c_scal ) =
   match b_exp with 
       LiVar(Unprimed,LiIntVar(vname)) -> vname (* returns the name of the variable*)
     | LiVar(Primed,LiIntVar(vname)) -> vname^"'" 
     | LiConst(LiIConst(i)) -> (Printf.sprintf "%d" i )
-    | LiSymConst(LiSymIConst(const_name)) -> const_name   
+    | LiSymConst(LiSymIConst(const_name)) -> const_name
+    | LiSymConst(LiTypeSizeof(t)) -> let s = pprint_ciltypes_size t in s
     | LiProd( sg , sd ) ->
       let rhs= ref "" in
       let lhs = ref "" in

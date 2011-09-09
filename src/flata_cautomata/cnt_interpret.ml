@@ -113,8 +113,8 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
     | LiSymConst ( cnt ) ->
 	begin
 	  match cnt with 
-	      LiSymCOnst(const_name ) -> CntSymCst(const_name)
-	    |  LiTypeSizeof ( t ) ->
+	      LiSymIConst( const_name ) -> CntSymCst(const_name)
+	    | LiTypeSizeof ( t )  ->
 		 interpret_ciltypes_size t (* Returns the constant
 					   name associated to the type t.*)
 	end
