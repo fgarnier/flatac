@@ -20,6 +20,7 @@ open Ssl_types
 open Ssl
 open SSL_lex
 open Global_mem
+open Validity_types
 open Validity
 open Cil_types
 open Nts_types
@@ -282,4 +283,35 @@ let rec c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool ) =
 	    CntBool (CntLeq , argg , argd )
 	end	  
 	  
+
+
+
+let rec valid_expr_2_cnt_bool ( vexpr : valid_counter ) =
+  match vexpr with 
+      TrueValid -> CntBTrue
+    | FalseValid -> CntBFalse
+    | PtValid ( s ) -> CntBool(CntEq,CntVar(NtsIVar(s)),CntCst(1))
+    | IntValid ( s ) -> CntBool(CntEq,CntVar(NtsIVar(s)),CntCst(1))
+    | AndValid ( l , r ) -> 
+	begin
+	  match l , r with 
+	      (FalseValid , _ ) -> CntBFalse
+	    | (_,FalseValid ) -> CntBFalse
+	    | (_,_) ->
+		let ll = valid_expr_2_cnt_bool l in
+		let rr =  valid_expr_2_cnt_bool r in
+		  CntBAnd ( ll , rr )
+	end
+	  
+    | OrValid ( l , r ) -> 
+	begin
+	 match l , r with 
+	      (TrueValid , _ ) -> CntBTrue
+	    | (_, TrueValid ) -> CntBTrue
+	    | (_,_) ->
+		let ll = valid_expr_2_cnt_bool l in
+		let rr =  valid_expr_2_cnt_bool r in
+		  CntBOr ( ll , rr )  
+	end
+
     

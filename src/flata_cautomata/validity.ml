@@ -109,6 +109,9 @@ and valid_ptrexp (sslf : ssl_formula ) ( ptrexp :  c_ptrexp ) =
 	    and_valid fg fd 
 	end
 
+(*
+
+ There is no need to be able to negate the validity of an expression.
 
 let rec negate_valid valexp  =
   match valexp with
@@ -123,10 +126,11 @@ let rec negate_valid valexp  =
 	    AndValid( fgr  , fgd )
 	end
       
-    | AndValid ( fg , fd ) ->
+     | AndValid ( fg , fd ) ->
 	begin
 	  let fgr = negate_valid fg in
 	  let fgd = negate_valid fd in
 	    OrValid( fgr  , fgd )
 	end
-    | NotValid( p ) -> p
+     | NotValid( p ) -> p
+*)
