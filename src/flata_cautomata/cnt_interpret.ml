@@ -110,7 +110,14 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
 	    end
 	  else CntInvalidExp
     
-    | LiSymConst ( LiSymIConst(const_name)) -> CntSymCst(const_name)
+    | LiSymConst ( cnt ) ->
+	begin
+	  match cnt with 
+	      LiSymCOnst(const_name ) -> CntSymCst(const_name)
+	    |  LiTypeSizeof ( t ) ->
+		 interpret_ciltypes_size t (* Returns the constant
+					   name associated to the type t.*)
+	end
 	    
 and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
   match ptrexp with 

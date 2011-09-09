@@ -274,7 +274,7 @@ let next_on_affectations  ( sslf :ssl_formula) ( instruction : Cil_types.instr) 
 let malloc_ssl_nts_transition sslf inst  = 
   (** Case of a malloc success *)
   let trans_list_succ = 
-
+    
 
 let  generate_list_of_transitions sslf  instr =
   match instr with 
