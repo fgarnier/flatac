@@ -1195,7 +1195,7 @@ pointer variable \lstinline!x!.
 $$
 \begin{array}{|l|}
 \hline
-\transmodel{\phi}{\mbox{\lstinline!x=malloc(!} I \mbox{\lstinline!)!}}{\isvalid{\phi}{I} \wedge \interpa{\phi}{I} > 0 \wedge \locvar{l^{\prime}}{\gmallocid}{\interpa{\phi}{I}} \wedge \ptroffset{x^{\prime}}=0 \wedge \gmallocid^{\prime}+=1}{\Sep{\exists l. \Addrep{\phi}{\Pointsto{x}{l}}}{\Alloc{l}}} \\
+\transmodel{\phi}{\mbox{\lstinline!x=malloc(!} I \mbox{\lstinline!)!}}{\isvalid{\phi}{I} \wedge \interpa{\phi}{I} > 0 \wedge \locvar{l^{\prime}}{\gmallocid}{\interpa{\phi}{I}} \wedge \ptroffset{x^{\prime}}=0 \wedge \gmallocid^{\prime}=\gmallocid + 1}{\Sep{\exists l. \Addrep{\phi}{\Pointsto{x}{l}}}{\Alloc{l}}} \\
 \hline
 \end{array}
 $$ 
@@ -1205,7 +1205,7 @@ If the expression $I$ evaluates to some negative value then malloc will return a
 $$
 \begin{array}{|l|}
 \hline
-\transmodel{\phi}{\mbox{\lstinline!x=malloc(!} I \mbox{\lstinline!)!}}{\isvalid{\phi}{I} \wedge \interpa{\phi}{I} \leq 0 \wedge \valid{x}^{\prime}= \bot}{\Addrep{\phi}{\Pointsto{x}{\nil}}} \\
+\transmodel{\phi}{\mbox{\lstinline!x=malloc(!} I \mbox{\lstinline!)!}}{\isvalid{\phi}{I} \wedge \interpa{\phi}{I} \leq 0 = \bot}{\Addrep{\phi}{\Pointsto{x}{\nil}}} \\
 \hline
 \end{array}
 $$ 
@@ -1342,7 +1342,7 @@ This rule models the fact that an access to a non allocated memory zone generate
 $$
 \begin{array}{|l|}
 \hline
-\transmodel{\exists l. \phi}{\accs{P}}{}{\bot} \gspace  \Alloc{l}\not \in \Sp{\phi}, l\not\in \FVars{\phi}, \mbox{ where } l \seq \base{\phi}{P} \\
+\transmodel{\exists l. \phi}{\accs{P}}{}{\bot} \gspace  \Alloc{l}\not \in \Sp{\phi}, l \in \FVars{\phi}, \mbox{ where } l \seq \base{\phi}{P} \\
 \hline
 \end{array}
 $$
@@ -1354,9 +1354,8 @@ $$
 \hline
 \transmodel{\phi}{\accs{P}}{
 \begin{array}{l}
-\interpa{\phi}{P}+\sizeof{\tau}< 0  \\ 
 \vee  \interpa{\phi}{P}+\sizeof{x} > \lsize{l} \\
-\vee \neg \congmod{(\interpa{\phi}{P}+\sizeof{\tau})}{0}{\sizeof{\tau}}
+\vee \neg (\interpa{\phi}{P}{0})\not\equiv \sizeof{\tau}
 \end{array}
 }{\bot} \gspace \Alloc{l}\in \Sp{\phi} \left \lbrace  \begin{array}{l} \mbox{where } P:\tau *,\\ l\seq\base{\phi}{P},\\ \end{array} \right . \\
 \hline
