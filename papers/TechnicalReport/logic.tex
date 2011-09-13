@@ -195,7 +195,7 @@
 
 
 \newcommand{\congmod}[3]{#1 \equiv #2 \lbrack #3 \rbrack}
-
+\newcommand{\notcongmod}[3]{#1 \not\equiv #2 \lbrack #3 \rbrack}
 \newcommand{\isvalid}[2]{Valid_{#1}(#2)}
 \newcommand{\DK}[2]{DK_{#1}(#2)}
 %\newcommand{\interpa}[2]{Tr_{#1}(#2)}
@@ -1207,7 +1207,7 @@ If the expression $I$ evaluates to some negative value then malloc will return a
 $$
 \begin{array}{|l|}
 \hline
-\transmodel{\phi}{\mbox{\lstinline!x=malloc(!} I \mbox{\lstinline!)!}}{\isvalid{\phi}{I} \wedge \interpa{\phi}{I} \leq 0 = \bot}{\Addrep{\phi}{\Pointsto{x}{\nil}}} \\
+\transmodel{\phi}{\mbox{\lstinline!x=malloc(!} I \mbox{\lstinline!)!}}{\isvalid{\phi}{I} \wedge \interpa{\phi}{I} \leq 0 }{\Addrep{\phi}{\Pointsto{x}{\nil}}} \\
 \hline
 \end{array}
 $$ 
@@ -1356,8 +1356,8 @@ $$
 \hline
 \transmodel{\phi}{\accs{P}}{
 \begin{array}{l}
-\vee  \interpa{\phi}{P}+\sizeof{x} > \lsize{l} \\
-\vee \neg (\interpa{\phi}{P}{0})\not\equiv \sizeof{\tau}
+\phantom{\vee}  \interpa{\phi}{P}+\sizeof{x} > \lsize{l} \\
+\vee \notcongmod{\interpa{\phi}{P}}{0}{\sizeof{\tau}}
 \end{array}
 }{\bot} \gspace \Alloc{l}\in \Sp{\phi} \left \lbrace  \begin{array}{l} \mbox{where } P:\tau *,\\ l\seq\base{\phi}{P},\\ \end{array} \right . \\
 \hline
@@ -1365,90 +1365,7 @@ $$
 $$
 
 
-%$$
-%\begin{array}{|l|}
-%\hline
-%\transmodel{\Formula{\Pointsto{x}{l}}{\Alloc{l}}}{*x=val}{ ! (\congmod{(\ptroffset{x}+\ptrbase{x})}{0}{\ptrsize{x}})}{\Formula{\Pointsto{x}{l}}{\top}}
-%\\
-%\hline
-%\end{array}
-%$$
-%
-%Writing outside an allocated zone, is a segmentation fault.
-%$$
-%\begin{array}{|l|}
-%\hline
-%\transmodel{\Formula{\Pointsto{x}{l}}{\Alloc{l}}}{*x=val}{\ptroffset{x}+\ptrsize{x} > \lsize{l}}{\Formula{\Pointsto{x}{l}}{\top}} \\
-%\hline
-%\end{array}
-%$$
-%
-%
-%Writing at some address that is the result of an invalid pointer arithmetic
-%operation is a bad thing as well.
-%$$
-%\begin{array}{|l|}
-%\hline
-%\transmodel{\Formula{\Pointsto{x}{\top}}{\Emp}}{*x=val}{}{\Formula{\Pointsto{x}{\top}}{\top}} \\
-%\hline
-%\end{array}
-%$$
-%
-%Writing in some address that corresponds to no allocated segment generates a segmentation fault.
-%$$
-%\begin{array}{|l|}
-%\hline
-%\transmodel{\Formula{\Pointsto{x}{l}}{\Emp}}{*x=val}{}{\Formula{\Pointsto{x}{l}}{\top}} \\
-%\hline
-%\end{array}
-%$$
-%
-%Reading some value with a pointer that has an ill alligned address :
-%
-%$$
-%\begin{array}{|l|}
-%\hline
-%\transmodel{\Formula{\Pointsto{x}{l}}{\Alloc{l}}}{i=*x}{ ! (\congmod{(\ptroffset{x}+\ptrbase{x})}{0}{\ptrsize{x}}) }{\segfault \wedge \Formula{\Pointsto{x}{l}}{\top}}
-%\\
-%\hline
-%\end{array}
-%$$
-%
-%
-%Any reading operation that either occurs at a non allocated zone or that uses a pointer that points to a non alligned address  or  that uses an invalid pointer , generates a reading error.
-%
-%
-%
-%$$
-%\begin{array}{|l|}
-%\hline
-%\transmodel{\Formula{\Pointsto{x}{l}}{\Emp}}{i=*x}{\valid{x}^{\prime}=\false \wedge }{\segfault \wedge \Formula{\Pointsto{x}{l}}{\Emp}} \\
-%\hline
-%\end{array}
-%$$
-%
-%Reading outside an allocated zone, is a segmentation fault.
-%
-%$$
-%\begin{array}{|l|}
-%\hline
-%\transmodel{\Formula{\Pointsto{x}{l}}{\Alloc{l}}}{i=*x}{\ptroffset{x}+\ptrsize{x} > \lsize{l}\wedge \valid{i}^{\prime}=\false }{\segfault \wedge \Formula{\Pointsto{x}{l}}{\Alloc{l}}} \\
-%\hline
-%\end{array}
-%$$
-%
-%
 
-%
-%\textbf{Comparison between pointers :}
-%
-%**** TODO : FIX THE SEMANTIC. SHALL ONE SAY THAT A COMPARISON  btw x and y IS
-%UNSOUND if  x and y don't share the same base address ? ***
-%
-%$$
-%\transmodel{\Formula{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l_2}}}{\Emp}}{x\bowtie y}{\ptrbase{x}+\ptroffset{x}\bowtie \ptrbase{y}+\ptroffset{y}}{\Formula{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l_2}}}{\Emp}}
-%$$
-%
 \textbf{Memory deallocation :}
 
 In C, \lstinline!free! must be called on the exact address returned by the

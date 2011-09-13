@@ -76,9 +76,26 @@ We introduce a function, called the validity, that interprets a pointer arithmet
 where the value $\dk$ abstracts the fact that one can't statically determine
 wheter an expression is valid or not.
 The validity of an expression depends on the validity of the evaluation
-of both the  pointer variables an the correctness of all the substractions between pointer expressions.
+of both the  pointer variables and the correctness of all the substractions between pointer expressions.
 In order to be able to compute the vality of an pointer arithmetic expression,
-one need to associate to each integer variable $i$, resp. to each pointer variable $x$, a variable $\ival{i}$, resp. $\ival{x}$, all ranging in $\lbrace \rbrace \true, \false, \dk$.
+one need to associate to each integer variable $i$, resp. to each pointer variable $x$, a variable $\ival{i}$, resp. $\ival{x}$, all ranging in $\lbrace \true, \false, \dk \rbrace$. The evaluation of the validity of an arithmetic pointer
+expression depends on the evaluation of the integer and pointer variables. 
+At this stage, we assume that those variables are properly assigned a value, 
+so that $\isvalid{}$ defines a function from the set of pointer aritmetic
+expression to $\lbrace \true, \false, \dk  \rbrace$. We will latter discuss
+on the impact that the initialization of those values has on the validity
+of a pointer arithmetic expression, in the sequel of this
+document.
+To define the validity function, we alsp introduce the following predicate :
+$$
+\begin{array}{lll}
+\DK{\phi}{P} & \Leftrightarrow & \isvalid{\phi}{P}==\dk, \\
+\DK{\phi}{I} & \Leftrightarrow & \isvalid{\phi}{I}==\dk, 
+\end{array} 
+$$
+
+where $P$, resp. $I$, is a pointer expression, resp. an integer expression,
+in the pointer arithmetic language, and $\phi$ is a SSL formula. 
  The validity of a pointer expression, in a context $\phi$, is recusively evaluated as : 
 
 $$
@@ -99,6 +116,16 @@ $$
 \false & \mbox{in all other cases.} 
 \end{array} \right . \\
 &&\\
+\isvalid{\phi}{P + I} & :=& \left \lbrace \begin{array}{ll}
+ \true & \mbox{if } \isvalid{\phi}{P} \wedge \isvalid{\phi}{I} \\
+\dk & \mbox{if } 
+\left \lbrace \begin{array}{l} \phantom{\mbox{ or }}\isvalid{\phi}{P} \wedge \DK{\phi}{I} \\ 
+\mbox{ or } \isvalid{\phi}{I}\wedge \DK{\phi}{P}  \\
+\mbox{ or } \DK{\phi}{P} \wedge \DK{\phi}{I} \\\end{array} \right .\\ 
+\false & \mbox{in all other cases.} 
+\end{array} \right . \\
+&&\\
+
 \isvalid{\phi}{I_1\oplus I_2} & := & \left \lbrace \begin{array}{ll} 
  \true & \mbox{if } \isvalid{\phi}{I_1}\wedge \isvalid{\phi}{I_2} \\
  \dk & \mbox{if} 
@@ -110,16 +137,22 @@ $$
  \false & \mbox{else} \\ \end{array} \right . \\
 & \mbox{where} & \oplus \in \lbrace + , \times  \rbrace \\
 &&\\
-\isvalid{\phi}{P_1 \bowtie P_2} &:=& \left \lbrace \begin{array}{ll} 
-	\isvalid{\phi}{P_1} \wedge \isvalid{\phi}{P_2} & \mbox{if } (\base{\phi}{P_1} == \base{\phi}{P_2}) \\
-\bot & \mbox{else} 
-\end{array} \right .\\
+\isvalid{\phi}{P_1 \bowtie P_2} &:=&\left \lbrace \begin{array}{ll}
+ \base{\phi}{P_1}==\base{\phi}{P_2} & \mbox{if } \isvalid{\phi}{P_1} \wedge \isvalid{\phi}{P_2} \\
+\dk & \mbox{if } 
+\left \lbrace \begin{array}{l} \phantom{\mbox{ or }}\isvalid{\phi}{P_1} \wedge \DK{\phi}{P_2} \\ 
+\mbox{ or } \isvalid{\phi}{P_2}\wedge \DK{\phi}{P_1}  \\
+\mbox{ or } \DK{\phi}{P_1} \wedge \DK{\phi}{P_2} \\\end{array} \right .\\ 
+\false & \mbox{in all other cases.} 
+\end{array} \right . \\ 
+ %\left \lbrace \begin{array}{ll} 
+%	\isvalid{\phi}{P_1} \wedge \isvalid{\phi}{P_2} & \mbox{if } (\base{\phi}{P_1} == \base{\phi}{P_2}) \\
+%\bot & \mbox{else} 
+%\end{array} \right .\\
 \hline
 \end{array}
 $$
 
-Here, $\ival{i}$ and $\ival{x}$ are counter associated to abstract the fact that
-the terms $i$ and $x$ contain values that are the result of a valid or an invalid chain of computations.
 
 %$$
 %\begin{array}{|lll|}
@@ -181,5 +214,7 @@ the terms $i$ and $x$ contain values that are the result of a valid or an invali
 %$$
 %
 
+\subsection{Impact of the initialization of the interpretation of pointer and integer variables on the validity of an arithmetic pointer expression}
 
+TODO
 
