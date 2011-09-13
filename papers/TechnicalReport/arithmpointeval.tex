@@ -93,6 +93,10 @@ $$
 \DK{\phi}{I} & \Leftrightarrow & \isvalid{\phi}{I}==\dk, 
 \end{array} 
 $$
+and the symbols :
+$$ \oplus \in \lbrace + , \times  \rbrace, $$
+$$ \bowtie \in \lbrace \leq,\geq,<> \rbrace,$$
+
 
 where $P$, resp. $I$, is a pointer expression, resp. an integer expression,
 in the pointer arithmetic language, and $\phi$ is a SSL formula. 
@@ -135,7 +139,6 @@ $$
     \mbox{or } \DK{\phi}{I_1} \wedge \DK{\phi}{I_2}  \\
  \end{array} \right . \\
  \false & \mbox{else} \\ \end{array} \right . \\
-& \mbox{where} & \oplus \in \lbrace + , \times  \rbrace \\
 &&\\
 \isvalid{\phi}{P_1 \bowtie P_2} &:=&\left \lbrace \begin{array}{ll}
  \base{\phi}{P_1}==\base{\phi}{P_2} & \mbox{if } \isvalid{\phi}{P_1} \wedge \isvalid{\phi}{P_2} \\

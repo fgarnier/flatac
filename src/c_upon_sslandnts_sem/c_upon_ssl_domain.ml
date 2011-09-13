@@ -27,13 +27,13 @@ exception Loc_is_a_constant of int64
 
 
 
-let make_offset_locpvar (v : SSL_types.pvar ) =
+let make_offset_locpvar (v : pvar ) =
   match  v  with 
       PVar ( s ) -> let soff =
 	s^"_off" in
 	CntVar(NtsIVar(soff))
 
-let make_size_
+let make_size_locvar ( v : pvar ) () =
 	
 
 
