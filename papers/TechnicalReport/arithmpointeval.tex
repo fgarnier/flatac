@@ -112,40 +112,48 @@ $$
 %\isvalid{\phi}{x_1 - x_2} & :=&  (\base{\phi}{x_1}==\base{\phi}{x_2})\wedge \valid{x_1} \wedge \valid{x_2} \\
 &&\\
 \isvalid{\phi}{P_1-P_2} & :=& \left \lbrace \begin{array}{ll}
- \base{\phi}{P_1}==\base{\phi}{P_2} & \mbox{if } \isvalid{\phi}{P_1} \wedge \isvalid{\phi}{P_2} \\
+ \base{\phi}{P_1}==\base{\phi}{P_2} & \mbox{if } \isvalid{\phi}{P_1} \andmath \isvalid{\phi}{P_2} \\
+&\\
 \dk & \mbox{if } 
-\left \lbrace \begin{array}{l} \phantom{\mbox{ or }}\isvalid{\phi}{P_1} \wedge \DK{\phi}{P_2} \\ 
-\mbox{ or } \isvalid{\phi}{P_2}\wedge \DK{\phi}{P_1}  \\
-\mbox{ or } \DK{\phi}{P_1} \wedge \DK{\phi}{P_2} \\\end{array} \right .\\ 
+\left \lbrace \begin{array}{l} \phantom{\mbox{ or }}\isvalid{\phi}{P_1} \ \andmath \ \DK{\phi}{P_2} \\ 
+\mbox{ or } \isvalid{\phi}{P_2}  \ \andmath \ \DK{\phi}{P_1}  \\
+\mbox{ or } \DK{\phi}{P_1} \ \andmath \ \DK{\phi}{P_2} \\\end{array} \right .\\ 
+&\\
 \false & \mbox{in all other cases.} 
 \end{array} \right . \\
 &&\\
 \isvalid{\phi}{P + I} & :=& \left \lbrace \begin{array}{ll}
- \true & \mbox{if } \isvalid{\phi}{P} \wedge \isvalid{\phi}{I} \\
+ \true & \mbox{if } \isvalid{\phi}{P} \ \andmath \ \isvalid{\phi}{I} \\
+&\\
 \dk & \mbox{if } 
-\left \lbrace \begin{array}{l} \phantom{\mbox{ or }}\isvalid{\phi}{P} \wedge \DK{\phi}{I} \\ 
-\mbox{ or } \isvalid{\phi}{I}\wedge \DK{\phi}{P}  \\
-\mbox{ or } \DK{\phi}{P} \wedge \DK{\phi}{I} \\\end{array} \right .\\ 
+\left \lbrace \begin{array}{l} \phantom{\mbox{ or }}\isvalid{\phi}{P} \ \andmath \ \DK{\phi}{I} \\ 
+\mbox{ or } \isvalid{\phi}{I}\ \andmath \ \DK{\phi}{P}  \\
+\mbox{ or } \DK{\phi}{P} \ \andmath \ \DK{\phi}{I} \\\end{array} \right .\\ 
+&\\
 \false & \mbox{in all other cases.} 
 \end{array} \right . \\
 &&\\
 
 \isvalid{\phi}{I_1\oplus I_2} & := & \left \lbrace \begin{array}{ll} 
- \true & \mbox{if } \isvalid{\phi}{I_1}\wedge \isvalid{\phi}{I_2} \\
- \dk & \mbox{if} 
+ \true & \mbox{if } \isvalid{\phi}{I_1}\ \andmath \ \isvalid{\phi}{I_2} \\
+&\\ 
+\dk & \mbox{if} 
    \left \lbrace 
-    \begin{array}{l} \phantom{\mbox{or}} \isvalid{\phi}{I_1} \wedge \DK{\phi}{I_2} \\
-    \mbox{or } \isvalid{\phi}{I_2}\wedge \DK{\phi}{I_1}  \\ 
-    \mbox{or } \DK{\phi}{I_1} \wedge \DK{\phi}{I_2}  \\
+    \begin{array}{l} \phantom{\mbox{or}} \isvalid{\phi}{I_1} \ \andmath \ \DK{\phi}{I_2} \\
+    \mbox{or } \isvalid{\phi}{I_2}\ \andmath \  \DK{\phi}{I_1}  \\ 
+    \mbox{or } \DK{\phi}{I_1} \ \andmath \ \DK{\phi}{I_2}  \\
  \end{array} \right . \\
- \false & \mbox{else} \\ \end{array} \right . \\
+&\\ 
+\false & \mbox{else} \\ \end{array} \right . \\
 &&\\
 \isvalid{\phi}{P_1 \bowtie P_2} &:=&\left \lbrace \begin{array}{ll}
- \base{\phi}{P_1}==\base{\phi}{P_2} & \mbox{if } \isvalid{\phi}{P_1} \wedge \isvalid{\phi}{P_2} \\
+ \base{\phi}{P_1}==\base{\phi}{P_2} & \mbox{if } \isvalid{\phi}{P_1} \ \andmath \ \isvalid{\phi}{P_2} \\
+&\\
 \dk & \mbox{if } 
-\left \lbrace \begin{array}{l} \phantom{\mbox{ or }}\isvalid{\phi}{P_1} \wedge \DK{\phi}{P_2} \\ 
-\mbox{ or } \isvalid{\phi}{P_2}\wedge \DK{\phi}{P_1}  \\
-\mbox{ or } \DK{\phi}{P_1} \wedge \DK{\phi}{P_2} \\\end{array} \right .\\ 
+\left \lbrace \begin{array}{l} \phantom{\mbox{ or }}\isvalid{\phi}{P_1} \ \andmath \ \DK{\phi}{P_2} \\ 
+\mbox{ or } \isvalid{\phi}{P_2}\ \andmath \ \DK{\phi}{P_1}  \\
+\mbox{ or } \DK{\phi}{P_1} \ \andmath \ \DK{\phi}{P_2} \\\end{array} \right .\\ 
+&\\
 \false & \mbox{in all other cases.} 
 \end{array} \right . \\ 
  %\left \lbrace \begin{array}{ll} 
