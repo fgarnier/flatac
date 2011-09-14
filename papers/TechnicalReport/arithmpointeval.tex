@@ -86,20 +86,8 @@ expression to $\lbrace \true, \false, \dk  \rbrace$. We will latter discuss
 on the impact that the initialization of those values has on the validity
 of a pointer arithmetic expression, in the sequel of this
 document.
-To define the validity function, we alsp introduce the following predicate :
-$$
-\begin{array}{lll}
-\DK{\phi}{P} & \Leftrightarrow & \isvalid{\phi}{P}==\dk, \\
-\DK{\phi}{I} & \Leftrightarrow & \isvalid{\phi}{I}==\dk, 
-\end{array} 
-$$
-and the symbols :
-$$ \oplus \in \lbrace + , \times  \rbrace, $$
-$$ \bowtie \in \lbrace \leq,\geq,<> \rbrace,$$
+We use the symbols $\oplus$ and $\bowtie$, for $\oplus \in \lbrace + , \times  \rbrace$, and $\bowtie \in \lbrace \leq,\geq,<> \rbrace$.
 
-
-where $P$, resp. $I$, is a pointer expression, resp. an integer expression,
-in the pointer arithmetic language, and $\phi$ is a SSL formula. 
  The validity of a pointer expression, in a context $\phi$, is recusively evaluated as : 
 
 $$
@@ -160,7 +148,13 @@ $$
 %	\isvalid{\phi}{P_1} \wedge \isvalid{\phi}{P_2} & \mbox{if } (\base{\phi}{P_1} == \base{\phi}{P_2}) \\
 %\bot & \mbox{else} 
 %\end{array} \right .\\
+
+\DK{\phi}{P} & \Leftrightarrow & \isvalid{\phi}{P}==\dk, \\
+\DK{\phi}{I} & \Leftrightarrow & \isvalid{\phi}{I}==\dk, \\ 
+
+
 \hline
+
 \end{array}
 $$
 
