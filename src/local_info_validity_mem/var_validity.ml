@@ -14,6 +14,12 @@ let is_intvar_or_ptvar ( v : Cil_types.varinfo ) =
       TInt(_,_) | TPtr(_,_) -> true
     | _ -> false
 
+(** Creates an empty table*)
+let new_valid_map _ =
+  let map_content = Validvarmap.empty in
+    Validlocmap( map_content )
+
+  
 
 let validity_of_byname ( loc_map : validity_loc_map ) ( varname : string ) =
   match loc_map with 
@@ -26,9 +32,6 @@ let validity_of_byname ( loc_map : validity_loc_map ) ( varname : string ) =
 	      Not_found -> raise Not_found
 	end
 	  
-
-
-
 (**  return a new validity mapping *)
 (** If a binding of v.vname already exists in the map, then it is replaced
 by the new validity information. *)
