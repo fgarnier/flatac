@@ -33,3 +33,25 @@ $$
 \hline
 \end{array}
 $$
+
+
+\subsection{propagation}
+
+\textbf{Assignation}
+
+\textbf{Assignation of the returned value of a function call}
+
+\textbf{Global variables : Monothread case, multithread case.}
+\begin{itemize}
+\item Monothread case : If a global variable is assigned a value
+from a valid variable or expression that have the same type, then
+its validity is set to true. However, If the control reaches a 
+function call, then this validity shall be reseted to $\dk$, unless
+one can garantee that the called function does not perform an access
+to this variable -- which goes beyond the scope of the current analysis. 
+
+\item Multithread case : Even if a global variable is assigned a valid
+value, it can be modified as soon as the control flow is peempted to another
+thread, that might perform an access to the global variable. In this case,
+the validity of this  function shall be set as the constant $\dk$.
+\end{itemize}
