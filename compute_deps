@@ -29,5 +29,5 @@ build_sub_makefiles () {
 }
 
 build_sub_makefiles "SSL/ global_mem/
-c_upon_sslandnts_sem/ flata_cautomata/"
+local_info_validity_mem/ c_upon_sslandnts_sem/ flata_cautomata/"
 echo ""

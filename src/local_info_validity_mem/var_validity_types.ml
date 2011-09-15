@@ -19,5 +19,5 @@ module  Validvarmap = Map.Make ( struct
 
 open Validvarmap
 
-type validity_loc_map = Validlocmap of string t 
+type validity_loc_map = Validlocmap of var_valid_entry t 
    
