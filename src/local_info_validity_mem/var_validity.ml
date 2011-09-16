@@ -62,6 +62,95 @@ let validity_of  ( loc_map : validity_loc_map ) (v : Cil_types.varinfo ) =
 	  end
 
 
+let and_sym_validity (vg : var_valid )( vd : var_valid) =
+  match vg , vd with
+      ( TruevarValid, TruevarValid) -> TruevarValid
+    | (FalsevarValid,_) -> FalsevarValid
+    | (_,FalsevarValid) -> FalsevarValid
+    | (_,_) -> DKvarValid (* In this case, we have a TruevarValid and a
+			     DKvarValid or two DKvarvalid, hence a Don't 
+			     know*)
+
+
+(** Determines wheter an arithmetic pointer expression evaluates
+to TruevarValid, FalsevarValid or DKvarValid.*)
+
+let rec valid_sym_cscal ( loc_map : validity_loc_map ) (sslf : ssl_formula )
+ ( scal : c_scal) =
+  match scal with
+      LiVar(_ , LiIntVar(vname)) -> validity_of_byname loc_map vname
+    | LiConst(_) -> TruevarValid
+    | LiSymConst(_) -> TruevarValid
+    
+    | LiProd ( cscalg, cscald ) ->
+	begin
+	  let fg = valid_sym_cscal loc_map sslf cscalg in
+	  let fd = valid_sym_cscal loc_mapp sslf cscald in
+	    and_sym_valid fg fd
+	end
+    
+    | LiSum (cscalg , cscald ) -> 
+	begin
+	  let fg = valid_sym_cscal loc_map sslf cscalg in
+	  let fd = valid_sym_cscal loc_map sslf cscald in
+	    and_sym_valid fg fd
+	end	  
+    
+    | LiMinus (cscalg , cscald ) -> 
+	begin
+	  let fg = valid_sym_cscal loc_map sslf cscalg in
+	  let fd = valid_sym_cscal loc_map sslf cscald in
+	    and_sym_valid fg fd
+	end
+    
+    |  LiUnMin (cscalg) -> valid_sym_cscal loc_map sslf cscalg
+    
+    |  LiMod(cscalg, cscald ) ->
+	 begin
+	  let fg = valid_sym_cscal loc_map sslf cscalg in
+	  let fd = valid_sym_cscal loc_map sslf cscald in
+	    and_sym_valid fg  fd 
+	 end 
+	 
+    | LiMinusPP ( ptrexpg , ptrexpd, _ ) ->
+	begin
+	  if not ( (base_ptrexp sslf ptrexpg)==(base_ptrexp sslf ptrexpd) )
+	  then FalseValid
+	  else 
+	    begin
+	      let fg = valid_ptrexp sslf ptrexpg in
+	      let fd = valid_ptrexp sslf ptrexpd in
+		and_valid fg fd 
+	    end
+	end
+	  
+and valid_ptrexp (sslf : ssl_formula ) ( ptrexp :  c_ptrexp ) =
+  match ptrexp with 
+      LiPVar ( _ , LiIntPtr(vname), _ ) ->  (PtValid(vname)) 
+    | LiPlusPI ( ptrexpprime , cscal , _) -> 
+	begin
+	  let fg = valid_ptrexp sslf ptrexpprime in
+	  let fd = valid_cscal sslf cscal in
+	    and_valid fg fd 
+	end
+	  
+    | LiIndexPI ( ptrexpprime , cscal , _) -> 
+	begin
+	  let fg = valid_ptrexp sslf ptrexpprime in
+	  let fd = valid_cscal sslf cscal in
+	    and_valid fg fd 
+	end
+
+    |  LiMinusPI ( ptrexpprime , cscal, _) -> 
+	begin
+	  let fg = valid_ptrexp sslf ptrexpprime in
+	  let fd = valid_cscal sslf cscal in
+	    and_valid fg fd 
+	end
+
+
+
+
 
 
 	 

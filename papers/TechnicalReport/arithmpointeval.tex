@@ -88,6 +88,34 @@ of a pointer arithmetic expression, in the sequel of this
 document.
 We use the symbols $\oplus$ and $\bowtie$, for $\oplus \in \lbrace + , \times  \rbrace$, and $\bowtie \in \lbrace \leq,\geq,<> \rbrace$.
 
+One of the operations that may be performed to evaluate the validity of a
+pointer aritmetical expression, is the comparison between the base address
+of two expression that represents some address. Sometime, the validity
+information of each variable and the memory abstaction expressed with
+a SSL formula $\phi$ is not sufficient to decide whether the base address
+of two memory address are equal or not. That's why, on define the $\samebase{\phi}{.}{.}$ operator, that is defined as :
+
+Condider $\phi$ a SSL formula, and let be $P_1$ and $P_2$ two expression that represent two addresses. Without loss of generality, consider two pointer variables be $x,y$ such that $x=\base{P_1}$ and $y=\base{P_2}$.
+
+So, the value of $\samebase{\phi}{P_1}{P_2}$ is defined as bellow :
+
+$$
+\begin{array}{|lll|}
+\hline 
+\true & \mbox{if } & \Pointsto{x}{l}\wedge\Pointsto{y}{l} \in \Pp{\phi}\\
+&&\\
+\dk & \mbox{if} & \left \lbrace 
+\begin{array}{l} 
+ \Pointsto{x}{l_1}\wedge\Pointsto{y}{l_2} \in \Pp{\phi} \ \mbox{and} \ l_1 \not\in \Sp{\phi}\wedge l_2\not\in\Sp{\phi} \\
+ \Pointsto{x}{l_1}\wedge\Pointsto{y}{l_2} \in \Pp{\phi} \ \mbox{and} \
+	l_i \in \Sp{\phi} \ \mbox{and} \ l_{\overline{i}} \not\in \Sp{\phi}
+	\end{array} \right . \\
+&&\\
+\false & \mbox{if}& \Pointsto{x}{l_1}\wedge\Pointsto{y}{l_2} \in \Pp{\phi} \ \mbox{and} \ \Sep{\Alloc{l_1}}{\Alloc{l_2}} \in \Sp{\phi} \\ 
+\hline
+\end{array} 
+$$ 
+
  The validity of a pointer expression, in a context $\phi$, is recusively evaluated as : 
 
 $$
@@ -100,7 +128,7 @@ $$
 %\isvalid{\phi}{x_1 - x_2} & :=&  (\base{\phi}{x_1}==\base{\phi}{x_2})\wedge \valid{x_1} \wedge \valid{x_2} \\
 &&\\
 \isvalid{\phi}{P_1-P_2} & :=& \left \lbrace \begin{array}{ll}
- \base{\phi}{P_1}==\base{\phi}{P_2} & \mbox{if } \isvalid{\phi}{P_1} \andmath \isvalid{\phi}{P_2} \\
+ \samebase{\phi}{P_1}{P_2} & \mbox{if } \isvalid{\phi}{P_1} \andmath \isvalid{\phi}{P_2} \\
 &\\
 \dk & \mbox{if } 
 \left \lbrace \begin{array}{l} \phantom{\mbox{ or }}\isvalid{\phi}{P_1} \ \andmath \ \DK{\phi}{P_2} \\ 

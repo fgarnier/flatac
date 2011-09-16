@@ -35,8 +35,18 @@ let rec base_ptrexp (sslf : ssl_formula )( ptr_exp : c_ptrexp ) =
     | LiMinusPI ( cptr , _ , _) -> base_ptrexp sslf cptr
   
 (** Generates counter based expressions that allow to determinate
-wheter an arithmetical expression is valid or not.
+whether an arithmetical expression is valid or not.
+
+!!! THIS FUNCTION OUGHT BE USED TO GENERATE THE GUARDS FOR FLATA,
+WHEN THE VALIDITY CAN'T BE STATICALLY DEDICED FROM THE ABSTRACT
+DOMAIN ( SSL*NTS_COUNTERS ).
+THIS function performs a TRANSLATION.
+
+IT shall not be confuse with Var_validity.validity_of and consort.
+
+
 *)
+
 let rec valid_cscal (sslf : ssl_formula ) ( scal : c_scal) =
   match scal with
       LiVar(_ , LiIntVar(vname)) -> IntValid(vname)

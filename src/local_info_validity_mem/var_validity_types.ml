@@ -2,9 +2,11 @@
 open Map
 
 
-type var_valid = TrueValid 
-		 | FalseValid
-		 | DKValid
+
+
+type var_valid = TruevarValid 
+		 | FalsevarValid
+		 | DKvarValid
 
 type var_cathegory = LocalVar
 		     | ParameterVar
