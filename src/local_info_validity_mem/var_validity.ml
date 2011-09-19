@@ -1,8 +1,13 @@
 open Var_validity_types
 open Cil_types
+open Ssl
+open Ssl_types
+open SSL_lex
+open Intermediate_language
 
 exception Neither_intvar_nor_ptvar
 exception Unregistered_var
+exception Relation_between_vars_out_of_ssl_context
 
 let compute_var_cathegory ( v : Cil_types.varinfo ) =
   if v.vformal then ParameterVar
@@ -47,6 +52,7 @@ let set_validity_in (loc_map : validity_loc_map ) ( v : Cil_types.varinfo )
 	  Validlocmap(res)
 
 
+
 let validity_of  ( loc_map : validity_loc_map ) (v : Cil_types.varinfo ) =
   if not (is_intvar_or_ptvar v) then
     raise Neither_intvar_nor_ptvar
@@ -62,8 +68,6 @@ let validity_of  ( loc_map : validity_loc_map ) (v : Cil_types.varinfo ) =
 	  end
 
 
-
-
 let and_sym_validity (vg : var_valid )( vd : var_valid) =
   match vg , vd with
       ( TruevarValid, TruevarValid) -> TruevarValid
@@ -73,40 +77,68 @@ let and_sym_validity (vg : var_valid )( vd : var_valid) =
 			     DKvarValid or two DKvarvalid, hence a Don't 
 			     know*)
 
+let same_base_meminfo sslf lvar1 lvar2 =
+  let lv1_allocated = Ssl.is_allocated  lvar1 sslf in
+  let lv2_allocated =  Ssl.is_allocated lvar2 sslf in
+    begin
+      if (Ssl.cmp_lex_lvar lvar1 lvar2 ) then TruevarValid 
+      else if ( lv1_allocated && lv2_allocated ) 
+      then FalsevarValid
+      else if ( ( lv1_allocated && not lv2_allocated ) 
+		|| ( lv2_allocated && not lv1_allocated )) then DKvarValid
+      else DKvarValid (* Neither lvar1 nor lvar2 belongs to the space 
+		      formula.*)
+    end
+    
 
-
-let sem_base (sslf : ssl_formula)( ptrexp : c_ptrexp )( ptrexp : c_ptrexp ) =
-  
-
+(** This function decides wheter two pointers have the base, or not, or
+answers DKvarValid if this question can't be statically decided.*)
+let same_base (sslf : ssl_formula)( ptrexp1 : c_ptrexp )( ptrexp2 : c_ptrexp ) =
+  let pvar_1 = Validity.base_var_ptrexp  ptrexp1 in
+  let pvar_2 = Validity.base_var_ptrexp  ptrexp2 in
+  let lvar_1 = Validity.base_ptrexp sslf ptrexp1 in
+  let lvar_2 = Validity.base_ptrexp sslf ptrexp2 in
+    begin
+      if (Ssl_decision.is_rel_in  pvar_1 lvar_1 sslf && 
+	    Ssl_decision.is_rel_in pvar_2 lvar_2 sslf )
+      then
+	same_base_meminfo sslf lvar_1 lvar_2
+	
+      else raise Relation_between_vars_out_of_ssl_context
+    end
+     
 (** Determines wheter an arithmetic pointer expression evaluates
 to TruevarValid, FalsevarValid or DKvarValid.*)
 
 let rec valid_sym_cscal ( loc_map : validity_loc_map ) (sslf : ssl_formula )
  ( scal : c_scal) =
   match scal with
-      LiVar(_ , LiIntVar(vname)) -> validity_of_byname loc_map vname
+      LiVar(_ , LiIntVar(vname)) -> 
+	let entry = validity_of_byname loc_map vname in
+	  entry.validity
+	    
     | LiConst(_) -> TruevarValid
     | LiSymConst(_) -> TruevarValid
     
     | LiProd ( cscalg, cscald ) ->
 	begin
 	  let fg = valid_sym_cscal loc_map sslf cscalg in
-	  let fd = valid_sym_cscal loc_mapp sslf cscald in
-	    and_sym_valid fg fd
+	  let fd = valid_sym_cscal loc_map sslf cscald in
+	    and_sym_validity fg fd
 	end
     
     | LiSum (cscalg , cscald ) -> 
 	begin
 	  let fg = valid_sym_cscal loc_map sslf cscalg in
 	  let fd = valid_sym_cscal loc_map sslf cscald in
-	    and_sym_valid fg fd
+	    and_sym_validity fg fd
 	end	  
     
     | LiMinus (cscalg , cscald ) -> 
 	begin
 	  let fg = valid_sym_cscal loc_map sslf cscalg in
 	  let fd = valid_sym_cscal loc_map sslf cscald in
-	    and_sym_valid fg fd
+	    and_sym_validity fg fd
 	end
     
     |  LiUnMin (cscalg) -> valid_sym_cscal loc_map sslf cscalg
@@ -115,43 +147,41 @@ let rec valid_sym_cscal ( loc_map : validity_loc_map ) (sslf : ssl_formula )
 	 begin
 	  let fg = valid_sym_cscal loc_map sslf cscalg in
 	  let fd = valid_sym_cscal loc_map sslf cscald in
-	    and_sym_valid fg  fd 
+	    and_sym_validity fg  fd 
 	 end 
 	 
     | LiMinusPP ( ptrexpg , ptrexpd, _ ) ->
 	begin
-	  if not ( (base_ptrexp sslf ptrexpg)==(base_ptrexp sslf ptrexpd) )
-	  then FalseValid
-	  else 
-	    begin
-	      let fg = valid_ptrexp sslf ptrexpg in
-	      let fd = valid_ptrexp sslf ptrexpd in
-		and_valid fg fd 
-	    end
+	      let fg = valid_sym_ptrexp loc_map sslf ptrexpg in
+	      let fd = valid_sym_ptrexp loc_map sslf ptrexpd in
+		and_sym_validity fg fd 
 	end
 	  
-and valid_ptrexp (sslf : ssl_formula ) ( ptrexp :  c_ptrexp ) =
+and valid_sym_ptrexp  ( loc_map : validity_loc_map ) (sslf : ssl_formula ) ( ptrexp :  c_ptrexp ) =
   match ptrexp with 
-      LiPVar ( _ , LiIntPtr(vname), _ ) ->  (PtValid(vname)) 
+      LiPVar ( _ , LiIntPtr(vname), _ ) ->  
+		let entry = validity_of_byname loc_map vname in
+		  entry.validity
+		    
     | LiPlusPI ( ptrexpprime , cscal , _) -> 
 	begin
-	  let fg = valid_ptrexp sslf ptrexpprime in
-	  let fd = valid_cscal sslf cscal in
-	    and_valid fg fd 
+	  let fg = valid_sym_ptrexp loc_map sslf ptrexpprime in
+	  let fd = valid_sym_cscal loc_map sslf cscal in
+	    and_sym_validity fg fd 
 	end
 	  
     | LiIndexPI ( ptrexpprime , cscal , _) -> 
 	begin
-	  let fg = valid_ptrexp sslf ptrexpprime in
-	  let fd = valid_cscal sslf cscal in
-	    and_valid fg fd 
+	  let fg = valid_sym_ptrexp loc_map sslf ptrexpprime in
+	  let fd = valid_sym_cscal loc_map sslf cscal in
+	    and_sym_validity fg fd 
 	end
 
     |  LiMinusPI ( ptrexpprime , cscal, _) -> 
 	begin
-	  let fg = valid_ptrexp sslf ptrexpprime in
-	  let fd = valid_cscal sslf cscal in
-	    and_valid fg fd 
+	  let fg = valid_sym_ptrexp loc_map  sslf ptrexpprime in
+	  let fd = valid_sym_cscal loc_map sslf cscal in
+	    and_sym_validity fg fd 
 	end
 
 

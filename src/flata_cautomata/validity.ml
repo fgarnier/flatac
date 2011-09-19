@@ -27,15 +27,15 @@ let and_valid fg fd =
 
 (** base_ptrexp(PTRexp) returns the locvar l such that PTRexp -> l*)
 
-let rec base_var_ptrexp (sslf : ssl_formula )( ptr_exp : c_ptrexp ) =
+let rec base_var_ptrexp ( ptr_exp : c_ptrexp ) =
    match ptr_exp with 
       LiPVar ( _ , LiIntPtr(vname), _ ) ->
 	PVar(vname) (* That's indeed the name of the pointer
 		    var we are looking for.*)
 
-    | LiPlusPI ( cptr , _ , _) -> base_ptrexp sslf cptr
-    | LiIndexPI ( cptr , _ , _) -> base_ptrexp sslf cptr
-    | LiMinusPI ( cptr , _ , _) -> base_ptrexp sslf cptr
+    | LiPlusPI ( cptr , _ , _) -> base_var_ptrexp  cptr
+    | LiIndexPI ( cptr , _ , _) -> base_var_ptrexp  cptr
+    | LiMinusPI ( cptr , _ , _) -> base_var_ptrexp  cptr
 
 let rec base_ptrexp (sslf : ssl_formula )( ptr_exp : c_ptrexp ) =
   match ptr_exp with 
