@@ -13,6 +13,19 @@ exception No_locvars_left
 exception Lvar_present
 exception Not_pointed
 
+
+let is_rel_in ( pvar : ptvar ) (lvar : locvar) ( sslf : ssl_formula ) =
+  let ptable = sslf.pure.affectations in
+    try
+      let ptvar_bounds = Hashtbl.find ptable pvar in
+	Hashtbl.mem  ptvar_bounds lvar (* If some ptvar->l bindings are 
+				      present, check that ptvar->lvar is
+				      indeed registered.*)
+    with
+ 	Not_found -> false (* there's no such pvar->l, hence the answer
+			   is false*)
+
+
 (** This function returns true if lvar isn't a bounded var
 of sslf and has at least on occurence of lvar*)
 let free_var (sslf : ssl_formula)(lvar : locvar ) =

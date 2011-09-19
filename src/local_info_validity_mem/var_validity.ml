@@ -62,6 +62,8 @@ let validity_of  ( loc_map : validity_loc_map ) (v : Cil_types.varinfo ) =
 	  end
 
 
+
+
 let and_sym_validity (vg : var_valid )( vd : var_valid) =
   match vg , vd with
       ( TruevarValid, TruevarValid) -> TruevarValid
