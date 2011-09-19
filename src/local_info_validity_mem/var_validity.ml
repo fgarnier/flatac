@@ -74,6 +74,10 @@ let and_sym_validity (vg : var_valid )( vd : var_valid) =
 			     know*)
 
 
+
+let sem_base (sslf : ssl_formula)( ptrexp : c_ptrexp )( ptrexp : c_ptrexp ) =
+  
+
 (** Determines wheter an arithmetic pointer expression evaluates
 to TruevarValid, FalsevarValid or DKvarValid.*)
 

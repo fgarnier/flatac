@@ -516,6 +516,21 @@ spacial part of a SSL formula *)
 quantified in the formula, false in any other cases *)
   let is_exists_quantified (lvar : locvar ) (sslf : ssl_formula ) =
     Hashtbl.mem sslf.quant_vars lvar
+
+ (** This function returns true if one and only one occurence of Alloc(lvar)
+belong belongs to the spacial part, and false if the other case.*)
+  let is_allocated (lvar : locvar ) (sslf : ssl_formula ) =
+    match sslf.space with
+	Space(space_table) ->
+	  begin
+	    try
+	      let occurence = Hashtbl.find space_table lvar in
+		if occurence == 1 then true
+		else false
+	    with
+		Not_found -> false
+	  end
+      | Top_heap -> raise Top_heap_exception
     
 
 (** Checks whether a ssl contains an instance of a location variable*)

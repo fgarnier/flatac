@@ -25,6 +25,7 @@ let and_valid fg fd =
     | ( TrueValid, TrueValid ) -> TrueValid
     | ( a , b) -> AndValid(a,b)
 
+(** base_ptrexp(PTRexp) returns the locvar l such that PTRexp -> l*)
 let rec base_ptrexp (sslf : ssl_formula )( ptr_exp : c_ptrexp ) =
   match ptr_exp with 
       LiPVar ( _ , LiIntPtr(vname), _ ) ->
