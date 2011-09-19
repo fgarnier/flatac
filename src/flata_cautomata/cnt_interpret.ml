@@ -27,6 +27,8 @@ open Nts_types
 
 exception Unhandled_valuetype_in_interpretciltypesize
 
+
+
 (** Creates the sizeof variable from the name stored
 in tinfo.tname.*)
 let sizeof_cil_tinfo ( tinfo : Cil_types.typeinfo ) =
@@ -65,6 +67,15 @@ let int_var_cnt_name ( cexpr : c_scal) =
    match cexpr with
       LiVar(_,LiIntVar(vname)) -> CntVar(NtsIVar( "intvar("^vname^")" ))
     | _ -> raise Not_LiVar
+
+let lvarbase_cnt_name ( lvar : locvar ) =
+  match lvar with
+    | LVar (vname) -> CntVar(NtsIVar(vname^"_base_addr"))
+
+let lvarsize_cnt_name ( lvar : locvar ) =
+  match lvar with 
+    | LVar (vname ) -> CntVar(NtsIVar(vname^"_size_of_segment"))
+
 
 let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
   match scalexp with 

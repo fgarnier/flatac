@@ -1,7 +1,10 @@
 (***********************************************************************)
-(* This files contains the functions that allows to determine wheter
-some aritmetic expressions that might contain pointers are valid w.r.t.
-the notion of validity introduced in the technical report. 
+(* 
+
+This files contains the functions that allow to translate the validity
+conditions concerning pointer arithmetic expressions into NTS systems
+expressions.
+
 
 Questions and/or remarks : mail to florent dot garnier At imag dot fr
 **********************************************************************)
