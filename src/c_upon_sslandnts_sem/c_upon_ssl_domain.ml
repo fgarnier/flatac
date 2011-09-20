@@ -32,13 +32,30 @@ exception Loc_is_a_constant of int64
 
 
 
-let make_offset_locpvar (v : pvar ) =
+let make_offset_locpvar (v : ptvar ) =
   match  v  with 
       PVar ( s ) -> let soff =
 	s^"_off" in
 	CntVar(NtsIVar(soff))
 
-let make_size_locvar ( v : pvar ) () =
+
+
+(** If used to descibe a malloc creation of a mem segment,
+this function must be called AFTER the generation of the
+ssl formula, to get the good gmid identificator.*)
+let make_size_locvar ( l : locvar ) (mid : global_mem_manager ) ( block_size : cnt_arithm_exp) =
+  match l with
+      LVar( vname ) -> 
+	let id_seg = mid#get_last_mid () in
+	let lbase_name = vname^"_base" in
+	let lsize_name = vname^"_size" in
+	let cnt_lbase = CntVar(NtsIVar(lbase_name)) in
+	let cnt_lsize = CntVar(NtsIVar(lsize_name)) in
+	let affect_list = (CntAffect(cnt_lbase,CntCst(is_seg))::[] ) in
+	let affect_list = CntAffect(cnt_lszie,block_size) in
+	affect_list
+
+  
 	
 
 
@@ -283,6 +300,26 @@ let next_on_affectations  ( sslf :ssl_formula) ( instruction : Cil_types.instr) 
   
 *)	  
 
+
+(** returns the list of translablels that corresponds to the affectation
+of some memory block*)
+let affect_lbase_lsize_malloc ( affect_pvar : option ptvar ) (interpret_malloc_param: cnt_arithm_exp) (sslf : ssl_formula ) =
+  let list_translabel = []
+  in 
+  let
+  
+   match affect_pvar with
+      None -> 
+    | Some ( pvar ) ->
+      begin
+	
+	let pvar_cnt_offset = Cnt_interpret.offset_cnt_of_pvar pvar in
+	
+	
+      end
+      
+	
+  
 
 (** The evaluation of the abstract prior the application
 of malloc is needed to compute the guards on the
