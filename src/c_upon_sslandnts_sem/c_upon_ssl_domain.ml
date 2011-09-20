@@ -336,7 +336,27 @@ let malloc_ssl_nts_transition ( v : Cil_types.varinfo ) sslv  lparam mid  =
 	let valid_sym_guard = valid_sym_scal locmap sslv.ssl_part scal_param in  
 	match valid_sym_guard with 
 	    TruevarValid ->
+	      begin
+		let new_abstract = copy_validity_absdomain sslv in
+		malloc_upon_ssl Some(v) new_abstract.ssl_part;
+		let valid_paral_malloc = valid_cscal sslf_pre scal_param in
+		let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
+		let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
+		  scal_param in
+		let interpret_gt_zero = CntBool(CntGT,interpret_param,CntCst(0))
+		in
+		let good_malloc_guard = CntBAnd(validity_guard_cnt,interpret_gt_zero)
+	    in 
+		let list_locvar_cnt_affect = make_size_locvar l mid interpret_param in
+		let cnt_ptvar_offset =  make_offset_locpvar (PVar(v.vname)) in
+		let zero_pvar_offset =  CntAffect( cnt_pvar_offset, CntCst(0)) in
+		let ret_list =  good_malloc_guard :: list_locvar_cnt_affect in
+		let ret_list = zero_pvar_offset :: ret_list in
+		( new_abstract , ret_list)
+	      end
+	      
 	  | FalsevarValid ->
+	    [] (* In this case, the empty list is returned*)
 	  | DKvarValid ->
 	    let valid_paral_malloc = valid_cscal sslf_pre scal_param in
 	    let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
