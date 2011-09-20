@@ -77,6 +77,10 @@ let and_sym_validity (vg : var_valid )( vd : var_valid) =
 			     DKvarValid or two DKvarvalid, hence a Don't 
 			     know*)
 
+(** Checks whether the ssl formula sslf provides a sufficiently detailed
+abstraction of the stack/heap to decide whether lvar1 and lvar2 have
+the same base address*)
+
 let same_base_meminfo sslf lvar1 lvar2 =
   let lv1_allocated = Ssl.is_allocated  lvar1 sslf in
   let lv2_allocated =  Ssl.is_allocated lvar2 sslf in

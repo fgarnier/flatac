@@ -56,22 +56,28 @@ let interpret_ciltypes_size (ciltype : Cil_types.typ ) =
     | TNamed(tinfo, _ ) -> sizeof_cil_tinfo tinfo 
     | _ -> raise  Unhandled_valuetype_in_interpretciltypesize
 
-(** This function aims at computing the name of the couter var name
+(** This function aims at computing the name of the counter var name
 associated to the offset of a pointer variable*)
 let offset_cnt_name ( ptvar : c_ptrexp ) =  
   match ptvar with
       LiPVar(_,LiIntPtr(vname),_) -> CntVar ( NtsIVar("offset("^vname^")") )
     | _ -> raise Not_LiPVar
   
+
 let int_var_cnt_name ( cexpr : c_scal) =
    match cexpr with
       LiVar(_,LiIntVar(vname)) -> CntVar(NtsIVar( "intvar("^vname^")" ))
     | _ -> raise Not_LiVar
 
+
+(** This function returns a counter associated to base address of a location
+variable. This function is used to model a memory allocation. See thechnical
+report and the section dedicated to malloc. *)
 let lvarbase_cnt_name ( lvar : locvar ) =
   match lvar with
     | LVar (vname) -> CntVar(NtsIVar(vname^"_base_addr"))
 
+(** Same as above, but for the size of a segment allocation.*)
 let lvarsize_cnt_name ( lvar : locvar ) =
   match lvar with 
     | LVar (vname ) -> CntVar(NtsIVar(vname^"_size_of_segment"))

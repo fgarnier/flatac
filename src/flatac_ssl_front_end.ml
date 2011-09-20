@@ -42,8 +42,12 @@ class ssl_flatac_front_end = object
     Ssl_pprinters.pprint_ssl_formula_tex sslv.ssl_part
 
     
-  method next (sslv :ssl_validity_absdom )(translist : trans_lanel list)
+  method next (sslv :ssl_validity_absdom )(translist : trans_label list)
     (skind : Cil_types.stmtkind) =
+   (** we now need to copy the current sslf_formula of sslv. 
+       validinfo is not a persistant structure, as it is based
+       upon a standard library Map.
+   *)
     let sslf_local = Ssl.copy sslf in
     C_upon_ssl_domain.next_on_ssl mid sslf_local skind trans_list; 
     (sslf_local , ())::[]
