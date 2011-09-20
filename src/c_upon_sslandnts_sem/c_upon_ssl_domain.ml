@@ -290,17 +290,23 @@ transition. This value is passed as the sslf_pre paramater,
 and the value sslf_post is used to express the successful
 application of the malloc call. i.e. when the condition
 expressed by the guards are met.*)
-let malloc_ssl_nts_transition ( v : Cil_types.varinfo option ) sslf_pre sslf_post  lparam  = 
+let malloc_ssl_nts_transition ( v : Cil_types.varinfo option ) sslv  lparam  = 
   (** Case of a malloc success *)
-  let l = List.hd lparam in
-  let scal_param = cil_expr_2_scalar l in
-  let interpret_param_malloc = interpret_c_scal_to_cnt sslf_pre scal_param in
-  let valid_paral_malloc = valid_cscal sslf_pre scal_param in
-  let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
-  let good_precondition = 
+  match sslv.validinfo with
+      Validlocmap (locmap ) -> 
+	let l = List.hd lparam in (* malloc takes one and only one input parameter.*)
+	let scal_param = cil_expr_2_scalar l in
+	let valid_sym_guard = valid_sym_scal locmap sslv.ssl_part scal_param in  
+	match valid_sym_guard with 
+	    TruevarValid ->
+	  | FalsevarValid ->
+	  | DKvarValid ->
+	    let valid_paral_malloc = valid_cscal sslf_pre scal_param in
+	    let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
+	    let good_precondition = 
 
     
-
+(*
 let  generate_list_of_transitions sslf  instr =
   match instr with 
 
@@ -386,7 +392,7 @@ let  generate_list_of_transitions sslf  instr =
 		*)
  
 
-
+*)
 (*
 
  We shall do the following thing :
