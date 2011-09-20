@@ -16,6 +16,11 @@ open Self
 open Int64
 open Ssl_normalization
 open Ssl_pprinters
+open Ssl_validity_absdomain (* This type defines 2-uples of ssl_formual and
+			    a validity_loc_map*)
+open  Ssl_validity_abs_dom (*Contains the copy_validity_absdomain function*)
+
+
 
 exception No_pvar_in_free_expression
 exception Wrong_parameter_type_in_free

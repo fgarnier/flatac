@@ -17,6 +17,7 @@ open Nts_types
 open Global_mem
 open Ssl_validity_absdomain (* This type defines 2-uples of ssl_formual and
 			    a validity_loc_map*)
+open  Ssl_validity_abs_dom (*Contains the copy_validity_absdomain function*)
 
 open Self
 
@@ -42,7 +43,7 @@ class ssl_flatac_front_end = object
     Ssl_pprinters.pprint_ssl_formula_tex sslv.ssl_part
 
     
-  method next (sslv :ssl_validity_absdom )(translist : trans_label list)
+  method next (sslv : ssl_validity_absdom )(translist : trans_label list)
     (skind : Cil_types.stmtkind) =
    (** we now need to copy the current sslf_formula of sslv. 
        validinfo is not a persistant structure, as it is based
