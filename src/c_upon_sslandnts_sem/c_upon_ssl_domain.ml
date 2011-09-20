@@ -282,7 +282,7 @@ and heap.
 The parameter mid shall be an instance of the global_mem_manager class.
  *)
 
-let next_on_ssl (mid : global_mem_manager ) (sslf : ssl_formula ) (skind : Cil_types.stmtkind ) _  =
+let next_on_ssl (mid : global_mem_manager ) (sslv  ) (skind : Cil_types.stmtkind ) _  =
   match skind with 
       Instr ( instruction ) ->  next_on_ssl_instr  mid sslf instruction;
 	let message = ("\n Formula : "^(Ssl_pprinters.pprint_ssl_formula sslf)^"\n") in
@@ -327,7 +327,7 @@ transition. This value is passed as the sslf_pre paramater,
 and the value sslf_post is used to express the successful
 application of the malloc call. i.e. when the condition
 expressed by the guards are met.*)
-let malloc_ssl_nts_transition ( v : Cil_types.varinfo option ) sslv  lparam  = 
+let malloc_ssl_nts_transition ( v : Cil_types.varinfo ) sslv  lparam mid  = 
   (** Case of a malloc success *)
   match sslv.validinfo with
       Validlocmap (locmap ) -> 
@@ -344,8 +344,14 @@ let malloc_ssl_nts_transition ( v : Cil_types.varinfo option ) sslv  lparam  =
 	      scal_param in
 	    let interpret_gt_zero = CntBool(CntGT,interpret_param,CntCst(0))
 	    in
-	    let good_malloc_guart = CntBAnd(validity_guard_cnt,interpret_gt_zero)
-	    in
+	    let good_malloc_guard = CntBAnd(validity_guard_cnt,interpret_gt_zero)
+	    in 
+	    let list_locvar_cnt_affect = make_size_locvar l mid interpret_param in
+	    let cnt_ptvar_offset =  make_offset_locpvar (PVar(v.vname)) in
+	    let zero_pvar_offset =  CntAffect( cnt_pvar_offset, CntCst(0)) in
+	    let ret_list =  good_malloc_guard :: list_locvar_cnt_affect in
+	    let ret_list = zero_pvar_offset :: ret_list in
+	    ret_list
 	    
 
     
