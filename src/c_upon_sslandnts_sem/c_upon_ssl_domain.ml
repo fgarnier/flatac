@@ -16,9 +16,12 @@ open Self
 open Int64
 open Ssl_normalization
 open Ssl_pprinters
-open Ssl_validity_absdomain (* This type defines 2-uples of ssl_formual and
+open Ssl_valid_abs_dom_types (* This type defines 2-uples of ssl_formual and
 			    a validity_loc_map*)
-open  Ssl_validity_abs_dom (*Contains the copy_validity_absdomain function*)
+open Ssl_valid_abs_dom (*Contains the copy_validity_absdomain function*)
+open Nts_types
+open Intermediate_language
+open Cnt_interpret
 
 
 
@@ -36,7 +39,7 @@ let make_offset_locpvar (v : ptvar ) =
   match  v  with 
       PVar ( s ) -> let soff =
 	s^"_off" in
-	CntVar(NtsIVar(soff))
+	NtsIVar(soff)
 
 
 
@@ -49,10 +52,10 @@ let make_size_locvar ( l : locvar ) (mid : global_mem_manager ) ( block_size : c
 	let id_seg = mid#get_last_mid () in
 	let lbase_name = vname^"_base" in
 	let lsize_name = vname^"_size" in
-	let cnt_lbase = CntVar(NtsIVar(lbase_name)) in
-	let cnt_lsize = CntVar(NtsIVar(lsize_name)) in
-	let affect_list = (CntAffect(cnt_lbase,CntCst(is_seg))::[] ) in
-	let affect_list = CntAffect(cnt_lszie,block_size) in
+	let cnt_lbase = NtsIVar(lbase_name) in
+	let cnt_lsize = NtsIVar(lsize_name) in
+	let affect_list = (CntAffect(cnt_lbase,CntCst(id_seg))::[] ) in
+	let affect_list = CntAffect(cnt_lsize,block_size) in
 	affect_list
 
 
@@ -287,10 +290,10 @@ The parameter mid shall be an instance of the global_mem_manager class.
 
 let next_on_ssl (mid : global_mem_manager ) (sslv  ) (skind : Cil_types.stmtkind ) _  =
   match skind with 
-      Instr ( instruction ) ->  next_on_ssl_instr  mid sslf instruction;
-	let message = ("\n Formula : "^(Ssl_pprinters.pprint_ssl_formula sslf)^"\n") in
+      Instr ( instruction ) ->  next_on_ssl_instr  mid sslv.ssl_part instruction;
+	let message = ("\n Formula : "^(Ssl_pprinters.pprint_ssl_formula sslv.ssl_part)^"\n") in
 	Format.printf "%s \n" message;
-	normalize_ssl sslf
+	normalize_ssl sslv.ssl_part
     | _ -> ()
 
 
@@ -327,17 +330,17 @@ let affect_lbase_lsize_malloc ( affect_pvar : option ptvar ) (interpret_malloc_p
   
 (** This function computes the heap shape after a successful call to malloc,
 i.e. when Valid(I) and [I]_{\phi} > 0*)
-let r_malloc_succ (v : Cil_types.varinfo ) sslv l (mid: global_mem ) (scal_param : c_scal) =
+let r_malloc_succ (v : Cil_types.varinfo ) sslv l (mid: global_mem_manager ) (scal_param : c_scal) =
   let new_abstract = copy_validity_absdomain sslv in
-  malloc_upon_ssl Some(v) new_abstract.ssl_part;
+  malloc_upon_ssl (Some(v)) mid new_abstract.ssl_part;
   let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
     scal_param in
-  let interpret_gt_zero = CntBool(CntGT,interpret_param,CntCst(0)) in
+  let interpret_gt_zero = CntBool(CntGt,interpret_param,CntCst(0)) in
   let list_locvar_cnt_affect = make_size_locvar l mid interpret_param in
   let cnt_ptvar_offset =  make_offset_locpvar (PVar(v.vname)) in
-  let zero_pvar_offset =  CntAffect( cnt_pvar_offset, CntCst(0)) in
-  let transit_list =  interpret_gt_zero :: list_locvar_cnt_affect in
-  let transit_list = zero_pvar_offset :: ret_list in
+  let zero_pvar_offset =  CntAffect( cnt_ptvar_offset, CntCst(0)) in
+  let transit_list =  (CntGuard(interpret_gt_zero)) :: (list_locvar_cnt_affect :: []) in
+  let transit_list = zero_pvar_offset :: transit_list in
   let ret_list = ( new_abstract , transit_list) :: [] in
   ret_list
 
