@@ -376,6 +376,21 @@ let r_malloc_neg_or_zero_arg (v : Cil_types.varinfo ) sslv l (mid: global_mem ) 
   let ret_list = ((new_abstract, (interpret_leq_zero :: []))::[] ) in
   ret_list
 
+let r_malloc_neg_or_zero_arg_withvalidityguard (v : Cil_types.varinfo ) sslv l (mid: global_mem ) (scal_param : c_scal) =
+  let new_abstract = copy_validity_absdomain sslv in
+  let pvar = PVar( v.vname ) in
+  let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
+  let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
+  let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
+    scal_param in
+  let aff_to_nil = Pointstonil(pvar) in
+  and_atomic_ptnil aff_to_nil new_abstract.ssl_part;
+  let interpret_leq_zero = CntBool(CntLeq,interpret_param,CntCst(0)) 
+  in 
+  let guard = CntBAnd(validity_guard_cnt,interpret_leq_zero) in 
+  let ret_list = ((new_abstract, (guard :: []))::[] ) in
+  ret_list
+
 
 let r_malloc_failed_with_unvalidcntgard (v : Cil_types.varinfo ) sslv l (mid: global_mem ) (scal_param : c_scal) =
   let abst_domain = create_validity_abstdomain in
@@ -410,44 +425,29 @@ let malloc_ssl_nts_transition ( v : Cil_types.varinfo ) sslv  lparam mid  =
 	match valid_sym_guard with 
 	    TruevarValid ->
 	      (*In this case, two transitions are allowed, corresponding
-	      to the cases where the interpretation of the paramater is
-	      positive or negative. The positiveness can't be checked
+		to the cases where the interpretation of the paramater is
+		positive or negative. The positiveness can't be checked
 	      before runtime, hence we have to generate both transition
-	      so that flata can do the job.*)
+		so that flata can do the job.*)
 	      begin
 		let ret_list = r_malloc_succ v sslv l mid in
 		let ret_list = (r_malloc_neg_or_zero_arg v sslv l mid)@ret_list 
 		in
 		ret_list
 	      end
-	      
+		
 	  | FalsevarValid ->
 	    let abs_domain = create_validity_abstdomain in
 	    set_heap_to_top abst_domain.ssl_part ;
 	    (abs_domain,[])::[] (** in this case, we transit right to an error
 				state*)
-	     (* In this case, the empty list is returned*)
+	  (* In this case, the empty list is returned*)
 	  | DKvarValid ->
 	    let ret_list =  r_malloc_succ__withvalidcntguard  v sslv l mid in
-	    let ret_list = (r_malloc_neg_or_zero_arg v sslv l mid)@ret_list 
-	    
-
-
-
-	    let valid_paral_malloc = valid_cscal sslf_pre scal_param in
-	    let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
-	    let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
-	      scal_param in
-	    let interpret_gt_zero = CntBool(CntGT,interpret_param,CntCst(0))
-	    in
-	    let good_malloc_guard = CntBAnd(validity_guard_cnt,interpret_gt_zero)
-	    in 
-	    let list_locvar_cnt_affect = make_size_locvar l mid interpret_param in
-	    let cnt_ptvar_offset =  make_offset_locpvar (PVar(v.vname)) in
-	    let zero_pvar_offset =  CntAffect( cnt_pvar_offset, CntCst(0)) in
-	    let ret_list =  good_malloc_guard :: list_locvar_cnt_affect in
-	    let ret_list = zero_pvar_offset :: ret_list in
+	    let ret_list = (r_malloc_neg_or_zero_arg_withvalidityguard v sslv l mid)@ret_list in
+	    let ret_list = (r_malloc_failed_with_unvalidcntgard v sslv l mid)@ret_list in
 	    ret_list
+	    
 	    
 
     
