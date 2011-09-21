@@ -321,15 +321,18 @@ let affect_lbase_lsize_malloc ( affect_pvar : option ptvar ) (interpret_malloc_p
 	
       end
       
-*)	
-  
+*)
 
+	
+  
+(** This function computes the heap shape after a successful call to malloc,
+i.e. when Valid(I) and [I]_{\phi} > 0*)
 let r_malloc_succ (v : Cil_types.varinfo ) sslv l (mid: global_mem ) (scal_param : c_scal) =
   let new_abstract = copy_validity_absdomain sslv in
   malloc_upon_ssl Some(v) new_abstract.ssl_part;
   let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
     scal_param in
-  let interpret_gt_zero = CntBool(CntGT,interpret_param,CntCst(0))
+  let interpret_gt_zero = CntBool(CntGT,interpret_param,CntCst(0)) in
   let list_locvar_cnt_affect = make_size_locvar l mid interpret_param in
   let cnt_ptvar_offset =  make_offset_locpvar (PVar(v.vname)) in
   let zero_pvar_offset =  CntAffect( cnt_pvar_offset, CntCst(0)) in
@@ -340,8 +343,7 @@ let r_malloc_succ (v : Cil_types.varinfo ) sslv l (mid: global_mem ) (scal_param
 
 
 
-(** This function computes the heap shape after a successful call to malloc,
-i.e. when Valid(I) and [I]_{\phi} > 0*)
+(** Same function as above, but includes an extra guar that express which constraints the counter evaluation shall satisfy so that Valid(I) is true. *)
 let r_malloc_succ_withvalidcntguard (v : Cil_types.varinfo ) sslv l (mid: global_mem ) (scal_param : c_scal) =
   let new_abstract = copy_validity_absdomain sslv in
   malloc_upon_ssl Some(v) new_abstract.ssl_part;
@@ -376,6 +378,8 @@ let r_malloc_neg_or_zero_arg (v : Cil_types.varinfo ) sslv l (mid: global_mem ) 
   let ret_list = ((new_abstract, (interpret_leq_zero :: []))::[] ) in
   ret_list
 
+(** Same as above, but includes a NTS guard that express the validity condition
+w.r.t. counters assigne values.*)
 let r_malloc_neg_or_zero_arg_withvalidityguard (v : Cil_types.varinfo ) sslv l (mid: global_mem ) (scal_param : c_scal) =
   let new_abstract = copy_validity_absdomain sslv in
   let pvar = PVar( v.vname ) in

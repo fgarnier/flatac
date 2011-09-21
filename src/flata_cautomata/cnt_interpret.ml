@@ -56,8 +56,8 @@ let interpret_ciltypes_size (ciltype : Cil_types.typ ) =
     | TNamed(tinfo, _ ) -> sizeof_cil_tinfo tinfo 
     | _ -> raise  Unhandled_valuetype_in_interpretciltypesize
 
-let offset_cnt_of_pvar (ptvar : pvar) =
-  match ptvar with 
+let offset_cnt_of_pvar (pvar : ptvar) =
+  match pvar with 
       PVar(vname) -> CntVar ( NtsIVar("offset("^vname^")") )
 
 (** This function aims at computing the name of the counter var name

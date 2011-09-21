@@ -1,7 +1,9 @@
 open Ssl_types
 open Ssl
 open SSL_lex
-open Ssl_validity_absdomain
+open Ssl_valid_abs_dom_types
+open Var_validity_types
+open Var_validity
 
 
 let create_validity_abstdomain = 
@@ -18,7 +20,7 @@ let copy_validity_absdomain (v : ssl_validity_absdom ) =
   let sslf = Ssl.copy v.ssl_part in
   let ret_val = {
     ssl_part =  sslf;
-    validinfo = v.validinfo ;
+    validinfos = v.validinfos ;
   }
   in 
   ret_val
