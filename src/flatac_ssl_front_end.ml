@@ -51,8 +51,8 @@ class ssl_flatac_front_end = object
        upon a standard library Map.
    *)
     let sslv_local =Ssl_valid_abs_dom.copy_validity_absdomain sslv in
-    C_upon_ssl_domain.next_on_ssl mid sslv_local skind translist; 
-    (sslf_local , ())::[]
+    C_upon_ssl_domain.next_on_ssl_nts mid sslv_local skind; (* translist;*) 
+    (sslv_local , ())::[]
     
 
  
