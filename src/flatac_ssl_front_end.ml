@@ -15,9 +15,10 @@ open C_upon_ssl_domain (* Contains the semantic tranformation
 		       of the C instruction on the SSL formulae*)
 open Nts_types
 open Global_mem
-open Ssl_validity_absdomain (* This type defines 2-uples of ssl_formual and
+ (* This type defines 2-uples of ssl_formual and
 			    a validity_loc_map*)
-open  Ssl_validity_abs_dom (*Contains the copy_validity_absdomain function*)
+open  Ssl_valid_abs_dom_types
+open  Ssl_valid_abs_dom (*Contains the copy_validity_absdomain function*)
 
 open Self
 
@@ -31,7 +32,7 @@ class ssl_flatac_front_end = object
     []
 
   method get_entry_point_abstraction () =
-    Ssl.create_ssl_f ()
+     Ssl_valid_abs_dom.create_validity_abstdomain
 
   method is_error_state (sslv : ssl_validity_absdom ) =
     match sslv.ssl_part.space with
@@ -43,14 +44,14 @@ class ssl_flatac_front_end = object
     Ssl_pprinters.pprint_ssl_formula_tex sslv.ssl_part
 
     
-  method next (sslv : ssl_validity_absdom )(translist : trans_label list)
+  method next (sslv : ssl_validity_absdom )(translist : Nts_types.cnt_trans_label list)
     (skind : Cil_types.stmtkind) =
    (** we now need to copy the current sslf_formula of sslv. 
        validinfo is not a persistant structure, as it is based
        upon a standard library Map.
    *)
-    let sslf_local = Ssl.copy sslf in
-    C_upon_ssl_domain.next_on_ssl mid sslf_local skind trans_list; 
+    let sslv_local =Ssl_valid_abs_dom.copy_validity_absdomain sslv in
+    C_upon_ssl_domain.next_on_ssl mid sslv_local skind translist; 
     (sslf_local , ())::[]
     
 
