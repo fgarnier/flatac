@@ -64,11 +64,6 @@ let make_size_locvar ( l : locvar ) (mid : global_mem_manager ) ( block_size : c
 
 
 
-
-  
-	
-
-
 (** This function aims at getting the first variable name
 of the list of parameters. Might be useful if some parameter
 expressions are prefixed by a cast or any other ugly stuff so
@@ -131,13 +126,15 @@ des parametres \n" ;
 	   
 
 
-let affect_ptr_upon_ssl (v : Cil_types.varinfo)  (expr : Cil_types.exp) (sslf : ssl_formula ) =
+let affect_ptr_upon_sslv (v : Cil_types.varinfo)  (expr : Cil_types.exp) (sslv : ssl_validity_absdom ) =
   Self.debug ~level:0 "Im am in affect_ptr_upon_ssl \n";
   try
     let pvar_left = (PVar(v.vname)) in
     let pvar_right = get_pvar_from_exp expr in
-    let lvar_right = get_ptr_affectation sslf pvar_right  in
-    Ssl.change_affect_var (Pointsto(pvar_left,lvar_right)) sslf 
+    let lvar_right = get_ptr_affectation sslv.ssl_part pvar_right  in
+    Ssl.change_affect_var (Pointsto(pvar_left,lvar_right)) sslv.ssl_part;
+    ((sslv,[])::[]) (* TODO : Update the validity of the lval pointer 
+		    variable.*)
   with
       Not_found -> Self.debug ~level:0 "Undefined right member in affectation, affect_ptr_upon_ssl crash"; raise Not_found
     | Loc_is_nil -> and_atomic_ptnil (Pointsnil((PVar(v.vname)))) sslf
@@ -146,15 +143,16 @@ let affect_ptr_upon_ssl (v : Cil_types.varinfo)  (expr : Cil_types.exp) (sslf : 
 
 (** This function modifies the sslf formula that abstracts the current
 heap and stack when a call to malloc is performed.*)
-let malloc_upon_ssl  ( v : Cil_types.varinfo option ) ( mid : global_mem_manager )  (sslf : ssl_formula ) =
+let malloc_upon_sslv  ( v : Cil_types.varinfo option ) ( mid : global_mem_manager )  (sslv : ssl_validity_absdom ) =
   match v with Some (vinfo) ->
     let lvar = mid#lvar_from_malloc () in
     let pvar = (PVar(vinfo.vname)) in
     let affect = (Pointsto (pvar,lvar)) in
-    Ssl.add_quant_var lvar sslf;
-    Ssl.change_affect_var affect sslf;
-    Ssl.add_alloc_cell lvar sslf
-      
+    Ssl.add_quant_var lvar sslv.ssl_part;
+    Ssl.change_affect_var affect sslv.ssl_part;
+    Ssl.add_alloc_cell lvar sslv.ssl_part
+      (*TODO : Need to set the left value pointer var validity 
+	as TruevarValid*)
     | None ->
        let lvar = mid#lvar_from_malloc () in
        Ssl.add_quant_var lvar sslf;
@@ -162,72 +160,22 @@ let malloc_upon_ssl  ( v : Cil_types.varinfo option ) ( mid : global_mem_manager
 	 
 (** Effect of a free(x),  where x is a pointer variable, on an ssl
 formula.*)
-let free_upon_ssl (pvar : ptvar)(sslf : ssl_formula) =
+let free_upon_sslv (pvar : ptvar)(sslv : ssl_validity_absdom ) =
   try
-    let lvar = get_ptr_affectation sslf pvar in
-    if not (space_contains_locvar lvar  sslf.space )
-    then set_heap_to_top sslf 
+    let lvar = get_ptr_affectation sslv.ssl_part pvar in
+    if not (space_contains_locvar lvar  sslv.ssl_part.space )
+    then set_heap_to_top sslv.ssl_part 
     else
-      try_remove_segment lvar sslf
+      try_remove_segment lvar sslv.ssl_part
   with
-      Not_found -> set_heap_to_top sslf (* Here we get that pvar
+      Not_found -> 
+	begin 
+	  set_heap_to_top sslv.ssl_part; (* Here we get that pvar
 					does not belong to the 
 					the affectation table*)
-	
-(** For testing purposes *)
-let next_on_ssl_instr_debug  (mid : global_mem_manager ) ( sslf :ssl_formula) ( instruction : Cil_types.instr) =
-  let lvar = mid#lvar_from_malloc () in
-  let pvar = (PVar("Dummy")) in
-  let affect = (Pointsto (pvar,lvar)) in
-  Ssl.add_quant_var lvar sslf;
-  Ssl.and_atomic_affect affect sslf;
-  Ssl.add_alloc_cell lvar sslf
-
-
-
-
-
-
-
-
-
-(** Modifies the ssl formual that abstracts the current stack
-and heap. 
-The parameter mid shall be an instance of the global_mem_manager class.
- *)
-
-
-
-
-(**  We are mostly considering pointer modfications and affectations in this
-function.*)
-(*
-let next_on_affectations  ( sslf :ssl_formula) ( instruction : Cil_types.instr) =
-  match instruction with 
-     Set( (Var(vinfo), _ ) , exp , _ ) ->
-  
-*)	  
-
-(*
-(** returns the list of translablels that corresponds to the affectation
-of some memory block*)
-let affect_lbase_lsize_malloc ( affect_pvar : option ptvar ) (interpret_malloc_param: cnt_arithm_exp) (sslf : ssl_formula ) =
-  let list_translabel = []
-  in 
-  let
-  
-   match affect_pvar with
-      None -> 
-    | Some ( pvar ) ->
-      begin
-	
-	let pvar_cnt_offset = Cnt_interpret.offset_cnt_of_pvar pvar in
-	
-	
-      end
-      
-*)
-
+	  (sslv,[])::[]
+	end
+ (* TODO : Shall we set the pointer's validity as FalsevarValid ? *)
 	
   
 (** This function computes the heap shape after a successful call to malloc,
@@ -370,7 +318,7 @@ let malloc_ssl_nts_transition ( v : Cil_types.varinfo ) sslv  lparam mid  =
 
 
 (** mid must be an instance of the class global mem manager*)
-let next_on_ssl_instr  (mid : global_mem_manager ) ( sslf :ssl_formula) ( instruction : Cil_types.instr) =
+let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom) ( instruction : Cil_types.instr) =
    	Self.debug ~level:0 "\n Dans next_on_ssl_instr \n" ;
     match instruction with 
 	  (*****************************************************************)
@@ -395,7 +343,7 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslf :ssl_formula) ( instru
 		begin
 		  (Self.debug ~level:0 "The left value is a variablex \n");
 		  match v.vtype with 
-		      TPtr(_,_) -> affect_ptr_upon_ssl v expr sslf 
+		      TPtr(_,_) -> affect_ptr_upon_ssl v expr sslv 
 		    | _ -> (Self.debug ~level:0 "Unhandled type of variable affectation, skiping it \n")
 		end
 	    | _ ->  Self.debug ~level:0 "The left member of this affectation is not a variable, skiping it \n"; ()	
