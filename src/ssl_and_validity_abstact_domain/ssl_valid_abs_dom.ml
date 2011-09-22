@@ -28,7 +28,7 @@ let copy_validity_absdomain (v : ssl_validity_absdom ) =
 
 (* This function returns a new domain value with the validity od vinfo updated
 to valid. *)
-let set_var_validity_in_absdomain  (domain : ssl_validity_absdomain) ( vinfo : Cil_types.varinfo ) (valid : var_valid) =
+let set_var_validity_in_absdomain  (domain : ssl_validity_absdom) ( vinfo : Cil_types.varinfo ) (valid : var_valid) =
   {
     ssl_part = domain.ssl_part ;
     validinfos = (set_validity_in domain.validinfos vinfo valid); 
