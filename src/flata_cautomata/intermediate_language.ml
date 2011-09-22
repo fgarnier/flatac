@@ -122,8 +122,10 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 	match f.vtype with
 	    TInt(_,_) -> LiVar(Unprimed,LiIntVar(f.vname))
 	  | _-> begin 
-	    let msg = "This variable : "^f.vname ^"isn't of type TInt, but appears in a scalar expression \n" in let exc =  Bad_expression_type msg in
-														 raise  exc
+	    let msg = "This variable : "^f.vname ^"isn't of type TInt, but appears in a scalar expression \n" in 
+	    let exc =  Bad_expression_type msg in
+	    raise  exc
+	  
 	  end
       end	
 	

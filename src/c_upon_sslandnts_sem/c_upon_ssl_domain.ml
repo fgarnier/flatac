@@ -133,29 +133,35 @@ let affect_ptr_upon_sslv (v : Cil_types.varinfo)  (expr : Cil_types.exp) (sslv :
     let pvar_right = get_pvar_from_exp expr in
     let lvar_right = get_ptr_affectation sslv.ssl_part pvar_right  in
     Ssl.change_affect_var (Pointsto(pvar_left,lvar_right)) sslv.ssl_part;
-    let offset_of_pexpr = interpret_c_ptrexp_to_cnt sslv.ssl_part expr in
+    let param_cscal = Intermediate_language.cil_expr_2_ptr expr in
+    let offset_of_pexpr = interpret_c_ptrexp_to_cnt sslv.ssl_part param_cscal in
     let offset_var_of_pvar =  offset_ntsivar_of_pvar pvar_left in
     let affect_off = CntAffect(offset_var_of_pvar,offset_of_pexpr) in
-    let affect_validity_of_pvar = valid_sym_ptrexp sslv.varinfos sslv.ssl_part in
-    let sslv_new = set_validity_in sslv.varinfos v affect_validity_of_pvar 
+    let affect_validity_of_pvar = valid_sym_ptrexp sslv.validinfos sslv.ssl_part param_cscal in
+    let sslv_new = set_var_validity_in_absdomain sslv v affect_validity_of_pvar 
     in
     ((sslv_new,affect_off::[])::[]) 
   with
       Not_found -> Self.debug ~level:0 "Undefined right member in affectation, affect_ptr_upon_ssl crash"; raise Not_found
-    | Loc_is_nil -> and_atomic_ptnil (Pointsnil((PVar(v.vname)))) sslf
+    | Loc_is_nil -> 
+      begin 
+	and_atomic_ptnil (Pointsnil((PVar(v.vname)))) sslv.ssl_part;
+	let new_sslv = set_var_validity_in_absdomain sslv v FalsevarValid in
+	(new_sslv , [])::[]
+      end
   
 
 
 (** This function modifies the sslf formula that abstracts the current
 heap and stack when a call to malloc is performed.*)
-let malloc_upon_sslv  ( v : Cil_types.varinfo option ) ( mid : global_mem_manager )  (sslv : ssl_validity_absdom ) =
+let malloc_upon_ssl  ( v : Cil_types.varinfo option ) ( mid : global_mem_manager )  (sslf : ssl_formula ) =
   match v with Some (vinfo) ->
     let lvar = mid#lvar_from_malloc () in
     let pvar = (PVar(vinfo.vname)) in
     let affect = (Pointsto (pvar,lvar)) in
-    Ssl.add_quant_var lvar sslv.ssl_part;
-    Ssl.change_affect_var affect sslv.ssl_part;
-    Ssl.add_alloc_cell lvar sslv.ssl_part
+    Ssl.add_quant_var lvar sslf;
+    Ssl.change_affect_var affect sslf;
+    Ssl.add_alloc_cell lvar sslf
       (*TODO : Need to set the left value pointer var validity 
 	as TruevarValid*)
     | None ->
@@ -190,7 +196,7 @@ let free_upon_sslv (pvar : ptvar)(sslv : ssl_validity_absdom ) =
 	Ssl.set_heap_to_top fucked_up_case.ssl_part;
 	let trans_list= (fucked_up_case, (CntGuard(non_zero_guard))::[])::[] 
 	in
-	let trans_list = (sslv,(Guard(eq_zero_guard))::[])::trans_list in
+	let trans_list = (sslv,(CntGuard(eq_zero_guard))::[])::trans_list in
 	trans_list
       end
   with
