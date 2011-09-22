@@ -344,7 +344,8 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 		  (Self.debug ~level:0 "The left value is a variablex \n");
 		  match v.vtype with 
 		      TPtr(_,_) -> affect_ptr_upon_ssl v expr sslv 
-		    | _ -> (Self.debug ~level:0 "Unhandled type of variable affectation, skiping it \n")
+		    | _ -> (Self.debug ~level:0 "Unhandled type of variable affectation, skiping it \n");
+		      
 		end
 	    | _ ->  Self.debug ~level:0 "The left member of this affectation is not a variable, skiping it \n"; ()	
 	end

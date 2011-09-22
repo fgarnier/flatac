@@ -38,8 +38,9 @@ let validity_of_byname ( loc_map : validity_loc_map ) ( varname : string ) =
 	end
 	  
 (**  return a new validity mapping *)
-(** If a binding of v.vname already exists in the map, then it is replaced
-by the new validity information. *)
+
+(** If a binding of v.vname already exists in the map, 
+then it is replaced by the new validity information. *)
 let set_validity_in (loc_map : validity_loc_map ) ( v : Cil_types.varinfo ) 
   (valid : var_valid) =
   match loc_map with 
