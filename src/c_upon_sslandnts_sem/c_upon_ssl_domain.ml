@@ -133,8 +133,13 @@ let affect_ptr_upon_sslv (v : Cil_types.varinfo)  (expr : Cil_types.exp) (sslv :
     let pvar_right = get_pvar_from_exp expr in
     let lvar_right = get_ptr_affectation sslv.ssl_part pvar_right  in
     Ssl.change_affect_var (Pointsto(pvar_left,lvar_right)) sslv.ssl_part;
-    ((sslv,[])::[]) (* TODO : Update the validity of the lval pointer 
-		    variable.*)
+    let offset_of_pexpr = interpret_c_ptrexp_to_cnt sslv.ssl_part expr in
+    let offset_var_of_pvar =  offset_ntsivar_of_pvar pvar_left in
+    let affect_off = CntAffect(offset_var_of_pvar,offset_of_pexpr) in
+    let affect_validity_of_pvar = valid_sym_ptrexp sslv.varinfos sslv.ssl_part in
+    let sslv_new = set_validity_in sslv.varinfos v affect_validity_of_pvar 
+    in
+    ((sslv_new,affect_off::[])::[]) 
   with
       Not_found -> Self.debug ~level:0 "Undefined right member in affectation, affect_ptr_upon_ssl crash"; raise Not_found
     | Loc_is_nil -> and_atomic_ptnil (Pointsnil((PVar(v.vname)))) sslf
@@ -164,16 +169,38 @@ let free_upon_sslv (pvar : ptvar)(sslv : ssl_validity_absdom ) =
   try
     let lvar = get_ptr_affectation sslv.ssl_part pvar in
     if not (space_contains_locvar lvar  sslv.ssl_part.space )
-    then set_heap_to_top sslv.ssl_part 
+    then 
+      begin 
+	set_heap_to_top sslv.ssl_part;
+	(sslv,[]) :: [] (* The only transition enabled leads to 
+			Top_heap*)
+      end
     else
-      try_remove_segment lvar sslv.ssl_part
+      begin
+	try_remove_segment lvar sslv.ssl_part; (* If the previous operation
+					       succeeds, we have to consider
+					       two possible transitions : Case
+					       of the offset of the address 
+					       is zero and the error prone 
+						  non-zero case.*)
+	let offset_of_pvar = Cnt_interpret.offset_cnt_of_pvar pvar in
+	let eq_zero_guard = CntBool(CntEq,offset_of_pvar,CntCst(0)) in
+	let non_zero_guard =   CntBool(CntNeq,offset_of_pvar,CntCst(0)) in
+	let fucked_up_case =  create_validity_abstdomain in
+	Ssl.set_heap_to_top fucked_up_case.ssl_part;
+	let trans_list= (fucked_up_case, (CntGuard(non_zero_guard))::[])::[] 
+	in
+	let trans_list = (sslv,(Guard(eq_zero_guard))::[])::trans_list in
+	trans_list
+      end
   with
       Not_found -> 
 	begin 
 	  set_heap_to_top sslv.ssl_part; (* Here we get that pvar
 					does not belong to the 
 					the affectation table*)
-	  (sslv,[])::[]
+
+	  (sslv,[])::[] (*sslv is supposed to be a copy. Double check that.*)
 	end
  (* TODO : Shall we set the pointer's validity as FalsevarValid ? *)
 	
@@ -309,14 +336,7 @@ let malloc_ssl_nts_transition ( v : Cil_types.varinfo ) sslv  lparam mid  =
       let ret_list = (r_malloc_failed_with_unvalidcntgard v sslv mid scal_param)@ret_list in
       ret_list
 	      
-	    
-
-  
-
-
-
-
-
+	 
 (** mid must be an instance of the class global mem manager*)
 let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom) ( instruction : Cil_types.instr) =
    	Self.debug ~level:0 "\n Dans next_on_ssl_instr \n" ;
@@ -343,7 +363,7 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 		begin
 		  (Self.debug ~level:0 "The left value is a variablex \n");
 		  match v.vtype with 
-		      TPtr(_,_) -> affect_ptr_upon_ssl v expr sslv 
+		      TPtr(_,_) -> affect_ptr_upon_sslv v expr sslv 
 		    | _ -> (Self.debug ~level:0 "Unhandled type of variable affectation, skiping it \n");
 		      
 		end

@@ -60,6 +60,15 @@ let offset_cnt_of_pvar (pvar : ptvar) =
   match pvar with 
       PVar(vname) -> CntVar ( NtsIVar("offset("^vname^")") )
 
+
+(** Same as above, but more conveninant to express CntAffectation,
+in the sense it spare the programmer to add another cumbersome
+match structure to get the embeded NtsIVar(name).
+*)
+let offset_ntsivar_of_pvar (pvar : ptvar ) =
+   match pvar with 
+      PVar(vname) -> NtsIVar("offset("^vname^")") 
+
 (** This function aims at computing the name of the counter var name
 associated to the offset of a pointer variable*)
 let offset_cnt_name ( ptvar : c_ptrexp ) =  
@@ -87,6 +96,9 @@ let lvarsize_cnt_name ( lvar : locvar ) =
     | LVar (vname ) -> CntVar(NtsIVar(vname^"_size_of_segment"))
 
 
+
+(** Interprets a scalar expression into the nts formalism, w.r.t. the
+current context expressed as a ssl formula.*)
 let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
   match scalexp with 
       LiVar(_) -> int_var_cnt_name scalexp
@@ -305,8 +317,8 @@ let rec c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool ) =
 	end	  
 	  
 
-
-
+(** Translates expressions of the valid_counter type into 
+booleans of the nts arithmetics.*)
 let rec valid_expr_2_cnt_bool ( vexpr : valid_counter ) =
   match vexpr with 
       TrueValid -> CntBTrue
