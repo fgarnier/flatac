@@ -119,7 +119,7 @@ build_global_makefile () {
   echo -e "\t-@mkdir ${DOC_DIR}/latex >/dev/null 2>&1" >> Makefile
   echo -e "\t@cd ${SRC_DIR} &&\
     ocamldoc ${FRAMA_C_INCLUDES} -html -d ${DOC_DIR}/html *.ml SSL/*.ml\
-  global_mem/*.ml c_upon_sslandnts_sem/*.ml" >> Makefile
+  global_mem/*.ml flatac_cautomata/*.ml ssl_and_validity_abstract_domain/*.ml local_info_validity_mem/*.ml c_upon_sslandnts_sem/*.ml " >> Makefile
 }
 
 [[ $# == 0 ]] && echo "type : ./configure PATH_TO_FRAMAC_SOURCE" && exit
