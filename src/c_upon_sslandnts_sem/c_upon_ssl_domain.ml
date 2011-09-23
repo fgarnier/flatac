@@ -530,11 +530,6 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 
 
 
-
-
-
-
-
 let next_on_ssl_nts (mid : global_mem_manager ) (sslv  ) (skind : Cil_types.stmtkind )   =
   match skind with 
       Instr ( instruction ) -> 
@@ -546,118 +541,7 @@ let next_on_ssl_nts (mid : global_mem_manager ) (sslv  ) (skind : Cil_types.stmt
     | _ -> 
       (sslv, [])::[]
 
-(*
-let  generate_list_of_transitions sslf  instr =
-  match instr with 
 
-    
-      | Set ( (lv,_),expr, loc) ->       (* Here we handle value 
-	(*Set(lv,offset), expr , loc) *)        affectations and pointer 
-						 affectations*)
-	begin
-	  Self.debug ~level:0 "Trying to handle an affectation \n"; 
-	  match lv with 
-	      Var(v) ->
-		begin
-		  (Self.debug ~level:0 "The left value is a variablex \n");
-		  match v.vtype with 
-		      TPtr(_,_) -> affect_ptr_upon_ssl v expr sslf 
-		    | _ -> (Self.debug ~level:0 "Unhandled type of variable affectation, skiping it \n")
-		end
-	    | _ ->  Self.debug ~level:0 "The left member of this affectation is not a variable, skiping it \n"; ()	
-	end
-     
-      |  Call( Some(lvo) , exp1, lparam , _ )->
-	begin
-	  	Self.debug ~level:0 " I have a call with some affectation to a variable \n" ;
-	      match lvo , exp1.enode with
-		  ((Var(v),_) , Lval((Var(f),_)) ) ->
-		    begin
-		       	Self.debug ~level:0 "\n Dans Call de %s=%s \n" v.vname f.vname ;
-		      match v.vtype with
-			  (*Returned value has an integer type*)
-			   
-			  TPtr(_,_)->
-			    begin
-			      match f.vname with
-				  "malloc" | "calloc" -> (malloc_upon_ssl (Some(v)) mid sslf)
-				|  _ -> () (** Plug other functions name
-					   that behaves like malloc in this 
-					   space*)
-			    end
-			 (*The returned value is a variable that has another
-			 type than an integer type. Tpointer, float for instance*)
-
-			| _ -> () (** Here the formula is let untouched*)
-		    end
-		| _ -> () (** Here the returned value is not a variable,
-			  the returned value shall be logged in this case.*)
-	  end
-
-
-      |  Call( None , exp1, lparam , _ )->
-		Self.debug ~level:0 "I've got a call with no affectation of the returned value \n" ;
-	begin
-	  match  exp1.enode  with
-	      Lval((Var(f),_))->
-		begin
-		 	Self.debug ~level:0  "Called function is %s \n" f.vname ; 
-		  match f.vname with
-		      "free" -> 
-			begin
-			try 
-			  let pv = get_first_ptvar_from_lparam lparam in
-			  match pv with
-			      PVar (vname) ->
-				begin
-				 	Self.debug ~level:0  "Pvar name is : %s \n" vname ;
-				  free_upon_ssl pv sslf 
-				end			
-			with
-			    No_pvar_in_free_expression -> 
-			      set_heap_to_top sslf
-			  | Loc_is_nil ->  Self.debug ~level:0 "free on a nil pointer \n"; set_heap_to_top sslf
-			end
-		    | "malloc" | "calloc" -> (malloc_upon_ssl  None mid sslf)
-		    | _ -> () (** All other function name that are dropped leads 
-			       here*)
-		end
-	    | _ -> () (** Here the formula is let untouched*)
-	end
-
-      | _ -> () (** This is the default case, that's to say when
-		    the parsed operation doesn't match the semantics.
-		    At this point, we shall add some relevant information
-		    dealing with the abstracted part of the ast.
-		*)
- 
-
-*)
-(*
-
- We shall do the following thing :
- Adding a generate_list_of_bad_numerical_preconditions 
-
-let next_on_ssl (mid : global_mem_manager ) (sslf : ssl_formula ) (skind : Cil_types.stmtkind ) _  =
-  match skind with 
-      Instr ( instruction ) ->  next_on_ssl_instr  mid sslf instruction;
-	normalize_ssl sslf;
-  let trans_list =
-  generate_list_of_transitions ( sslf : evaluates the abstract domain value
- after a successful exectution of instr) instr 
- in trans_list
-
- (** generate the list of cnt_trans_label list * ssl_formula such that 
- contains the transition from the current state to the next abstact state when
- some preconditions are met and from the current state to bot when others  
- conditions are met.
-
- We expect that the second set of conditions corresponds to the negations 
- of the first ones.
- *) 
-    | _ -> ()
-
-*)
 
 
 

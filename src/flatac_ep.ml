@@ -24,7 +24,7 @@ open Dot_exporter
 open List
  (* Working on the cartesian prouct with validity pre-processing.*)
 open Nts_types
-open Ssl_validity_abs_dom_types
+open Ssl_valid_abs_dom_types
 
 module Enabled =
 	Self.False
@@ -37,8 +37,8 @@ module Enabled =
 (** This module is used as a parameter of the Ecfg functor *)
 module CfgExtension = 
         struct 
-                type abstract_type = Ssl_validity_abs_dom_types.ssl_validity_absdom
-                type label_type = Nts_types.cnt_translabel list
+                type abstract_type = Ssl_valid_abs_dom_types.ssl_validity_absdom
+                type label_type = Nts_types.cnt_trans_label list
         end;;
 
 (** Creation of an Ecfg which abstract domain is {true,false}*)
