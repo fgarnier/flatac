@@ -213,79 +213,148 @@ let free_upon_sslv (pvar : ptvar)(sslv : ssl_validity_absdom ) =
   
 (** This function computes the heap shape after a successful call to malloc,
 i.e. when Valid(I) and [I]_{\phi} > 0*)
-let r_malloc_succ (v : Cil_types.varinfo ) sslv (mid: global_mem_manager ) (scal_param : c_scal) =
-  let new_abstract = copy_validity_absdomain sslv in
-  malloc_upon_ssl (Some(v)) mid new_abstract.ssl_part;
-  let l = mid#get_last_lvar () in
-  let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
-    scal_param in
-  let interpret_gt_zero = CntBool(CntGt,interpret_param,CntCst(0)) in
-  let list_locvar_cnt_affect = make_size_locvar l mid interpret_param in
-  let cnt_ptvar_offset =  make_offset_locpvar (PVar(v.vname)) in
-  let zero_pvar_offset =  CntAffect( cnt_ptvar_offset, CntCst(0)) in
-  let transit_list =  (CntGuard(interpret_gt_zero)) :: list_locvar_cnt_affect  in
-  let transit_list = zero_pvar_offset :: transit_list in
-  let ret_list = (( new_abstract , transit_list) :: []) in
-  ret_list
+let r_malloc_succ (var : Cil_types.varinfo option ) sslv (mid: global_mem_manager ) (scal_param : c_scal) =
+  match var with
+      Some(v) ->
+	begin
+	let new_abstract = copy_validity_absdomain sslv in
+	malloc_upon_ssl (Some(v)) mid new_abstract.ssl_part;
+	let l = mid#get_last_lvar () in
+	let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
+	  scal_param in
+	let interpret_gt_zero = CntBool(CntGt,interpret_param,CntCst(0)) in
+	let list_locvar_cnt_affect = make_size_locvar l mid interpret_param in
+	let cnt_ptvar_offset =  make_offset_locpvar (PVar(v.vname)) in
+	let zero_pvar_offset =  CntAffect( cnt_ptvar_offset, CntCst(0)) in
+	let transit_list =  (CntGuard(interpret_gt_zero)) :: list_locvar_cnt_affect  in
+	let transit_list = zero_pvar_offset :: transit_list in
+	let ret_list = (( new_abstract , transit_list) :: []) in
+	ret_list
+	end
+    | None ->
+      begin
+	let new_abstract = copy_validity_absdomain sslv in
+	malloc_upon_ssl None mid new_abstract.ssl_part;
+	let l = mid#get_last_lvar () in
+	let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
+	  scal_param in
+	let interpret_gt_zero = CntBool(CntGt,interpret_param,CntCst(0)) in
+	let list_locvar_cnt_affect = make_size_locvar l mid interpret_param in
+	let transit_list =  (CntGuard(interpret_gt_zero)) :: list_locvar_cnt_affect  in
+	let ret_list = (( new_abstract , transit_list) :: []) in
+	ret_list
+      end
 
 
 
 (** Same function as above, but includes an extra guar that express which constraints the counter evaluation shall satisfy so that Valid(I) is true. *)
-let r_malloc_succ_withvalidcntguard (v : Cil_types.varinfo ) sslv (mid: global_mem_manager ) (scal_param : c_scal) =
+let r_malloc_succ_withvalidcntguard (var : Cil_types.varinfo option) sslv (mid: global_mem_manager ) (scal_param : c_scal) =
 
-  let new_abstract = copy_validity_absdomain sslv in
-  malloc_upon_ssl (Some(v)) mid new_abstract.ssl_part;
-  let l = mid#get_last_lvar () in
-  let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
-  let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
-  let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
-    scal_param in
-  let interpret_gt_zero = CntBool(CntGt,interpret_param,CntCst(0)) in
-  let good_malloc_guard = CntBAnd(validity_guard_cnt,interpret_gt_zero)
-  in 
-  let list_locvar_cnt_affect = make_size_locvar l mid interpret_param in
-  let cnt_ptvar_offset =  make_offset_locpvar (PVar(v.vname)) in
-  let zero_pvar_offset =  CntAffect( cnt_ptvar_offset, CntCst(0)) in
-  let transit_list =  (CntGuard(good_malloc_guard)) :: list_locvar_cnt_affect  in
-  let transit_list = zero_pvar_offset :: transit_list in
-  let ret_list = ( new_abstract , transit_list) :: [] in
-  ret_list
-
-  
-(** this function computes the labels and the new heap shape when a
-call of malloc is performed using a negative or zero parameter.*)
+  match var with 
+      Some(v) ->
+	begin
+	  let new_abstract = copy_validity_absdomain sslv in
+	  malloc_upon_ssl (Some(v)) mid new_abstract.ssl_part;
+	  let l = mid#get_last_lvar () in
+	  let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
+	  let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
+	  let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
+	    scal_param in
+	  let interpret_gt_zero = CntBool(CntGt,interpret_param,CntCst(0)) in
+	  let good_malloc_guard = CntBAnd(validity_guard_cnt,interpret_gt_zero)
+	  in 
+	  let list_locvar_cnt_affect = make_size_locvar l mid interpret_param in
+	  let cnt_ptvar_offset =  make_offset_locpvar (PVar(v.vname)) in
+	  let zero_pvar_offset =  CntAffect( cnt_ptvar_offset, CntCst(0)) in
+	  let transit_list =  (CntGuard(good_malloc_guard)) :: list_locvar_cnt_affect  in
+	  let transit_list = zero_pvar_offset :: transit_list in
+	  let ret_list = ( new_abstract , transit_list) :: [] in
+	  ret_list
+	end
+    | None ->
+      begin
+	let new_abstract = copy_validity_absdomain sslv in
+	malloc_upon_ssl None mid new_abstract.ssl_part;
+	let l = mid#get_last_lvar () in
+	let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
+	let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
+	let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
+	  scal_param in
+	let interpret_gt_zero = CntBool(CntGt,interpret_param,CntCst(0)) in
+	let good_malloc_guard = CntBAnd(validity_guard_cnt,interpret_gt_zero)
+	in 
+	let list_locvar_cnt_affect = make_size_locvar l mid interpret_param in
 	
-let r_malloc_neg_or_zero_arg (v : Cil_types.varinfo ) sslv  (mid: global_mem_manager ) (scal_param : c_scal) =
-  let new_abstract = copy_validity_absdomain sslv in
-  let pvar = (PVar( v.vname )) in
-  let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
-    scal_param in
-  let aff_to_nil = Pointsnil(pvar) in
-  and_atomic_ptnil aff_to_nil new_abstract.ssl_part;
-  let guard_leq_zero =  CntGuard(CntBool(CntLeq,interpret_param,CntCst(0))) 
-  in 
-  let ret_list = ((new_abstract, (guard_leq_zero :: []))::[] ) in
-  ret_list
+	let transit_list =  (CntGuard(good_malloc_guard)) :: list_locvar_cnt_affect  in
+	let ret_list = ( new_abstract , transit_list) :: [] in
+	ret_list
+      end
+  
+
+(** this function computes the labels and the new heap shape when a
+call of malloc is performed using a negative or zero parameter.*)	
+let r_malloc_neg_or_zero_arg (var : Cil_types.varinfo option ) sslv  (mid: global_mem_manager ) (scal_param : c_scal) =
+  match var with
+      Some(v) ->
+	begin
+	  let new_abstract = copy_validity_absdomain sslv in
+	  let pvar = (PVar( v.vname )) in
+	  let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
+	    scal_param in
+	  let aff_to_nil = Pointsnil(pvar) in
+	  and_atomic_ptnil aff_to_nil new_abstract.ssl_part;
+	  let guard_leq_zero =  CntGuard(CntBool(CntLeq,interpret_param,CntCst(0))) 
+	  in 
+	  let ret_list = ((new_abstract, (guard_leq_zero :: []))::[] ) in
+	  ret_list
+	end
+    | None ->
+      	begin
+	  let new_abstract = copy_validity_absdomain sslv in
+	  let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
+	    scal_param in
+	  let guard_leq_zero =  CntGuard(CntBool(CntLeq,interpret_param,CntCst(0))) 
+	  in 
+	  let ret_list = ((new_abstract, (guard_leq_zero :: []))::[] ) in
+	  ret_list
+	end
 
 (** Same as above, but includes a NTS guard that express the validity condition
 w.r.t. counters assigne values.*)
-let r_malloc_neg_or_zero_arg_withvalidityguard (v : Cil_types.varinfo ) sslv  (mid: global_mem_manager ) (scal_param : c_scal) =
-  let new_abstract = copy_validity_absdomain sslv in
-  let pvar = PVar( v.vname ) in
-  let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
-  let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
-  let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
-    scal_param in
-  let aff_to_nil = Pointsnil(pvar) in
-  and_atomic_ptnil aff_to_nil new_abstract.ssl_part;
-  let interpret_leq_zero = CntBool(CntLeq,interpret_param,CntCst(0)) 
-  in 
-  let guard = CntGuard(CntBAnd(validity_guard_cnt,interpret_leq_zero)) in 
-  let ret_list = ((new_abstract, (guard :: []))::[] ) in
-  ret_list
 
+let r_malloc_neg_or_zero_arg_withvalidityguard (var : Cil_types.varinfo option ) sslv  (mid: global_mem_manager ) (scal_param : c_scal) =
+  match var with 
+      Some(v) ->
+	begin
+	  let new_abstract = copy_validity_absdomain sslv in
+	  let pvar = PVar( v.vname ) in
+	  let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
+	  let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
+	  let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
+	    scal_param in
+	  let aff_to_nil = Pointsnil(pvar) in
+	  and_atomic_ptnil aff_to_nil new_abstract.ssl_part;
+	  let interpret_leq_zero = CntBool(CntLeq,interpret_param,CntCst(0)) 
+	  in 
+	  let guard = CntGuard(CntBAnd(validity_guard_cnt,interpret_leq_zero)) in 
+	  let ret_list = ((new_abstract, (guard :: []))::[] ) in
+	  ret_list
+	end
+    | None ->
+      begin
+	let new_abstract = copy_validity_absdomain sslv in
+	let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
+	let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
+	let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
+	  scal_param in
+	let interpret_leq_zero = CntBool(CntLeq,interpret_param,CntCst(0)) 
+	in 
+	let guard = CntGuard(CntBAnd(validity_guard_cnt,interpret_leq_zero)) in 
+	let ret_list = ((new_abstract, (guard :: []))::[] ) in
+	ret_list	
+      end
 
-let r_malloc_failed_with_unvalidcntgard (v : Cil_types.varinfo ) sslv  (mid: global_mem_manager ) (scal_param : c_scal) =
+let r_malloc_failed_with_unvalidcntgard _ sslv  (mid: global_mem_manager ) (scal_param : c_scal) =
   let abst_domain = create_validity_abstdomain in
   set_heap_to_top abst_domain.ssl_part ;
   let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
@@ -309,7 +378,7 @@ and the value sslf_post is used to express the successful
 application of the malloc call. i.e. when the condition
 expressed by the guards are met.*)
 
-let malloc_ssl_nts_transition ( v : Cil_types.varinfo ) sslv  lparam mid  = 
+let malloc_ssl_nts_transition ( v : Cil_types.varinfo  option) sslv  lparam mid  = 
   (** Case of a malloc success *)
   let locmap = sslv.validinfos in
      (* Validlocmap (locmap ) -> *) 
@@ -371,9 +440,11 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 		  match v.vtype with 
 		      TPtr(_,_) -> affect_ptr_upon_sslv v expr sslv 
 		    | _ -> (Self.debug ~level:0 "Unhandled type of variable affectation, skiping it \n");
+		      (sslv,[])::[]
 		      
 		end
-	    | _ ->  Self.debug ~level:0 "The left member of this affectation is not a variable, skiping it \n"; ()	
+	    | _ ->  Self.debug ~level:0 "The left member of this affectation is not a variable, skiping it \n"; 
+	      (sslv,[])::[]
 	end
      
       |  Call( Some(lvo) , exp1, lparam , _ )->
@@ -389,17 +460,24 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 			  TPtr(_,_)->
 			    begin
 			      match f.vname with
-				  "malloc" | "calloc" -> (malloc_upon_ssl (Some(v)) mid sslf)
-				|  _ -> () (** Plug other functions name
+				  "malloc" | "calloc" -> (malloc_ssl_nts_transition (Some(v)) sslv lparam mid)
+				    
+				|  _ -> 
+				  ((sslv,[])::[])
+			    (** Plug other functions name
 					   that behaves like malloc in this 
 					   space*)
 			    end
 			 (*The returned value is a variable that has another
 			 type than an integer type. Tpointer, float for instance*)
 
-			| _ -> () (** Here the formula is let untouched*)
+			| _ -> 
+			  (sslv,[])::[]
+		    (** Here the formula is let untouched*)
 		    end
-		| _ -> () (** Here the returned value is not a variable,
+		| _ -> 
+		  (sslv,[])::[]
+	  (** Here the returned value is not a variable,
 			  the returned value shall be logged in this case.*)
 	  end
 
@@ -420,21 +498,31 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 			      PVar (vname) ->
 				begin
 				 	Self.debug ~level:0  "Pvar name is : %s \n" vname ;
-				  free_upon_ssl pv sslf 
+				  free_upon_sslv pv sslv
 				end			
 			with
 			    No_pvar_in_free_expression -> 
-			      set_heap_to_top sslf
-			  | Loc_is_nil ->  Self.debug ~level:0 "free on a nil pointer \n"; set_heap_to_top sslf
+			      set_heap_to_top sslv.ssl_part;
+			      (sslv,[])::[]
+
+			  | Loc_is_nil ->  Self.debug ~level:0 "free on a nil pointer \n"; set_heap_to_top sslv.ssl_part;
+			    (sslv,[])::[]
 			end
-		    | "malloc" | "calloc" -> (malloc_upon_ssl  None mid sslf)
-		    | _ -> () (** All other function name that are dropped leads 
+		    | "malloc" | "calloc" -> (malloc_ssl_nts_transition  None sslv lparam mid)
+		    | _ -> 
+
+		      (sslv,[])::[]
+		(** All other function name that are dropped leads 
 			       here*)
 		end
-	    | _ -> () (** Here the formula is let untouched*)
+	    | _ -> 
+	      (sslv,[])::[]
+	(** Here the formula is let untouched*)
 	end
 
-      | _ -> () (** This is the default case, that's to say when
+      | _ -> 
+	(sslv,[])::[]
+(** This is the default case, that's to say when
 		    the parsed operation doesn't match the semantics.
 		    At this point, we shall add some relevant information
 		    dealing with the abstracted part of the ast.
@@ -447,13 +535,17 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 
 
 
-let next_on_ssl_nts (mid : global_mem_manager ) (sslv  ) (skind : Cil_types.stmtkind ) _  =
+let next_on_ssl_nts (mid : global_mem_manager ) (sslv  ) (skind : Cil_types.stmtkind )   =
   match skind with 
-      Instr ( instruction ) ->  next_on_ssl_instr  mid sslv.ssl_part instruction;
-	let message = ("\n Formula : "^(Ssl_pprinters.pprint_ssl_formula sslv.ssl_part)^"\n") in
-	Format.printf "%s \n" message;
-	normalize_ssl sslv.ssl_part
-    | _ -> ()  
+      Instr ( instruction ) -> 
+	(*let message = ("\n Formula : "^(Ssl_pprinters.pprint_ssl_formula sslv.ssl_part)^"\n") in
+	Format.printf "%s \n" message;*)
+	 next_on_ssl_instr  mid sslv instruction
+	
+
+    | _ -> 
+      (sslv, [])::[]
+
 (*
 let  generate_list_of_transitions sslf  instr =
   match instr with 
