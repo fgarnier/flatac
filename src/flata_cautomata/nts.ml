@@ -58,8 +58,6 @@ let rec size_arithmexp_deeper_than  (exp : cnt_arithm_exp ) (deepness : int ) =
     | CntUnMin ( exp' ) ->   size_arithmexp_deeper_than exp' deepness'
     | CntMinus ( eg ,  ed ) ->
       (size_arithmexp_deeper_than eg deepness' ) || (size_arithmexp_deeper_than ed deepness' )
-    | CntMinus ( eg ,  ed ) -> 
-      (size_arithmexp_deeper_than eg deepness' ) || (size_arithmexp_deeper_than ed deepness' )
     | CntSum ( eg ,  ed ) ->
      (size_arithmexp_deeper_than eg deepness' ) || (size_arithmexp_deeper_than ed deepness' )
     | CntProd ( eg ,  ed ) -> 
@@ -68,6 +66,25 @@ let rec size_arithmexp_deeper_than  (exp : cnt_arithm_exp ) (deepness : int ) =
       (size_arithmexp_deeper_than eg deepness' ) || (size_arithmexp_deeper_than ed deepness' ) 
     | CntDiv ( eg ,  ed ) -> 
       (size_arithmexp_deeper_than eg deepness' ) || (size_arithmexp_deeper_than ed deepness' )
+
+let rec size_boolexp_deeper_than  (bexp : cnt_bool ) (deepness : int ) =
+  if deepness <= 0 then
+    true
+  else
+    let deep' = deepness - 1 in
+    match bexp with
+	CntBTrue -> false
+      | CntBFalse -> false
+      | CntNot ( exp' ) -> size_boolexp_deeper_than exp' deep'
+      | CntBAnd ( eg ,  ed ) ->
+	(size_boolexp_deeper_than eg deep' ) || (size_boolexp_deeper_than ed deep' )
+      | CntBOr ( eg ,  ed ) ->
+	(size_boolexp_deeper_than eg deep' ) || (size_boolexp_deeper_than ed deep' )
+      | CntBool ( _, _ , _ ) -> false
+
+	  
+      
+
 
 let rec cnt_pprint_arithm_exp ( exp : cnt_arithm_exp ) =
   match exp with
@@ -177,3 +194,71 @@ let rec cnt_pprint_arithm_exp ( exp : cnt_arithm_exp ) =
      end 
 
    | CntInvalidExp -> raise Invalid_nts_expression
+
+
+
+
+let rec cnt_pprint_boolexp (bexp :cnt_bool ) =
+  match bexp with 
+      	 CntBTrue -> "true"
+	| CntBFalse-> "false"
+	| CntNot ( exp ) ->
+	  if size_boolexp_deeper_than exp 2 then
+	    "not ("^(cnt_pprint_boolexp exp)^")"
+	  else 
+	    "not"^cnt_pprint_boolexp exp
+	
+	|  CntBAnd ( eg , ed )
+	  -> 
+	  begin
+	    let pprint_outputd = ref ""
+	    in
+	    let pprint_outputg = ref "" 
+	    in
+	    begin
+	      if size_boolexp_deeper_than ed 2 then
+		begin
+	     pprint_outputd := "("^(cnt_pprint_boolexp ed)^")";
+		end
+	      else
+		pprint_outputd := cnt_pprint_boolexp ed;
+	    end;
+	    begin
+	      if size_boolexp_deeper_than eg 2 then
+		begin
+		  pprint_outputg := "("^(cnt_pprint_boolexp eg)^")";
+		end
+	      else
+		pprint_outputg := cnt_pprint_boolexp eg;
+	    end;
+	    (!pprint_outputg)^" and "^(!pprint_outputd)
+	  end
+
+       	|  CntBOr ( eg , ed )
+	  -> 
+	  begin
+	    let pprint_outputd = cnt_pprint_boolexp ed 
+	    in
+	    let pprint_outputg = cnt_pprint_boolexp eg
+	    in
+	    (pprint_outputg)^" or "^(pprint_outputd)
+	  end
+
+	| CntBool ( bop , expg , expd ) ->
+	  begin
+	    let expg = cnt_pprint_arithm_exp expg 
+	    in
+	    let expd =  cnt_pprint_arithm_exp expd 
+	    in
+	    match bop with
+		CntEq ->  expg^"="^expd
+	      | CntNeq ->  expg^"!="^expd
+	      | CntLeq -> expg^"<="^expd
+	      | CntLt -> expg^"<"^expd
+	      | CntGt -> expg^">"^expd
+	      | CntGeq -> expg^">="^expd
+	  end
+
+
+	    
+	  
