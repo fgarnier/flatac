@@ -1,5 +1,6 @@
 open Nts_types
 
+
 (*  
 This files contains the functions used to deal with Numerical Transition
 Systems, a.k.a. counter automata.
@@ -32,9 +33,7 @@ let rec size_arithm_exp ( exp : cnt_arithm_exp ) =
     | CntInvalidExp -> 1
     | CntUnMin ( exp' ) -> 1 +    size_arithm_exp exp'
     | CntMinus ( eg ,  ed ) ->
-      1 + max (size_arithm_exp eg ) (size_arithm_exp eg ) 
-    | CntMinus ( eg ,  ed ) -> 
-      1 + max (size_arithm_exp eg ) (size_arithm_exp eg )  
+      1 + max (size_arithm_exp eg ) (size_arithm_exp eg )
     | CntSum ( eg ,  ed ) ->
       1 + max (size_arithm_exp eg ) (size_arithm_exp eg )
     | CntProd ( eg ,  ed ) -> 
@@ -70,7 +69,111 @@ let rec size_arithmexp_deeper_than  (exp : cnt_arithm_exp ) (deepness : int ) =
     | CntDiv ( eg ,  ed ) -> 
       (size_arithmexp_deeper_than eg deepness' ) || (size_arithmexp_deeper_than ed deepness' )
 
-(*let rec cnt_arithm_exp ( exp : cnt_arithm_exp ) =*)
+let rec cnt_pprint_arithm_exp ( exp : cnt_arithm_exp ) =
+  match exp with
+      CntCst(i) -> let s = Format.sprintf "%d" i in s
+    | CntSymCst(str) -> str
+    | CntVar ( ntsvar ) -> nts_pprint_nts_ivar ntsvar
+
+    | CntSum ( eg , ed ) ->
+        (cnt_pprint_arithm_exp eg)^"+"^(cnt_pprint_arithm_exp ed)
+    
+    | CntUnMin (e ) ->
+      begin
+	match e with
+	    CntUnMin( ploc ) -> cnt_pprint_arithm_exp ploc
+	  | _  -> cnt_pprint_arithm_exp e
+      end
+    
+    | CntMinus ( eg , ed )
+	-> 
+      begin
+	if size_arithmexp_deeper_than ed 2 then
+	  let pprint_output = 
+	    (cnt_pprint_arithm_exp eg)^"-("^(cnt_pprint_arithm_exp ed)^")"
+	  in
+	  pprint_output
+	else
+	  (cnt_pprint_arithm_exp eg)^"-"^(cnt_pprint_arithm_exp ed)
+      end
+	
+   | CntDiv ( eg , ed )
+	-> 
+     begin
+       let pprint_outputd = ref ""
+       in
+       let pprint_outputg = ref "" 
+       in
+       begin
+	 if size_arithmexp_deeper_than ed 2 then
+	   begin
+	     pprint_outputd := "("^(cnt_pprint_arithm_exp ed)^")";
+	   end
+	 else
+	   pprint_outputd := cnt_pprint_arithm_exp ed;
+       end;
+        begin
+	 if size_arithmexp_deeper_than eg 2 then
+	   begin
+	     pprint_outputg := "("^(cnt_pprint_arithm_exp eg)^")";
+	   end
+	 else
+	   pprint_outputg := cnt_pprint_arithm_exp eg;
+	end;
+	(!pprint_outputg)^"-"^(!pprint_outputd)
+      end
   
-  
-  
+   | CntProd ( eg , ed )
+	-> 
+     begin
+       let pprint_outputd = ref ""
+       in
+       let pprint_outputg = ref "" 
+       in
+       begin
+	 if size_arithmexp_deeper_than ed 2 then
+	   begin
+	     pprint_outputd := "("^(cnt_pprint_arithm_exp ed)^")";
+	   end
+	 else
+	   pprint_outputd := cnt_pprint_arithm_exp ed;
+       end;
+        begin
+	 if size_arithmexp_deeper_than eg 2 then
+	   begin
+	     pprint_outputg := "("^(cnt_pprint_arithm_exp eg)^")";
+	   end
+	 else
+	   pprint_outputg := cnt_pprint_arithm_exp eg;
+	end;
+	(!pprint_outputg)^"*"^(!pprint_outputd)
+     end
+
+    
+   | CntMod ( eg , ed )
+	-> 
+     begin
+       let pprint_outputd = ref ""
+       in
+       let pprint_outputg = ref "" 
+       in
+       begin
+	 if size_arithmexp_deeper_than ed 2 then
+	   begin
+	     pprint_outputd := "("^(cnt_pprint_arithm_exp ed)^")";
+	   end
+	 else
+	   pprint_outputd := cnt_pprint_arithm_exp ed;
+       end;
+        begin
+	 if size_arithmexp_deeper_than eg 2 then
+	   begin
+	     pprint_outputg := "("^(cnt_pprint_arithm_exp eg)^")";
+	   end
+	 else
+	   pprint_outputg := cnt_pprint_arithm_exp eg;
+	end;
+	(!pprint_outputg)^"%"^(!pprint_outputd)
+     end 
+
+   | CntInvalidExp -> raise Invalid_nts_expression
