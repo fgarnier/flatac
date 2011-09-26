@@ -5,7 +5,7 @@ PLUGIN_NAME=Flatac
 PLUGIN_CMO=self sem_and_logic_front_end ecfg_types ecfg ssl_types ssl global_mem ssl_pprinters union_find ssl_substitution \
 					 ssl_normalization ssl_decision ssl_entailement \
 					 ssl_biabduction \
-nts_types validity_types validity cnt_interpret intermediate_language\
+nts_types nts validity_types validity cnt_interpret intermediate_language\
 var_validity_types var_validity \
 ssl_valid_abs_dom_types ssl_valid_abs_dom \
  c_upon_ssl_domain flatac_ssl_front_end dot_exporter \
