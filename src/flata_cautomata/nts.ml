@@ -260,5 +260,31 @@ let rec cnt_pprint_boolexp (bexp :cnt_bool ) =
 	  end
 
 
+
+
+
+let arg_name_left_folder (str : string ) ( cnt_aexp : cnt_arithm_exp) = 
+  match str with
+      "" -> cnt_pprint_arithm_exp cnt_aexp 
+    | _ -> str^","^( cnt_pprint_arithm_exp cnt_aexp )
+  
+  
+
+let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
+  match tlabel with
+      CntGuard ( cbool ) -> cnt_pprint_boolexp cbool
+    | CntAffect( ntvar ,  expr ) ->
+       (nts_pprint_nts_ivar ntvar)^"'="^(cnt_pprint_arithm_exp expr)
+    | CntFunCall ( funname, retval , largs ) ->
+      begin
+	match retval with
+	    Some(NtsIVar(varname)) ->
+	      begin
+		varname^"'="^(List.fold_left arg_name_left_folder "" largs )
+	      end
+	  | None -> (List.fold_left arg_name_left_folder "" largs )
+      end
+      
+  
 	    
 	  
