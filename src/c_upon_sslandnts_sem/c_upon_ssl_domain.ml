@@ -125,9 +125,8 @@ des parametres \n" ;
 	 end
 	   
 
-
 let affect_ptr_upon_sslv (v : Cil_types.varinfo)  (expr : Cil_types.exp) (sslv : ssl_validity_absdom ) =
-  Self.debug ~level:0 "Im am in affect_ptr_upon_ssl \n";
+  Self.debug ~level:0 "Im am in affect_ptr_upon_sslv \n";
   try
     let pvar_left = (PVar(v.vname)) in
     let pvar_right = get_pvar_from_exp expr in
@@ -142,7 +141,16 @@ let affect_ptr_upon_sslv (v : Cil_types.varinfo)  (expr : Cil_types.exp) (sslv :
     in
     ((sslv_new,affect_off::[])::[]) 
   with
-      Not_found -> Self.debug ~level:0 "Undefined right member in affectation, affect_ptr_upon_ssl crash"; raise Not_found
+      Not_found ->
+	begin
+	 (* match pvar_right with 
+	    PVar(rvarname) ->*)
+	      (*begin*)
+		Self.debug ~level:0 "Undefined right member in affectation, affect_ptr_upon_ssl crash";(* Format.printf "Debug : right pvar name is : %s \n" rvarname;*)
+		  raise Not_found
+	     (*end*)
+	end
+	  
     | Loc_is_nil -> 
       begin 
 	and_atomic_ptnil (Pointsnil((PVar(v.vname)))) sslv.ssl_part;
@@ -172,6 +180,7 @@ let malloc_upon_ssl  ( v : Cil_types.varinfo option ) ( mid : global_mem_manager
 (** Effect of a free(x),  where x is a pointer variable, on an ssl
 formula.*)
 let free_upon_sslv (pvar : ptvar)(sslv : ssl_validity_absdom ) =
+  	Self.debug ~level:0 "Entering free_upon_sslv";
   try
     let lvar = get_ptr_affectation sslv.ssl_part pvar in
     if not (space_contains_locvar lvar  sslv.ssl_part.space )
@@ -214,6 +223,7 @@ let free_upon_sslv (pvar : ptvar)(sslv : ssl_validity_absdom ) =
 (** This function computes the heap shape after a successful call to malloc,
 i.e. when Valid(I) and [I]_{\phi} > 0*)
 let r_malloc_succ (var : Cil_types.varinfo option ) sslv (mid: global_mem_manager ) (scal_param : c_scal) =
+  	Self.debug ~level:0 "Entering r_malloc_succ";
   match var with
       Some(v) ->
 	begin
@@ -249,7 +259,7 @@ let r_malloc_succ (var : Cil_types.varinfo option ) sslv (mid: global_mem_manage
 
 (** Same function as above, but includes an extra guar that express which constraints the counter evaluation shall satisfy so that Valid(I) is true. *)
 let r_malloc_succ_withvalidcntguard (var : Cil_types.varinfo option) sslv (mid: global_mem_manager ) (scal_param : c_scal) =
-
+	Self.debug ~level:0 "Entering r_malloc_succ_withvalidcntguard ";
   match var with 
       Some(v) ->
 	begin
@@ -294,6 +304,8 @@ let r_malloc_succ_withvalidcntguard (var : Cil_types.varinfo option) sslv (mid: 
 (** this function computes the labels and the new heap shape when a
 call of malloc is performed using a negative or zero parameter.*)	
 let r_malloc_neg_or_zero_arg (var : Cil_types.varinfo option ) sslv  (mid: global_mem_manager ) (scal_param : c_scal) =
+
+  Self.debug ~level:0 "Entering r_malloc_neg_or_zero_arg ";
   match var with
       Some(v) ->
 	begin
@@ -323,6 +335,7 @@ let r_malloc_neg_or_zero_arg (var : Cil_types.varinfo option ) sslv  (mid: globa
 w.r.t. counters assigne values.*)
 
 let r_malloc_neg_or_zero_arg_withvalidityguard (var : Cil_types.varinfo option ) sslv  (mid: global_mem_manager ) (scal_param : c_scal) =
+  Self.debug ~level:0 " r_malloc_neg_or_zero_arg_withvalidityguard ";
   match var with 
       Some(v) ->
 	begin
@@ -355,6 +368,7 @@ let r_malloc_neg_or_zero_arg_withvalidityguard (var : Cil_types.varinfo option )
       end
 
 let r_malloc_failed_with_unvalidcntgard _ sslv  (mid: global_mem_manager ) (scal_param : c_scal) =
+   Self.debug ~level:0 " r_malloc_failed_with_unvalidcntgard ";
   let abst_domain = create_validity_abstdomain in
   set_heap_to_top abst_domain.ssl_part ;
   let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
@@ -379,6 +393,8 @@ application of the malloc call. i.e. when the condition
 expressed by the guards are met.*)
 
 let malloc_ssl_nts_transition ( v : Cil_types.varinfo  option) sslv  lparam mid  = 
+  Self.debug ~level:0 " malloc_ssl_nts_transition ";
+  
   (** Case of a malloc success *)
   let locmap = sslv.validinfos in
      (* Validlocmap (locmap ) -> *) 
