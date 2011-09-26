@@ -15,6 +15,6 @@ module Self =
 		(struct
 			let name = "FlataC"
 			let shortname = "FlataC"
-			let help= "This plugin demonstrate the work of Radu Iosif, Florent Ganier, Marius Bozga \
-			and Maxime Gaudin about the automatic verification on critical embedded softwares."
+			let help= "Extracts flat counter automata based
+	model of C program for memory faults detection."
 		end)
