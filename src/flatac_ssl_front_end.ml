@@ -67,7 +67,7 @@ class ssl_flatac_front_end = object
   returned string.*)
   method pretty_label tlist = 
     let  str = List.fold_left pprint_trans_list_foldleft "" tlist in
-      "\\begin{minipage}{16cm}\\lstinline{"^str^"}\\end{minipage}"
+      str
     
   method accepts sslvg sslvd =
 

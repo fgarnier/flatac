@@ -94,7 +94,7 @@ struct
             (front_end#pretty abstraction); 
           Hashtbl.iter ( fun toUid counterValue  -> 
                            Format.fprintf foc 
-                             "\t\t%d -> %d [texlbl=\"%s\"]\n\n" uid toUid
+                             "\t\t%d -> %d [label=\"%s\"]\n\n" uid toUid
                              (front_end#pretty_label counterValue)
           ) listOfEdges
 
@@ -108,6 +108,7 @@ struct
         ( fun fname -> Format.fprintf foc 
                          "\tsubgraph cluster_%s {\n \
                          \t\tnode [style=filled,shape=box,color=white]; \n \
+                         \t\tedge [lblstyle=\"auto\",topath=\"bend left\"]; \n \
                          \t\tstyle=filled; \n \
                          \t\tcolor=lightgray; \n \
                          \t\tlabel = \"%s\"; \n \

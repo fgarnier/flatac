@@ -251,12 +251,12 @@ let rec cnt_pprint_boolexp (bexp :cnt_bool ) =
 	    let expd =  cnt_pprint_arithm_exp expd 
 	    in
 	    match bop with
-		CntEq ->  expg^"="^expd
-	      | CntNeq ->  expg^"!="^expd
-	      | CntLeq -> expg^"<="^expd
-	      | CntLt -> expg^"<"^expd
-	      | CntGt -> expg^">"^expd
-	      | CntGeq -> expg^">="^expd
+		CntEq ->  expg^" = "^expd
+	      | CntNeq ->  expg^" != "^expd
+	      | CntLeq -> expg^" <=  "^expd
+	      | CntLt -> expg^" > "^expd
+	      | CntGt -> expg^" < "^expd
+	      | CntGeq -> expg^" <= "^expd
 	  end
 
 
