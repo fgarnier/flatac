@@ -6,7 +6,7 @@ open SSL_lex
 open Intermediate_language
 
 exception Neither_intvar_nor_ptvar
-exception Unregistered_var
+exception Unregistered_var of string
 exception Relation_between_vars_out_of_ssl_context
 
 let compute_var_cathegory ( v : Cil_types.varinfo ) =
@@ -34,7 +34,7 @@ let validity_of_byname ( loc_map : validity_loc_map ) ( varname : string ) =
 	    let res = Validvarmap.find varname var_name_map  in
 	      res
 	  with
-	      Not_found -> raise Not_found
+	      Not_found -> raise (Unregistered_var(varname))
 	end
 	  
 (**  return a new validity mapping *)
@@ -65,7 +65,10 @@ let validity_of  ( loc_map : validity_loc_map ) (v : Cil_types.varinfo ) =
 	      let res = Validvarmap.find v.vname var_map 
 	      in res.validity
 	    with
-		Not_found -> raise Unregistered_var
+		Not_found ->  
+		  let excs = Unregistered_var (v.vname )
+		  in 
+		    raise excs
 	  end
 
 
@@ -119,8 +122,15 @@ let rec valid_sym_cscal ( loc_map : validity_loc_map ) (sslf : ssl_formula )
  ( scal : c_scal) =
   match scal with
       LiVar(_ , LiIntVar(vname)) -> 
-	let entry = validity_of_byname loc_map vname in
-	  entry.validity
+	begin
+	  try
+	    let entry = validity_of_byname loc_map vname in
+	      entry.validity
+	  with
+	      Not_found -> 
+		let excs = Unregistered_var ( vname ) in 
+		  raise excs
+	end
 	    
     | LiConst(_) -> TruevarValid
     | LiSymConst(_) -> TruevarValid

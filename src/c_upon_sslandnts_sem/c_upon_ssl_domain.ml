@@ -64,6 +64,24 @@ let make_size_locvar ( l : locvar ) (mid : global_mem_manager ) ( block_size : c
 
 
 
+(**
+This function progates the validity to an expression to the lvalue
+when the latter is an integer variable
+*)
+
+let affect_int_val_upon_sslv (v : Cil_types.varinfo) (expr : Cil_types.exp) 
+    (sslv : ssl_validity_absdom ) =
+  Self.debug ~level:0 " Entering affect_int_val_upon_sslv ";
+  let scal_of_exp = cil_expr_2_scalar expr in
+  let validity_of_rval = valid_sym_cscal sslv.validinfos sslv.ssl_part 
+    scal_of_exp in
+  let ret_absdomain =
+    set_var_validity_in_absdomain sslv v validity_of_rval in
+    (ret_absdomain , []) :: []
+    
+
+
+
 (** This function aims at getting the first variable name
 of the list of parameters. Might be useful if some parameter
 expressions are prefixed by a cast or any other ugly stuff so
@@ -400,7 +418,9 @@ let malloc_ssl_nts_transition ( v : Cil_types.varinfo  option) sslv  lparam mid 
      (* Validlocmap (locmap ) -> *) 
   let l = List.hd lparam in (* malloc takes one and only one input parameter.*)
   let scal_param = cil_expr_2_scalar l in
-  let valid_sym_guard = valid_sym_cscal locmap sslv.ssl_part scal_param in  
+  Self.debug ~level:0 " [malloc_ssl_nts_transition] Pre valid_sym_cscal ";  
+  let valid_sym_guard = valid_sym_cscal locmap sslv.ssl_part scal_param in
+  Self.debug ~level:0 " [malloc_ssl_nts_transition] Post valid_sym_cscal ";
   match valid_sym_guard with 
       TruevarValid ->
 	      (*In this case, two transitions are allowed, corresponding
@@ -455,6 +475,10 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 		  (Self.debug ~level:0 "The left value is a variablex \n");
 		  match v.vtype with 
 		      TPtr(_,_) -> affect_ptr_upon_sslv v expr sslv 
+		    (* affect_int_val_upon_sslv set the valitidity of
+		    v to the validity of expr*)
+		    | TInt(_,_) -> affect_int_val_upon_sslv v expr sslv
+			
 		    | _ -> (Self.debug ~level:0 "Unhandled type of variable affectation, skiping it \n");
 		      (sslv,[])::[]
 		      
