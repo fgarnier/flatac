@@ -37,7 +37,7 @@ struct
                                    sem_and_logic_front_end) option ) = None
 
     (** This hash table contains the already built eCFGs *)
-    val ecfgs : (string, ecfg) Hashtbl.t = Hashtbl.create 12
+    val ecfgs : (string, ecfg) Hashtbl.t = Hashtbl.create 97
 
     (** This one contains every node associeted to the eCFG in construction.
     * After it's construction, it will be added to the previously defined 

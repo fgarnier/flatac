@@ -19,7 +19,7 @@ and then send me your message.
 
 
 (* This part defines the function used to export the nts trees into
-human readable format.*)
+a NTS compliant syntax -- as well as being human readable.*)
 
 let nts_pprint_nts_ivar (x : nts_var ) = 
   match x with 

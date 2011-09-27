@@ -14,6 +14,7 @@ open Ssl_pprinters
 open C_upon_ssl_domain (* Contains the semantic tranformation
 		       of the C instruction on the SSL formulae*)
 open Nts_types
+open Nts
 open Global_mem
  (* This type defines 2-uples of ssl_formual and
 			    a validity_loc_map*)
@@ -21,6 +22,13 @@ open  Ssl_valid_abs_dom_types
 open  Ssl_valid_abs_dom (*Contains the copy_validity_absdomain function*)
 
 open Self
+
+let pprint_trans_list_foldleft (s : string ) ( trans : cnt_trans_label ) =
+  match s with 
+      "" -> s^(cnt_pprint_translabel trans )
+    | _ -> s^" and "^(cnt_pprint_translabel trans )
+  
+
 
 class ssl_flatac_front_end = object 
   inherit [ssl_validity_absdom , Nts_types.cnt_trans_label list ]  sem_and_logic_front_end
@@ -55,8 +63,10 @@ class ssl_flatac_front_end = object
     
     
 
- 
-  method pretty_label _ = ""
+  (* Pretty prints each elements of tlist and concatenates it on the
+  returned string.*)
+  method pretty_label tlist = 
+    List.fold_left pprint_trans_list_foldleft "" tlist
     
   method accepts sslvg sslvd =
 
