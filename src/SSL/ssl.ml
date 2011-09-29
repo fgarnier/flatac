@@ -363,7 +363,7 @@ pvar from the set of variables that appears within the Ptnils.*)
 	Pointsnil ( ptr ) ->
 	  Hashtbl.remove sslf.pure.affectations ptr; (** Removes any affectations
 					       of ptr to locations variables.*)
-	  if ( (Hashtbl.mem sslf.pure.affectations ptr) == false ) 
+	  if ( (Hashtbl.mem sslf.pure.ptnil ptr) == false ) 
 	  then Hashtbl.add sslf.pure.ptnil ptr ()
 	    (*One adds x->nil iff it is not yet present*)
 	  
