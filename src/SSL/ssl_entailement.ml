@@ -1,5 +1,10 @@
 (** This files contains the fonctions and the definitions required
-to decide the entailement property. *)
+to decide the entailement property. 
+
+Mail_to florent dot garnier at imag dot fr, for questions, comments
+or requests.
+
+*)
 
 open Hashtbl
 open List
@@ -414,14 +419,18 @@ let does_entail (etp : entail_problem ) =
 		    end
 		end
 	    end
-	| (_,_) ->
+	| (Top_heap,Top_heap) ->
 	  Printf.printf " \n [ does_entail ] TRUE, one of the formula has
  Top Heap \n";
 	  true (** One of the heap is broken, shall raise an
 			exception.*)
+	|(_,_)->
+	   false (* One heap is broken whilst the other on isn't, hence
+		 no entailement relation between those two incomparable
+		 formulae.*)
     end
   with
-      Top_heap_exception -> true (** We shall not deal with exception
+      Top_heap_exception -> false (** We shall not deal with exception
 				 at this point. This treatment is here
 				 for testing purpose, until a proper
 				 exception treatment is added in the

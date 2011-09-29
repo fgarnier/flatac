@@ -35,8 +35,11 @@ let sizeof_cil_tinfo ( tinfo : Cil_types.typeinfo ) =
   let typename = "sizeof_"^tinfo.tname in
     CntSymCst( typename )
 
-(** Needs to be duely completed.*)
-let interpret_ciltypes_size (ciltype : Cil_types.typ ) =
+(** Needs to be duely completed.
+Given a type t, this function return the sizeof of t,
+or for type t*, it returns the sizeof of t.
+*)
+let rec interpret_ciltypes_size (ciltype : Cil_types.typ ) =
   match ciltype with
       TInt(IBool,_) -> CntSymCst ("sizeof_bool")
     | TInt(IChar,_) -> CntSymCst ("sizeof_char")
@@ -54,6 +57,8 @@ let interpret_ciltypes_size (ciltype : Cil_types.typ ) =
     | TFloat(FDouble,_) -> CntSymCst ("sizeof_double")
     | TFloat(FLongDouble,_) -> CntSymCst ("sizeof_long_double")
     | TNamed(tinfo, _ ) -> sizeof_cil_tinfo tinfo 
+    | TPtr(t,_) -> interpret_ciltypes_size t (* Won't work
+					     for t** ...*)
     | _ -> raise  Unhandled_valuetype_in_interpretciltypesize
 
 let offset_cnt_of_pvar (pvar : ptvar) =

@@ -35,8 +35,36 @@ exception Debug_information of string
 exception Contains_no_pvar
 exception Loc_is_nil
 exception Loc_is_a_constant of int64
+exception Debug_info of string 
 
 
+
+
+
+let pprint_binop_op (b : Cil_types.binop) =
+  match b with
+  | 	PlusA  -> "PlusA"	(*	arithmetic +	*)
+  | 	PlusPI -> "PlusPI"	(*	pointer + integer	*)
+  | 	IndexPI -> "IndexPI" 	(*	pointer + integer but only when it arises from an expression e[i] when e is a pointer and not an array. This is semantically the same as PlusPI but CCured uses this as a hint that the integer is probably positive.	*)
+  | 	MinusA -> 	"MinusA" 	(*	arithmetic -	*)
+  | 	MinusPI -> "MinusPI"	(*	pointer - integer	*)
+  | 	MinusPP -> "MinusPP" 	(*	pointer - pointer	*)
+  | 	Mult -> "Mult"
+  | 	Div  -> "Div"	(*	/	*)
+  | 	Mod  ->	"Mod" 	(*	%	*)
+  | 	Shiftlt -> 	"Shiftlt"	(*	shift left	*)
+  | 	Shiftrt -> "Shiftrt" 	(*	shift right	*)
+  | 	Lt  -> "Lt"	(*	< (arithmetic comparison)	*)
+  | 	Gt -> "Gt" 	(*	> (arithmetic comparison)	*)
+  | 	Le -> "Le" 	(*	<= (arithmetic comparison)	*)
+  | 	Ge -> "Ge"	(*	>= (arithmetic comparison)	*)
+  | 	Eq -> "Eq"	(*	== (arithmetic comparison)	*)
+  | 	Ne -> "Ne"	(*	!= (arithmetic comparison)	*)
+  | 	BAnd -> "BAnd"	(*	bitwise and	*)
+  | 	BXor -> "BXor"	(*	exclusive-or	*)
+  | 	BOr -> "BOr"	(*	inclusive-or	*)
+  | 	LAnd -> "LAnd" 	(*	logical and. Unlike other expressions this one does not always evaluate both operands. If you want to use these, you must set Cil.useLogicalOperators.	*)
+  | 	LOr -> "LOr"
 
 
 let make_offset_locpvar (v : ptvar ) =
@@ -75,8 +103,9 @@ let affect_int_val_upon_sslv (v : Cil_types.varinfo) (expr : Cil_types.exp)
   let scal_of_exp = cil_expr_2_scalar expr in
   let validity_of_rval = valid_sym_cscal sslv.validinfos sslv.ssl_part 
     scal_of_exp in
+  let ret_absdomain = copy_validity_absdomain sslv in
   let ret_absdomain =
-    set_var_validity_in_absdomain sslv v validity_of_rval in
+    set_var_validity_in_absdomain ret_absdomain v validity_of_rval in
     (ret_absdomain , []) :: []
     
 
@@ -106,6 +135,22 @@ let rec get_pvar_from_exp (expr : Cil_types.exp ) =
       if (Int64.compare i (Int64.zero)) == 0 then 
 	raise Loc_is_nil
       else raise (Loc_is_a_constant(i))
+    
+    | BinOp (PlusPI,e1,_,_) 
+    | BinOp (MinusPI,e1,_,_)
+	->
+	get_pvar_from_exp e1
+
+    |BinOp (b,_,_,_) ->
+	let b = pprint_binop_op b in
+	let msg = "[get_pvar_from_exp :] Don't know what
+to do with Binop operator "^b in
+	  raise (Debug_info(msg))
+
+    | Info (_,_) ->raise (Debug_info("[get_pvar_from_exp :] Don't know what
+to do with Info"))
+
+    | AddrOf (_) ->  raise (Debug_info("[get_pvar_from_exp :] Don't know what to do with AddrOf"))
 
     | _ ->  raise Contains_no_pvar
 	  
@@ -148,6 +193,7 @@ let affect_ptr_upon_sslv (v : Cil_types.varinfo)  (expr : Cil_types.exp) (sslv :
   try
     let pvar_left = (PVar(v.vname)) in
     let pvar_right = get_pvar_from_exp expr in
+    let sslv = copy_validity_absdomain sslv in
     let lvar_right = get_ptr_affectation sslv.ssl_part pvar_right  in
     Ssl.change_affect_var (Pointsto(pvar_left,lvar_right)) sslv.ssl_part;
     let param_cscal = Intermediate_language.cil_expr_2_ptr expr in
@@ -199,6 +245,7 @@ let malloc_upon_ssl  ( v : Cil_types.varinfo option ) ( mid : global_mem_manager
 formula.*)
 let free_upon_sslv (pvar : ptvar)(sslv : ssl_validity_absdom ) =
   	Self.debug ~level:0 "Entering free_upon_sslv";
+  let sslv = copy_validity_absdomain sslv in
   try
     let lvar = get_ptr_affectation sslv.ssl_part pvar in
     if not (space_contains_locvar lvar  sslv.ssl_part.space )
@@ -242,6 +289,7 @@ let free_upon_sslv (pvar : ptvar)(sslv : ssl_validity_absdom ) =
 i.e. when Valid(I) and [I]_{\phi} > 0*)
 let r_malloc_succ (var : Cil_types.varinfo option ) sslv (mid: global_mem_manager ) (scal_param : c_scal) =
   	Self.debug ~level:0 "Entering r_malloc_succ";
+  let sslv = copy_validity_absdomain sslv in
   match var with
       Some(v) ->
 	begin
@@ -273,11 +321,10 @@ let r_malloc_succ (var : Cil_types.varinfo option ) sslv (mid: global_mem_manage
 	ret_list
       end
 
-
-
 (** Same function as above, but includes an extra guar that express which constraints the counter evaluation shall satisfy so that Valid(I) is true. *)
 let r_malloc_succ_withvalidcntguard (var : Cil_types.varinfo option) sslv (mid: global_mem_manager ) (scal_param : c_scal) =
 	Self.debug ~level:0 "Entering r_malloc_succ_withvalidcntguard ";
+  let sslv = copy_validity_absdomain sslv in
   match var with 
       Some(v) ->
 	begin
@@ -324,6 +371,7 @@ call of malloc is performed using a negative or zero parameter.*)
 let r_malloc_neg_or_zero_arg (var : Cil_types.varinfo option ) sslv  (mid: global_mem_manager ) (scal_param : c_scal) =
 
   Self.debug ~level:0 "Entering r_malloc_neg_or_zero_arg ";
+  let sslv = copy_validity_absdomain sslv in
   match var with
       Some(v) ->
 	begin
@@ -354,6 +402,7 @@ w.r.t. counters assigne values.*)
 
 let r_malloc_neg_or_zero_arg_withvalidityguard (var : Cil_types.varinfo option ) sslv  (mid: global_mem_manager ) (scal_param : c_scal) =
   Self.debug ~level:0 " r_malloc_neg_or_zero_arg_withvalidityguard ";
+  let sslv = copy_validity_absdomain sslv in
   match var with 
       Some(v) ->
 	begin
@@ -387,6 +436,7 @@ let r_malloc_neg_or_zero_arg_withvalidityguard (var : Cil_types.varinfo option )
 
 let r_malloc_failed_with_unvalidcntgard _ sslv  (mid: global_mem_manager ) (scal_param : c_scal) =
    Self.debug ~level:0 " r_malloc_failed_with_unvalidcntgard ";
+  let sslv = copy_validity_absdomain sslv in
   let abst_domain = create_validity_abstdomain in
   set_heap_to_top abst_domain.ssl_part ;
   let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
@@ -412,7 +462,7 @@ expressed by the guards are met.*)
 
 let malloc_ssl_nts_transition ( v : Cil_types.varinfo  option) sslv  lparam mid  = 
   Self.debug ~level:0 " malloc_ssl_nts_transition ";
-  
+  let sslv = copy_validity_absdomain sslv in
   (** Case of a malloc success *)
   let locmap = sslv.validinfos in
      (* Validlocmap (locmap ) -> *) 
@@ -451,6 +501,7 @@ let malloc_ssl_nts_transition ( v : Cil_types.varinfo  option) sslv  lparam mid 
 (** mid must be an instance of the class global mem manager*)
 let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom) ( instruction : Cil_types.instr) =
    	Self.debug ~level:0 "\n Dans next_on_ssl_instr \n" ;
+  let sslv = copy_validity_absdomain sslv in
     match instruction with 
 	  (*****************************************************************)
 	
