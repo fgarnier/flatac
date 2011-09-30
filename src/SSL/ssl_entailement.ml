@@ -92,7 +92,7 @@ let fresh_locvar_name_from_etp (etp : entail_problem ) =
 	  match var_max with
 	      LVar ( vname ) -> FLVar( vname, 1)
 	end
-    | (_,_) -> raise Top_heap_exception
+    | (_,_) -> raise Top_heap_exception 
   
 
 (** Used to compute the biggest location variabl in a (locvar, unit ) t 
@@ -214,7 +214,7 @@ let entail_r4 ( subst_ref : (entail_subst ref) option )( etp : entail_problem ) 
 	    Some ( overall_subst ) -> 
 	      overall_subst := 
 		{lsubst = (Ssl_substitution.compose_subst subst_left !overall_subst.rsubst );
-	      rsubst = (Ssl_substitution.compose_subst subst_right !overall_subst.lsubst );
+		 rsubst = (Ssl_substitution.compose_subst subst_right !overall_subst.lsubst );
 }
 	  | None -> ()
   in
@@ -260,7 +260,9 @@ match entp.left.space,  entp.right.space with
 	  (* The iterator can raise a Top_heap_exception. We propagate
 	  the exception in this case.*)
       end
-  | (_,_) -> raise Top_heap_exception
+  | (_,_) -> ()  (** No operation is performed when one heap is fubar.*)
+
+    (* raise Top_heap_exception *)
     (* In this case, at leat on of the heap are corrupted, hence we
     raise an exception to note that one can't infer a new heap.*)
 
@@ -292,13 +294,15 @@ let entail_r2 ( etp : entail_problem ) =
 		  Hashtbl.remove space_table_right lvar
 		end
 	      else ()
-	| (_,_) -> raise Top_heap_exception
+	| (_,_) -> () (* Do nothing if the heaps aren't both in sane shape*)
+	    (*raise Top_heap_exception*)
   in
   try
     match  etp.left.space with
 	Space( space_table_left ) -> Hashtbl.iter r2_iterator space_table_left
-      | Top_heap -> raise Top_heap_exception
-  with
+      | Top_heap -> () (*Left heap is corrupted, then skip rule 2.*) 
+	  (**)
+  with 
       Top_heap_exception -> raise Top_heap_exception
 
 
@@ -360,7 +364,8 @@ let ssl_entailement (etp : entail_problem ) =
   entail_r1 etp;
   entail_r1_nil etp;
   entail_r3 etp;
-  entail_r3_nil etp
+  entail_r3_nil etp;
+  entail_r5 etp
  
 
 
@@ -375,9 +380,9 @@ let pprint_entailement_problem (etp : entail_problem ) =
 that f |- g reduces to 
 (Pure[...]|| Emp ) |- (true || Emp)
 
-the entailement problem and their associated SSL formula
+the entailement problem and their associated SSL formulae
 are copied, and the parameter remain unaffected by the
-computation. Both formula of the entailement problem must
+computation. Both formulae of the entailement problem must
 be in normal form.
 *)
 let does_entail (etp : entail_problem ) =
@@ -388,19 +393,28 @@ let does_entail (etp : entail_problem ) =
   in
   Self.feedback ~level:0 "I reached does_entail \n";
   Format.printf " \n [ does_entail ] %s \n " (pprint_entailement_problem etp);  
-  try 
-    begin
+  begin
+    try 
       ssl_entailement etp_prime;
-      match etp_prime.left.space , etp_prime.right.space with 
-	  ( Space ( space_table_l) , Space(space_table_r)) ->
-	    begin
-	      if ( Hashtbl.length space_table_l > 0 ) ||
-		(Hashtbl.length space_table_r > 0 ) then
-		begin
-		 Printf.printf " \n [ does_entail ] FALSE, heap of different size \n";
+    with
+	Top_heap_exception -> raise Top_heap_exception         
+	  (** We shall not deal with exception
+					at this point. This treatment is here
+					for testing purpose, until a proper
+					exception treatment is added in the
+					Ecfg computation function/method. *)
+	  
+  end;
+  match etp_prime.left.space , etp_prime.right.space with 
+      ( Space ( space_table_l) , Space(space_table_r)) ->
+	begin
+	  if ( Hashtbl.length space_table_l > 0 ) ||
+	    (Hashtbl.length space_table_r > 0 ) then
+	      begin
+		Printf.printf " \n [ does_entail ] FALSE, heap of different size \n";
 		false
-		end
-	      else
+	      end
+	  else
 		begin
 		  if (Hashtbl.length etp_prime.right.pure.affectations == 0 )
 		    && (Hashtbl.length etp_prime.right.pure.ptnil == 0)
@@ -412,36 +426,92 @@ let does_entail (etp : entail_problem ) =
 		  else
 		    begin
 		      Printf.printf " \n [ does_entail ] FALSE, non empty right formula \n";
-		       Format.printf " \n [ False : Post computations : ] %s \n " (pprint_entailement_problem etp_prime);
-
+		      Format.printf " \n [ False : Post computations : ] %s \n " (pprint_entailement_problem etp_prime);
+		      
 		      
 		      false
 		    end
 		end
-	    end
-	| (Top_heap,Top_heap) ->
-	  Printf.printf " \n [ does_entail ] TRUE, one of the formula has
+	end
+    | (Top_heap,Top_heap) ->
+	Printf.printf " \n [ does_entail ] TRUE, both  formula has
  Top Heap \n";
-	  true (** One of the heap is broken, shall raise an
-			exception.*)
-	|(_,_)->
-	   false (* One heap is broken whilst the other on isn't, hence
-		 no entailement relation between those two incomparable
-		 formulae.*)
-    end
-  with
-      Top_heap_exception -> false (** We shall not deal with exception
-				 at this point. This treatment is here
-				 for testing purpose, until a proper
-				 exception treatment is added in the
-				 Ecfg computation function/method. *)
+	true (** One of the heap is broken, shall raise an
+		 exception.*)
+    |(_,_)->
+       Printf.printf "\n  [ does_entail ] FALSE, ONE fromula has
+Top Heapm while the other one hasn't \n";
+       false (* One heap is broken whilst the other on isn't, hence
+		no entailement relation between those two incomparable
+		formulae.*)
+ 
 
 	  
-  
+
   
   
 
 
+let accept_new_abstraction (etp : entail_problem ) =
+  let etp_prime = { 
+    left = (Ssl.copy etp.left) ;
+    right = (Ssl.copy etp.right) ;
+  } 
+  in
+  Self.feedback ~level:0 "I reached does_entail \n";
+  Format.printf " \n [ accept_new_abstraction ] %s \n " (pprint_entailement_problem etp);  
+  begin
+    try 
+      ssl_entailement etp_prime;
+    with
+	Top_heap_exception -> raise Top_heap_exception         
+	  (** We shall not deal with exception
+					at this point. This treatment is here
+					for testing purpose, until a proper
+					exception treatment is added in the
+					Ecfg computation function/method. *)
+	  
+  end;
+  match etp_prime.left.space , etp_prime.right.space with 
+      ( Space ( space_table_l) , Space(space_table_r)) ->
+	begin
+	  if ( Hashtbl.length space_table_l > 0 ) ||
+	    (Hashtbl.length space_table_r > 0 ) then
+	      begin
+		Printf.printf " \n [ accept_entailement ] TRUE, heap of different size \n";
+		true
+	      end
+	  else
+		begin
+		  if (Hashtbl.length etp_prime.right.pure.affectations == 0 )
+		    && (Hashtbl.length etp_prime.right.pure.ptnil == 0)
+		  then
+		    begin
+		      Printf.printf " \n [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one\n";
+		      false
+		    end
+		  else
+		    begin
+		      Printf.printf " \n [  accept_entailement ] TRUE, non empty right formula, meaning it is not comparable with the left hand side \n";
+		      Format.printf " \n [ True : Post computations : ] %s \n " (pprint_entailement_problem etp_prime);
+		      
+		      
+		      false
+		    end
+		end
+	end
+    | (Top_heap,Top_heap) ->
+	Printf.printf " \n [ does_entail ] FALSE, False formula aren't
+added, as all are equivalent ";
+	false (** One of the heap is broken, shall raise an
+		 exception.*)
+    |(_,_)->
+       Printf.printf "\n  [ does_entail ] FALSE, ONE fromula has
+Top Heapm while the other one hasn't \n";
+       false (* One heap is broken whilst the other on isn't, hence
+		no entailement relation between those two incomparable
+		formulae.*)
+ 
 
 
     

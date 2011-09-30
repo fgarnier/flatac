@@ -80,7 +80,7 @@ class ssl_flatac_front_end = object
       right = sslvg.ssl_part;
     }
     in
-    not (Ssl_entailement.does_entail etp )
+    (Ssl_entailement.accept_new_abstraction etp )
 
 end
 

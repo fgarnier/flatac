@@ -92,7 +92,7 @@ struct
       else 
       begin 
         let visited_abstractions = Hashtbl.find visited_sids sid in
-          (** Is there any node such as for this sid, it's abstraction is
+          (** Is there any node such as for this sid, its abstraction is
           * the current one, or is more general (i.e. entails) the current one
           *)
           if List.exists ( fun abs -> 
@@ -121,7 +121,7 @@ struct
         if not (Hashtbl.mem visited_nodes (statement.sid, abstraction)) then
         begin
           self#add_visited_node statement.sid abstraction;
-          let subEdges = Hashtbl.create 12 in
+          let subEdges = Hashtbl.create 97 in
           let _ = List.map 
             ( fun succ -> 
             try
