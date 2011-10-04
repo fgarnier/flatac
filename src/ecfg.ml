@@ -100,8 +100,9 @@ struct
                              if abs = abstraction then true
                              else 
                                (** Entails ? *)
-                               try not(front_end#accepts abs abstraction)
-                               with e -> self#handle_exception e; true
+                               not (front_end#accepts abs abstraction)
+                               (** accept might raise some exceptions at
+			       some points*)
           ) visited_abstractions then false 
           else 
           begin

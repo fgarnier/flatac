@@ -496,7 +496,7 @@ let accept_new_abstraction (etp : entail_problem ) =
 		      Format.printf " \n [ True : Post computations : ] %s \n " (pprint_entailement_problem etp_prime);
 		      
 		      
-		      false
+		      true
 		    end
 		end
 	end
@@ -505,13 +505,16 @@ let accept_new_abstraction (etp : entail_problem ) =
 added, as all are equivalent ";
 	false (** One of the heap is broken, shall raise an
 		 exception.*)
-    |(_,_)->
-       Printf.printf "\n  [ does_entail ] FALSE, ONE fromula has
-Top Heapm while the other one hasn't \n";
+    |(_,Top_heap)->
+       Printf.printf "\n  [ does_entail ] FALSE, Rhs has Top_heap
+whilst Lhs don't, accepting it";
        false (* One heap is broken whilst the other on isn't, hence
 		no entailement relation between those two incomparable
 		formulae.*)
  
-
+    |(Top_heap,_) ->
+       Printf.printf "\n  [ does_entail ] TRUE, Rhs has not Top_heap
+whilst Lhs has, accepting it";
+       true
 
     
