@@ -155,7 +155,12 @@ struct
 					deal with this kind of exception
 					*)
 
+
+    method build_ecfg (current_node : ecfg_vertex) (stmt : Cil_types.stmt)( abst : label_type ) =
+      
+
     
+      
     method build_node_list ( funInfo : Cil_types.fundec ) front_end =
       Hashtbl.clear current_ecfg;
       prepareCFG funInfo; computeCFGInfo funInfo true;
