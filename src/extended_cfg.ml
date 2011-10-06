@@ -63,8 +63,85 @@ struct
 	new_vertex.id (**  Returns the id of the created vertex*)
 
 
+    method private register_edge (origin : int )( dest : int  )
+      (label : label_type ) =
+      try
+	let entry_tab = Hashtbl.find edges origin in
+	  Hashtbl.add entry_tabl dest label;
+	  let reverse_table = Hashtbl.find edge_inv post in
+	    Hashtbl.add reverse_table pre ();
+	    (* store that post has pre as predecessor, obvious isn't it ?*)
+	  
+      with
+	  Not_found -> raise Not_found
+	    
+    (* This method check whether some abstract state 
+       (sid , absdomvalue) is not entailed by another
+	  abstract state (sid, abv), i.e. abv |- absdomvalue.
+       If no abs value is associated to this sid, then
+       the method answers false.
+    *)
+	    
+    method entailed_by_same_id_absvalue  (next_stmt : Cil_types.stmt)
+      ( absval : abs_domain_type ) =
+      let entail_folder (id_abs_brothers : int ) () (already_found : int ) =
+	if already_found > 0 then already_found
+	else
+	  let brother_ecfg_node = Hashtbl.find vertices id_abs_brother in
+	  let brother_abs = brother_ecfg_node.abstract_val in
+	  if ( front_end#accept brother_abs absval ) then id_abs_brother
+	  else 
+	    already_found
+      in
+      try
+	let brotherhood_abs = Hashtbl.find next_stmt.sid in
+	let id_candidate = Hashtbl.fold entail_folder brotherhood_abs -1 in
+	  if id_candidate > 0 then
+	    (true , id_candidate )
+	  else
+	    (false , -1 )
+      with
+	  Not_found -> (false , -1 ) 
+	    
+   (*
+   This operation takes as input the current state and the next abstract
+     state, and :
+     If there exits an abstract state in the extended cfg that entails/(
+     implies) the "asbtract domain valuation" of the next state, with the
+     mame Cil_types.sid, then one adds an edge from the current state to
+     this state. Otherwise, create a new abstact state, and add an edge
+     between the current vertex and the new one, labelled using the
+     label parameter.
+   *) 
+	  
+   
+    method add_transition_from_to ( current : ecfg_vertex ) 
+      (next_stmt : Cil_types.stmt ) (next_abs : abs_domain_type ) 
+      ( label : label_type) =
+      try
+	let dest_sid_abs_table = Hashtbl.find unfoldsid_2_abs_map dest_sid 
+	in
+	let is_new_abstraction =  self#entailed_by_same_id_absvalue 
+	  next_stmt next_abs in
+	  begin
+	    match is_new_abstraction with
+		(false , _ ) -> 
+		  begin
+		  let new_abs_state_id = 
+		    self#add_abstract_state next_stmt next_abs in
+		    self#register_edge current.id new_abs_state_id label
+		  end
+	      | (true , entailing_state_id ) ->
+		  self#register_edge current.id entailin_state_id label
+	  end
+      with
+	  Not_found -> raise Not_found (* TODO Write an exception treatment
+				       that suits ...*)
+	    
 
-    method add_edge (pre : int) (post : int ) (label : trans_label_val) =
+ (* Pre and post reprensent the identificators of the abstract states,
+ i.e. states in the sid * abs_dom_val cross product.*)
+    method add_edge_by_id (pre : int) (post : int ) (label : trans_label_val) =
       try
 	let entry_table = Hashtbl.find edge pre in
 	  Hashtbl.add entry_table post label;
