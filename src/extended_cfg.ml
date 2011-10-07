@@ -40,6 +40,7 @@ struct
       Hashtbl.create init_hashtbl_size
     val edge_inv : (int , int ) Hashtbl.t = Hashtbl.create init_hashtbl_size
     val vertices : (int , ecfg_vertex) Hashtblt = Hashtbl.create init_hashtbl_size
+
     (* The key corresponds to the Cil_type.stmt.sid and the corresponding
     hash table contains all the id of the note of the ecfg which have
     the same sid as the key.*)
@@ -50,7 +51,9 @@ struct
 				    to be created node, if any.*)
 
 
-    method add_abstract_state ( s : cil_types.stmt ) ( absval : abs_domain_type ) =
+
+    (** Adds a vertex to the ecfg*)
+    method private add_abstract_state ( s : cil_types.stmt ) ( absval : abs_domain_type ) =
       let new_vertex = {
 	id = current_node_id;
 	statement = s;
@@ -62,7 +65,9 @@ struct
 	current_node_id <- (current_node_id + 1);
 	new_vertex.id (**  Returns the id of the created vertex*)
 
-
+	  
+    (** Adds a labelled edge between two vertexed of the
+	extended control flow graph.*)
     method private register_edge (origin : int )( dest : int  )
       (label : label_type ) =
       try
@@ -74,14 +79,18 @@ struct
 	  
       with
 	  Not_found -> raise Not_found
+
+
+
 	    
-    (* This method check whether some abstract state 
+    (** This method checks whether some abstract state 
        (sid , absdomvalue) is not entailed by another
-	  abstract state (sid, abv), i.e. abv |- absdomvalue.
-       If no abs value is associated to this sid, then
-       the method answers false.
+	abstract state (sid, abv), i.e. abv |- absdomvalue.
+	If no abs value is associated to this sid, then
+	the method answers ( false , -1 ).
+	Otherwise, it returns a tuple ( true ,  sid'), where
+        abs' |- absdomvalue .
     *)
-	    
     method entailed_by_same_id_absvalue  (next_stmt : Cil_types.stmt)
       ( absval : abs_domain_type ) =
       let entail_folder (id_abs_brothers : int ) () (already_found : int ) =
@@ -102,8 +111,10 @@ struct
 	    (false , -1 )
       with
 	  Not_found -> (false , -1 ) 
-	    
-   (*
+  
+
+
+ (*
    This operation takes as input the current state and the next abstract
      state, and :
      If there exits an abstract state in the extended cfg that entails/(
@@ -113,8 +124,6 @@ struct
      between the current vertex and the new one, labelled using the
      label parameter.
    *) 
-	  
-   
     method add_transition_from_to ( current : ecfg_vertex ) 
       (next_stmt : Cil_types.stmt ) (next_abs : abs_domain_type ) 
       ( label : label_type) =
@@ -156,9 +165,20 @@ struct
 					*)
 
 
-    method build_ecfg (current_node : ecfg_vertex) (stmt : Cil_types.stmt)( abst : label_type ) =
+    method private recurive_build_ecfg (current_node : ecfg_vertex) (stmt : Cil_types.stmt)( abst : label_type ) =
       
+      
+    method build_fun_ecfg ( funinfo : Cil_types.fundec ) =
+      prepareCFG funinfo; computeCFGInfo funinfo true;
+      let rootstmt = List.hd funinfo.sallstmts in
+      let root_abstraction = get_entry_point_abstraction () in
+	self#add_abstract_state rootstmt root_abstraction;
+	recursive_build_ecfg 
+	
 
+front_end#make_entry_node_from_cil_stmt rootstmt
+      in
+      
     
       
     method build_node_list ( funInfo : Cil_types.fundec ) front_end =
