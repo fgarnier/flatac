@@ -40,7 +40,7 @@ struct
     val edge : ( int , (int , trans_label_val ) Hashtbl.t ) Hashtbl.t = 
       Hashtbl.create init_hashtbl_size
     val edge_inv : (int , int ) Hashtbl.t = Hashtbl.create init_hashtbl_size
-    val vertices : (int , ecfg_vertex) Hashblt = Hashtbl.create init_hashtbl_size
+    val vertices : (int , ecfg_vertex) Hashtlt = Hashtbl.create init_hashtbl_size
 
     val init_state : ( int , unit ) Hashtbl.t = Hashtbl.create init_hashtbl_size
     val final_stat : ( int , unit ) Hashtbl.t = Hashtbl.create init_hashtbl_size
@@ -70,7 +70,7 @@ struct
 	
       } 
       in
-	Hashtbl.add vertices vertices current_node_id new_vertex;
+	Hashtbl.add vertices  current_node_id new_vertex;
 	if Hashtbl.mem unfoldsid_2_abs_map s.sid 
 	then 
 	  begin
@@ -103,7 +103,7 @@ struct
 	  Not_found -> raise Not_found
 
 
-
+	    
 	    
     (** This method checks whether some abstract states 
        (sid , absdomvalue) is not entailed by another
@@ -135,7 +135,24 @@ struct
 	  Not_found -> (false , -1 ) 
   
 
+    method is_sid_visited ( id : int ) =
+      Hashtbl.mem visited_index id
 
+(** Returns true if the s * abs has not yet been visited for building the ecfg.*)
+    method recurse_to_abs_succs ( s : Cil_type_stmt ) ( abs : abs_domain_type ) =
+      if (Hashtbl.mem visited_index s.sid) == false
+      then true 
+      else
+	not ( entailed_by_same_id_absvalue s abs )
+	
+
+    method mark_as_visited ( vertex_id : int ) =
+      let v = Hashtbl.find vertices vertex_id in
+	try
+	  let sid_table = Hashtbl.mem visited v.statment.sid in
+	    if Hashtbl.mem sid_table v.id then ()
+	    else Hashtbl.add sid_table v.id
+	with
  (*
    This operation takes as input the current state and the next abstract
      state, and :
