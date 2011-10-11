@@ -24,6 +24,9 @@ object
   (** Returns a label without any consequence on sub transition label *)
   method virtual get_empty_transition_label : unit -> 'b 
 
+  method virtual copy_absdom_label : 'a -> 'a
+  method virtual copy_transit_label : 'b -> 'b
+
   (* Returns true if, knowing the first abstraction, the second one is
   * accepted *)
   method virtual accepts: 'a -> 'a -> bool

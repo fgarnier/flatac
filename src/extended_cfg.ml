@@ -30,6 +30,7 @@ struct
   class extended_cfg ( prj : Project.t ) = object(self)
     inherit Visitor.generic_frama_c_visitor (prj) (Cil.inplace_visit())
     (** Frama-C related ** TO CHECK IF USED ANYWHERE *)
+    val mutable name : string
     val mutable is_computed = false
       
     val mutable front_end : ( ( (Extended_cfg_base_types.abs_dom_type, 
@@ -39,7 +40,13 @@ struct
     val edge : ( int , (int , trans_label_val ) Hashtbl.t ) Hashtbl.t = 
       Hashtbl.create init_hashtbl_size
     val edge_inv : (int , int ) Hashtbl.t = Hashtbl.create init_hashtbl_size
-    val vertices : (int , ecfg_vertex) Hashtblt = Hashtbl.create init_hashtbl_size
+    val vertices : (int , ecfg_vertex) Hashblt = Hashtbl.create init_hashtbl_size
+
+    val init_state : ( int , unit ) Hashtbl.t = Hashtbl.create init_hashtbl_size
+    val final_stat : ( int , unit ) Hashtbl.t = Hashtbl.create init_hashtbl_size
+     (** The key shall be the Cil_stmt.sid and the second one shall be
+     *)
+    val visited_index : ( int ,  (int , ()) Hashtbl.t ) Hashtbl.t = Hashtbl.create init_hashtbl_size
 
     (* The key corresponds to the Cil_type.stmt.sid and the corresponding
     hash table contains all the id of the note of the ecfg which have
@@ -51,6 +58,8 @@ struct
 				    to be created node, if any.*)
 
 
+    initializer (name : string ) =
+      funname <- name
 
     (** Adds a vertex to the ecfg*)
     method private add_abstract_state ( s : cil_types.stmt ) ( absval : abs_domain_type ) =
@@ -61,10 +70,23 @@ struct
 	
       } 
       in
-	Hashtbl.add vertices vertices current_node_id new_vertex; 
+	Hashtbl.add vertices vertices current_node_id new_vertex;
+	if Hashtbl.mem unfoldsid_2_abs_map s.sid 
+	then 
+	  begin
+	    let entry_table = Hashtbl.find unfoldsid_2_abs_map s.sid 
+	    in
+	      Hashtbl.add entry_table current_node ()
+	  end
+	else
+	  begin
+	    let entry_table = Hashtbl.create init_hashtbl_size in
+	      Hashtbl.add entry_table current_node_id ();
+	      Hashtbl.add unfoldsid_2_abs_map s.sid entry_table
+	  end;
 	current_node_id <- (current_node_id + 1);
 	new_vertex.id (**  Returns the id of the created vertex*)
-
+	  
 	  
     (** Adds a labelled edge between two vertexed of the
 	extended control flow graph.*)
@@ -76,14 +98,14 @@ struct
 	  let reverse_table = Hashtbl.find edge_inv post in
 	    Hashtbl.add reverse_table pre ();
 	    (* store that post has pre as predecessor, obvious isn't it ?*)
-	  
+	    
       with
 	  Not_found -> raise Not_found
 
 
 
 	    
-    (** This method checks whether some abstract state 
+    (** This method checks whether some abstract states 
        (sid , absdomvalue) is not entailed by another
 	abstract state (sid, abv), i.e. abv |- absdomvalue.
 	If no abs value is associated to this sid, then
@@ -128,8 +150,6 @@ struct
       (next_stmt : Cil_types.stmt ) (next_abs : abs_domain_type ) 
       ( label : label_type) =
       try
-	let dest_sid_abs_table = Hashtbl.find unfoldsid_2_abs_map dest_sid 
-	in
 	let is_new_abstraction =  self#entailed_by_same_id_absvalue 
 	  next_stmt next_abs in
 	  begin
@@ -144,8 +164,13 @@ struct
 		  self#register_edge current.id entailin_state_id label
 	  end
       with
-	  Not_found -> raise Not_found (* TODO Write an exception treatment
-				       that suits ...*)
+	  Not_found -> 
+	    let _ = self#add_abstract_state next_stmt absval;
+	      self#add_transition_from_to current next_stmt next_abs label
+    (* A Not_found exception is raised iff there's no entry for 
+       next_stmt.sid 
+
+    *)
 	    
 
  (* Pre and post reprensent the identificators of the abstract states,
@@ -165,9 +190,34 @@ struct
 					*)
 
 
-    method private recurive_build_ecfg (current_node : ecfg_vertex) (stmt : Cil_types.stmt)( abst : label_type ) =
-      
-      
+
+	
+    method private recurive_build_ecfg (current_node : ecfg_vertex) ( successor_stmt : Cil_types.stmt)( abst : label_type ) =
+      let next_list_adder_iterator (e : (abs_domain_type * label_type ) ) =
+	match e with
+	    ( absvalue , labval ) ->
+	      begin
+		self#add_transition_from_to current_node successor_stmt 
+		  absvalue labval  
+	      end
+      in
+      let
+      let build_iterator ( succs_stmt : Cil_types.stmt ) =
+	let current_absvalue = front_end#copy_absdom_label abst.abstract_val
+	in
+	let  succs_list = front_end#next current_absvalue () successor.skind 
+	in
+	  List.iter next_list_adder_iterator succs_list;
+	  
+      try
+	let  
+      with
+	  Not_found -> 
+	    begin
+	      let 
+	    end
+
+
     method build_fun_ecfg ( funinfo : Cil_types.fundec ) =
       prepareCFG funinfo; computeCFGInfo funinfo true;
       let rootstmt = List.hd funinfo.sallstmts in
@@ -175,7 +225,6 @@ struct
 	self#add_abstract_state rootstmt root_abstraction;
 	recursive_build_ecfg 
 	
-
 front_end#make_entry_node_from_cil_stmt rootstmt
       in
       
