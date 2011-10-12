@@ -17,6 +17,7 @@ open Sem_and_logic_front_end
 
 open Extended_cfg_types
 
+exception Marking_unregistered_vertex of int
 
 
 module Extended_cfg_definition = 
@@ -40,7 +41,7 @@ struct
     val edge : ( int , (int , trans_label_val ) Hashtbl.t ) Hashtbl.t = 
       Hashtbl.create init_hashtbl_size
     val edge_inv : (int , int ) Hashtbl.t = Hashtbl.create init_hashtbl_size
-    val vertices : (int , ecfg_vertex) Hashtlt = Hashtbl.create init_hashtbl_size
+    val vertices : (int , ecfg_vertex) Hashtbl.t = Hashtbl.create init_hashtbl_size
 
     val init_state : ( int , unit ) Hashtbl.t = Hashtbl.create init_hashtbl_size
     val final_stat : ( int , unit ) Hashtbl.t = Hashtbl.create init_hashtbl_size
@@ -140,34 +141,37 @@ struct
 
 (** Returns true if the s * abs has not yet been visited for building the ecfg.*)
     method recurse_to_abs_succs ( s : Cil_type_stmt ) ( abs : abs_domain_type ) =
-      if (Hashtbl.mem visited_index s.sid) == false
+      if (not (Hashtbl.mem visited_index s.sid) )
       then true 
       else
 	not ( entailed_by_same_id_absvalue s abs )
-	
+	  
 
     method mark_as_visited ( vertex_id : int ) =
-      let v = Hashtbl.find vertices vertex_id in
-	try
-	  let sid_table = Hashtbl.mem visited v.statment.sid in
-	    if Hashtbl.mem sid_table v.id then ()
-	    else Hashtbl.add sid_table v.id
-	with
- (*
-   This operation takes as input the current state and the next abstract
-     state, and :
-     If there exits an abstract state in the extended cfg that entails/(
-     implies) the "asbtract domain valuation" of the next state, with the
-     mame Cil_types.sid, then one adds an edge from the current state to
-     this state. Otherwise, create a new abstact state, and add an edge
-     between the current vertex and the new one, labelled using the
+      try
+	let v = Hashtbl.find vertices vertex_id in
+	let sid_table = Hashtbl.mem visited v.statment.sid in
+	  if Hashtbl.mem sid_table v.id then ()
+	  else Hashtbl.add sid_table v.id
+      with
+	  Not_found -> let excep = Marking_unregistered_vertex ( vertex_id ) in
+	    raise excep
+ 
+    (*
+      This operation takes as input the current state and the next abstract
+      state, and :
+      If there exits an abstract state in the extended cfg that entails/(
+      implies) the "asbtract domain valuation" of the next state, with the
+      mame Cil_types.sid, then one adds an edge from the current state to
+      this state. Otherwise, create a new abstact state, and add an edge
+      between the current vertex and the new one, labelled using the
      label parameter.
-   *) 
+    *) 
     method add_transition_from_to ( current : ecfg_vertex ) 
       (next_stmt : Cil_types.stmt ) (next_abs : abs_domain_type ) 
       ( label : label_type) =
       try
-	let is_new_abstraction =  self#entailed_by_same_id_absvalue 
+	let is_new_abstraction = self#entailed_by_same_id_absvalue 
 	  next_stmt next_abs in
 	  begin
 	    match is_new_abstraction with
@@ -185,7 +189,8 @@ struct
 	    let _ = self#add_abstract_state next_stmt absval;
 	      self#add_transition_from_to current next_stmt next_abs label
     (* A Not_found exception is raised iff there's no entry for 
-       next_stmt.sid 
+       next_stmt.sid
+ 
 
     *)
 	    
@@ -209,7 +214,15 @@ struct
 
 
 	
-    method private recurive_build_ecfg (current_node : ecfg_vertex) ( successor_stmt : Cil_types.stmt)( abst : label_type ) =
+    method private recurive_build_ecfg ( current_node : ecfg_vertex ) =
+      (* This function is used to recursivelu call recusive_build_ecfg 
+      on all the nodes that are registered as successor of  the parameter
+      current_node.*)
+      let ecfg_succ_recursor  (index : int ) _ =
+	let next_ecfg_vertex = Hashtbl.find vertices indec in
+	  recusive_build_ecfg next_ecfg_vertex
+      in
+      
       let next_list_adder_iterator (e : (abs_domain_type * label_type ) ) =
 	match e with
 	    ( absvalue , labval ) ->
@@ -217,33 +230,43 @@ struct
 		self#add_transition_from_to current_node successor_stmt 
 		  absvalue labval  
 	      end
+		(* End of  next_list_adder_iterator *)
       in
-      let
       let build_iterator ( succs_stmt : Cil_types.stmt ) =
 	let current_absvalue = front_end#copy_absdom_label abst.abstract_val
 	in
-	let  succs_list = front_end#next current_absvalue () successor.skind 
+	let succs_list = front_end#next current_absvalue () successor.skind 
 	in
-	  List.iter next_list_adder_iterator succs_list;
-	  
-      try
-	let  
-      with
-	  Not_found -> 
-	    begin
-	      let 
-	    end
-
-
+	  List.iter next_list_adder_iterator succs_list
+	    (* End of the build_iterator definition *)
+      in
+	if 
+	self#mark_as_visited current_node.id then ()
+	else
+	  begin
+	    try
+	      let current_statment_successors = current_node.statement.succs in
+		List.iter build_iterator current_statement_successors;
+		(* We get the set of the current vertex successor and
+		we iterate on each of them*)
+		let ecfg_succs_indexes = Hashtbl.find vertices current.id in
+		  
+	    with
+		Not_found -> 
+		  begin
+		    let 
+		  end
+		  
+		  
     method build_fun_ecfg ( funinfo : Cil_types.fundec ) =
       prepareCFG funinfo; computeCFGInfo funinfo true;
       let rootstmt = List.hd funinfo.sallstmts in
       let root_abstraction = get_entry_point_abstraction () in
 	self#add_abstract_state rootstmt root_abstraction;
-	recursive_build_ecfg 
+	self#recursive_build_ecfg 
 	
-front_end#make_entry_node_from_cil_stmt rootstmt
-      in
+	  
+	
       
     
       
