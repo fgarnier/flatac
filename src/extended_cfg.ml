@@ -26,12 +26,12 @@ struct
   module Extended_cfg_base_types = Extended_cfg_types ( A ) 
   open Extended_cfg_base_types
   
-  val init_hashtbl_size = 97
-    
-  class extended_cfg ( prj : Project.t ) = object(self)
+  
+  
+  class extended_cfg (name_function : string )( prj : Project.t ) = object(self)
     inherit Visitor.generic_frama_c_visitor (prj) (Cil.inplace_visit())
-    (** Frama-C related ** TO CHECK IF USED ANYWHERE *)
-    val mutable name : string
+      (** Frama-C related ** TO CHECK IF USED ANYWHERE *)
+    val mutable name = name_function 
     val mutable is_computed = false
       
     val mutable front_end : ( ( (Extended_cfg_base_types.abs_dom_type, 
@@ -47,28 +47,28 @@ struct
     val final_stat : ( int , unit ) Hashtbl.t = Hashtbl.create init_hashtbl_size
      (** The key shall be the Cil_stmt.sid and the second one shall be
      *)
-    val visited_index : ( int ,  (int , ()) Hashtbl.t ) Hashtbl.t = Hashtbl.create init_hashtbl_size
+    val visited_index : ( int ,  (int ,  unit ) Hashtbl.t ) Hashtbl.t = Hashtbl.create init_hashtbl_size
 
     (* The key corresponds to the Cil_type.stmt.sid and the corresponding
     hash table contains all the id of the note of the ecfg which have
     the same sid as the key.*)
-    val unfoldsid_2_abs_map : (int , (int , ()) Hashtbl.t) Hashtbl.t 
+    val unfoldsid_2_abs_map : (int , (int , unit ) Hashtbl.t) Hashtbl.t =
+      Hashtbl.create init_hashtbl_size
 
     val mutable current_node_id = 0 (* Basically, the total number of
 				    nodes, as well as the id of the next
 				    to be created node, if any.*)
 
 
-    initializer (name : string ) =
-      funname <- name
-
+   
     (** Adds a vertex to the ecfg*)
-    method private add_abstract_state ( s : cil_types.stmt ) ( absval : abs_domain_type ) =
+    method private add_abstract_state ( s : Cil_types.stmt ) 
+      ( absval : abs_domain_type ) =
+      
       let new_vertex = {
 	id = current_node_id;
 	statement = s;
-	abstract_val = absval ; 
-	
+	abstract_val = absval ; 	
       } 
       in
 	Hashtbl.add vertices  current_node_id new_vertex;
@@ -97,14 +97,10 @@ struct
 	let entry_tab = Hashtbl.find edges origin in
 	  Hashtbl.add entry_tabl dest label;
 	  let reverse_table = Hashtbl.find edge_inv post in
-	    Hashtbl.add reverse_table pre ();
-	    (* store that post has pre as predecessor, obvious isn't it ?*)
-	    
+	    Hashtbl.add reverse_table pre ()
+	    (* store that post has pre as predecessor, obvious isn't it ?*)   
       with
-	  Not_found -> raise Not_found
-
-
-	    
+	  Not_found -> raise Not_found	    
 	    
     (** This method checks whether some abstract states 
        (sid , absdomvalue) is not entailed by another
@@ -140,7 +136,7 @@ struct
       Hashtbl.mem visited_index id
 
 (** Returns true if the s * abs has not yet been visited for building the ecfg.*)
-    method recurse_to_abs_succs ( s : Cil_type_stmt ) ( abs : abs_domain_type ) =
+    method recurse_to_abs_succs ( s : Cil_type.stmt ) ( abs : abs_domain_type ) =
       if (not (Hashtbl.mem visited_index s.sid) )
       then true 
       else
@@ -157,7 +153,8 @@ struct
 	  Not_found -> let excep = Marking_unregistered_vertex ( vertex_id ) in
 	    raise excep
  
-    (*
+ 
+   (*
       This operation takes as input the current state and the next abstract
       state, and :
       If there exits an abstract state in the extended cfg that entails/(
@@ -167,6 +164,7 @@ struct
       between the current vertex and the new one, labelled using the
      label parameter.
     *) 
+
     method add_transition_from_to ( current : ecfg_vertex ) 
       (next_stmt : Cil_types.stmt ) (next_abs : abs_domain_type ) 
       ( label : label_type) =
@@ -186,12 +184,12 @@ struct
 	  end
       with
 	  Not_found -> 
-	    let _ = self#add_abstract_state next_stmt absval;
+	    let _ = self#add_abstract_state next_stmt absval in
 	      self#add_transition_from_to current next_stmt next_abs label
-    (* A Not_found exception is raised iff there's no entry for 
+	      
+  
+  (* A Not_found exception is raised iff there's no entry for 
        next_stmt.sid
- 
-
     *)
 	    
 
@@ -250,13 +248,12 @@ struct
 		(* We get the set of the current vertex successor and
 		we iterate on each of them*)
 		let ecfg_succs_indexes = Hashtbl.find vertices current.id in
-		  
+		  Hashtbl.iter ecfg_succ_recursor ecfg_succs_indexes
+		    (* The recursive call is performed in the iterator*)
 	    with
 		Not_found -> 
-		  begin
-		    let 
-		  end
-		  
+		  raise Not_found
+	  end	  
 		  
     method build_fun_ecfg ( funinfo : Cil_types.fundec ) =
       prepareCFG funinfo; computeCFGInfo funinfo true;
@@ -269,8 +266,9 @@ struct
 	
       
     
-      
-    method build_node_list ( funInfo : Cil_types.fundec ) front_end =
+   (* 
+   
+ method build_node_list ( funInfo : Cil_types.fundec ) front_end =
       Hashtbl.clear current_ecfg;
       prepareCFG funInfo; computeCFGInfo funInfo true;
       let rootStmt = (List.hd funInfo.sallstmts) in
@@ -287,9 +285,9 @@ struct
             DoChildren
         | _ -> DoChildren  
 
+    *)
       
       
-      
-  end;;
-
+  end;; (* End of the class ecfg*)
+end;; (* End of the modul*)
 

@@ -41,6 +41,13 @@ class ssl_flatac_front_end = object
 
   method get_entry_point_abstraction () =
      Ssl_valid_abs_dom.create_validity_abstdomain
+  
+  method copy_transit_label (label : Nts_types.cnt_trans_label list ) =
+    []
+
+  method copy_absdom_label (absval : ssl_validity_absdom ) =
+     copy_validity_absdomain absval 
+      
 
   method is_error_state (sslv : ssl_validity_absdom ) =
     match sslv.ssl_part.space with

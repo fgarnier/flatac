@@ -168,7 +168,7 @@ class cautomaton name_id = object(self)
 a counter automate. The interface that follows allows to add both initial
 and terminal state as well as transitions *)
 
-  val mutable name = "";
+  val mutable name = ""
   (** The two fields that follows are used to represent the set
       of control state and the set of transition of a counter automaton*)  
   val  transitions = ( Hashtbl.create 97 : ( string , transition) t)

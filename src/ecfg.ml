@@ -46,7 +46,7 @@ struct
 
     (** For speed purpose, we had to duplicate datas along two structures. 
     * The first one contains the computed uid (if it was computed yet),
-    * the second one contains every abstractions associated to sids. *)
+d    * the second one contains every abstractions associated to sids. *)
     val visited_nodes : ((ecfg_node_id * semantic_abstraction), int) Hashtbl.t =
       Hashtbl.create 97
     val visited_sids : (ecfg_node_id, semantic_abstraction list)
