@@ -38,9 +38,9 @@ struct
 				  Extended_cfg_base_types.trans_label_val)
                                  sem_and_logic_front_end ) = frontend 
 
-    val edge : ( int , (int , trans_label_val ) Hashtbl.t ) Hashtbl.t = 
+    val edges : ( int , (int , trans_label_val ) Hashtbl.t ) Hashtbl.t = 
       Hashtbl.create init_hashtbl_size
-    val edge_inv : (int , (int , unit) Hashtbl.t ) Hashtbl.t = Hashtbl.create init_hashtbl_size
+    val edges_inv : (int , (int , unit) Hashtbl.t ) Hashtbl.t = Hashtbl.create init_hashtbl_size
     val vertices : (int , ecfg_vertex) Hashtbl.t = Hashtbl.create init_hashtbl_size
 
     val init_state : ( int , unit ) Hashtbl.t = Hashtbl.create init_hashtbl_size
@@ -94,18 +94,18 @@ struct
     method private register_edge (origin : int )( dest : int  )
       (label : trans_label_val ) =
       try
-	let entry_tab = Hashtbl.find edge origin in
+	let entry_tab = Hashtbl.find edges origin in
 	  Hashtbl.add entry_tab dest label;
-	  if Hashtbl.mem edge_inv dest then
+	  if Hashtbl.mem edges_inv dest then
 	    begin
-	      let reverse_table = Hashtbl.find edge_inv dest in
+	      let reverse_table = Hashtbl.find edges_inv dest in
 		Hashtbl.add reverse_table origin ()
 	    end
 	  else
 	    begin
 	      let reverse_table = Hashtbl.create init_hashtbl_size in
 		Hashtbl.add reverse_table origin () ;
-		Hashtbl.add edge_inv dest reverse_table 
+		Hashtbl.add edges_inv dest reverse_table 
 	    end
 	      (* store that post has pre as predecessor, obvious isn't it ?*)   
       with
@@ -207,69 +207,75 @@ struct
  i.e. states in the sid * abs_dom_val cross product.*)
     method add_edge_by_id (pre : int) (post : int ) (label : trans_label_val) =
       try
-	let entry_table = Hashtbl.find edge pre in
+	let entry_table = Hashtbl.find edges pre in
 	  Hashtbl.add entry_table post label;
-	  let reverse_table = Hashtbl.find edge_inv post in
+	  let reverse_table = Hashtbl.find edges_inv post in
 	    Hashtbl.add reverse_table pre;
 	    (* store that post has pre as predecessor, obvious isn't it ?*)
 	    
       with
 	  Not_found -> raise Not_found  (* Put that here to note that
-					there exists a smartes way to 
+					   there exists a smartes way to 
 					deal with this kind of exception
 					*)
-
-
+	    
+	    
 
 	
     method private recursive_build_ecfg ( current_node : ecfg_vertex ) =
       (* This function is used to recursivelu call recusive_build_ecfg 
       on all the nodes that are registered as successor of  the parameter
-      current_node.*)
+	 current_node.*)
       let ecfg_succ_recursor  (index : int ) _ =
 	let next_ecfg_vertex = Hashtbl.find vertices index in
-	  self#recursive_build_ecfg next_ecfg_vertex
+	  if ( self#recurse_to_abs_succs next_ecfg_vertex.statement next_ecfg_vertex.abstract_val ) 
+	  then
+	    self#recursive_build_ecfg next_ecfg_vertex
+	  else ()
       in
-      
       let next_list_adder_iterator (next_stmt : Cil_types.stmt) 
 	  (e : (abs_dom_val * trans_label_val ) ) =
 	match e with
 	    ( absvalue , labval ) ->
 	      begin
-		self#add_transition_from_to current_node next_stmt absvalue labval  
+		self#add_transition_from_to current_node next_stmt absvalue
+		  labval  
 	      end
 		(* End of  next_list_adder_iterator *)
       in
       let build_iterator ( succs_stmt : Cil_types.stmt ) =
-	let current_absvalue = front_end#copy_absdom_label current_node.abstract_val
+	let current_absvalue = front_end#copy_absdom_label 
+	  current_node.abstract_val
 	in
-	let succs_list = front_end#next current_absvalue () succs_stmt.skind 
+	let empty_label = front_end#get_empty_transition_label () in
+	let succs_list = front_end#next current_absvalue empty_label 
+	  succs_stmt.skind 
 	in
 	  List.iter (next_list_adder_iterator succs_stmt) succs_list
 	    (* End of the build_iterator definition *)
-      in
-	if 
-	self#mark_as_visited current_node.id then ()
-	else
-	  begin
-	    try
-	      let current_statment_successors = current_node.statement.succs in
-		List.iter build_iterator current_statment_successors;
-		(* We get the set of the current vertex successor and
-		we iterate on each of them*)
-		let ecfg_succs_indexes = Hashtbl.find vertices current.id in
-		  Hashtbl.iter ecfg_succ_recursor ecfg_succs_indexes
-		    (* The recursive call is performed in the iterator*)
-	    with
-		Not_found -> 
-		  raise Not_found
-	  end	  
-		  
+      in 
+	self#mark_as_visited current_node.id;
+	try
+	  let current_statment_successors = current_node.statement.succs 
+	  in
+	    List.iter build_iterator current_statment_successors;
+	    (* We get the set of the current vertex successor and
+	       we iterate on each of them*)
+	    let ecfg_succs_indexes = Hashtbl.find edges current_node.id in
+	      Hashtbl.iter ecfg_succ_recursor ecfg_succs_indexes
+		(* The recursive call is performed in the iterator*)
+	with
+	    Not_found -> 
+	      raise Not_found
+  	  
+    
+
+
     method build_fun_ecfg ( funinfo : Cil_types.fundec ) =
       prepareCFG funinfo; computeCFGInfo funinfo true;
       let rootstmt = List.hd funinfo.sallstmts in
-      let root_abstraction = get_entry_point_abstraction () in
-	self#add_abstract_state rootstmt root_abstraction;
+      let root_abstraction = front_end#get_entry_point_abstraction () in
+      let _ = self#add_abstract_state rootstmt root_abstraction in
 	self#recursive_build_ecfg 
 	
 	  
