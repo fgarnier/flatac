@@ -12,6 +12,8 @@
 open Self
 open Ecfg
 open Sem_and_logic_front_end
+open Extended_cfg_types
+open Extended_cfg
 
 (* open True_logic_front_end *) 
 (* open Trivalue_logic_front_end *)
