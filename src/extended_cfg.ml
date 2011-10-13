@@ -28,8 +28,8 @@ struct
   
   
   
-  class extended_cfg (name_function : string ) frontend  ( prj : Project.t ) = object(self)
-    inherit Visitor.generic_frama_c_visitor (prj) (Cil.inplace_visit())
+  class extended_cfg (name_function : string ) frontend   = object(self)
+   
       (** Frama-C related ** TO CHECK IF USED ANYWHERE *)
     val mutable name = name_function 
     val mutable is_computed = false
