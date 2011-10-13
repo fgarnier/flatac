@@ -20,7 +20,7 @@ open Extended_cfg_types
 exception Marking_unregistered_vertex of int
 
 
-module Extended_cfg_definition = 
+module Extended_cfg_definition  = 
   functor ( A : sig type abstract_type type label_type end ) ->
 struct
   module Extended_cfg_base_types = Extended_cfg_types ( A ) 
