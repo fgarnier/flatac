@@ -18,7 +18,7 @@ open Sem_and_logic_front_end
 open Extended_cfg_types
 
 exception Marking_unregistered_vertex of int
-
+exception No_such_state_id
 
 module Extended_cfg_definition  = 
   functor ( A : sig type abstract_type type label_type end ) ->
@@ -32,6 +32,7 @@ struct
 
     val mutable name = name_function 
     val mutable is_computed = false
+
       
     val mutable front_end :  ( (Extended_cfg_base_types.abs_dom_val, 
 				  Extended_cfg_base_types.trans_label_val)
@@ -72,7 +73,14 @@ struct
 				    to be created node, if any.*)
 
 
-   
+   (* Sets a state as being initial.*)
+    method private register_init_state ( state_id ) = 
+      if Hashtbl.mem vertices state_id
+      then 
+	Hashtbl.add init_state state_id ()
+      else
+	raise No_such_state_id
+
     (** Adds a vertex to the ecfg*)
     method private add_abstract_state ( s : Cil_types.stmt ) 
       ( absval : abs_dom_val ) =
@@ -101,9 +109,7 @@ struct
 	new_vertex.id (**  Returns the id of the created vertex*)
 	  
 
-    method private register_init_state ( state_id : int ) =
-      Hashtbl.add init_state state_id ()
-	  
+  
     (** Adds a labelled edge between two vertexes of the
 	extended control flow graph.*)
     method private register_edge (origin : int )( dest : int  )
@@ -291,54 +297,68 @@ struct
       let rootstmt = List.hd funinfo.sallstmts in
       let root_abstraction = front_end#get_entry_point_abstraction () in
       let root_id = self#add_abstract_state rootstmt root_abstraction in
-	register_init_state root_id;
+	self#register_init_state root_id;
 	self#recursive_build_ecfg  
         
 
     
 
     method pprint_node ( node_id : int) =
-      Format.sprintf "%s" node_id
+      Format.sprintf "%d" node_id
 
 	
-    method private pprint_edge (int : orig ) (int : dest ) =
+    method private pprint_edge ( orig : int ) ( dest : int ) =
       let orig_tabl_out = Hashtbl.find edges orig in
-      let label_trans = Hashtbl.find orig_tabl_out in
+      let label_trans = Hashtbl.find orig_tabl_out dest in
       let str_label = front_end#pretty_label label_trans in
       let str_label = "{"^str_label^"} \n" in
       let str_res = (self#pprint_node orig)^"->"^(self#pprint_node dest)^" "^str_label in
 	str_res
 	
 
-    method private pprint_to_nts_rec (current_vertex_id : int)(printed_index : (int , ()) Hashtbl.t ) (pre_print : string ) =
+    method private pprint_to_nts_rec (current_vertex_id : int)(printed_index : (int , unit ) Hashtbl.t ) (pre_print : string ) =
       
       let transitions_folder (id : int ) _ (previous_trans : string ) =
 	let previous_trans = 
-	  previous_trans^(self#print_edge current_vertex_id id) 
+	  previous_trans^(self#pprint_edge current_vertex_id id) 
 	in
 	  previous_trans
+      in
+
+      let  recurse_folder (succs_id : int ) _ ( nts_script : string ) =
+	if Hashtbl.mem vertices succs_id then  nts_script
+	else self#pprint_to_nts_rec succs_id printed_index nts_script 
       in
 	Hashtbl.add printed_index current_vertex_id (); (* Marks the
 							   current vertex as 
 							   visited
 							*)
 	let succ_id = Hashtbl.find edges current_vertex_id in
-	
-      
+	let trans_from_current = Hashtbl.fold transitions_folder succ_id "" in
+	let ret_succs  = pre_print^trans_from_current in
+	  Hashtbl.fold recurse_folder succ_id ret_succs
+	  
       
 
+    method private pprint_inits (pre_print : string ) =
+      pre_print
 	
+    method private pprint_finals (pre_print : string )=
+      pre_print
 	
-      
-    method pprint_to_nts  = 
-      let current_ecfg_node = Hashtbl.get vertex current_vertex_id in
+    method private pprint_error_states (pre_print : string ) =
+      pre_print
+
+    method pprint_to_nts (pre_print : string ) = 
+     (* let current_ecfg_node = Hashtbl.get vertex current_vertex_id in *)
       let res_string = Format.sprintf "%s \n nts %s \n; \n" pre_print name in
       let res_string = res_string^name^" {\n" in
-      let res_string = self#print_inits res_string in
-      let res_string = self#print_finals res_string in
-      let res_string = self#print_error_states in
+      let res_string = res_string^(self#pprint_inits res_string)  in
+      let res_string = res_string^(self#pprint_finals res_string) in
+      let res_string = res_string^(self#pprint_error_states res_string) in
       let printed_index = Hashtbl.create 97 in
-      let res_string = self#pprint_to_nts_rec 0 printed_indec "" in
+      let res_string = res_string^(self#pprint_to_nts_rec 0 printed_index "")
+      in
       let res_string = res_string^"\n}" in
 	res_string
 	
