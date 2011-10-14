@@ -311,7 +311,22 @@ struct
 	
 
     method private pprint_to_nts_rec (current_vertex_id : int)(printed_index : (int , ()) Hashtbl.t ) (pre_print : string ) =
-       
+      
+      let transitions_folder (id : int ) _ (previous_trans : string ) =
+	let previous_trans = 
+	  previous_trans^(self#print_edge current_vertex_id id) 
+	in
+	  previous_trans
+      in
+	Hashtbl.add printed_index current_vertex_id (); (* Marks the
+							   current vertex as 
+							   visited
+							*)
+	let succ_id = Hashtbl.find edges current_vertex_id in
+	
+      
+      
+
 	
 	
       
