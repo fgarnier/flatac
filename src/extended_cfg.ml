@@ -29,8 +29,7 @@ struct
   
   
   class extended_cfg (name_function : string ) frontend   = object(self)
-   
-      (** Frama-C related ** TO CHECK IF USED ANYWHERE *)
+
     val mutable name = name_function 
     val mutable is_computed = false
       
@@ -40,18 +39,31 @@ struct
 
     val edges : ( int , (int , trans_label_val ) Hashtbl.t ) Hashtbl.t = 
       Hashtbl.create init_hashtbl_size
-    val edges_inv : (int , (int , unit) Hashtbl.t ) Hashtbl.t = Hashtbl.create init_hashtbl_size
-    val vertices : (int , ecfg_vertex) Hashtbl.t = Hashtbl.create init_hashtbl_size
+    
+    val edges_inv : (int , (int , unit) Hashtbl.t ) Hashtbl.t =
+      Hashtbl.create init_hashtbl_size
+    
+    val vertices : (int , ecfg_vertex) Hashtbl.t = 
+      Hashtbl.create init_hashtbl_size
 
-    val init_state : ( int , unit ) Hashtbl.t = Hashtbl.create init_hashtbl_size
-    val final_stat : ( int , unit ) Hashtbl.t = Hashtbl.create init_hashtbl_size
-     (** The key shall be the Cil_stmt.sid and the second one shall be
-     *)
-    val visited_index : ( int ,  (int ,  unit ) Hashtbl.t ) Hashtbl.t = Hashtbl.create init_hashtbl_size
+    (** The tree next hashtbl contain the indexes ot the initial
+    states, final states and errors states. *)
+    val init_state : ( int , unit ) Hashtbl.t = 
+      Hashtbl.create init_hashtbl_size
+    val final_state : ( int , unit ) Hashtbl.t = 
+      Hashtbl.create init_hashtbl_size
+    val error_state : ( int , unit ) Hashtbl.t =
+       Hashtbl.create init_hashtbl_size
+
+    (** The key shall be the Cil_stmt.sid and the second element contains
+     all the ids of the ecfg nodes that were visited.*)
+    val visited_index : ( int ,  (int ,  unit ) Hashtbl.t ) Hashtbl.t =
+      Hashtbl.create init_hashtbl_size
 
     (* The key corresponds to the Cil_type.stmt.sid and the corresponding
-    hash table contains all the id of the note of the ecfg which have
-    the same sid as the key.*)
+       hash table contains all the id of the note of the ecfg which have
+       the same sid as the key.*)
+	
     val unfoldsid_2_abs_map : (int , (int , unit ) Hashtbl.t) Hashtbl.t =
       Hashtbl.create init_hashtbl_size
 
@@ -88,6 +100,9 @@ struct
 	current_node_id <- (current_node_id + 1);
 	new_vertex.id (**  Returns the id of the created vertex*)
 	  
+
+    method private register_init_state ( state_id : int ) =
+      Hashtbl.add init_state state_id ()
 	  
     (** Adds a labelled edge between two vertexes of the
 	extended control flow graph.*)
@@ -223,7 +238,7 @@ struct
 
 	
     method private recursive_build_ecfg ( current_node : ecfg_vertex ) =
-      (* This function is used to recursivelu call recusive_build_ecfg 
+      (* This function is used to recursivey call recusive_build_ecfg 
       on all the nodes that are registered as successor of  the parameter
 	 current_node.*)
       let ecfg_succ_recursor  (index : int ) _ =
@@ -275,35 +290,45 @@ struct
       prepareCFG funinfo; computeCFGInfo funinfo true;
       let rootstmt = List.hd funinfo.sallstmts in
       let root_abstraction = front_end#get_entry_point_abstraction () in
-      let _ = self#add_abstract_state rootstmt root_abstraction in
-	self#recursive_build_ecfg 
-	
-	  
-	
-      
+      let root_id = self#add_abstract_state rootstmt root_abstraction in
+	register_init_state root_id;
+	self#recursive_build_ecfg  
+        
+
     
-   (* 
-   
- method build_node_list ( funInfo : Cil_types.fundec ) front_end =
-      Hashtbl.clear current_ecfg;
-      prepareCFG funInfo; computeCFGInfo funInfo true;
-      let rootStmt = (List.hd funInfo.sallstmts) in
-      let _ = self#_build_node_list rootStmt
-                (front_end#get_entry_point_abstraction ())
-                (front_end#get_empty_transition_label ()) front_end in
-        Hashtbl.copy current_ecfg
 
-    method vglob_aux (g : Cil_types.global ) =
-      match (g, _front_end) with 
-        | ( GFun ( funInfo, _ ), Some ( front_end ) ) -> 
-            Hashtbl.add ecfgs funInfo.svar.vname 
-              (self#build_node_list funInfo front_end); 
-            DoChildren
-        | _ -> DoChildren  
+    method pprint_node ( node_id : int) =
+      Format.sprintf "%s" node_id
 
-    *)
+	
+    method private pprint_edge (int : orig ) (int : dest ) =
+      let orig_tabl_out = Hashtbl.find edges orig in
+      let label_trans = Hashtbl.find orig_tabl_out in
+      let str_label = front_end#pretty_label label_trans in
+      let str_label = "{"^str_label^"} \n" in
+      let str_res = (self#pprint_node orig)^"->"^(self#pprint_node dest)^" "^str_label in
+	str_res
+	
+
+    method private pprint_to_nts_rec (current_vertex_id : int)(printed_index : (int , ()) Hashtbl.t ) (pre_print : string ) =
+       
+	
+	
       
-      
+    method pprint_to_nts  = 
+      let current_ecfg_node = Hashtbl.get vertex current_vertex_id in
+      let res_string = Format.sprintf "%s \n nts %s \n; \n" pre_print name in
+      let res_string = res_string^name^" {\n" in
+      let res_string = self#print_inits res_string in
+      let res_string = self#print_finals res_string in
+      let res_string = self#print_error_states in
+      let printed_index = Hashtbl.create 97 in
+      let res_string = self#pprint_to_nts_rec 0 printed_indec "" in
+      let res_string = res_string^"\n}" in
+	res_string
+	
+	
+
   end;; (* End of the class ecfg*)
-end;; (* End of the modul*)
+end;; (* End of the module extended_cfg.ml*)
 
