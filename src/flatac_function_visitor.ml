@@ -6,6 +6,7 @@ open Visitor
 open Sem_and_logic_front_end
 open Flatac_ssl_front_end
 open Extended_cfg_types
+open Extended_cfg
 
 
 module Flatac_extended_cfg =  
@@ -31,7 +32,7 @@ class flatac_visitor (prj : Project.t ) = object (self)
 
   
   method private register_ecfg_of_gfun ( funinfos : Cil_types.fundec ) =
-    let funname = fununfos.svar.vname in
+    let funname = funinfos.svar.vname in
     let flatac_ssl_frontend = new ssl_flatac_front_end in
     let ecfg_of_visited_gfun = new extended_cfg funname flatac_ssl_frontend in
       Hashtbl.add function_tables funname ecfg_of_visited_gfun

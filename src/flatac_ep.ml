@@ -27,6 +27,7 @@ open List
  (* Working on the cartesian prouct with validity pre-processing.*)
 open Nts_types
 open Ssl_valid_abs_dom_types
+open Flatac_function_visitor
 
 module Enabled =
 	Self.False
