@@ -340,22 +340,69 @@ struct
 	  
       
 
-    method private pprint_inits (pre_print : string ) =
-      pre_print
+    method private pprint_inits  =
+      let elem_left = ref 0 in
+      let pprint_folder id () prescript =
+	if (!elem_left) <= 0 then
+	  (prescript^(Printf.sprintf "%d" id))
+	else
+	  begin
+	    elem_left  := (!elem_left) - 1;
+	    prescript^(Printf.sprintf "%d," id)
+	  end
+      in 
+	elem_left := (Hashtbl.length init_state);
+	let retstring = Hashtbl.fold pprint_folder init_state ""
+	in
+	  "init: "^retstring
 	
-    method private pprint_finals (pre_print : string )=
-      pre_print
 	
-    method private pprint_error_states (pre_print : string ) =
-      pre_print
+
+    method private pprint_finals =
+      let elem_left = ref 0 in
+      let pprint_folder id () prescript =
+	if !elem_left <= 0 then
+	  prescript^(Format.sprintf "%d" id)
+	else
+	  begin
+	    elem_left := !elem_left-1;
+	    prescript^(Format.sprintf "%d," id)
+	  end
+      in
+	elem_left := (Hashtbl.length final_state);
+	let retstring = Hashtbl.fold pprint_folder final_state ""
+	in
+	  "final: "^retstring
+	
+
+    method private pprint_error_states  =
+       let elem_left = ref 0 in
+      let pprint_folder id () prescript =
+	if !elem_left <= 0 then
+	  prescript^(Format.sprintf "%d" id)
+	else
+	  begin
+	    elem_left := !elem_left-1;
+	    prescript^(Format.sprintf "%d," id)
+	  end
+      in
+	elem_left := (Hashtbl.length error_state);
+	let retstring = Hashtbl.fold pprint_folder error_state ""
+	in
+	  "error: "^retstring
+
+
+
+
+
 
     method pprint_to_nts (pre_print : string ) = 
      (* let current_ecfg_node = Hashtbl.get vertex current_vertex_id in *)
       let res_string = Format.sprintf "%s \n nts %s \n; \n" pre_print name in
       let res_string = res_string^name^" {\n" in
-      let res_string = res_string^(self#pprint_inits res_string)  in
-      let res_string = res_string^(self#pprint_finals res_string) in
-      let res_string = res_string^(self#pprint_error_states res_string) in
+      let res_string = res_string^(self#pprint_inits)  in
+      let res_string = res_string^(self#pprint_finals) in
+      let res_string = res_string^(self#pprint_error_states) in
       let printed_index = Hashtbl.create 97 in
       let res_string = res_string^(self#pprint_to_nts_rec 0 printed_index "")
       in

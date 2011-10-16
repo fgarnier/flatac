@@ -46,7 +46,8 @@ class flatac_visitor (prj : Project.t ) = object (self)
 	  DoChildren
       | _ -> DoChildren 
 
-  (* This function returns the persistant *)
+  (* This function returns the persistant structure that contains
+  the set of the ecfgs, that each desribes one function.*)
   method get_ecfgs_of_file =
     function_tables
 
