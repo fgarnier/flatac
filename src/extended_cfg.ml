@@ -398,9 +398,9 @@ struct
 
 
 
-    method pprint_to_nts (pre_print : string ) = 
+    method pprint_to_nts  = 
      (* let current_ecfg_node = Hashtbl.get vertex current_vertex_id in *)
-      let res_string = Format.sprintf "%s \n nts %s \n; \n" pre_print name in
+      let res_string = Format.sprintf " nts %s \n; \n" name in
       let res_string = res_string^name^" {\n" in
       let res_string = res_string^(self#pprint_inits)  in
       let res_string = res_string^(self#pprint_finals) in

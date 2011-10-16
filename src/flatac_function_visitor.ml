@@ -49,4 +49,12 @@ class flatac_visitor (prj : Project.t ) = object (self)
   method get_ecfgs_of_file =
     function_tables
 
+  method pprint_all_ecfgs =
+    let pprint_folder _ registered_ecfg pre_msg =
+    let current_ecfg_output = registered_ecfg#pprint_to_nts in
+      pre_msg^current_ecfg_output^"\n"
+    in
+      Hashtbl.fold pprint_folder function_tables ""
+      
+      
 end;;
