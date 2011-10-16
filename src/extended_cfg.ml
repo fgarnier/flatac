@@ -28,7 +28,8 @@ struct
   
   
   
-  class extended_cfg (name_function : string ) frontend   = object(self)
+  class extended_cfg (name_function : string ) (funinfo : Cil_types.fundec) 
+    frontend   = object(self)
 
     val mutable name = name_function 
     val mutable is_computed = false
@@ -37,6 +38,9 @@ struct
     val mutable front_end :  ( (Extended_cfg_base_types.abs_dom_val, 
 				  Extended_cfg_base_types.trans_label_val)
                                  sem_and_logic_front_end ) = frontend 
+
+    
+    
 
     val edges : ( int , (int , trans_label_val ) Hashtbl.t ) Hashtbl.t = 
       Hashtbl.create init_hashtbl_size
@@ -65,6 +69,7 @@ struct
        hash table contains all the id of the note of the ecfg which have
        the same sid as the key.*)
 	
+    
     val unfoldsid_2_abs_map : (int , (int , unit ) Hashtbl.t) Hashtbl.t =
       Hashtbl.create init_hashtbl_size
 
@@ -72,6 +77,8 @@ struct
 				    nodes, as well as the id of the next
 				    to be created node, if any.*)
 
+
+    initializer self#build_fun_ecfg funinfo
 
    (* Sets a state as being initial.*)
     method private register_init_state ( state_id ) = 
@@ -298,10 +305,8 @@ struct
       let root_abstraction = front_end#get_entry_point_abstraction () in
       let root_id = self#add_abstract_state rootstmt root_abstraction in
 	self#register_init_state root_id;
-	self#recursive_build_ecfg  
+	self#recursive_build_ecfg  (Hashtbl.find vertices root_id)
         
-
-    
 
     method pprint_node ( node_id : int) =
       Format.sprintf "%d" node_id
@@ -393,9 +398,6 @@ struct
 
 
 
-
-
-
     method pprint_to_nts (pre_print : string ) = 
      (* let current_ecfg_node = Hashtbl.get vertex current_vertex_id in *)
       let res_string = Format.sprintf "%s \n nts %s \n; \n" pre_print name in
@@ -409,8 +411,6 @@ struct
       let res_string = res_string^"\n}" in
 	res_string
 	
-	
-
   end;; (* End of the class ecfg*)
 end;; (* End of the module extended_cfg.ml*)
 

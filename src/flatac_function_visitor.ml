@@ -29,12 +29,10 @@ class flatac_visitor (prj : Project.t ) = object (self)
   val function_tables = Hashtbl.create 97
   
 
-
-  
   method private register_ecfg_of_gfun ( funinfos : Cil_types.fundec ) =
     let funname = funinfos.svar.vname in
     let flatac_ssl_frontend = new ssl_flatac_front_end in
-    let ecfg_of_visited_gfun = new extended_cfg funname flatac_ssl_frontend in
+    let ecfg_of_visited_gfun = new extended_cfg funname funinfos flatac_ssl_frontend  in
       Hashtbl.add function_tables funname ecfg_of_visited_gfun
 	
 
