@@ -44,7 +44,7 @@ class ssl_flatac_front_end = object
   (*
   method copy_transit_label (label : Nts_types.cnt_trans_label list ) =
     []
-  *)
+²  *)
   method copy_transit_label _ =
     []
  

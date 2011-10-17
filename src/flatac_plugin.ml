@@ -25,17 +25,17 @@ let pretty_print_cautomata_obj out =
   Visitor.visitFramacFile (visited_file :> frama_c_copy ) file_ast;
   visited_file#save_in_file ca_out_name;
 
-  
-
 let print () = Self.result "%t" ( fun out ->  pretty_print_cautomata_obj out )
 
-
-
-(** The code below is not mandatory: you can ignore it in a first reading. It
-    provides an API for the plug-in, so that the function [run] is callable by
-    another plug-in and journalized: first, each plug-in can call [Dynamic.get
-    "Hello.run" (Type.func Type.unit Type.unit)] in order to call [run]
-    and second, each call to [run] is written in the Frama-C journal. *)
+(** The code below is not mandatory: you can ignore it in a first 
+    reading. It provides an API for the plug-in, so that the function 
+    [run] is callable by
+    another plug-in and journalized: first, each plug-in can call 
+    [Dynamic.get
+    "Hello.run" (Type.func Type.unit Type.unit)] in order to call 
+    [run] and second, each call to [run] is written in the Frama-C
+    journal. *)
+  
 let print =
   Dynamic.register
     ~plugin:"flatac"
