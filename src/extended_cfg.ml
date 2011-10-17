@@ -197,14 +197,15 @@ struct
 	  
 
     method mark_as_visited ( vertex_id : int ) =
-      try
+      
 	let v = Hashtbl.find vertices vertex_id in
-	let sid_table = Hashtbl.find visited_index v.statement.sid in
+	try	
+	  let sid_table = Hashtbl.find visited_index v.statement.sid in
 	  if Hashtbl.mem sid_table v.id then ()
 	  else Hashtbl.add sid_table v.id ()
-      with
-	  Not_found -> let excep = Marking_unregistered_vertex ( vertex_id ) in
-	    raise excep
+	with
+	    Not_found -> let excep = Marking_unregistered_vertex ( vertex_id ) in
+			 raise excep
  
  
    (*
@@ -335,14 +336,12 @@ struct
 	
 	
     method private pprint_to_nts_rec (current_vertex_id : int)(printed_index : (int , unit ) Hashtbl.t ) (pre_print : string ) =
-      
       let transitions_folder (id : int ) _ (previous_trans : string ) =
 	let previous_trans = 
 	  previous_trans^(self#pprint_edge current_vertex_id id) 
 	in
 	previous_trans
       in
-      
       let  recurse_folder (succs_id : int ) _ ( nts_script : string ) =
 	if Hashtbl.mem vertices succs_id then  nts_script
 	else self#pprint_to_nts_rec succs_id printed_index nts_script 
@@ -355,9 +354,9 @@ struct
       let trans_from_current = Hashtbl.fold transitions_folder succ_id "" in
       let ret_succs  = pre_print^trans_from_current in
       Hashtbl.fold recurse_folder succ_id ret_succs
-	    
-      
-
+	
+	
+	
     method private pprint_inits  =
       let elem_left = ref 0 in
       let pprint_folder id () prescript =
@@ -369,13 +368,13 @@ struct
 	    prescript^(Printf.sprintf "%d," id)
 	  end
       in 
-	elem_left := (Hashtbl.length init_state);
+      elem_left := (Hashtbl.length init_state);
       let retstring = Hashtbl.fold pprint_folder init_state ""
       in
       "init: "^retstring
 	
 	
-
+	
     method private pprint_finals =
       let elem_left = ref 0 in
       let pprint_folder id () prescript =
