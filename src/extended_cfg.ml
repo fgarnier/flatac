@@ -40,8 +40,6 @@ struct
                                  sem_and_logic_front_end ) = frontend 
 
     
-    
-
     val edges : ( int , (int , trans_label_val ) Hashtbl.t ) Hashtbl.t = 
       Hashtbl.create init_hashtbl_size
     
@@ -51,7 +49,7 @@ struct
     val vertices : (int , ecfg_vertex) Hashtbl.t = 
       Hashtbl.create init_hashtbl_size
 
-    (** The tree next hashtbl contain the indexes ot the initial
+    (** The four next hashtbl contain the indexes ot the initial
     states, final states and errors states. *)
     val init_state : ( int , unit ) Hashtbl.t = 
       Hashtbl.create init_hashtbl_size
@@ -59,7 +57,12 @@ struct
       Hashtbl.create init_hashtbl_size
     val error_state : ( int , unit ) Hashtbl.t =
        Hashtbl.create init_hashtbl_size
-
+    (* The common state table contains the index of all states that
+    don't fall in any category above.*)
+    val common_state : ( int , unit ) Hashtbl.t =  
+      Hashtbl.create init_hashtbl_size
+	
+     
     (** The key shall be the Cil_stmt.sid and the second element contains
      all the ids of the ecfg nodes that were visited.*)
     val visited_index : ( int ,  (int ,  unit ) Hashtbl.t ) Hashtbl.t =
@@ -113,6 +116,17 @@ struct
 	      Hashtbl.add unfoldsid_2_abs_map s.sid entry_table
 	  end;
 	current_node_id <- (current_node_id + 1);
+
+	(* Error states shall be considered as an absorbing class.
+	There must be no states that could be both a final state 
+	or an error state. *)
+
+	if front_end#is_error_state absval then
+	  Hashtbl.add error_state new_vertex.id ()
+	else if ( (List.length s.succs) == 0 ) then
+	  Hashtbl.add final_state new_vertex.id ()
+	else
+	  Hashtbl.add common_state new_vertex.id ();
 	new_vertex.id (**  Returns the id of the created vertex*)
 	  
 
@@ -147,6 +161,7 @@ struct
 	Otherwise, it returns a tuple ( true ,  sid'), where
         abs' |- absdomvalue .
     *)
+
     method entailed_by_same_id_absvalue  (next_stmt : Cil_types.stmt)
       ( absval : abs_dom_val ) =
       let entail_folder (id_abs_brothers : int ) () (already_found : int ) =
@@ -167,7 +182,7 @@ struct
 	    (false , -1 )
       with
 	  Not_found -> (false , -1 ) 
-  
+	    
 
     method is_sid_visited ( id : int ) =
       Hashtbl.mem visited_index id
@@ -236,30 +251,30 @@ struct
     method add_edge_by_id (pre : int) (post : int ) (label : trans_label_val) =
       try
 	let entry_table = Hashtbl.find edges pre in
-	  Hashtbl.add entry_table post label;
-	  let reverse_table = Hashtbl.find edges_inv post in
-	    Hashtbl.add reverse_table pre;
-	    (* store that post has pre as predecessor, obvious isn't it ?*)
+	Hashtbl.add entry_table post label;
+	let reverse_table = Hashtbl.find edges_inv post in
+	Hashtbl.add reverse_table pre;
+      (* store that post has pre as predecessor, obvious isn't it ?*)
 	    
       with
 	  Not_found -> raise Not_found  (* Put that here to note that
 					   there exists a smartes way to 
-					deal with this kind of exception
+					   deal with this kind of exception
 					*)
 	    
 	    
 
-	
+	    
     method private recursive_build_ecfg ( current_node : ecfg_vertex ) =
       (* This function is used to recursivey call recusive_build_ecfg 
-      on all the nodes that are registered as successor of  the parameter
-	 current_node.*)
+	 on all the nodes that are registered as successor of  the parameter
+	 current_node. *)
       let ecfg_succ_recursor  (index : int ) _ =
 	let next_ecfg_vertex = Hashtbl.find vertices index in
-	  if ( self#recurse_to_abs_succs next_ecfg_vertex.statement next_ecfg_vertex.abstract_val ) 
-	  then
-	    self#recursive_build_ecfg next_ecfg_vertex
-	  else ()
+	if ( self#recurse_to_abs_succs next_ecfg_vertex.statement next_ecfg_vertex.abstract_val ) 
+	then
+	  self#recursive_build_ecfg next_ecfg_vertex
+	else ()
       in
       let next_list_adder_iterator (next_stmt : Cil_types.stmt) 
 	  (e : (abs_dom_val * trans_label_val ) ) =
@@ -269,7 +284,7 @@ struct
 		self#add_transition_from_to current_node next_stmt absvalue
 		  labval  
 	      end
-		(* End of  next_list_adder_iterator *)
+      (* End of  next_list_adder_iterator *)
       in
       let build_iterator ( succs_stmt : Cil_types.stmt ) =
 	let current_absvalue = front_end#copy_absdom_label 
@@ -279,38 +294,36 @@ struct
 	let succs_list = front_end#next current_absvalue empty_label 
 	  succs_stmt.skind 
 	in
-	  List.iter (next_list_adder_iterator succs_stmt) succs_list
+	List.iter (next_list_adder_iterator succs_stmt) succs_list
 	    (* End of the build_iterator definition *)
       in 
-	self#mark_as_visited current_node.id;
-	try
-	  let current_statment_successors = current_node.statement.succs 
-	  in
+      self#mark_as_visited current_node.id;
+      try
+	let current_statment_successors = current_node.statement.succs 
+	in
 	    List.iter build_iterator current_statment_successors;
 	    (* We get the set of the current vertex successor and
 	       we iterate on each of them*)
-	    let ecfg_succs_indexes = Hashtbl.find edges current_node.id in
-	      Hashtbl.iter ecfg_succ_recursor ecfg_succs_indexes
-		(* The recursive call is performed in the iterator*)
-	with
-	    Not_found -> 
-	      raise Not_found
+	let ecfg_succs_indexes = Hashtbl.find edges current_node.id in
+	Hashtbl.iter ecfg_succ_recursor ecfg_succs_indexes
+	(* The recursive call is performed in the iterator*)
+      with
+	  Not_found -> 
+	    raise Not_found
   	  
-    
-
-
+	       
     method build_fun_ecfg ( funinfo : Cil_types.fundec ) =
       prepareCFG funinfo; computeCFGInfo funinfo true;
       let rootstmt = List.hd funinfo.sallstmts in
       let root_abstraction = front_end#get_entry_point_abstraction () in
       let root_id = self#add_abstract_state rootstmt root_abstraction in
-	self#register_init_state root_id;
-	self#recursive_build_ecfg  (Hashtbl.find vertices root_id)
-        
-
+      self#register_init_state root_id;
+      self#recursive_build_ecfg  (Hashtbl.find vertices root_id)
+          
+	  
     method pprint_node ( node_id : int) =
       Format.sprintf "%d" node_id
-
+	
 	
     method private pprint_edge ( orig : int ) ( dest : int ) =
       let orig_tabl_out = Hashtbl.find edges orig in
@@ -318,31 +331,31 @@ struct
       let str_label = front_end#pretty_label label_trans in
       let str_label = "{"^str_label^"} \n" in
       let str_res = (self#pprint_node orig)^"->"^(self#pprint_node dest)^" "^str_label in
-	str_res
+      str_res
 	
-
+	
     method private pprint_to_nts_rec (current_vertex_id : int)(printed_index : (int , unit ) Hashtbl.t ) (pre_print : string ) =
       
       let transitions_folder (id : int ) _ (previous_trans : string ) =
 	let previous_trans = 
 	  previous_trans^(self#pprint_edge current_vertex_id id) 
 	in
-	  previous_trans
+	previous_trans
       in
-
+      
       let  recurse_folder (succs_id : int ) _ ( nts_script : string ) =
 	if Hashtbl.mem vertices succs_id then  nts_script
 	else self#pprint_to_nts_rec succs_id printed_index nts_script 
       in
-	Hashtbl.add printed_index current_vertex_id (); (* Marks the
-							   current vertex as 
-							   visited
-							*)
-	let succ_id = Hashtbl.find edges current_vertex_id in
-	let trans_from_current = Hashtbl.fold transitions_folder succ_id "" in
-	let ret_succs  = pre_print^trans_from_current in
-	  Hashtbl.fold recurse_folder succ_id ret_succs
-	  
+      Hashtbl.add printed_index current_vertex_id (); (* Marks the
+							 current vertex as 
+							 visited
+						      *)
+      let succ_id = Hashtbl.find edges current_vertex_id in
+      let trans_from_current = Hashtbl.fold transitions_folder succ_id "" in
+      let ret_succs  = pre_print^trans_from_current in
+      Hashtbl.fold recurse_folder succ_id ret_succs
+	    
       
 
     method private pprint_inits  =
@@ -357,9 +370,9 @@ struct
 	  end
       in 
 	elem_left := (Hashtbl.length init_state);
-	let retstring = Hashtbl.fold pprint_folder init_state ""
-	in
-	  "init: "^retstring
+      let retstring = Hashtbl.fold pprint_folder init_state ""
+      in
+      "init: "^retstring
 	
 	
 
@@ -374,14 +387,14 @@ struct
 	    prescript^(Format.sprintf "%d," id)
 	  end
       in
-	elem_left := (Hashtbl.length final_state);
-	let retstring = Hashtbl.fold pprint_folder final_state ""
-	in
-	  "final: "^retstring
+      elem_left := (Hashtbl.length final_state);
+      let retstring = Hashtbl.fold pprint_folder final_state ""
+      in
+      "final: "^retstring
 	
-
+	
     method private pprint_error_states  =
-       let elem_left = ref 0 in
+      let elem_left = ref 0 in
       let pprint_folder id () prescript =
 	if !elem_left <= 0 then
 	  prescript^(Format.sprintf "%d" id)
@@ -391,15 +404,15 @@ struct
 	    prescript^(Format.sprintf "%d," id)
 	  end
       in
-	elem_left := (Hashtbl.length error_state);
-	let retstring = Hashtbl.fold pprint_folder error_state ""
-	in
-	  "error: "^retstring
+      elem_left := (Hashtbl.length error_state);
+      let retstring = Hashtbl.fold pprint_folder error_state ""
+      in
+      "error: "^retstring
 
-
-
+	
+	
     method pprint_to_nts  = 
-     (* let current_ecfg_node = Hashtbl.get vertex current_vertex_id in *)
+      (* let current_ecfg_node = Hashtbl.get vertex current_vertex_id in *)
       let res_string = Format.sprintf " nts %s \n; \n" name in
       let res_string = res_string^name^" {\n" in
       let res_string = res_string^(self#pprint_inits)  in
@@ -409,7 +422,7 @@ struct
       let res_string = res_string^(self#pprint_to_nts_rec 0 printed_index "")
       in
       let res_string = res_string^"\n}" in
-	res_string
+      res_string
 	
   end;; (* End of the class ecfg*)
 end;; (* End of the module extended_cfg.ml*)
