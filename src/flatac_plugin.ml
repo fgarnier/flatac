@@ -1,8 +1,20 @@
+(*
+Ought we need to add some reference to FRAMAC and LGPL2 copyright
+notice here, since this code was once extended form an example
+takem from FRAMA-C ugin developper manual ??
+
+I think so.
+
+*)
+
+
+
+
 open Visitor
 open Flatac_function_visitor
 open Cil_types
 open Cil
-
+open Self
 
 
 let pretty_print_cautomata_obj out = 
@@ -14,8 +26,6 @@ let pretty_print_cautomata_obj out =
   visited_file#save_in_file ca_out_name;
 
   
-  
-
 
 let print () = Self.result "%t" ( fun out ->  pretty_print_cautomata_obj out )
 
