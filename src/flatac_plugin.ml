@@ -16,26 +16,36 @@ open Cil_types
 open Cil
 open Self
 
+(*module Self =
+  Plugin.Register
+    (struct
+      let name = "FlataC"
+      let shortname = "FlataC"
+      let help= "Extracts flat counter automata based model of C program for memory faults detection."
+     end) *)
+    
+module Enabled =
+        Self.False
+                (struct
+                        let option_name= "-flatac"
+                        let help= ""
+                        let kind= `Correctness
+                 end)
+
+
 
 let pretty_print_cautomata_obj out = 
   let prj= Project.current() in
-  let visited_file = new  flatac_fun_visitor ( prj ) in
+  let visited_file = new  flatac_visitor ( prj ) in
   let file_ast = Ast.get() in
   let ca_out_name = Printf.sprintf "%s.ca" file_ast.fileName in
   Visitor.visitFramacFile (visited_file :> frama_c_copy ) file_ast;
   visited_file#save_in_file ca_out_name;
+  let compile_out = visited_file#pprint_all_ecfgs in
+  Format.fprintf out "%s" compile_out
 
 let print () = Self.result "%t" ( fun out ->  pretty_print_cautomata_obj out )
 
-(** The code below is not mandatory: you can ignore it in a first 
-    reading. It provides an API for the plug-in, so that the function 
-    [run] is callable by
-    another plug-in and journalized: first, each plug-in can call 
-    [Dynamic.get
-    "Hello.run" (Type.func Type.unit Type.unit)] in order to call 
-    [run] and second, each call to [run] is written in the Frama-C
-    journal. *)
-  
 let print =
   Dynamic.register
     ~plugin:"flatac"
