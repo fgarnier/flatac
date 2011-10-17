@@ -9,6 +9,8 @@ open Extended_cfg_types
 open Extended_cfg
 
 
+exception Untraversed_ast
+
 module Flatac_extended_cfg =  
   Extended_cfg_definition (
     struct
@@ -45,7 +47,9 @@ class flatac_visitor (prj : Project.t ) = object (self)
       | _ -> DoChildren 
 
   (* This function returns the persistant structure that contains
-  the set of the ecfgs, that each desribes one function.*)
+     the set of all extended control flow graphs, that each desribes 
+     one C global function. *)
+	
   method get_ecfgs_of_file =
     function_tables
 
@@ -56,5 +60,15 @@ class flatac_visitor (prj : Project.t ) = object (self)
     in
       Hashtbl.fold pprint_folder function_tables ""
       
+
+  method save_in_file ( file_name : string ) =
+    if not is_computed then
+      raise Untraversed_ast 
+    else 
+      let out_file = open_out file_name in
+      let format_out_file = Format.formatter_of_out_channel out_file in
+      Format.fprintf format_out_file "%s" (self#pprint_all_ecfgs);
+      Format.fprintf format_out_file "%!";
+      close_out out_file;
       
 end;;
