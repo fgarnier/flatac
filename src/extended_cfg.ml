@@ -62,7 +62,6 @@ struct
     val common_state : ( int , unit ) Hashtbl.t =  
       Hashtbl.create init_hashtbl_size
 	
-     
     (** The key shall be the Cil_stmt.sid and the second element contains
      all the ids of the ecfg nodes that were visited.*)
     val visited_index : ( int ,  (int ,  unit ) Hashtbl.t ) Hashtbl.t =
@@ -72,14 +71,21 @@ struct
        hash table contains all the id of the note of the ecfg which have
        the same sid as the key.*)
 	
-    
     val unfoldsid_2_abs_map : (int , (int , unit ) Hashtbl.t) Hashtbl.t =
       Hashtbl.create init_hashtbl_size
 
+    (* Associates to each
+       abstract id the correspond
+       sid. Used to spare a double
+       call on Hashtbl.find.
+       Encodes the inverse relation of unfoldsid_2_abs_map.
+    *)
+    val fold_abs_map_2_sid : ( int , int ) Hashtbl.t =
+      Hashtbl.create init_hashtbl_size
+                                                   
     val mutable current_node_id = 0 (* Basically, the total number of
 				    nodes, as well as the id of the next
 				    to be created node, if any.*)
-
 
     initializer self#build_fun_ecfg funinfo
 
@@ -93,8 +99,7 @@ struct
 
     (** Adds a vertex to the ecfg*)
     method private add_abstract_state ( s : Cil_types.stmt ) 
-      ( absval : abs_dom_val ) =
-      
+      ( absval : abs_dom_val ) =      
       let new_vertex = {
 	id = current_node_id;
 	statement = s;
@@ -115,12 +120,15 @@ struct
 	      Hashtbl.add entry_table current_node_id ();
 	      Hashtbl.add unfoldsid_2_abs_map s.sid entry_table
 	  end;
+	Hashtbl.add fold_abs_map_2_sid new_vertex.id s.sid;
 	current_node_id <- (current_node_id + 1);
-
+	
 	(* Error states shall be considered as an absorbing class.
 	There must be no states that could be both a final state 
 	or an error state. *)
+	
 
+	Format.printf "[ Extended cfg Adding : node id sid : %d node id %d ] \n " new_vertex.statement.sid new_vertex.id;
 	if front_end#is_error_state absval then
 	  Hashtbl.add error_state new_vertex.id ()
 	else if ( (List.length s.succs) == 0 ) then
@@ -130,7 +138,6 @@ struct
 	new_vertex.id (**  Returns the id of the created vertex*)
 	  
 
-  
     (** Adds a labelled edge between two vertexes of the
 	extended control flow graph.*)
     method private register_edge (origin : int )( dest : int  )
@@ -165,18 +172,18 @@ struct
     method entailed_by_same_id_absvalue  (next_stmt : Cil_types.stmt)
       ( absval : abs_dom_val ) =
       let entail_folder (id_abs_brothers : int ) () (already_found : int ) =
-	if already_found > 0 then already_found
+	if already_found >= 0 then already_found
 	else
 	  let brother_ecfg_node = Hashtbl.find vertices id_abs_brothers in
 	  let brother_abs = brother_ecfg_node.abstract_val in
-	  if ( front_end#accepts brother_abs absval ) then id_abs_brothers
+	  if ( front_end#accepts  absval brother_abs) then id_abs_brothers
 	  else 
 	    already_found
       in
       try
 	let brotherhood_abs = Hashtbl.find unfoldsid_2_abs_map next_stmt.sid in
 	let id_candidate = (Hashtbl.fold entail_folder brotherhood_abs (-1)) in
-	  if id_candidate > 0 then
+	  if id_candidate >= 0 then
 	    (true , id_candidate )
 	  else
 	    (false , -1 )
@@ -196,19 +203,18 @@ struct
 	  is_entailed
 	  
 
-    method mark_as_visited ( vertex_id : int ) =
-      
+    method mark_as_visited ( vertex_id : int ) =      
       let v = Hashtbl.find vertices vertex_id in
       try    
 	if Hashtbl.mem visited_index v.statement.sid then 
 	  begin
 	    let sid_table = Hashtbl.find visited_index v.statement.sid in
-	    if Hashtbl.mem sid_table v.id then ()
-	    else Hashtbl.add sid_table v.id ()
+	    if Hashtbl.mem sid_table vertex_id then ()
+	    else Hashtbl.add sid_table vertex_id ()
 	  end
 	else
 	  let new_visited_tab = Hashtbl.create init_hashtbl_size in
-	  Hashtbl.add new_visited_tab v.id ();
+	  Hashtbl.add new_visited_tab vertex_id ();
 	  Hashtbl.add visited_index v.statement.sid new_visited_tab
 	  
       with
@@ -231,25 +237,29 @@ struct
       (next_stmt : Cil_types.stmt ) (next_abs : abs_dom_val ) 
       ( label : trans_label_val) =
       try
+	Format.printf "Entering add transition_from_to \n";
 	let is_new_abstraction = self#entailed_by_same_id_absvalue 
 	  next_stmt next_abs in
 	  begin
 	    match is_new_abstraction with
 		(false , _ ) -> 
 		  begin
+		    Format.printf "Adding new node to ecfg \n";
 		  let new_abs_state_id = 
 		    self#add_abstract_state next_stmt next_abs in
 		    self#register_edge current.id new_abs_state_id label
 		  end
 	      | (true , entailing_state_id ) ->
+		 Format.printf "Not adding a new node, creating a new edge\n";
 		  self#register_edge current.id entailing_state_id label
 	  end
       with
-	  Not_found -> 
-	    let _ = self#add_abstract_state next_stmt next_abs in
+	  Not_found -> raise Not_found
+
+(*	    let _ = self#add_abstract_state next_stmt next_abs in
 	      self#add_transition_from_to current next_stmt next_abs label
 	      
-  
+*)
   (* A Not_found exception is raised iff there's no entry for 
        next_stmt.sid
     *)
@@ -272,15 +282,18 @@ struct
 					*)
 	    
 	    
-
-	    
     method private recursive_build_ecfg ( current_node : ecfg_vertex ) =
       (* This function is used to recursivey call recusive_build_ecfg 
 	 on all the nodes that are registered as successor of  the parameter
 	 current_node. *)
+      let current_sid = current_node.statement.sid in
       let ecfg_succ_recursor  (index : int ) _ =
+	Format.printf "recursor : successor id is %d \n" index;
 	let next_ecfg_vertex = Hashtbl.find vertices index in
-	if ( self#recurse_to_abs_succs next_ecfg_vertex.statement next_ecfg_vertex.abstract_val ) 
+	let visited_abs_from_current_sid = Hashtbl.find visited_index current_sid in
+	if( Hashtbl.mem visited_abs_from_current_sid  index)
+	then ()
+	else if ( self#recurse_to_abs_succs next_ecfg_vertex.statement next_ecfg_vertex.abstract_val ) 
 	then
 	  self#recursive_build_ecfg next_ecfg_vertex
 	else ()
@@ -313,7 +326,7 @@ struct
 	    List.iter build_iterator current_statment_successors;
 	    (* We get the set of the current vertex successor and
 	       we iterate on each of them*)
-	let ecfg_succs_indexes = Hashtbl.find edges current_node.id in
+	let ecfg_succs_indexes = Hashtbl.find edges current_node.statement.sid in
 	Hashtbl.iter ecfg_succ_recursor ecfg_succs_indexes
 	(* The recursive call is performed in the iterator*)
       with
