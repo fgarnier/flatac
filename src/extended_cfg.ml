@@ -198,15 +198,23 @@ struct
 
     method mark_as_visited ( vertex_id : int ) =
       
-	let v = Hashtbl.find vertices vertex_id in
-	try	
-	  let sid_table = Hashtbl.find visited_index v.statement.sid in
-	  if Hashtbl.mem sid_table v.id then ()
-	  else Hashtbl.add sid_table v.id ()
-	with
-	    Not_found -> let excep = Marking_unregistered_vertex ( vertex_id ) in
-			 raise excep
- 
+      let v = Hashtbl.find vertices vertex_id in
+      try    
+	if Hashtbl.mem visited_index v.statement.sid then 
+	  begin
+	    let sid_table = Hashtbl.find visited_index v.statement.sid in
+	    if Hashtbl.mem sid_table v.id then ()
+	    else Hashtbl.add sid_table v.id ()
+	  end
+	else
+	  let new_visited_tab = Hashtbl.create init_hashtbl_size in
+	  Hashtbl.add new_visited_tab v.id ();
+	  Hashtbl.add visited_index v.statement.sid new_visited_tab
+	  
+      with
+	  Not_found -> let excep = Marking_unregistered_vertex ( vertex_id ) in
+		       raise excep
+			 
  
    (*
       This operation takes as input the current state and the next abstract
