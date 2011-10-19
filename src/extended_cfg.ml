@@ -18,6 +18,7 @@ open Sem_and_logic_front_end
 open Extended_cfg_types
 
 exception Marking_unregistered_vertex of int
+exception Ecfg_vertex_not_registered
 exception No_such_state_id
 exception Building_an_edge_between_inexisting_node_ids of int
 exception Debug_exception of string
@@ -262,8 +263,8 @@ struct
 		  self#register_edge current.id entailing_state_id label
 	  end
       with
-	  Not_found -> raise (Debug_exception("In method add_transition_from_to, a Not_found
-exception was raised"))
+	  Not_found -> 
+raise (Debug_exception("In method add_transition_from_to, a Not_found exception was raised"))
 
 (*	    let _ = self#add_abstract_state next_stmt next_abs in
 	      self#add_transition_from_to current next_stmt next_abs label
@@ -292,7 +293,16 @@ exception was raised"))
 					   deal with this kind of exception
 					*)
 	    
-	    
+
+    method private get_succs_of_ecfg_node ( node : ecfg_vertex ) =
+      try
+	let prim_table = Hashtbl.find edges (node.id) 
+	in
+	prim_table
+      with
+	  Not_found -> raise  Ecfg_vertex_not_registered
+
+
     method private recursive_build_ecfg ( current_node : ecfg_vertex ) =
       (* This function is used to recursivey call recusive_build_ecfg 
 	 on all the nodes that are registered as successor of  the parameter
@@ -337,7 +347,7 @@ exception was raised"))
 	List.iter build_iterator current_statment_successors;
 	    (* We get the set of the current vertex successor and
 	       we iterate on each of them*)
-	let ecfg_succs_indexes = Hashtbl.find edges current_node.statement.sid in
+	let ecfg_succs_indexes = self#get_succs_of_ecfg_node current_node in 
 	Hashtbl.iter ecfg_succ_recursor ecfg_succs_indexes
 	(* The recursive call is performed in the iterator*)
       with
