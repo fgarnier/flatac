@@ -19,6 +19,8 @@ open Extended_cfg_types
 
 exception Marking_unregistered_vertex of int
 exception No_such_state_id
+exception Building_an_edge_between_inexisting_node_ids of int
+exception Debug_exception of string
 
 module Extended_cfg_definition  = 
   functor ( A : sig type abstract_type type label_type end ) ->
@@ -143,6 +145,12 @@ struct
     method private register_edge (origin : int )( dest : int  )
       (label : trans_label_val ) =
       try
+	if not (Hashtbl.mem edges origin) then
+	  begin
+	    let tabl_for_origin = Hashtbl.create init_hashtbl_size in
+	    Hashtbl.add edges origin tabl_for_origin
+	  end;
+	
 	let entry_tab = Hashtbl.find edges origin in
 	  Hashtbl.add entry_tab dest label;
 	  if Hashtbl.mem edges_inv dest then
@@ -158,7 +166,7 @@ struct
 	    end
 	      (* store that post has pre as predecessor, obvious isn't it ?*)   
       with
-	  Not_found -> raise Not_found	    
+	  Not_found -> raise (Debug_exception (" method register edge, Not_found caught"))	    
 	    
     (** This method checks whether some abstract states 
        (sid , absdomvalue) is not entailed by another
@@ -254,7 +262,8 @@ struct
 		  self#register_edge current.id entailing_state_id label
 	  end
       with
-	  Not_found -> raise Not_found
+	  Not_found -> raise (Debug_exception("In method add_transition_from_to, a Not_found
+exception was raised"))
 
 (*	    let _ = self#add_abstract_state next_stmt next_abs in
 	      self#add_transition_from_to current next_stmt next_abs label
@@ -276,7 +285,9 @@ struct
       (* store that post has pre as predecessor, obvious isn't it ?*)
 	    
       with
-	  Not_found -> raise Not_found  (* Put that here to note that
+	  Not_found -> raise (Debug_exception("Method add_edge_by_id, Not_found caught"))  
+
+    (* Put that here to note that
 					   there exists a smartes way to 
 					   deal with this kind of exception
 					*)
@@ -323,7 +334,7 @@ struct
       try
 	let current_statment_successors = current_node.statement.succs 
 	in
-	    List.iter build_iterator current_statment_successors;
+	List.iter build_iterator current_statment_successors;
 	    (* We get the set of the current vertex successor and
 	       we iterate on each of them*)
 	let ecfg_succs_indexes = Hashtbl.find edges current_node.statement.sid in
@@ -331,7 +342,7 @@ struct
 	(* The recursive call is performed in the iterator*)
       with
 	  Not_found -> 
-	    raise Not_found
+	    raise (Debug_exception("In ecfg rec build, I caught an exception"))
   	  
 	       
     method build_fun_ecfg ( funinfo : Cil_types.fundec ) =
