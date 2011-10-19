@@ -19,6 +19,7 @@ open Extended_cfg_types
 
 exception Marking_unregistered_vertex of int
 exception Ecfg_vertex_not_registered
+exception No_outgoing_edges_from_state of int
 exception No_such_state_id
 exception Building_an_edge_between_inexisting_node_ids of int
 exception Debug_exception of string
@@ -109,7 +110,7 @@ struct
 	abstract_val = absval ; 	
       } 
       in
-	Hashtbl.add vertices  current_node_id new_vertex;
+	Hashtbl.add vertices current_node_id new_vertex;
 	if Hashtbl.mem unfoldsid_2_abs_map s.sid 
 	then 
 	  begin
@@ -185,7 +186,7 @@ struct
 	else
 	  let brother_ecfg_node = Hashtbl.find vertices id_abs_brothers in
 	  let brother_abs = brother_ecfg_node.abstract_val in
-	  if ( front_end#accepts  absval brother_abs) then id_abs_brothers
+	  if ( front_end#accepts  brother_abs absval) then id_abs_brothers
 	  else 
 	    already_found
       in
@@ -247,10 +248,10 @@ struct
       ( label : trans_label_val) =
       try
 	Format.printf "Entering add transition_from_to \n";
-	let is_new_abstraction = self#entailed_by_same_id_absvalue 
+	let is_entailed_abstraction = self#entailed_by_same_id_absvalue 
 	  next_stmt next_abs in
 	  begin
-	    match is_new_abstraction with
+	    match is_entailed_abstraction with
 		(false , _ ) -> 
 		  begin
 		    Format.printf "Adding new node to ecfg \n";
@@ -289,20 +290,19 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	  Not_found -> raise (Debug_exception("Method add_edge_by_id, Not_found caught"))  
 
     (* Put that here to note that
-					   there exists a smartes way to 
-					   deal with this kind of exception
-					*)
-	    
-
+       there exists a smartes way to 
+       deal with this kind of exception
+    *)
+  
     method private get_succs_of_ecfg_node ( node : ecfg_vertex ) =
       try
 	let prim_table = Hashtbl.find edges (node.id) 
 	in
 	prim_table
       with
-	  Not_found -> raise  Ecfg_vertex_not_registered
-
-
+	  Not_found -> raise  (No_outgoing_edges_from_state(node.id))
+	    
+	    
     method private recursive_build_ecfg ( current_node : ecfg_vertex ) =
       (* This function is used to recursivey call recusive_build_ecfg 
 	 on all the nodes that are registered as successor of  the parameter
@@ -349,11 +349,13 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	       we iterate on each of them*)
 	let ecfg_succs_indexes = self#get_succs_of_ecfg_node current_node in 
 	Hashtbl.iter ecfg_succ_recursor ecfg_succs_indexes
+       
 	(* The recursive call is performed in the iterator*)
       with
 	  Not_found -> 
 	    raise (Debug_exception("In ecfg rec build, I caught an exception"))
-  	  
+  	|  No_outgoing_edges_from_state ( _ ) -> () (* The current node ahs no successor
+						   in the ecfg*)    
 	       
     method build_fun_ecfg ( funinfo : Cil_types.fundec ) =
       prepareCFG funinfo; computeCFGInfo funinfo true;
@@ -397,6 +399,23 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       let ret_succs  = pre_print^trans_from_current in
       Hashtbl.fold recurse_folder succ_id ret_succs
 	
+	
+    method pprint_transitions =
+      let dest_table_print_folder ( origin : int ) (dest : int ) label 
+	  (prescript : string ) =
+	let post_script = Format.sprintf "%s \n %d -> %d { %s } \n" prescript origin dest 
+	  (front_end#pretty_label label)
+	in 
+	post_script 
+      in
+      let origin_table_print_folder (origin : int ) table_dest 
+	  (pre_script :  string ) =
+	Hashtbl.fold (dest_table_print_folder origin) table_dest pre_script
+      in
+      Hashtbl.fold origin_table_print_folder edges ""
+
+	
+	  
 	
 	
     method private pprint_inits  =
@@ -454,13 +473,13 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	
     method pprint_to_nts  = 
       (* let current_ecfg_node = Hashtbl.get vertex current_vertex_id in *)
-      let res_string = Format.sprintf " nts %s \n; \n" name in
+      let res_string = Format.sprintf " nts %s; \n" name in
       let res_string = res_string^name^" {\n" in
-      let res_string = res_string^(self#pprint_inits)  in
-      let res_string = res_string^(self#pprint_finals) in
-      let res_string = res_string^(self#pprint_error_states) in
+      let res_string = res_string^(self#pprint_inits)^"\n"  in
+      let res_string = res_string^(self#pprint_finals)^"\n" in
+      let res_string = res_string^(self#pprint_error_states)^"\n" in
       let printed_index = Hashtbl.create 97 in
-      let res_string = res_string^(self#pprint_to_nts_rec 0 printed_index "")
+      let res_string = res_string^(self#pprint_transitions)
       in
       let res_string = res_string^"\n}" in
       res_string
