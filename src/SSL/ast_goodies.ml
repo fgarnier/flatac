@@ -72,20 +72,23 @@ let rec pprint_ciltypes (ciltype : Cil_types.typ ) =
   match ciltype with
       TInt(IBool,_) -> "bool"
     | TInt(IChar,_) ->  "char"
-    | TInt(ISChar,_) -> "sizeof_signed_char"
+    | TInt(ISChar,_) -> "signed_char"
     | TInt(IUChar,_) -> "unsigned_char"	
-    | TInt(IInt,_) -> "sizeof_int"
-    | TInt(IUInt,_) -> "sizeof_unsigned_int"
-    | TInt(IShort,_) -> "sizeof_short"
-    | TInt(IUShort,_) -> "sizeof_unsigned_short"
-    | TInt(ILong,_) -> "sizeof_long"
-    | TInt(IULong,_) -> "sizeof_unsigned_long"
-    | TInt(ILongLong,_) -> "sizeof_long_long"
-    | TInt(IULongLong,_) -> "sizeof_unsigned_long_long"	
-    | TFloat(FFloat,_) -> "sizeof_float"
-    | TFloat(FDouble,_) -> "sizeof_double"
-    | TFloat(FLongDouble,_) -> "sizeof_long_double"
+    | TInt(IInt,_) -> "int"
+    | TInt(IUInt,_) -> "unsigned_int"
+    | TInt(IShort,_) -> "short"
+    | TInt(IUShort,_) -> "unsigned_short"
+    | TInt(ILong,_) -> "long"
+    | TInt(IULong,_) -> "unsigned_long"
+    | TInt(ILongLong,_) -> "long_long"
+    | TInt(IULongLong,_) -> "unsigned_long_long"	
+    | TFloat(FFloat,_) -> "float"
+    | TFloat(FDouble,_) -> "double"
+    | TFloat(FLongDouble,_) -> "long_double"
     | TPtr(t,_) -> (pprint_ciltypes t)^"*" 
+    | TVoid(_) -> "Void"
+    | TArray ( t , _,_,_) ->
+	    "[Array : " ^(pprint_ciltypes t)^"]" 
     | _ ->  "Non numerical type"
 
 
@@ -104,7 +107,7 @@ let rec pprint_cil_exp ( e : Cil_types.exp ) =
     | SizeOfStr (str) -> "sizeof("^str^")"
     | SizeOfE ( e') -> "sizeof("^(pprint_cil_exp e')^")"
     | SizeOf ( t )-> "sizeof("^(pprint_ciltypes t)^")"
-    | CastE( t , expr ) -> "("^(pprint_ciltypes t)^")"^(pprint_cil_exp expr)
+    | CastE( t , expr ) -> "( CAST "^(pprint_ciltypes t)^","^(pprint_cil_exp expr)^")"
     | BinOp( bop , eg , ed, t) ->  (pprint_binop_op bop)^"("^ (pprint_cil_exp eg ) ^ ","^(pprint_cil_exp ed )^") : "^(pprint_ciltypes t)
       
     | UnOp(u , expr , t  ) -> (pprint_unop_op u)^( pprint_cil_exp expr)^" : "^(pprint_ciltypes t)

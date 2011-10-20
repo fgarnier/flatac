@@ -475,7 +475,7 @@ let malloc_ssl_nts_transition ( v : Cil_types.varinfo  option) sslv  lparam mid 
   let locmap = sslv.validinfos in
      (* Validlocmap (locmap ) -> *) 
   let l = List.hd lparam in (* malloc takes one and only one input parameter.*)
-  Format.printf "Malloc parametter is : %s" (pprint_cil_exp l);
+  Format.printf "Malloc parametter is : %s" (Ast_goodies.pprint_cil_exp l);
   let scal_param = cil_expr_2_scalar l in
   Self.debug ~level:0 " [malloc_ssl_nts_transition] Pre valid_sym_cscal ";  
   let valid_sym_guard = valid_sym_cscal locmap sslv.ssl_part scal_param in

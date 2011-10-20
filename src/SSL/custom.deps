@@ -1,3 +1,4 @@
 ssl_pprinters.cmo: ssl_pprinters.cmx
 ssl_pprinters.cmx: ssl_types.cmo ssl.cmo
-ssl_pprinters.cmo : ast_goodies.cmo
+ast_goodies.cmo:
+ast_goodies.cmx:
