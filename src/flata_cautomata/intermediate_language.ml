@@ -121,6 +121,14 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
       begin
 	match f.vtype with
 	    TInt(_,_) -> LiVar(Unprimed,LiIntVar(f.vname))
+	  | TPtr(_,_) ->  (* Modified on the 20-10-11, need to check 
+						impact.*)
+
+	    let msg = "This variable : "^f.vname ^"Has a pointer type, but appears in a scalar expression, and I don't know what to do with it \n" in 
+	    let exc =  Bad_expression_type msg in
+	    raise  exc
+	  
+	    
 	  | _-> begin 
 	    let msg = "This variable : "^f.vname ^"isn't of type TInt, but appears in a scalar expression \n" in 
 	    let exc =  Bad_expression_type msg in
