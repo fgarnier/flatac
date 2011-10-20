@@ -186,7 +186,7 @@ struct
 	else
 	  let brother_ecfg_node = Hashtbl.find vertices id_abs_brothers in
 	  let brother_abs = brother_ecfg_node.abstract_val in
-	  if ( front_end#accepts  brother_abs absval) then id_abs_brothers
+	  if ( front_end#entails  brother_abs absval) then id_abs_brothers
 	  else 
 	    already_found
       in
@@ -201,8 +201,18 @@ struct
 	  Not_found -> (false , -1 ) 
 	    
 
-    method is_sid_visited ( id : int ) =
-      Hashtbl.mem visited_index id
+    method is_sid_visited ( sid : int ) =
+      Hashtbl.mem visited_index sid
+
+    method is_ecfg_vertex_id_visited ( id  : int ) =
+      let sid_of_id = Hashtbl.find fold_abs_map_2_sid id in
+      try
+	let visit_tbl_of_sid = Hashtbl.find visited_index sid_of_id in
+	Hashtbl.mem visit_tbl_of_sid id
+      with
+	| Not_found -> false (* No ecfg node whose sid equals sid_of_id has
+			     yet been visited*)
+
 
 (** Returns true if the s * abs has not yet been visited for building the ecfg.*)
     method recurse_to_abs_succs ( s : Cil_types.stmt ) ( abs : abs_dom_val ) =
@@ -230,6 +240,9 @@ struct
       with
 	  Not_found -> let excep = Marking_unregistered_vertex ( vertex_id ) in
 		       raise excep
+
+
+    
 			 
  
    (*
@@ -311,12 +324,19 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       let ecfg_succ_recursor  (index : int ) _ =
 	Format.printf "recursor : successor id is %d \n" index;
 	let next_ecfg_vertex = Hashtbl.find vertices index in
-	let visited_abs_from_current_sid = Hashtbl.find visited_index current_sid in
-	if( Hashtbl.mem visited_abs_from_current_sid  index)
-	then ()
+     (*let visited_abs_from_current_sid = Hashtbl.find visited_index current_sid in*)
+	if( self#is_ecfg_vertex_id_visited index)
+	then 
+	  begin
+	    Format.printf "Ecfg vertex %d already visided \n" index
+	  end
+
 	else if ( self#recurse_to_abs_succs next_ecfg_vertex.statement next_ecfg_vertex.abstract_val ) 
 	then
-	  self#recursive_build_ecfg next_ecfg_vertex
+	  begin
+	     Format.printf "Ecfg vertex %d not yet marked as visited \n" index;
+	    self#recursive_build_ecfg next_ecfg_vertex
+	  end
 	else ()
       in
       let next_list_adder_iterator (next_stmt : Cil_types.stmt) 

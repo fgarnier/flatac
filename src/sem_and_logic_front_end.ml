@@ -31,6 +31,8 @@ object
   * accepted *)
   method virtual accepts: 'a -> 'a -> bool
 
+  method virtual entails: 'a -> 'a -> bool
+
   (** Returns true if the given state is an error state. *)
   method virtual is_error_state: 'a -> bool
 

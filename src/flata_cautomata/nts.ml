@@ -254,9 +254,9 @@ let rec cnt_pprint_boolexp (bexp :cnt_bool ) =
 		CntEq ->  expg^" = "^expd
 	      | CntNeq ->  expg^" != "^expd
 	      | CntLeq -> expg^" <=  "^expd
-	      | CntLt -> expg^" > "^expd
-	      | CntGt -> expg^" < "^expd
-	      | CntGeq -> expg^" <= "^expd
+	      | CntLt -> expg^" < "^expd
+	      | CntGt -> expg^" > "^expd
+	      | CntGeq -> expg^" >= "^expd
 	  end
 
 
