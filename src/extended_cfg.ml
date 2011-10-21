@@ -320,7 +320,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       (* This function is used to recursivey call recusive_build_ecfg 
 	 on all the nodes that are registered as successor of  the parameter
 	 current_node. *)
-      let current_sid = current_node.statement.sid in
+      (*let current_sid = current_node.statement.sid in*)
       let ecfg_succ_recursor  (index : int ) _ =
 	Format.printf "recursor : successor id is %d \n" index;
 	let next_ecfg_vertex = Hashtbl.find vertices index in

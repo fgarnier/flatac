@@ -53,7 +53,7 @@ let rec base_ptrexp (sslf : ssl_formula )( ptr_exp : c_ptrexp ) =
 whether an arithmetical expression is valid or not.
 
 !!! THIS FUNCTION OUGHT BE USED TO GENERATE THE GUARDS FOR FLATA,
-WHEN THE VALIDITY CAN'T BE STATICALLY DEDICED FROM THE ABSTRACT
+WHEN THE VALIDITY CAN'T BE STATICALLY DEDCIED FROM THE ABSTRACT
 DOMAIN ( SSL*NTS_COUNTERS ).
 THIS function performs a TRANSLATION.
 

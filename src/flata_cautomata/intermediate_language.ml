@@ -52,12 +52,15 @@ type c_scal = LiVar of primed * c_int_var
 	      | LiUnMin of c_scal
 	      | LiMod of c_scal * c_scal   (*Modulo operator*)
 	      | LiMinusPP of c_ptrexp * c_ptrexp *  Cil_types.typ
+	      | LiScalOfAddr of c_ptrexp (* While casting a ptr to an 
+					integer type*) 
 		  
 and c_ptrexp = LiPVar of primed * c_ptr *  Cil_types.typ
   (* Type of pointer variables *)
 	       | LiPlusPI of c_ptrexp * c_scal  * Cil_types.typ
 	       | LiIndexPI of c_ptrexp * c_scal * Cil_types.typ
 	       | LiMinusPI of c_ptrexp * c_scal * Cil_types.typ
+	       | LiAddrOfScal of c_scal
 	       
 type c_bool = LiBNot of c_bool 
  	      | LiBAnd of c_bool * c_bool 
@@ -139,7 +142,21 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 	
     | SizeOf ( t ) -> LiSymConst( LiTypeSizeof ( t ) ) (*  Added 9-9-11 *)
 
-    | CastE ( t , expression ) -> cil_expr_2_scalar expression (* Added 9-9-11*)
+    | CastE ( _ , expr ) -> 
+      begin (* If here, one expects the wildcarded
+	       type to be an integer type.*) 
+	let exp_type = Cil.typeOf expr in
+	match exp_type with
+	    TInt(_,_) ->  cil_expr_2_scalar expr (* Added 9-9-11,
+							  Completed 21-10-11*)
+	  | TPtr(_,_) ->
+	    let ptr_val = cil_expr_2_ptr expr in
+	    LiScalOfAddr(ptr_val)
+	      
+	  | _ ->  raise ( Bad_expression_type "Trying to a value to an
+integer type, which type is neither TInt nor TPtr.\n")
+      end
+	
 
     | BinOp (PlusA, expg, expd, TInt(_,_) ) ->
       LiSum (cil_expr_2_scalar expg , cil_expr_2_scalar expd)
@@ -184,12 +201,33 @@ and cil_expr_2_ptr expr =
 	  end
       end
 
+
+    | CastE ( _ , expression ) -> (* If here, one expects the wildcarded
+				  type to be a pointer type.*) 
+      let exp_type = Cil.typeOf expression in
+      begin
+	match exp_type with
+	    TInt(_,_) -> 
+	      let int_val = cil_expr_2_scalar expression in
+	      LiAddrOfScal ( int_val)
+	 
+	  | TPtr(_,_) ->
+	    cil_expr_2_ptr expr
+
+	      
+	  | _ ->  raise ( Bad_expression_type "Trying to cast a value to an
+address type, which type is neither TInt nor TPtr.\n")
+
+      
+      end
+      	
+	
     |  (_) ->    begin 
 	    let msg = " There is something I was unable to properly
 parse in the ci_expr_2_ptr function" 
 	    in let exc =  Bad_expression_type msg in 
 	       raise exc
-	  end
+    end
       
 
 
@@ -338,6 +376,7 @@ let rec scal_to_string ( b_exp : c_scal ) =
     | LiConst(LiIConst(i)) -> (Printf.sprintf "%d" i )
     | LiSymConst(LiSymIConst(const_name)) -> const_name
     | LiSymConst(LiTypeSizeof(t)) -> let s = pprint_ciltypes_size t in s
+    | LiScalOfAddr(e)->"(TINT of Addr cast)"^(ptrexp_to_str e)
     | LiProd( sg , sd ) ->
       let rhs= ref "" in
       let lhs = ref "" in
@@ -378,7 +417,9 @@ and ptrexp_to_str ( cptr : c_ptrexp ) =
     
     | LiPVar ( Unprimed , LiIntPtr ( vname ), _) ->
       vname
-    
+
+    |  LiAddrOfScal (e) -> "(Addr of TINT)"^(scal_to_string e)
+
     | LiPlusPI ( ptr_in , offset, _ ) ->
       ( ptrexp_to_str  ptr_in )^"["^(scal_to_string offset)^"]"
     
