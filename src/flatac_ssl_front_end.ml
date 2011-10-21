@@ -55,8 +55,13 @@ class ssl_flatac_front_end = object
   method is_error_state (sslv : ssl_validity_absdom ) =
     match sslv.ssl_part.space with
 	Top_heap -> true
-      | _ -> not (Ssl_decision.sat_ssl sslv.ssl_part)
-
+      | _ -> 
+	  begin 
+	    if (Ssl_decision.sat_ssl sslv.ssl_part)
+	    then  ( (Ssl_decision.garbage_ssl sslv.ssl_part) )
+	    else false
+	  end
+	    
 
   method pretty (sslv : ssl_validity_absdom ) =
     Ssl_pprinters.pprint_ssl_formula_tex sslv.ssl_part

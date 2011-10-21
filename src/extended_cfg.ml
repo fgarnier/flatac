@@ -357,26 +357,34 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	let succs_list = front_end#next current_absvalue empty_label 
 	  succs_stmt.skind 
 	in
-	List.iter (next_list_adder_iterator succs_stmt) succs_list
+	  List.iter (next_list_adder_iterator succs_stmt) succs_list
 	    (* End of the build_iterator definition *)
       in 
-      self#mark_as_visited current_node.id;
-      try
-	let current_statment_successors = current_node.statement.succs 
-	in
-	List.iter build_iterator current_statment_successors;
-	    (* We get the set of the current vertex successor and
-	       we iterate on each of them*)
-	let ecfg_succs_indexes = self#get_succs_of_ecfg_node current_node in 
-	Hashtbl.iter ecfg_succ_recursor ecfg_succs_indexes
+	self#mark_as_visited current_node.id;
+	if (front_end#is_error_state current_node.abstract_val) 
+	then () (* One stops the recursive call on the set of
+		states whose abstract domain value is an erro
+		state, i.e. memory leak or broken heap *)
+	else
+	  begin 
+	    try
+	      let current_statment_successors = current_node.statement.succs 
+	      in
+		List.iter build_iterator current_statment_successors;
+		(* We get the set of the current vertex successor and
+		   we iterate on each of them*)
+		let ecfg_succs_indexes = self#get_succs_of_ecfg_node current_node 
+		in 
+		  Hashtbl.iter ecfg_succ_recursor ecfg_succs_indexes
        
 	(* The recursive call is performed in the iterator*)
-      with
-	  Not_found -> 
-	    raise (Debug_exception("In ecfg rec build, I caught an exception"))
-  	|  No_outgoing_edges_from_state ( _ ) -> () (* The current node ahs no successor
+	    with
+		Not_found -> 
+		  raise (Debug_exception("In ecfg rec build, I caught an exception"))
+  	      |  No_outgoing_edges_from_state ( _ ) -> () (* The current node ahs no successor
 						   in the ecfg*)    
 	       
+	  end
     method build_fun_ecfg ( funinfo : Cil_types.fundec ) =
       prepareCFG funinfo; computeCFGInfo funinfo true;
       let rootstmt = List.hd funinfo.sallstmts in
