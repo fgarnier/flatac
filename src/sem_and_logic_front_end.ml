@@ -19,6 +19,7 @@ exception Flatac_exception of int * int * string
 
 class virtual ['a, 'b] sem_and_logic_front_end = 
 object 
+ 
   method virtual get_entry_point_abstraction : unit -> 'a
 
   (** Returns a label without any consequence on sub transition label *)
