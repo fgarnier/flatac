@@ -498,7 +498,6 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       let res_string = res_string^(self#pprint_inits)^"\n"  in
       let res_string = res_string^(self#pprint_finals)^"\n" in
       let res_string = res_string^(self#pprint_error_states)^"\n" in
-      let printed_index = Hashtbl.create 97 in
       let res_string = res_string^(self#pprint_transitions)
       in
       let res_string = res_string^"\n}" in

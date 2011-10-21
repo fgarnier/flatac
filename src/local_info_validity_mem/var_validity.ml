@@ -171,6 +171,9 @@ let rec valid_sym_cscal ( loc_map : validity_loc_map ) (sslf : ssl_formula )
 	      let fd = valid_sym_ptrexp loc_map sslf ptrexpd in
 		and_sym_validity fg fd 
 	end
+
+    | LiScalOfAddr ( ptrexp , _ ) -> 
+      valid_sym_ptrexp loc_map sslf ptrexp
 	  
 and valid_sym_ptrexp  ( loc_map : validity_loc_map ) (sslf : ssl_formula ) ( ptrexp :  c_ptrexp ) =
   match ptrexp with 
@@ -198,6 +201,10 @@ and valid_sym_ptrexp  ( loc_map : validity_loc_map ) (sslf : ssl_formula ) ( ptr
 	  let fd = valid_sym_cscal loc_map sslf cscal in
 	    and_sym_validity fg fd 
 	end
+
+    | LiAddrOfScal ( scalexp , _ ) ->
+       valid_sym_cscal loc_map sslf scalexp
+
 
 
 

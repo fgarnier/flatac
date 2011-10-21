@@ -157,6 +157,13 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
 		 interpret_ciltypes_size t (* Returns the constant
 					   name associated to the type t.*)
 	end
+
+    | LiScalOfAddr( ptrexp , optype ) -> 
+      begin
+       	let ll = interpret_c_ptrexp_to_cnt sslf ptrexp in
+	let  sizeof_ptr_type = interpret_ciltypes_size optype in
+	CntProd(ll,sizeof_ptr_type)
+      end
 	    
 and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
   match ptrexp with 
@@ -185,7 +192,12 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
 	    CntSum(ll,lr) 
 	end
 
-
+    | LiAddrOfScal ( scalval , optype ) ->
+      begin
+	let ll = interpret_c_scal_to_cnt sslf scalval in
+	let  sizeof_ptr_type = interpret_ciltypes_size optype in
+	CntProd(ll,sizeof_ptr_type)
+      end
 (** Returns the type of the pointer expression, that is
 basically the type of the varname. Returns the type of the
 innermost pointer variable the expression tree.
@@ -202,6 +214,7 @@ let rec type_of_ptrexp ptrexp =
 	type_of_ptrexp cptrexp
     | LiIndexPI ( cptrexp , scalv,_ ) ->
 	type_of_ptrexp cptrexp
+    | LiAddrOfScal(_, optype ) -> optype
 
 
 let rec c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool ) = 
@@ -232,7 +245,6 @@ let rec c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool ) =
 	  let argd =  interpret_c_scal_to_cnt sslf cscald in
 	     CntBool ( CntEq , argg , argd )
 	end
-  
 
     | LiBNeq ( cscalg , cscald ) -> 
 	begin

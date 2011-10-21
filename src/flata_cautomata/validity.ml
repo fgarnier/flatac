@@ -16,7 +16,8 @@ open Ssl
 open SSL_lex
 open Validity_types
 
-
+exception Cannot_find_pvar
+exception Cannot_find_lvar
 
 (** returns the location variable l which models the base address
 of the pointer expression.
@@ -39,16 +40,39 @@ let rec base_var_ptrexp ( ptr_exp : c_ptrexp ) =
     | LiPlusPI ( cptr , _ , _) -> base_var_ptrexp  cptr
     | LiIndexPI ( cptr , _ , _) -> base_var_ptrexp  cptr
     | LiMinusPI ( cptr , _ , _) -> base_var_ptrexp  cptr
+    | LiAddrOfScal(expr , _) ->  base_var_cscal expr(*Nil*) (*
+						  Ça n'est
+						  pas aussi simple que ça.
+						  le cscal peut égalmenent
+'						  être un cast d'un pointer,
+						  qui lui même a son addresse de base propre/une variable de poiteur de base qui lui est propre.
+						*)
+and base_var_cscal ( c_exp : c_scal ) =
+  match c_exp with
+      LiScalOfAddr( add , _ ) -> base_var_ptrexp add
+    | _ -> raise Cannot_find_pvar
+
+(* Nil. Maybe raising an customized exception
+		    will help to handle this case without confusion*)
+
+
 
 let rec base_ptrexp (sslf : ssl_formula )( ptr_exp : c_ptrexp ) =
   match ptr_exp with 
       LiPVar ( _ , LiIntPtr(vname), _ ) ->
 	get_ptr_affectation sslf (PVar(vname))
-
+	  
     | LiPlusPI ( cptr , _ , _) -> base_ptrexp sslf cptr
     | LiIndexPI ( cptr , _ , _) -> base_ptrexp sslf cptr
     | LiMinusPI ( cptr , _ , _) -> base_ptrexp sslf cptr
-  
+    | LiAddrOfScal( scalar , _ ) -> base_cscalptrexp sslf scalar
+and
+    base_cscalptrexp (sslf : ssl_formula )( scal : c_scal ) =
+  match scal with
+      LiScalOfAddr(ptrexp , _ ) -> base_ptrexp sslf ptrexp
+    | _ -> LVar("") (*Nil*)
+
+
 (** Generates counter based expressions that allow to determinate
 whether an arithmetical expression is valid or not.
 
@@ -58,7 +82,6 @@ DOMAIN ( SSL*NTS_COUNTERS ).
 THIS function performs a TRANSLATION.
 
 IT shall not be confuse with Var_validity.validity_of and consort.
-
 
 *)
 
@@ -109,6 +132,9 @@ let rec valid_cscal (sslf : ssl_formula ) ( scal : c_scal) =
 		and_valid fg fd 
 	    end
 	end
+
+    | LiScalOfAddr( ptrexp , _) -> 
+      valid_ptrexp sslf ptrexp
 	  
 and valid_ptrexp (sslf : ssl_formula ) ( ptrexp :  c_ptrexp ) =
   match ptrexp with 
@@ -133,6 +159,9 @@ and valid_ptrexp (sslf : ssl_formula ) ( ptrexp :  c_ptrexp ) =
 	  let fd = valid_cscal sslf cscal in
 	    and_valid fg fd 
 	end
+
+    | LiAddrOfScal ( scal_exp , _ ) ->
+      valid_cscal sslf scal_exp
 
 (*
 
