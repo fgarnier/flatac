@@ -115,3 +115,43 @@ let rec pprint_cil_exp ( e : Cil_types.exp ) =
 
     | _ -> "Some expr"
 	  
+
+let rec pprint_attr_list_l_fold ( elem_left : int ref)( attr : Cil_types.attrparam )
+    (s : string) =
+  if (!elem_left <= 1 ) then
+    begin
+      
+      s^( pprint_attrparam attr)
+    end
+  else
+    begin
+      elem_left := !elem_left - 1;
+      s^( pprint_attrparam attr)^","
+    end
+ 
+and pprint_attrparam ( attr : Cil_types.attrparam ) =
+  match attr with 
+      AInt ( i ) -> Format.sprintf "%d" i
+    | AStr ( s ) -> s
+    | ACons (s , plist ) ->
+	begin
+	  let nbelem = ref (List.length plist) in 
+	  s^"("^(List.fold_right (pprint_attr_list_l_fold nbelem) plist "" )^")"
+	end
+    | ASizeOf (t) -> "Sizeof("^(pprint_ciltypes t)^")"
+    | AUnOp ( op , atp ) -> (pprint_unop_op op )^(pprint_attrparam atp)
+    | ABinOp ( bop, ag , ad ) -> (pprint_binop_op bop )^"("^(pprint_attrparam ag)^","^(pprint_attrparam ad)^")"
+    | AStar( atp) -> "*"^(pprint_attrparam atp)
+    | _ -> "Some attributes params"
+
+
+
+let pprint_attributes (atr : Cil_types.attribute ) =
+  match atr with
+      Attr ( s , atpl ) ->
+	begin
+	  let len = ref (List.length atpl) in
+	    s^"("^( List.fold_right (pprint_attr_list_l_fold len) atpl "" )^")"
+	end
+    |  AttrAnnot (s ) -> "Annotation ["^s^"]"
+  
