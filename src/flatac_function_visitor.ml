@@ -41,7 +41,9 @@ class flatac_visitor (prj : Project.t ) = object (self)
   method vglob_aux (g : Cil_types.global ) =
     is_computed <- true ;
     match g with 
-        GFun ( funninfos , _ ) ->          
+        GFun ( funninfos , _ ) ->
+          let strinfo = Ast_goodies.pprint_slocal_vars funninfos.slocals in
+	    Format.printf "%s \n" strinfo;
        	  self#register_ecfg_of_gfun funninfos;
 	  DoChildren
       | _ -> DoChildren 

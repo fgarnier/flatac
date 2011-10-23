@@ -146,7 +146,7 @@ and pprint_attrparam ( attr : Cil_types.attrparam ) =
 
 
 
-let pprint_attributes (atr : Cil_types.attribute ) =
+let pprint_attribute (atr : Cil_types.attribute ) =
   match atr with
       Attr ( s , atpl ) ->
 	begin
@@ -155,3 +155,12 @@ let pprint_attributes (atr : Cil_types.attribute ) =
 	end
     |  AttrAnnot (s ) -> "Annotation ["^s^"]"
   
+
+let pprint_attributes ( attr :  Cil_types.attributes) =
+  List.fold_right ( fun  a s -> (s^(pprint_attribute a)^";")) attr ""
+
+let pprint_slocal_var (slocal : Cil_types.varinfo ) =
+  "SLOCAL [ "^(slocal.vname)^" ] = "^(pprint_attributes slocal.vattr)
+  
+let pprint_slocal_vars ( slocals :  Cil_types.varinfo list ) =
+  List.fold_right (fun vinf str -> str^(pprint_slocal_var vinf)^"\n" ) slocals ""

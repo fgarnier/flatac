@@ -4,6 +4,7 @@ open SSL_lex
 open Ssl_valid_abs_dom_types
 open Var_validity_types
 open Var_validity
+open Cil_types
 
 
 let create_validity_abstdomain = 
@@ -33,3 +34,7 @@ let set_var_validity_in_absdomain  (domain : ssl_validity_absdom) ( vinfo : Cil_
     ssl_part = domain.ssl_part ;
     validinfos = (set_validity_in domain.validinfos vinfo valid); 
   }
+
+
+let register_slocals (funinfos : Cil_types.fundec ) ( absdom_param : ssl_validity_absdom ) =
+  List.fold_right ( fun vinf_slocal absdom -> set_var_validity_in_absdomain absdom vinf_slocal FalsevarValid ) (funinfos.slocals) absdom_param

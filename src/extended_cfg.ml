@@ -241,10 +241,6 @@ struct
 	  Not_found -> let excep = Marking_unregistered_vertex ( vertex_id ) in
 		       raise excep
 
-
-    
-			 
- 
    (*
       This operation takes as input the current state and the next abstract
       state, and :
@@ -382,13 +378,13 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 		Not_found -> 
 		  raise (Debug_exception("In ecfg rec build, I caught an exception"))
   	      |  No_outgoing_edges_from_state ( _ ) -> () (* The current node ahs no successor
-						   in the ecfg*)    
-	       
+						   in the ecfg*)    	       
 	  end
+
     method build_fun_ecfg ( funinfo : Cil_types.fundec ) =
       prepareCFG funinfo; computeCFGInfo funinfo true;
       let rootstmt = List.hd funinfo.sallstmts in
-      let root_abstraction = front_end#get_entry_point_abstraction () in
+      let root_abstraction = front_end#get_entry_point_from_fundec funinfo in
       let root_id = self#add_abstract_state rootstmt root_abstraction in
       self#register_init_state root_id;
       self#recursive_build_ecfg  (Hashtbl.find vertices root_id)

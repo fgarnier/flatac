@@ -5,6 +5,10 @@ open Ssl_types
 open SSL_lex
 open Intermediate_language
 
+
+(* Ast_infos is here for testing purposes*)
+open Ast_goodies
+
 exception Neither_intvar_nor_ptvar
 exception Unregistered_var of string
 exception Relation_between_vars_out_of_ssl_context
@@ -65,8 +69,9 @@ let validity_of  ( loc_map : validity_loc_map ) (v : Cil_types.varinfo ) =
 	      let res = Validvarmap.find v.vname var_map 
 	      in res.validity
 	    with
-		Not_found ->  
-		  let excs = Unregistered_var (v.vname )
+		Not_found ->
+		  let arg_infos = pprint_attributes v.vattr in
+		  let excs = Unregistered_var ((v.vname^"'s attribures :"^arg_infos  ))
 		  in 
 		    raise excs
 	  end
@@ -128,7 +133,7 @@ let rec valid_sym_cscal ( loc_map : validity_loc_map ) (sslf : ssl_formula )
 	      entry.validity
 	  with
 	      Not_found -> 
-		let excs = Unregistered_var ( vname ) in 
+		let excs = Unregistered_var ((vname^" In valid_cscal")) in
 		  raise excs
 	end
 	    
