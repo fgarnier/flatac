@@ -36,5 +36,10 @@ let set_var_validity_in_absdomain  (domain : ssl_validity_absdom) ( vinfo : Cil_
   }
 
 
+(* Registers the set of local variables in the validity table*)
 let register_slocals (funinfos : Cil_types.fundec ) ( absdom_param : ssl_validity_absdom ) =
   List.fold_right ( fun vinf_slocal absdom -> set_var_validity_in_absdomain absdom vinf_slocal FalsevarValid ) (funinfos.slocals) absdom_param
+
+(* Registers the set of local variables in the validity table*)
+let register_sformals (funinfos : Cil_types.fundec ) ( absdom_param : ssl_validity_absdom ) =
+  List.fold_right ( fun vinf_slocal absdom -> set_var_validity_in_absdomain absdom vinf_slocal DKvarValid ) (funinfos.sformals) absdom_param

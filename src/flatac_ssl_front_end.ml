@@ -44,7 +44,8 @@ class ssl_flatac_front_end = object
  
   method get_entry_point_from_fundec ( funinfo : Cil_types.fundec ) =
     let absdom = Ssl_valid_abs_dom.create_validity_abstdomain in
-      Ssl_valid_abs_dom.register_slocals funinfo absdom
+    let absdom = Ssl_valid_abs_dom.register_slocals funinfo absdom in
+    Ssl_valid_abs_dom.register_sformals funinfo absdom
   (*
   method copy_transit_label (label : Nts_types.cnt_trans_label list ) =
     []
