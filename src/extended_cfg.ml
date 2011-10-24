@@ -17,12 +17,18 @@ open Sem_and_logic_front_end
 
 open Extended_cfg_types
 
-exception Marking_unregistered_vertex of int
+exception Marking_unregistered_vertex of ecfg_id
 exception Ecfg_vertex_not_registered
-exception No_outgoing_edges_from_state of int
+exception No_outgoing_edges_from_state of ecfg_id
 exception No_such_state_id
-exception Building_an_edge_between_inexisting_node_ids of int
+exception Building_an_edge_between_inexisting_node_ids of ecfg_id
 exception Debug_exception of string
+
+let get_id_of_ecfg_id ( id : ecfg_id) =
+  match id with
+      Ecfg_id(i) -> i
+
+
 
 module Extended_cfg_definition  = 
   functor ( A : sig type abstract_type type label_type end ) ->
@@ -31,6 +37,8 @@ struct
   open Extended_cfg_base_types
   
   
+  
+
   
   class extended_cfg (name_function : string ) (funinfo : Cil_types.fundec) 
     frontend   = object(self)
@@ -44,38 +52,38 @@ struct
                                  sem_and_logic_front_end ) = frontend 
 
     
-    val edges : ( int , (int , trans_label_val ) Hashtbl.t ) Hashtbl.t = 
+    val edges : ( ecfg_id , (ecfg_id , trans_label_val ) Hashtbl.t ) Hashtbl.t = 
       Hashtbl.create init_hashtbl_size
     
-    val edges_inv : (int , (int , unit) Hashtbl.t ) Hashtbl.t =
+    val edges_inv : ( ecfg_id, (ecfg_id , unit) Hashtbl.t ) Hashtbl.t =
       Hashtbl.create init_hashtbl_size
     
-    val vertices : (int , ecfg_vertex) Hashtbl.t = 
+    val vertices : (ecfg_id , ecfg_vertex) Hashtbl.t = 
       Hashtbl.create init_hashtbl_size
 
     (** The four next hashtbl contain the indexes ot the initial
     states, final states and errors states. *)
-    val init_state : ( int , unit ) Hashtbl.t = 
+    val init_state : ( ecfg_id , unit ) Hashtbl.t = 
       Hashtbl.create init_hashtbl_size
-    val final_state : ( int , unit ) Hashtbl.t = 
+    val final_state : ( ecfg_id , unit ) Hashtbl.t = 
       Hashtbl.create init_hashtbl_size
-    val error_state : ( int , unit ) Hashtbl.t =
+    val error_state : ( ecfg_id , unit ) Hashtbl.t =
        Hashtbl.create init_hashtbl_size
     (* The common state table contains the index of all states that
     don't fall in any category above.*)
-    val common_state : ( int , unit ) Hashtbl.t =  
+    val common_state : ( ecfg_id , unit ) Hashtbl.t =  
       Hashtbl.create init_hashtbl_size
 	
     (** The key shall be the Cil_stmt.sid and the second element contains
      all the ids of the ecfg nodes that were visited.*)
-    val visited_index : ( int ,  (int ,  unit ) Hashtbl.t ) Hashtbl.t =
+    val visited_index : ( sid_class ,  (ecfg_id ,  unit ) Hashtbl.t ) Hashtbl.t =
       Hashtbl.create init_hashtbl_size
 
     (* The key corresponds to the Cil_type.stmt.sid and the corresponding
        hash table contains all the id of the note of the ecfg which have
        the same sid as the key.*)
 	
-    val unfoldsid_2_abs_map : (int , (int , unit ) Hashtbl.t) Hashtbl.t =
+    val unfoldsid_2_abs_map : (sid_class , (ecfg_id , unit ) Hashtbl.t) Hashtbl.t =
       Hashtbl.create init_hashtbl_size
 
     (* Associates to each
@@ -84,22 +92,33 @@ struct
        call on Hashtbl.find.
        Encodes the inverse relation of unfoldsid_2_abs_map.
     *)
-    val fold_abs_map_2_sid : ( int , int ) Hashtbl.t =
+    val fold_abs_map_2_sid : ( ecfg_id , sid_class ) Hashtbl.t =
       Hashtbl.create init_hashtbl_size
                                                    
-    val mutable current_node_id = 0 (* Basically, the total number of
-				    nodes, as well as the id of the next
-				    to be created node, if any.*)
-
+    val mutable current_node_id = (Ecfg_id (0)) 
+                            (*    Basically, the total number of
+				  nodes, as well as the id of the next
+				  to be created node, if any.
+			     *)
+      
     initializer self#build_fun_ecfg funinfo
 
+    method private incr_current_node_id =
+      match current_node_id with
+	  Ecfg_id(i) -> 
+	    let nid = i+1 in
+	    current_node_id <- Ecfg_id(nid)
+
+
    (* Sets a state as being initial.*)
-    method private register_init_state ( state_id ) = 
+    method private register_init_state ( state_id : ecfg_id ) = 
       if Hashtbl.mem vertices state_id
       then 
 	Hashtbl.add init_state state_id ()
       else
 	raise No_such_state_id
+
+    
 
     (** Adds a vertex to the ecfg*)
     method private add_abstract_state ( s : Cil_types.stmt ) 
@@ -111,10 +130,10 @@ struct
       } 
       in
 	Hashtbl.add vertices current_node_id new_vertex;
-	if Hashtbl.mem unfoldsid_2_abs_map s.sid 
+	if Hashtbl.mem unfoldsid_2_abs_map (Sid_class(s.sid)) 
 	then 
 	  begin
-	    let entry_table = Hashtbl.find unfoldsid_2_abs_map s.sid 
+	    let entry_table = Hashtbl.find unfoldsid_2_abs_map (Sid_class(s.sid))  
 	    in
 	      Hashtbl.add entry_table current_node_id ()
 	  end
@@ -122,17 +141,20 @@ struct
 	  begin
 	    let entry_table = Hashtbl.create init_hashtbl_size in
 	      Hashtbl.add entry_table current_node_id ();
-	      Hashtbl.add unfoldsid_2_abs_map s.sid entry_table
+	      Hashtbl.add unfoldsid_2_abs_map (Sid_class(s.sid)) entry_table
 	  end;
-	Hashtbl.add fold_abs_map_2_sid new_vertex.id s.sid;
-	current_node_id <- (current_node_id + 1);
+	Hashtbl.add fold_abs_map_2_sid new_vertex.id (Sid_class(s.sid));
+	self#incr_current_node_id;
+	(*current_node_id <- (current_node_id + 1);*)
 	
 	(* Error states shall be considered as an absorbing class.
 	There must be no states that could be both a final state 
 	or an error state. *)
-	
-
-	Format.printf "[ Extended cfg Adding : node id sid : %d node id %d ] \n " new_vertex.statement.sid new_vertex.id;
+	begin
+	  match new_vertex.id with
+	      Ecfg_id(id) ->
+		Format.printf "[ Extended cfg Adding : node id sid : %d node id %d ] \n " new_vertex.statement.sid id
+	end;
 	if front_end#is_error_state absval then
 	  Hashtbl.add error_state new_vertex.id ()
 	else if ( (List.length s.succs) == 0 ) then
@@ -144,7 +166,7 @@ struct
 
     (** Adds a labelled edge between two vertexes of the
 	extended control flow graph.*)
-    method private register_edge (origin : int )( dest : int  )
+    method private register_edge (origin : ecfg_id ) ( dest : ecfg_id )
       (label : trans_label_val ) =
       try
 	if not (Hashtbl.mem edges origin) then
@@ -181,30 +203,38 @@ struct
 
     method entailed_by_same_id_absvalue  (next_stmt : Cil_types.stmt)
       ( absval : abs_dom_val ) =
-      let entail_folder (id_abs_brothers : int ) () (already_found : int ) =
-	if already_found >= 0 then already_found
-	else
-	  let brother_ecfg_node = Hashtbl.find vertices id_abs_brothers in
-	  let brother_abs = brother_ecfg_node.abstract_val in
-	  if ( front_end#entails  brother_abs absval) then id_abs_brothers
-	  else 
-	    already_found
+      let entail_folder (id_abs_brothers : ecfg_id ) () (already_found :(bool * ecfg_id ) ) =
+	match already_found with
+	    ( true , _ ) ->
+	      already_found
+	  | ( false , _ ) ->
+	    let brother_ecfg_node = Hashtbl.find vertices id_abs_brothers in
+	    let brother_abs = brother_ecfg_node.abstract_val in
+	    if ( front_end#entails  brother_abs absval) 
+	    then
+	      (true , id_abs_brothers)
+	    else 
+	      already_found
       in
       try
-	let brotherhood_abs = Hashtbl.find unfoldsid_2_abs_map next_stmt.sid in
-	let id_candidate = (Hashtbl.fold entail_folder brotherhood_abs (-1)) in
+	let brotherhood_abs = Hashtbl.find unfoldsid_2_abs_map (Sid_class(next_stmt.sid)) in
+	let candidate = (Hashtbl.fold entail_folder brotherhood_abs (false , Ecfg_id( - 1 ))) in
+	candidate
+      (*match candidate with 
+	    (true, _ ) -> candidate
 	  if id_candidate >= 0 then
 	    (true , id_candidate )
 	  else
 	    (false , -1 )
+	*)
       with
-	  Not_found -> (false , -1 ) 
+	  Not_found -> (false ,Ecfg_id(-1)) 
 	    
 
-    method is_sid_visited ( sid : int ) =
+    method is_sid_visited ( sid : sid_class ) =
       Hashtbl.mem visited_index sid
 
-    method is_ecfg_vertex_id_visited ( id  : int ) =
+    method is_ecfg_vertex_id_visited ( id  : ecfg_id ) =
       let sid_of_id = Hashtbl.find fold_abs_map_2_sid id in
       try
 	let visit_tbl_of_sid = Hashtbl.find visited_index sid_of_id in
@@ -216,26 +246,33 @@ struct
 
 (** Returns true if the s * abs has not yet been visited for building the ecfg.*)
     method recurse_to_abs_succs ( s : Cil_types.stmt ) ( abs : abs_dom_val ) =
-      if (not (Hashtbl.mem visited_index s.sid) )
+      let sid_of_stmt = Sid_class( s.sid ) in
+      if (not (Hashtbl.mem visited_index sid_of_stmt ) )
       then true 
       else
 	let ( is_entailed , _ ) = self#entailed_by_same_id_absvalue s abs in
 	  is_entailed
 	  
 
-    method mark_as_visited ( vertex_id : int ) =      
+    method mark_as_error_state (vertex_id : ecfg_id ) =
+      if not (Hashtbl.mem error_state vertex_id)
+      then Hashtbl.add error_state vertex_id ()
+      else ()
+      
+
+    method mark_as_visited ( vertex_id : ecfg_id ) =      
       let v = Hashtbl.find vertices vertex_id in
       try    
-	if Hashtbl.mem visited_index v.statement.sid then 
+	if Hashtbl.mem visited_index (Sid_class(v.statement.sid)) then 
 	  begin
-	    let sid_table = Hashtbl.find visited_index v.statement.sid in
+	    let sid_table = Hashtbl.find visited_index (Sid_class(v.statement.sid)) in
 	    if Hashtbl.mem sid_table vertex_id then ()
 	    else Hashtbl.add sid_table vertex_id ()
 	  end
 	else
 	  let new_visited_tab = Hashtbl.create init_hashtbl_size in
 	  Hashtbl.add new_visited_tab vertex_id ();
-	  Hashtbl.add visited_index v.statement.sid new_visited_tab
+	  Hashtbl.add visited_index (Sid_class(v.statement.sid)) new_visited_tab
 	  
       with
 	  Not_found -> let excep = Marking_unregistered_vertex ( vertex_id ) in
@@ -287,7 +324,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 
  (* Pre and post reprensent the identificators of the abstract states,
  i.e. states in the sid * abs_dom_val cross product.*)
-    method add_edge_by_id (pre : int) (post : int ) (label : trans_label_val) =
+    method add_edge_by_id (pre : ecfg_id) (post : ecfg_id ) (label : trans_label_val) =
       try
 	let entry_table = Hashtbl.find edges pre in
 	Hashtbl.add entry_table post label;
@@ -309,7 +346,8 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	in
 	prim_table
       with
-	  Not_found -> raise  (No_outgoing_edges_from_state(node.id))
+	  Not_found -> 
+	    raise  (No_outgoing_edges_from_state(node.id))
 	    
 	    
     method private recursive_build_ecfg ( current_node : ecfg_vertex ) =
@@ -317,20 +355,20 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	 on all the nodes that are registered as successor of  the parameter
 	 current_node. *)
       (*let current_sid = current_node.statement.sid in*)
-      let ecfg_succ_recursor  (index : int ) _ =
-	Format.printf "recursor : successor id is %d \n" index;
+      let ecfg_succ_recursor  (index : ecfg_id ) _ =
+	Format.printf "recursor : successor id is %d \n" ( get_id_of_ecfg_id index);
 	let next_ecfg_vertex = Hashtbl.find vertices index in
      (*let visited_abs_from_current_sid = Hashtbl.find visited_index current_sid in*)
 	if( self#is_ecfg_vertex_id_visited index)
 	then 
 	  begin
-	    Format.printf "Ecfg vertex %d already visided \n" index
+	    Format.printf "Ecfg vertex %d already visided \n" (get_id_of_ecfg_id index)
 	  end
 
 	else if ( self#recurse_to_abs_succs next_ecfg_vertex.statement next_ecfg_vertex.abstract_val ) 
 	then
 	  begin
-	     Format.printf "Ecfg vertex %d not yet marked as visited \n" index;
+	     Format.printf "Ecfg vertex %d not yet marked as visited \n" ( get_id_of_ecfg_id index);
 	    self#recursive_build_ecfg next_ecfg_vertex
 	  end
 	else ()
@@ -358,9 +396,10 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       in 
 	self#mark_as_visited current_node.id;
 	if (front_end#is_error_state current_node.abstract_val) 
-	then () (* One stops the recursive call on the set of
+	then  (* One stops the recursive call on the set of
 		states whose abstract domain value is an erro
 		state, i.e. memory leak or broken heap *)
+	  self#mark_as_error_state current_node.id
 	else
 	  begin 
 	    try
@@ -377,7 +416,8 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	    with
 		Not_found -> 
 		  raise (Debug_exception("In ecfg rec build, I caught an exception"))
-  	      |  No_outgoing_edges_from_state ( _ ) -> () (* The current node ahs no successor
+  	      |  No_outgoing_edges_from_state ( node_id ) ->
+		Hashtbl.add final_state node_id () (* The current node ahs no successor
 						   in the ecfg*)    	       
 	  end
 
@@ -390,11 +430,11 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       self#recursive_build_ecfg  (Hashtbl.find vertices root_id)
           
 	  
-    method pprint_node ( node_id : int) =
-      Format.sprintf "%d" node_id
+    method pprint_node ( node_id : ecfg_id ) =
+      Format.sprintf "%d" (get_id_of_ecfg_id node_id)
 	
 	
-    method private pprint_edge ( orig : int ) ( dest : int ) =
+    method private pprint_edge ( orig : ecfg_id ) ( dest : ecfg_id ) =
       let orig_tabl_out = Hashtbl.find edges orig in
       let label_trans = Hashtbl.find orig_tabl_out dest in
       let str_label = front_end#pretty_label label_trans in
@@ -403,14 +443,14 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       str_res
 	
 	
-    method private pprint_to_nts_rec (current_vertex_id : int)(printed_index : (int , unit ) Hashtbl.t ) (pre_print : string ) =
-      let transitions_folder (id : int ) _ (previous_trans : string ) =
+    method private pprint_to_nts_rec (current_vertex_id : ecfg_id )(printed_index : (ecfg_id , unit ) Hashtbl.t ) (pre_print : string ) =
+      let transitions_folder (id : ecfg_id ) _ (previous_trans : string ) =
 	let previous_trans = 
 	  previous_trans^(self#pprint_edge current_vertex_id id) 
 	in
 	previous_trans
       in
-      let  recurse_folder (succs_id : int ) _ ( nts_script : string ) =
+      let  recurse_folder (succs_id : ecfg_id ) _ ( nts_script : string ) =
 	if Hashtbl.mem vertices succs_id then  nts_script
 	else self#pprint_to_nts_rec succs_id printed_index nts_script 
       in
@@ -425,14 +465,14 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	
 	
     method pprint_transitions =
-      let dest_table_print_folder ( origin : int ) (dest : int ) label 
+      let dest_table_print_folder ( origin : ecfg_id ) (dest : ecfg_id ) label 
 	  (prescript : string ) =
-	let post_script = Format.sprintf "%s \n %d -> %d { %s } \n" prescript origin dest 
+	let post_script = Format.sprintf "%s \n %d -> %d { %s } \n" prescript ( get_id_of_ecfg_id origin)  ( get_id_of_ecfg_id dest) 
 	  (front_end#pretty_label label)
 	in 
 	post_script 
       in
-      let origin_table_print_folder (origin : int ) table_dest 
+      let origin_table_print_folder (origin : ecfg_id ) table_dest 
 	  (pre_script :  string ) =
 	Hashtbl.fold (dest_table_print_folder origin) table_dest pre_script
       in
@@ -446,11 +486,11 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       let elem_left = ref 0 in
       let pprint_folder id () prescript =
 	if (!elem_left) <= 0 then
-	  (prescript^(Printf.sprintf "%d" id))
+	  (prescript^(Printf.sprintf "%d" ( get_id_of_ecfg_id  id )))
 	else
 	  begin
 	    elem_left  := (!elem_left) - 1;
-	    prescript^(Printf.sprintf "%d," id)
+	    prescript^(Printf.sprintf "%d," ( get_id_of_ecfg_id  id ))
 	  end
       in 
       elem_left := (Hashtbl.length init_state);
@@ -464,11 +504,11 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       let elem_left = ref 0 in
       let pprint_folder id () prescript =
 	if !elem_left <= 0 then
-	  prescript^(Format.sprintf "%d" id)
+	  prescript^(Format.sprintf "%d" ( get_id_of_ecfg_id id ))
 	else
 	  begin
 	    elem_left := !elem_left-1;
-	    prescript^(Format.sprintf "%d," id)
+	    prescript^(Format.sprintf "%d," ( get_id_of_ecfg_id id ))
 	  end
       in
       elem_left := (Hashtbl.length final_state);
@@ -481,11 +521,11 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       let elem_left = ref 0 in
       let pprint_folder id () prescript =
 	if !elem_left <= 0 then
-	  prescript^(Format.sprintf "%d" id)
+	  prescript^(Format.sprintf "%d" ( get_id_of_ecfg_id id ))
 	else
 	  begin
 	    elem_left := !elem_left-1;
-	    prescript^(Format.sprintf "%d," id)
+	    prescript^(Format.sprintf "%d," ( get_id_of_ecfg_id id ))
 	  end
       in
       elem_left := (Hashtbl.length error_state);
