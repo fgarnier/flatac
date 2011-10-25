@@ -5,7 +5,7 @@ open Ssl_valid_abs_dom_types
 open Var_validity_types
 open Var_validity
 open Cil_types
-
+ 
 
 let create_validity_abstdomain = 
   let sslf = create_ssl_f () in
@@ -15,6 +15,9 @@ let create_validity_abstdomain =
     validinfos = val_map ;
   }
 
+
+let add_atomic_affect_to_validity_abstdomain  (equ : SSL_lex.affect) (domain :ssl_validity_absdom) =
+  Ssl.and_atomic_affect equ domain.ssl_part 
 
 (** the fiel ssl_part is mutable and peristant, whereas validinfo isn't.*)
 let copy_validity_absdomain (v : ssl_validity_absdom ) =
@@ -40,6 +43,26 @@ let set_var_validity_in_absdomain  (domain : ssl_validity_absdom) ( vinfo : Cil_
 let register_slocals (funinfos : Cil_types.fundec ) ( absdom_param : ssl_validity_absdom ) =
   List.fold_right ( fun vinf_slocal absdom -> set_var_validity_in_absdomain absdom vinf_slocal FalsevarValid ) (funinfos.slocals) absdom_param
 
-(* Registers the set of local variables in the validity table*)
-let register_sformals (funinfos : Cil_types.fundec ) ( absdom_param : ssl_validity_absdom ) =
+
+
+(* Registers the set of local variables in the validity table.
+For each pointer variable x, one need to associate a location var
+
+l such that x->l in the ssl part.
+*)
+    
+let register_sformals mid (funinfos : Cil_types.fundec ) 
+    ( absdom_param : ssl_validity_absdom ) =
+  let formal_register_folder absdom sform =
+    match sform.vtype with 
+      | TPtr(_,_) ->
+	begin
+	  let fresh_lvar = mid#get_fresh_lvar in
+	  let atom_aff = (Pointsto((PVar(sform.vname)),fresh_lvar)) in
+	  add_atomic_affect_to_validity_abstdomain atom_aff absdom;
+	  absdom
+	end 
+      | _ -> absdom
+  in
+let absdom_param = List.fold_left formal_register_folder absdom_param funinfos.sformals in
   List.fold_right ( fun vinf_slocal absdom -> set_var_validity_in_absdomain absdom vinf_slocal DKvarValid ) (funinfos.sformals) absdom_param

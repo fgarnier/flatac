@@ -12,6 +12,7 @@ For questions or remarks, contact florent.garnier__at__imag__dot__fr
 open Cil_types
 open Int64
 open Validity_types
+open Ast_goodies
 
 (* 
 Boolean doesn't have a peculiar type in ANSI C. 
@@ -153,8 +154,10 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 	    let ptr_val = cil_expr_2_ptr expr in
 	    LiScalOfAddr(ptr_val , t )
 	      
-	  | _ ->  raise ( Bad_expression_type "Trying to a value to an
-integer type, which type is neither TInt nor TPtr.\n")
+	  | _ ->  
+	    let msg = Format.sprintf  "Trying to cast a value to an
+integer type, which type is neither TInt nor TPtr : %s .\n" (pprint_cil_exp expr) in
+	    raise ( Bad_expression_type(msg))
       end
 	
 
@@ -201,6 +204,15 @@ and cil_expr_2_ptr expr =
 	  end
       end
 
+    | Lval (Mem(e), _ ) -> 
+      let type_of_e = Cil.typeOf e in
+      begin
+	match type_of_e with
+	    TInt(_,_) -> LiAddrOfScal((cil_expr_2_scalar e), type_of_e)
+	  | TPtr(_,_) -> cil_expr_2_ptr e
+	  | _ -> raise  ( Bad_expression_type "Lval Mem(e), e has neither 
+type int nor type TPtr .\n")
+      end
 
     | CastE ( t , expression ) -> (* If here, one expects the wildcarded
 				  type to be a pointer type.*) 

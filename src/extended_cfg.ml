@@ -414,8 +414,8 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
        
 	(* The recursive call is performed in the iterator*)
 	    with
-		Not_found -> 
-		  raise (Debug_exception("In ecfg rec build, I caught an exception"))
+		(*Not_found -> 
+		  raise (Debug_exception("In ecfg rec build, I caught an exception")) *)
   	      |  No_outgoing_edges_from_state ( node_id ) ->
 		Hashtbl.add final_state node_id () (* The current node ahs no successor
 						   in the ecfg*)    	       

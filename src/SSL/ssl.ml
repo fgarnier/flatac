@@ -13,8 +13,7 @@ open Hashtbl
 open Format
 
 
-exception Lvar_found 
-exception Get_a_locvar of locvar
+
 
 let cmp_lex_lvar (g : locvar ) (d : locvar ) =
   match g , d with
@@ -584,7 +583,7 @@ the pure part of sslf*)
 	  if Hashtbl.mem sslf.pure.ptnil pvar then
 	    (LVar(""))
 	  else
-	    raise Not_found
+	    raise No_such_pvar_in_ssl_formula
 	  
 (** sets the heap in the top state*)
   let set_heap_to_top (sslf : ssl_formula ) =

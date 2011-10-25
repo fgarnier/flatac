@@ -11,7 +11,8 @@ open List
 open Hashtbl
 
 
-exception Top_heap_exception
+
+
 
 module SSL_types_gen = functor ( P : sig 
 				   val order_relation : string -> string -> bool
@@ -68,4 +69,11 @@ module SSL_lex = SSL_types_gen (struct
 			      let order_relation = (>)
 			      let equals_to = (=)
 				end) 
+
+
+exception Top_heap_exception
+exception Lvar_found 
+exception Get_a_locvar of SSL_lex.locvar
+exception No_such_pvar_in_ssl_formula
+
 

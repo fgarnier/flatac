@@ -8,6 +8,7 @@
 *)
 open Self
 open Cil_types
+open Global_mem
 
 (** First type variable -- i.e. 'a -- is the type of the abstract domain
 and 'b is the type used to encode the transition label of the automaton.*)
@@ -28,6 +29,12 @@ object
 
   method virtual copy_absdom_label : 'a -> 'a
   method virtual copy_transit_label : 'b -> 'b
+
+
+(*
+  method virtual register_sformals : global_mem_manager -> 'a -> 'a
+  method virtual register_slocals : 'a -> 'a
+*)
 
   (* Returns true if, knowing the first abstraction, the second one is
   * accepted *)

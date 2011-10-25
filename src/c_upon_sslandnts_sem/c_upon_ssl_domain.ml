@@ -130,6 +130,10 @@ let rec get_pvar_from_exp (expr : Cil_types.exp ) =
 	      TPtr(_,_) -> (PVar(p.vname))
 	    | _ -> raise Contains_no_pvar
 	end
+
+    | Lval(Mem(e), _ ) ->
+      get_pvar_from_exp e
+
     | CastE (TPtr (_,_), e ) ->
 	get_pvar_from_exp e
 
@@ -143,7 +147,7 @@ let rec get_pvar_from_exp (expr : Cil_types.exp ) =
 	->
 	get_pvar_from_exp e1
 
-    |BinOp (b,_,_,_) ->
+    | BinOp (b,_,_,_) ->
 	let b = pprint_binop_op b in
 	let msg = "[get_pvar_from_exp :] Don't know what
 to do with Binop operator "^b in
@@ -194,6 +198,7 @@ let affect_ptr_upon_sslv (v : Cil_types.varinfo)  (expr : Cil_types.exp) (sslv :
   Self.debug ~level:0 "Im am in affect_ptr_upon_sslv \n";
   let sslv =  copy_validity_absdomain sslv in
   try
+    Format.printf "[affect_ptr_upon_sslv: expression : %s=%s \n]" v.vname (pprint_cil_exp expr);
     let pvar_left = (PVar(v.vname)) in
     let pvar_right = get_pvar_from_exp expr in
     let sslv = copy_validity_absdomain sslv in
@@ -213,7 +218,7 @@ let affect_ptr_upon_sslv (v : Cil_types.varinfo)  (expr : Cil_types.exp) (sslv :
       in
 	((sslv_new,affect_off::[])::[]) 
   with
-      Not_found ->
+      (*Not_found ->
 	begin
 	  (* match pvar_right with 
 	     PVar(rvarname) ->*)
@@ -222,7 +227,7 @@ let affect_ptr_upon_sslv (v : Cil_types.varinfo)  (expr : Cil_types.exp) (sslv :
 	  raise Not_found
 	    (*end*)
 	end
-	  
+      *)  
     | Loc_is_nil -> 
 	begin 
 	  and_atomic_ptnil (Pointsnil((PVar(v.vname)))) sslv.ssl_part;
