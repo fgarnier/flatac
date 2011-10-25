@@ -229,7 +229,10 @@ let affect_ptr_upon_sslv (v : Cil_types.varinfo)  (expr : Cil_types.exp) (sslv :
 	  let new_sslv = set_var_validity_in_absdomain sslv v FalsevarValid in
 	    (new_sslv , [])::[]
 	end
-  
+    | Contains_no_pvar ->
+      let exprpvarless = pprint_cil_exp expr in
+      Format.printf "No pvar found in %s \n" exprpvarless;
+      raise Contains_no_pvar
 	  
 	  
 (** This function modifies the sslf formula that abstracts the current

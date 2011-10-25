@@ -65,31 +65,49 @@ from Boron to Carbon ... *)
 	| 	BOr -> "BOr"	(*	inclusive-or	*)
 	| 	LAnd -> "LAnd" 	(*	logical and. Unlike other expressions this one does not always evaluate both operands. If you want to use these, you must set Cil.useLogicalOperators.	*)
 	| 	LOr -> "LOr"
+	  
+	  
+	  
 
 
+    
+	  
+    let pprint_comp_infos ( cinfo : Cil_types.compinfo ) =
+      if cinfo.cstruct then
+	"struct "^cinfo.cname
+      else
+	"union "^cinfo.cname
 
-let rec pprint_ciltypes (ciltype : Cil_types.typ ) =
-  match ciltype with
-      TInt(IBool,_) -> "bool"
-    | TInt(IChar,_) ->  "char"
-    | TInt(ISChar,_) -> "signed_char"
-    | TInt(IUChar,_) -> "unsigned_char"	
-    | TInt(IInt,_) -> "int"
-    | TInt(IUInt,_) -> "unsigned_int"
-    | TInt(IShort,_) -> "short"
-    | TInt(IUShort,_) -> "unsigned_short"
-    | TInt(ILong,_) -> "long"
-    | TInt(IULong,_) -> "unsigned_long"
-    | TInt(ILongLong,_) -> "long_long"
-    | TInt(IULongLong,_) -> "unsigned_long_long"	
-    | TFloat(FFloat,_) -> "float"
-    | TFloat(FDouble,_) -> "double"
-    | TFloat(FLongDouble,_) -> "long_double"
-    | TPtr(t,_) -> (pprint_ciltypes t)^"*" 
-    | TVoid(_) -> "Void"
-    | TArray ( t , _,_,_) ->
-	    "[Array : " ^(pprint_ciltypes t)^"]" 
-    | _ ->  "Non numerical type"
+
+    let pprint_type_infos ( tinfo : Cil_types.typeinfo) =
+      tinfo.torig_name
+
+    let rec pprint_ciltypes (ciltype : Cil_types.typ ) =
+      match ciltype with
+	  TInt(IBool,_) -> "bool"
+	| TInt(IChar,_) ->  "char"
+	| TInt(ISChar,_) -> "signed_char"
+	| TInt(IUChar,_) -> "unsigned_char"	
+	| TInt(IInt,_) -> "int"
+	| TInt(IUInt,_) -> "unsigned_int"
+	| TInt(IShort,_) -> "short"
+	| TInt(IUShort,_) -> "unsigned_short"
+	| TInt(ILong,_) -> "long"
+	| TInt(IULong,_) -> "unsigned_long"
+	| TInt(ILongLong,_) -> "long_long"
+	| TInt(IULongLong,_) -> "unsigned_long_long"	
+	| TFloat(FFloat,_) -> "float"
+	| TFloat(FDouble,_) -> "double"
+	| TFloat(FLongDouble,_) -> "long_double"
+	| TPtr(t,_) -> (pprint_ciltypes t)^"*" 
+	| TVoid(_) -> "Void"
+	| TArray ( t , _,_,_) ->
+	  "[Array : " ^(pprint_ciltypes t)^"]" 
+	    
+	| TComp(cinfo,_,_)-> pprint_comp_infos cinfo
+	| TNamed(type_info,_) -> "TNamed type"^(pprint_type_infos type_info)
+      
+	| _ ->  "Non numerical type"
 
 
 
