@@ -532,7 +532,7 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 
 	  (*****************************************************************)
     
-      | Set ( (lv,_),expr, loc) ->       (* Here we handle value 
+      | Set ( (lv,off),expr, loc) ->       (* Here we handle value 
 	(*Set(lv,offset), expr , loc) *)        affectations and pointer 
 						 affectations*)
 	begin
@@ -551,6 +551,22 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 		      (sslv,[])::[]
 		      
 		end
+	    | Mem(e) ->
+	      begin
+		(*let v_dest = get_pvar_from_exp e in*)
+		match e.enode with
+		    Lval(Var(v),_) ->
+		      begin
+		(*	match v.vtype with
+			    TPtr(_,_)
+			    -> affect_ptr_upon_sslv v expr sslv
+			  | TInt(_,_)
+			    -> affect_int_val_upon_sslv v expr sslv
+			    
+		*)	      
+		      end
+			| _ -> raise (Debug_info ("[next_on_ssl_affect :]Paramater e in Mem(e) is not a Lval(Var(),_)"))
+	      end
 	    | _ ->  Self.debug ~level:0 "The left member of this affectation is not a variable, skiping it \n"; 
 	      (sslv,[])::[]
 	end
