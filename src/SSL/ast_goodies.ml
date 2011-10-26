@@ -78,11 +78,16 @@ from Boron to Carbon ... *)
       else
 	"union "^cinfo.cname
 
+    let rec pprint_enum_item (e : Cil_types.enumitem ) =
+      "Enumitem : "^e.einame^" value : "^(pprint_cil_exp e.eival)
 
-    let pprint_type_infos ( tinfo : Cil_types.typeinfo) =
+     and pprint_type_infos ( tinfo : Cil_types.typeinfo) =
       tinfo.torig_name
 
-    let rec pprint_ciltypes (ciltype : Cil_types.typ ) =
+     and pprint_enum_infos ( enum : Cil_types.enuminfo) =
+      "Enumeration : "^enum.eorig_name^" Ename : "^enum.ename
+ 
+     and  pprint_ciltypes (ciltype : Cil_types.typ ) =
       match ciltype with
 	  TInt(IBool,_) -> "bool"
 	| TInt(IChar,_) ->  "char"
@@ -106,32 +111,31 @@ from Boron to Carbon ... *)
 	    
 	| TComp(cinfo,_,_)-> pprint_comp_infos cinfo
 	| TNamed(type_info,_) -> "TNamed type"^(pprint_type_infos type_info)
-      
+	| TEnum (enum,_) -> pprint_enum_infos enum
 	| _ ->  "Non numerical type"
 
+     and pprint_cil_constant (c : Cil_types.constant ) =
+      match c with 
+	  CInt64(i,_,_) -> Format.sprintf "%d" (Int64.to_int i)
+	| CStr(s) -> s
+	| CEnum(e) -> pprint_enum_item e
+	| _ -> "Some non integer and non string constant"
+	    
 
-
-let pprint_cil_constant (c : Cil_types.constant ) =
-  match c with 
-      CInt64(i,_,_) -> Format.sprintf "%d" (Int64.to_int i)
-    | CStr(s) -> s
-    | _ -> "Some non integer and non string constant"
-
-
-let rec pprint_cil_exp ( e : Cil_types.exp ) =
-  match e.enode with 
-      Lval( Var(v) , _ ) -> Format.sprintf "Var %s : %s" v.vname (pprint_ciltypes v.vtype)
-    |  Lval ( Mem (e' ) , _) -> Format.sprintf "Mem [ %s ]" (pprint_cil_exp e')
-    | SizeOfStr (str) -> "sizeof("^str^")"
-    | SizeOfE ( e') -> "sizeof("^(pprint_cil_exp e')^")"
-    | SizeOf ( t )-> "sizeof("^(pprint_ciltypes t)^")"
-    | CastE( t , expr ) -> "( CAST "^(pprint_ciltypes t)^","^(pprint_cil_exp expr)^")"
-    | BinOp( bop , eg , ed, t) ->  (pprint_binop_op bop)^"("^ (pprint_cil_exp eg ) ^ ","^(pprint_cil_exp ed )^") : "^(pprint_ciltypes t)
-      
-    | UnOp(u , expr , t  ) -> (pprint_unop_op u)^( pprint_cil_exp expr)^" : "^(pprint_ciltypes t)
-    | Const(c) -> pprint_cil_constant c 
-
-    | _ -> "Some expr"
+     and pprint_cil_exp ( e : Cil_types.exp ) =
+      match e.enode with 
+	  Lval( Var(v) , _ ) -> Format.sprintf "Var %s : %s" v.vname (pprint_ciltypes v.vtype)
+	|  Lval ( Mem (e' ) , _) -> Format.sprintf "Mem [ %s ]" (pprint_cil_exp e')
+	| SizeOfStr (str) -> "sizeof("^str^")"
+	| SizeOfE ( e') -> "sizeof("^(pprint_cil_exp e')^")"
+	| SizeOf ( t )-> "sizeof("^(pprint_ciltypes t)^")"
+	| CastE( t , expr ) -> "( CAST "^(pprint_ciltypes t)^","^(pprint_cil_exp expr)^")"
+	| BinOp( bop , eg , ed, t) ->  (pprint_binop_op bop)^"("^ (pprint_cil_exp eg ) ^ ","^(pprint_cil_exp ed )^") : "^(pprint_ciltypes t)
+	    
+	| UnOp(u , expr , t  ) -> (pprint_unop_op u)^( pprint_cil_exp expr)^" : "^(pprint_ciltypes t)
+	| Const(c) -> pprint_cil_constant c 
+	
+	| _ -> "Some expr"
 	  
 
 let rec pprint_attr_list_l_fold ( elem_left : int ref)( attr : Cil_types.attrparam )

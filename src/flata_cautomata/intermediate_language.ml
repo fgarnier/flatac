@@ -132,7 +132,8 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 	    let exc =  Bad_expression_type msg in
 	    raise  exc
 	  
-	    
+	  | TComp(_,_,_) ->LiVar(Unprimed,LiIntVar(f.vname))
+
 	  | _-> begin 
 	    let msg = "This variable : "^f.vname ^"isn't of type TInt, but appears in a scalar expression \n" in 
 	    let exc =  Bad_expression_type msg in
@@ -148,15 +149,19 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 	       type to be an integer type.*) 
 	let exp_type = Cil.typeOf expr in
 	match exp_type with
-	    TInt(_,_) ->  cil_expr_2_scalar expr (* Added 9-9-11,
+	    TComp (_,_,_)  |
+		TNamed(_,_) |
+		TInt(_,_) ->  cil_expr_2_scalar expr (* Added 9-9-11,
 							  Completed 21-10-11*)
 	  | TPtr(_,_) ->
 	    let ptr_val = cil_expr_2_ptr expr in
 	    LiScalOfAddr(ptr_val , t )
 	      
+	  
+	      
 	  | _ ->  
 	    let msg = Format.sprintf  "Trying to cast a value to an
-integer type, which type is neither TInt nor TPtr : %s .\n" (pprint_cil_exp expr) in
+integer type, which type is neither TInt nor TPtr : %s , type : %s .\n" (pprint_cil_exp expr) (pprint_ciltypes exp_type)in
 	    raise ( Bad_expression_type(msg))
       end
 	
