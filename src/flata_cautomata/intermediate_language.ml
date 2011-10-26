@@ -121,6 +121,8 @@ let rec negate_bool_bot ( b_exp : c_bool ) =
 let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
   match expr.enode with 
       Const(CInt64(i,_,_))-> LiConst( LiIConst(Int64.to_int i))
+    | Const(CEnum(e)) -> cil_enumitem_2_scalar e
+
     | Lval(Var(f),_)->
       begin
 	match f.vtype with
@@ -132,7 +134,12 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 	    let exc =  Bad_expression_type msg in
 	    raise  exc
 	  
-	  | TComp(_,_,_) ->LiVar(Unprimed,LiIntVar(f.vname))
+	  | TComp(_,_,_) -> 
+	    LiVar(Unprimed,LiIntVar(f.vname))
+
+	  
+	  | TEnum(e,_) -> 
+	    LiVar(Unprimed,LiIntVar(f.vname))
 
 	  | _-> begin 
 	    let msg = "This variable : "^f.vname ^"isn't of type TInt, but appears in a scalar expression \n" in 
@@ -141,6 +148,20 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 	  
 	  end
       end	
+
+    | Lval(Mem(e),_) ->
+      begin
+	let t = Cil.typeOf e in
+	match t with
+	    TPtr(t,_) ->
+	      let ptr_addr_e = cil_expr_2_ptr e in
+	      LiScalOfAddr(ptr_addr_e,t)
+
+	  | _ -> 
+	    let msg = Format.sprintf "[Cil_expr_2_scalar :] Accessing LVal(Mem(e),_) where
+e is not of type TPtr(_,_), e : %s\n" (Ast_goodies.pprint_cil_exp e) in
+	    raise (Bad_expression_type(msg))
+      end
 	
     | SizeOf ( t ) -> LiSymConst( LiTypeSizeof ( t ) ) (*  Added 9-9-11 *)
 
@@ -157,7 +178,15 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 	    let ptr_val = cil_expr_2_ptr expr in
 	    LiScalOfAddr(ptr_val , t )
 	      
-	  
+	  | TEnum(_,_) ->
+	    begin
+	      match expr.enode with
+		  Const(CEnum(e)) -> cil_enumitem_2_scalar e
+		| _ -> 
+		  let msg = Format.sprintf  "[Cil_exp_2_scalar :] Trying to
+cast an expression whose type is TEnum but which is not embeded in a CEnum constructor \n"  in
+	    raise ( Bad_expression_type(msg))
+	    end
 	      
 	  | _ ->  
 	    let msg = Format.sprintf  "Trying to cast a value to an
@@ -184,7 +213,7 @@ integer type, which type is neither TInt nor TPtr : %s , type : %s .\n" (pprint_
     | UnOp (Neg, exp , TInt(_,_)) ->
       LiUnMin ( cil_expr_2_scalar exp)
        
-    | _ -> raise( Bad_expression_type "'Can't parse expression in cil_expr_2_scalar \n")
+    | _ -> raise( Bad_expression_type ("'Can't parse expression in cil_expr_2_scalar : %s \n"^(Ast_goodies.pprint_cil_exp expr)))
 
 and cil_expr_2_ptr expr =
   match expr.enode with
@@ -245,6 +274,10 @@ parse in the ci_expr_2_ptr function"
 	    in let exc =  Bad_expression_type msg in 
 	       raise exc
     end
+
+and cil_enumitem_2_scalar (enum : Cil_types.enumitem ) =
+  let eval = cil_expr_2_scalar enum.eival in
+  eval
       
 
 
