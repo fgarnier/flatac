@@ -74,6 +74,6 @@ module SSL_lex = SSL_types_gen (struct
 exception Top_heap_exception
 exception Lvar_found 
 exception Get_a_locvar of SSL_lex.locvar
-exception No_such_pvar_in_ssl_formula
+exception No_such_pvar_in_ssl_formula of string
 
 

@@ -31,11 +31,6 @@ object
   method virtual copy_transit_label : 'b -> 'b
 
 
-(*
-  method virtual register_sformals : global_mem_manager -> 'a -> 'a
-  method virtual register_slocals : 'a -> 'a
-*)
-
   (* Returns true if, knowing the first abstraction, the second one is
   * accepted *)
   method virtual accepts: 'a -> 'a -> bool

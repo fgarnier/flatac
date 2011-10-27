@@ -201,6 +201,7 @@ let affect_ptr_upon_sslv (v : Cil_types.varinfo)  (expr : Cil_types.exp) (sslv :
     Format.printf "[affect_ptr_upon_sslv: expression : %s=%s \n]" v.vname (pprint_cil_exp expr);
     let pvar_left = (PVar(v.vname)) in
     let pvar_right = get_pvar_from_exp expr in
+    Format.printf "I have a pvar \n %!";
     let sslv = copy_validity_absdomain sslv in
     let lvar_right = get_ptr_affectation sslv.ssl_part pvar_right 
     in
@@ -209,7 +210,9 @@ let affect_ptr_upon_sslv (v : Cil_types.varinfo)  (expr : Cil_types.exp) (sslv :
 	    LVar("") ->  Ssl.and_atomic_ptnil (Pointsnil(pvar_right)) sslv.ssl_part
 	  | LVar(_) -> Ssl.change_affect_var (Pointsto(pvar_left,lvar_right)) sslv.ssl_part
       end;
+    Format.printf "On the way to compute cil_expre_2_per of expr %s \n %!" (pprint_cil_exp expr);
       let param_cscal = Intermediate_language.cil_expr_2_ptr expr in
+      Format.printf "Operation done \n about to compute interpret_c_ptr_exp_to_cnt \n %!";
       let offset_of_pexpr = interpret_c_ptrexp_to_cnt sslv.ssl_part param_cscal in
       let offset_var_of_pvar =  offset_ntsivar_of_pvar pvar_left in
       let affect_off = CntAffect(offset_var_of_pvar,offset_of_pexpr) in
@@ -555,7 +558,7 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 	      begin
 		(*let v_dest = get_pvar_from_exp e in*)
 		match e.enode with
-		    Lval(Var(v),_) ->
+		    Lval(Var(v),off) ->
 		      begin
 		(*	match v.vtype with
 			    TPtr(_,_)
@@ -563,7 +566,12 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 			  | TInt(_,_)
 			    -> affect_int_val_upon_sslv v expr sslv
 			    
-		*)	      
+		*)	     
+			let msg =
+			  Format.sprintf "Mem(e) with e.node : Lval(Var(v),off), not yet supported, where v = %s and offset = %s \n, %s <- %s" v.vname (Ast_goodies.pprint_offset off ) v.vname (pprint_cil_exp expr) in
+			Format.printf "%s" msg;
+			 (sslv,[])::[]
+			(*raise (Debug_info (msg))*)
 		      end
 			| _ -> raise (Debug_info ("[next_on_ssl_affect :]Paramater e in Mem(e) is not a Lval(Var(),_)"))
 	      end

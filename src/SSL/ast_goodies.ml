@@ -80,14 +80,31 @@ from Boron to Carbon ... *)
 
     let rec pprint_enum_item (e : Cil_types.enumitem ) =
       "Enumitem : "^e.einame^" value : "^(pprint_cil_exp e.eival)
+    
 
-     and pprint_type_infos ( tinfo : Cil_types.typeinfo) =
+    and pprint_field_info (finfo : Cil_types.fieldinfo) =
+      "fieldname : "^finfo.fname^":"^(pprint_ciltypes finfo.ftype)
+      
+    and pprint_offset (off : Cil_types.offset ) =
+      match off with
+	  NoOffset -> "no_offset"
+	| Field( finfo , foff ) ->
+	  begin
+	    finfo.forig_name^"."^finfo.fname^"Offset_info:["^(pprint_offset foff)^"]"
+	  end
+	| Index (e , ioff) ->
+	  begin
+	    "Index of ["^(pprint_cil_exp e)^","^(pprint_offset ioff)^"]"
+	  end
+
+	    
+    and pprint_type_infos ( tinfo : Cil_types.typeinfo) =
       tinfo.torig_name
 
-     and pprint_enum_infos ( enum : Cil_types.enuminfo) =
+    and pprint_enum_infos ( enum : Cil_types.enuminfo) =
       "Enumeration : "^enum.eorig_name^" Ename : "^enum.ename
- 
-     and  pprint_ciltypes (ciltype : Cil_types.typ ) =
+	
+    and  pprint_ciltypes (ciltype : Cil_types.typ ) =
       match ciltype with
 	  TInt(IBool,_) -> "bool"
 	| TInt(IChar,_) ->  "char"
@@ -110,19 +127,19 @@ from Boron to Carbon ... *)
 	  "[Array : " ^(pprint_ciltypes t)^"]" 
 	    
 	| TComp(cinfo,_,_)-> pprint_comp_infos cinfo
-	| TNamed(type_info,_) -> "TNamed type"^(pprint_type_infos type_info)
+	| TNamed(type_info,_) -> "TNamed type "^(pprint_type_infos type_info)
 	| TEnum (enum,_) -> pprint_enum_infos enum
 	| _ ->  "Non numerical type"
-
+	  
      and pprint_cil_constant (c : Cil_types.constant ) =
       match c with 
 	  CInt64(i,_,_) -> Format.sprintf "%d" (Int64.to_int i)
 	| CStr(s) -> s
 	| CEnum(e) -> pprint_enum_item e
 	| _ -> "Some non integer and non string constant"
-	    
-
-     and pprint_cil_exp ( e : Cil_types.exp ) =
+	  
+	  
+    and pprint_cil_exp ( e : Cil_types.exp ) =
       match e.enode with 
 	  Lval( Var(v) , _ ) -> Format.sprintf "Var %s : %s" v.vname (pprint_ciltypes v.vtype)
 	|  Lval ( Mem (e' ) , _) -> Format.sprintf "Mem [ %s ]" (pprint_cil_exp e')
@@ -134,8 +151,16 @@ from Boron to Carbon ... *)
 	    
 	| UnOp(u , expr , t  ) -> (pprint_unop_op u)^( pprint_cil_exp expr)^" : "^(pprint_ciltypes t)
 	| Const(c) -> pprint_cil_constant c 
+	| AddrOf(l) ->
+	  begin
+	  match l with 
+	    | (Var(vv),off_v) -> "AddressOf["^(vv.vname)^"@offset :"^(pprint_offset off_v)^"]"
+
+	    | (Mem(e), offv) -> "AddressOf[Mem["^(pprint_cil_exp e)^"@offset"^(pprint_offset offv)^"]"
+	  end
 	
-	| _ -> "Some expr"
+
+	| _ -> "Some not yet parsed expression"
 	  
 
 let rec pprint_attr_list_l_fold ( elem_left : int ref)( attr : Cil_types.attrparam )
@@ -182,7 +207,7 @@ let pprint_attributes ( attr :  Cil_types.attributes) =
   List.fold_right ( fun  a s -> (s^(pprint_attribute a)^";")) attr ""
 
 let pprint_slocal_var (slocal : Cil_types.varinfo ) =
-  "SLOCAL [ "^(slocal.vname)^" ] = "^(pprint_attributes slocal.vattr)
+  "SLOCAL [ "^(slocal.vname)^":"^(pprint_ciltypes slocal.vtype)^" ] = "^(pprint_attributes slocal.vattr)
   
 let pprint_slocal_vars ( slocals :  Cil_types.varinfo list ) =
   List.fold_right (fun vinf str -> str^(pprint_slocal_var vinf)^"\n" ) slocals ""

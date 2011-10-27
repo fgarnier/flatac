@@ -583,8 +583,11 @@ the pure part of sslf*)
 	  if Hashtbl.mem sslf.pure.ptnil pvar then
 	    (LVar(""))
 	  else
-	    raise No_such_pvar_in_ssl_formula
-	  
+	    begin
+	      match pvar with
+		  PVar(vname)
+		  -> raise (No_such_pvar_in_ssl_formula(vname))
+	    end
 (** sets the heap in the top state*)
   let set_heap_to_top (sslf : ssl_formula ) =
     sslf.space <- Top_heap

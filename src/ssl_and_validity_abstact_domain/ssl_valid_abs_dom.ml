@@ -40,7 +40,19 @@ let set_var_validity_in_absdomain  (domain : ssl_validity_absdom) ( vinfo : Cil_
 
 
 (* Registers the set of local variables in the validity table*)
-let register_slocals (funinfos : Cil_types.fundec ) ( absdom_param : ssl_validity_absdom ) =
+let register_slocals mid (funinfos : Cil_types.fundec ) ( absdom_param : ssl_validity_absdom ) =
+   let slocals_register_folder absdom sform =
+    match sform.vtype with 
+      | TPtr(_,_) ->
+	begin
+	  let fresh_lvar = mid#get_fresh_lvar in
+	  let atom_aff = (Pointsto((PVar(sform.vname)),fresh_lvar)) in
+	  add_atomic_affect_to_validity_abstdomain atom_aff absdom;
+	  absdom
+	end 
+      | _ -> absdom
+  in
+let absdom_param = List.fold_left slocals_register_folder absdom_param funinfos.slocals in
   List.fold_right ( fun vinf_slocal absdom -> set_var_validity_in_absdomain absdom vinf_slocal FalsevarValid ) (funinfos.slocals) absdom_param
 
 
