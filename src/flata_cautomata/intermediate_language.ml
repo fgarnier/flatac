@@ -119,6 +119,8 @@ let rec negate_bool_bot ( b_exp : c_bool ) =
 
 
 let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
+
+  Format.printf "In cil_expr_2_scalar %s \n" (Ast_goodies.pprint_cil_exp expr );
   match expr.enode with 
       Const(CInt64(i,_,_))-> LiConst( LiIConst(Int64.to_int i))
     | Const(CEnum(e)) -> cil_enumitem_2_scalar e
@@ -215,7 +217,8 @@ integer type, which type is neither TInt nor TPtr : %s , type : %s .\n" (pprint_
        
     | _ -> raise( Bad_expression_type ("'Can't parse expression in cil_expr_2_scalar : %s \n"^(Ast_goodies.pprint_cil_exp expr)))
 
-and cil_expr_2_ptr expr =
+and cil_expr_2_ptr (expr : Cil_types.exp ) =
+   Format.printf "In cil_expr_2_ptr %s \n" (Ast_goodies.pprint_cil_exp expr );
   match expr.enode with
     
       BinOp (PlusPI, expg, expd , optype ) ->
