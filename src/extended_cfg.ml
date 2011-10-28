@@ -422,7 +422,8 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	  end
 
     method build_fun_ecfg ( funinfo : Cil_types.fundec ) =
-      prepareCFG funinfo; computeCFGInfo funinfo true;
+      (*prepareCFG funinfo; computeCFGInfo funinfo true;*)
+      Cfg.cfgFun funinfo;
       let rootstmt = List.hd funinfo.sallstmts in
       let root_abstraction = front_end#get_entry_point_from_fundec funinfo in
       let root_id = self#add_abstract_state rootstmt root_abstraction in

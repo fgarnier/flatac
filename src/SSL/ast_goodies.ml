@@ -121,7 +121,7 @@ from Boron to Carbon ... *)
 	| TFloat(FFloat,_) -> "float"
 	| TFloat(FDouble,_) -> "double"
 	| TFloat(FLongDouble,_) -> "long_double"
-	| TPtr(t,_) -> (pprint_ciltypes t)^"*" 
+	| TPtr(t,_) -> "("^(pprint_ciltypes t)^")*" 
 	| TVoid(_) -> "Void"
 	| TArray ( t , _,_,_) ->
 	  "[Array : " ^(pprint_ciltypes t)^"]" 

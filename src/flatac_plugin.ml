@@ -38,6 +38,7 @@ let pretty_print_cautomata_obj out =
   let prj= Project.current() in
   let visited_file = new  flatac_visitor ( prj ) in
   let file_ast = Ast.get() in
+  Cfg.clearFileCFG file_ast;
   let ca_out_name = Printf.sprintf "%s.ca" file_ast.fileName in
   Visitor.visitFramacFile (visited_file :> frama_c_copy ) file_ast;
   visited_file#save_in_file ca_out_name;

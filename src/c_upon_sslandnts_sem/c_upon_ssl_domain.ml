@@ -573,7 +573,9 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 			 (sslv,[])::[]
 			(*raise (Debug_info (msg))*)
 		      end
-			| _ -> raise (Debug_info ("[next_on_ssl_affect :]Paramater e in Mem(e) is not a Lval(Var(),_)"))
+			| _ -> 
+			  let msg = Format.sprintf "[next_on_ssl_affect :]Paramater e in Mem(e) is not a Lval(Var(),_), e is : %s \n" (pprint_cil_exp e) in
+			  raise (Debug_info (msg))
 	      end
 	    | _ ->  Self.debug ~level:0 "The left member of this affectation is not a variable, skiping it \n"; 
 	      (sslv,[])::[]
@@ -589,8 +591,12 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 		      match v.vtype with
 			  (*Returned value has an integer type*)
 			   
-			  TPtr(_,_)->
+			  TPtr(_,_) |  TNamed(_,_)->
 			    begin
+
+			      
+			(*The returned value is a variable that has another
+			  type than an integer type. Tpointer, float for instance*)
 			      match f.vname with
 				  "malloc" | "calloc" -> (malloc_ssl_nts_transition (Some(v)) sslv lparam mid)
 				    
@@ -600,15 +606,28 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 					   that behaves like malloc in this 
 					   space*)
 			    end
-			 (*The returned value is a variable that has another
-			 type than an integer type. Tpointer, float for instance*)
+
+			(*| TNamed(tinfo,_) ->
+			  (*In this case, the returned type is a composite
+			  one, either a structure or an union.*) *)
+
+
 
 			| _ -> 
-			  (sslv,[])::[]
+			  begin
+			    let msg= Format.sprintf "[next_on_ssl_instr] Var : %s = %s \n" (v.vname) (pprint_cil_exp exp1) in
+			    Format.printf "%s" msg;
+			    (sslv,[])::[]
+			  end
 		    (** Here the formula is let untouched*)
 		    end
+		      
 		| _ -> 
-		  (sslv,[])::[]
+		  begin
+		    let msg = Format.sprintf "[!!! next_on_ssl_instr !!!] The lhs is not a variable : ? = %s, leaving absdomain untouched \n" (pprint_cil_exp exp1 ) in
+		    Format.printf "%s %!" msg;
+		    (sslv,[])::[]
+		  end
 	  (** Here the returned value is not a variable,
 			  the returned value shall be logged in this case.*)
 	  end
@@ -616,6 +635,7 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 
       |  Call( None , exp1, lparam , _ )->
 		Self.debug ~level:0 "I've got a call with no affectation of the returned value \n" ;
+	Format.printf "[next_on_ssl_instr:] expr1 = %s \n" (pprint_cil_exp exp1);
 	begin
 	  match  exp1.enode  with
 	      Lval((Var(f),_))->
