@@ -261,7 +261,7 @@ type int nor type TPtr .\n")
 	      LiAddrOfScal ( int_val , t)
 	 
 	  | TPtr(_,_) ->
-	    cil_expr_2_ptr expr
+	    cil_expr_2_ptr expression
 
 	      
 	  | _ ->  raise ( Bad_expression_type "Trying to cast a value to an
