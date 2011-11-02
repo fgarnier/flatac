@@ -591,7 +591,7 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 		      match v.vtype with
 			  (*Returned value has an integer type*)
 			   
-			  TPtr(_,_) |  TNamed(_,_)->
+			  TPtr(_,_) |  TNamed(_,_) ->
 			    begin
 
 			      
@@ -615,9 +615,10 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 
 			| _ -> 
 			  begin
-			    let msg= Format.sprintf "[next_on_ssl_instr] Var : %s = %s \n" (v.vname) (pprint_cil_exp exp1) in
-			    Format.printf "%s" msg;
-			    (sslv,[])::[]
+			    let msg= Format.sprintf "[next_on_ssl_instr] Var : %s = %s : %s \n"  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype) in
+			    raise (Debug_info(msg))
+			    (*Format.printf "%s" msg;
+			    (sslv,[])::[]*)
 			  end
 		    (** Here the formula is let untouched*)
 		    end
