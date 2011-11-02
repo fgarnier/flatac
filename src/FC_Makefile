@@ -9,6 +9,7 @@ nts_types nts validity_types validity cnt_interpret intermediate_language\
 var_validity_types var_validity \
 ssl_valid_abs_dom_types ssl_valid_abs_dom \
  c_upon_ssl_domain flatac_ssl_front_end  \
+cautomata c2cautomatanalys flata_language flatac_debug_visitor \
 flatac_function_visitor flatac_plugin
 
 include Makefile.conf
