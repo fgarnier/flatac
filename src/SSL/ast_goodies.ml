@@ -129,6 +129,7 @@ from Boron to Carbon ... *)
 	| TComp(cinfo,_,_)-> pprint_comp_infos cinfo
 	| TNamed(type_info,_) -> "TNamed type "^(pprint_type_infos type_info)
 	| TEnum (enum,_) -> pprint_enum_infos enum
+	| TFun( t,_,_,_) -> "Function of return type : "^(pprint_ciltypes t)
 	| _ ->  "Non numerical type"
 	  
      and pprint_cil_constant (c : Cil_types.constant ) =

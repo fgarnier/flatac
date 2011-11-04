@@ -560,18 +560,19 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 		match e.enode with
 		    Lval(Var(v),off) ->
 		      begin
-		(*	match v.vtype with
+			match v.vtype with
 			    TPtr(_,_)
 			    -> affect_ptr_upon_sslv v expr sslv
-			  | TInt(_,_)
+			 (* | TInt(_,_)
 			    -> affect_int_val_upon_sslv v expr sslv
+			 *) 
+			  | _ ->
 			    
-		*)	     
 			let msg =
 			  Format.sprintf "Mem(e) with e.node : Lval(Var(v),off), not yet supported, where v = %s and offset = %s \n, %s <- %s" v.vname (Ast_goodies.pprint_offset off ) v.vname (pprint_cil_exp expr) in
-			Format.printf "%s" msg;
-			 (sslv,[])::[]
-			(*raise (Debug_info (msg))*)
+			(*Format.printf "%s" msg;
+			 (sslv,[])::[]*)
+			raise (Debug_info (msg))
 		      end
 			| _ -> 
 			  let msg = Format.sprintf "[next_on_ssl_affect :]Paramater e in Mem(e) is not a Lval(Var(),_), e is : %s \n" (pprint_cil_exp e) in
@@ -591,7 +592,7 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 		      match v.vtype with
 			  (*Returned value has an integer type*)
 			   
-			  TPtr(_,_) |  TNamed(_,_) ->
+			  TPtr(_,_) -> (*|  TNamed(_,_) ->*)
 			    begin
 
 			      
@@ -610,19 +611,28 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 			(*| TNamed(tinfo,_) ->
 			  (*In this case, the returned type is a composite
 			  one, either a structure or an union.*) *)
-
-
-
 			| _ -> 
 			  begin
 			    let msg= Format.sprintf "[next_on_ssl_instr] Var : %s = %s : %s \n"  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype) in
 			    raise (Debug_info(msg))
-			    (*Format.printf "%s" msg;
-			    (sslv,[])::[]*)
+			  (* Format.printf "%s" msg;
+			     (sslv,[])::[] *)
 			  end
-		    (** Here the formula is let untouched*)
 		    end
-		      
+		| ((Mem(e),_), Lval(Var(f),_)) ->
+		  begin
+		    match e.enode with 
+			Lval(Var(v),_) ->
+			  begin
+			    match f.vname with
+				"malloc" | "calloc" -> (malloc_ssl_nts_transition (Some(v)) sslv lparam mid)
+			  
+			      |  _ -> 
+				raise ( Debug_info ("Lost in call of malloc/calloc of ((Mem(e),_),Lval(Var(f),_)) case of  next_on_ssl_instr "))
+			  end
+		      | _ -> raise ( Debug_info ("Lost in ((Mem(e),_),Lval(Var(f),_)) case of  next_on_ssl_instr "))
+		  end
+		 
 		| _ -> 
 		  begin
 		    let msg = Format.sprintf "[!!! next_on_ssl_instr !!!] The lhs is not a variable : ? = %s, leaving absdomain untouched \n" (pprint_cil_exp exp1 ) in
@@ -630,9 +640,9 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 		    (sslv,[])::[]
 		  end
 	  (** Here the returned value is not a variable,
-			  the returned value shall be logged in this case.*)
-	  end
-
+	      the returned value shall be logged in this case.*)
+	end
+	  
 
       |  Call( None , exp1, lparam , _ )->
 		Self.debug ~level:0 "I've got a call with no affectation of the returned value \n" ;
@@ -674,7 +684,8 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 	end
 
       | _ -> 
-	(sslv,[])::[]
+	raise (Debug_info ("I'm lost \n"))
+	(*(sslv,[])::[]*)
 (** This is the default case, that's to say when
 		    the parsed operation doesn't match the semantics.
 		    At this point, we shall add some relevant information
