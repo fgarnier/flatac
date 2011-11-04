@@ -218,12 +218,12 @@ struct
     *)
 	    
 
-    private method register_ecfg_entry_point =
+    private method register_ecfg_entry_point ( funinfo : Cil_types.fundec ) =
       if entry_point_set then raise Entry_point_already_registered 
       else
 	begin
 	  let statment_of_ep= make_empty_cil_statement in
-	  let absval_of_ep = front_end#make_empty_statement in
+	  let absval_of_ep = front_end#get_empty_point_from_fundec funinfo in
 	  let id_ep = self#register_abstract_state statement_of_ep 
 	    absval_of_ep in
 	    id_ep
@@ -458,9 +458,9 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
     method build_fun_ecfg ( funinfo : Cil_types.fundec ) =
       (*prepareCFG funinfo; computeCFGInfo funinfo true;*)
       Cfg.cfgFun funinfo;
-      let ecfg_entry_point = 
-      let rootstmt = List.hd funinfo.sallstmts in
-      let root_abstraction = front_end#get_entry_point_from_fundec funinfo in
+      let ecfg_entry_point_id = self#register_ecfg_entry_point  funinfo in 
+      let cil_rootstmt = List.hd funinfo.sallstmts in
+      let croot_abstraction = front_end#get_entry_point_from_fundec funinfo in
       let root_id = self#add_abstract_state rootstmt root_abstraction in
       self#register_init_state root_id;
       self#recursive_build_ecfg  (Hashtbl.find vertices root_id)
