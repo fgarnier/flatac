@@ -17,6 +17,8 @@ open Sem_and_logic_front_end
 
 open Extended_cfg_types
 
+
+exception Entry_point_already_registered 
 exception Marking_unregistered_vertex of ecfg_id
 exception Ecfg_vertex_not_registered
 exception No_outgoing_edges_from_state of ecfg_id
@@ -27,6 +29,18 @@ exception Debug_exception of string
 let get_id_of_ecfg_id ( id : ecfg_id) =
   match id with
       Ecfg_id(i) -> i
+
+
+let make_empty_cil_statement =
+  {
+    labels = [] ;
+    skind = UnspecifiedSequence ([]) ;
+    sid = -1 ;
+    succs = [] ;
+    preds = [] ;
+    ghost = true ;
+  }
+  
 
 
 
@@ -45,6 +59,8 @@ struct
 
     val mutable name = name_function 
     val mutable is_computed = false
+    val mutable entry_point_set = false (* Initial control state of the 
+					ecfg set ?*)
 
       
     val mutable front_end :  ( (Extended_cfg_base_types.abs_dom_val, 
@@ -109,7 +125,7 @@ struct
 	    let nid = i+1 in
 	    current_node_id <- Ecfg_id(nid)
 
-
+	      
    (* Sets a state as being initial.*)
     method private register_init_state ( state_id : ecfg_id ) = 
       if Hashtbl.mem vertices state_id
@@ -200,6 +216,22 @@ struct
 	Otherwise, it returns a tuple ( true ,  sid'), where
         abs' |- absdomvalue .
     *)
+	    
+
+    private method register_ecfg_entry_point =
+      if entry_point_set then raise Entry_point_already_registered 
+      else
+	begin
+	  let statment_of_ep= make_empty_cil_statement in
+	  let absval_of_ep = front_end#make_empty_statement in
+	  let id_ep = self#register_abstract_state statement_of_ep 
+	    absval_of_ep in
+	    id_ep
+	   (* returns the id of the node, shall be 0*) 
+	      
+	end 
+
+
 
     method entailed_by_same_id_absvalue  (next_stmt : Cil_types.stmt)
       ( absval : abs_dom_val ) =
@@ -426,6 +458,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
     method build_fun_ecfg ( funinfo : Cil_types.fundec ) =
       (*prepareCFG funinfo; computeCFGInfo funinfo true;*)
       Cfg.cfgFun funinfo;
+      let ecfg_entry_point = 
       let rootstmt = List.hd funinfo.sallstmts in
       let root_abstraction = front_end#get_entry_point_from_fundec funinfo in
       let root_id = self#add_abstract_state rootstmt root_abstraction in
