@@ -17,6 +17,8 @@ open Sem_and_logic_front_end
 
 open Extended_cfg_types
 
+
+exception Entry_point_already_registered 
 exception Marking_unregistered_vertex of ecfg_id
 exception Ecfg_vertex_not_registered
 exception No_outgoing_edges_from_state of ecfg_id
@@ -27,6 +29,18 @@ exception Debug_exception of string
 let get_id_of_ecfg_id ( id : ecfg_id) =
   match id with
       Ecfg_id(i) -> i
+
+
+let make_empty_cil_statement =
+  {
+    labels = [] ;
+    skind = UnspecifiedSequence ([]) ;
+    sid = -1 ;
+    succs = [] ;
+    preds = [] ;
+    ghost = true ;
+  }
+  
 
 
 
@@ -45,6 +59,8 @@ struct
 
     val mutable name = name_function 
     val mutable is_computed = false
+    val mutable entry_point_set = false (* Initial control state of the 
+					ecfg set ?*)
 
       
     val mutable front_end :  ( (Extended_cfg_base_types.abs_dom_val, 
@@ -109,7 +125,7 @@ struct
 	    let nid = i+1 in
 	    current_node_id <- Ecfg_id(nid)
 
-
+	      
    (* Sets a state as being initial.*)
     method private register_init_state ( state_id : ecfg_id ) = 
       if Hashtbl.mem vertices state_id
@@ -200,6 +216,22 @@ struct
 	Otherwise, it returns a tuple ( true ,  sid'), where
         abs' |- absdomvalue .
     *)
+	    
+
+    method private register_ecfg_entry_point ( funinfo : Cil_types.fundec ) =
+      if entry_point_set then raise Entry_point_already_registered 
+      else
+	begin
+	  let statment_of_ep= make_empty_cil_statement in
+	  let absval_of_ep = front_end#get_entry_point_from_fundec funinfo in
+	  let id_ep = self#add_abstract_state statment_of_ep 
+	    absval_of_ep in
+	    id_ep
+	   (* returns the id of the node, shall be 0*) 
+	      
+	end 
+
+
 
     method entailed_by_same_id_absvalue  (next_stmt : Cil_types.stmt)
       ( absval : abs_dom_val ) =
@@ -313,13 +345,7 @@ struct
 	  Not_found -> 
 raise (Debug_exception("In method add_transition_from_to, a Not_found exception was raised"))
 
-(*	    let _ = self#add_abstract_state next_stmt next_abs in
-	      self#add_transition_from_to current next_stmt next_abs label
-	      
-*)
-  (* A Not_found exception is raised iff there's no entry for 
-       next_stmt.sid
-    *)
+
 	    
 
  (* Pre and post reprensent the identificators of the abstract states,
@@ -335,10 +361,9 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       with
 	  Not_found -> raise (Debug_exception("Method add_edge_by_id, Not_found caught"))  
 
-    (* Put that here to note that
-       there exists a smartes way to 
-       deal with this kind of exception
-    *)
+
+
+
   
     method private get_succs_of_ecfg_node ( node : ecfg_vertex ) =
       try
@@ -349,26 +374,34 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	  Not_found -> 
 	    raise  (No_outgoing_edges_from_state(node.id))
 	    
-	    
+
+
+
+
+    (* This function is used to recursivey call recusive_build_ecfg 
+       on all the nodes that are registered as successor of  the parameter
+       current_node. *)	    
     method private recursive_build_ecfg ( current_node : ecfg_vertex ) =
-      (* This function is used to recursivey call recusive_build_ecfg 
-	 on all the nodes that are registered as successor of  the parameter
-	 current_node. *)
+     
       (*let current_sid = current_node.statement.sid in*)
       let ecfg_succ_recursor  (index : ecfg_id ) _ =
-	Format.printf "recursor : successor id is %d \n" ( get_id_of_ecfg_id index);
+	Format.printf "recursor : successor id is %d \n" 
+	  ( get_id_of_ecfg_id index);
+	
 	let next_ecfg_vertex = Hashtbl.find vertices index in
-     (*let visited_abs_from_current_sid = Hashtbl.find visited_index current_sid in*)
 	if( self#is_ecfg_vertex_id_visited index)
 	then 
 	  begin
-	    Format.printf "Ecfg vertex %d already visided \n" (get_id_of_ecfg_id index)
+	    Format.printf "Ecfg vertex %d already visided \n" 
+	      (get_id_of_ecfg_id index)
 	  end
 
-	else if ( self#recurse_to_abs_succs next_ecfg_vertex.statement next_ecfg_vertex.abstract_val ) 
+	else if ( self#recurse_to_abs_succs next_ecfg_vertex.statement
+		    next_ecfg_vertex.abstract_val ) 
 	then
 	  begin
-	     Format.printf "Ecfg vertex %d not yet marked as visited \n" ( get_id_of_ecfg_id index);
+	    Format.printf "Ecfg vertex %d not yet marked as visited \n" 
+	      ( get_id_of_ecfg_id index);
 	    self#recursive_build_ecfg next_ecfg_vertex
 	  end
 	else ()
@@ -382,6 +415,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 		  labval  
 	      end
       (* End of  next_list_adder_iterator *)
+
       in
       let build_iterator ( succs_stmt : Cil_types.stmt ) =
 	let current_absvalue = front_end#copy_absdom_label 
@@ -391,46 +425,61 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	let succs_list = front_end#next current_absvalue empty_label 
 	  succs_stmt.skind 
 	in
-	  List.iter (next_list_adder_iterator succs_stmt) succs_list
-	    (* End of the build_iterator definition *)
+	List.iter (next_list_adder_iterator succs_stmt) succs_list
+      (* End of the build_iterator definition *)
       in 
-	self#mark_as_visited current_node.id;
-	if (front_end#is_error_state current_node.abstract_val) 
-	then  (* One stops the recursive call on the set of
-		states whose abstract domain value is an erro
-		state, i.e. memory leak or broken heap *)
-	  self#mark_as_error_state current_node.id
-	else
-	  begin 
-	    try
-	      let current_statment_successors = current_node.statement.succs 
-	      in
-		List.iter build_iterator current_statment_successors;
+      self#mark_as_visited current_node.id;
+      if (front_end#is_error_state current_node.abstract_val) 
+      then  (* One stops the recursive call on the set of
+	       states whose abstract domain value is an erro
+	       state, i.e. memory leak or broken heap *)
+	self#mark_as_error_state current_node.id
+      else
+	begin 
+	  try
+	    let current_statment_successors = current_node.statement.succs 
+	    in
+	    List.iter build_iterator current_statment_successors;
 		(* We get the set of the current vertex successor and
 		   we iterate on each of them*)
-		let ecfg_succs_indexes = self#get_succs_of_ecfg_node current_node 
-		in 
-		  Hashtbl.iter ecfg_succ_recursor ecfg_succs_indexes
-       
+	    let ecfg_succs_indexes = self#get_succs_of_ecfg_node current_node 
+	    in 
+	    Hashtbl.iter ecfg_succ_recursor ecfg_succs_indexes
+	      
 	(* The recursive call is performed in the iterator*)
-	    with
-		(*Not_found -> 
-		  raise (Debug_exception("In ecfg rec build, I caught an exception")) *)
-  	      |  No_outgoing_edges_from_state ( node_id ) ->
-		Hashtbl.add final_state node_id () (* The current node ahs no successor
-						   in the ecfg*)    	       
-	  end
-
-    method build_fun_ecfg ( funinfo : Cil_types.fundec ) =
-      (*prepareCFG funinfo; computeCFGInfo funinfo true;*)
-      Cfg.cfgFun funinfo;
-      let rootstmt = List.hd funinfo.sallstmts in
-      let root_abstraction = front_end#get_entry_point_from_fundec funinfo in
-      let root_id = self#add_abstract_state rootstmt root_abstraction in
-      self#register_init_state root_id;
-      self#recursive_build_ecfg  (Hashtbl.find vertices root_id)
-          
+	  with
+	     
+  	    |  No_outgoing_edges_from_state ( node_id ) ->
+	      Hashtbl.add final_state node_id () (* The current node ahs no successor
+						    in the ecfg*)    	       
+	end
 	  
+	  
+    method build_fun_ecfg ( funinfo : Cil_types.fundec ) =
+      
+      let ep_succs_iterator (entry_point :  ecfg_vertex ) (next_stmt : Cil_types.stmt) 
+	   (e : (abs_dom_val * trans_label_val ) ) =
+	match e with
+	    ( absvalue , labval ) ->
+	      begin
+		self#add_transition_from_to entry_point next_stmt absvalue
+		  labval  
+	      end
+      in
+	Cfg.cfgFun funinfo;
+	let empty_label = front_end#get_empty_transition_label () in
+	let ecfg_entry_point_id = self#register_ecfg_entry_point funinfo in 
+	let ecfg_entry_point = Hashtbl.find vertices ecfg_entry_point_id in
+	let cil_rootstmt = List.hd funinfo.sallstmts in
+	let succs_of_ecfg_entry_point = front_end#next 
+	  (ecfg_entry_point.abstract_val) empty_label cil_rootstmt.skind
+	in
+	  List.iter ( ep_succs_iterator ecfg_entry_point  cil_rootstmt )  
+	    succs_of_ecfg_entry_point;
+	  self#recursive_build_ecfg  
+	    (Hashtbl.find vertices ecfg_entry_point_id)
+          
+	
     method pprint_node ( node_id : ecfg_id ) =
       Format.sprintf "%d" (get_id_of_ecfg_id node_id)
 	

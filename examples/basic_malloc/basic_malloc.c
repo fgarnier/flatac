@@ -11,7 +11,7 @@ int main (int argc, char **argv){
 
  taille_zone =20;
  taille_zone = 40 +2;	
- /*buffer = NULL;*/
+ buffer = NULL;
  
  buffer = (int *)malloc((taille_zone+7)*sizeof(int));
  
