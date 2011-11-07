@@ -212,3 +212,20 @@ let pprint_slocal_var (slocal : Cil_types.varinfo ) =
   
 let pprint_slocal_vars ( slocals :  Cil_types.varinfo list ) =
   List.fold_right (fun vinf str -> str^(pprint_slocal_var vinf)^"\n" ) slocals ""
+
+
+let get_cil_type_of_global (g : cil_types.global ) =
+  match g with
+      GType (tinfo , _ ) ->
+	TNamed(tinfo, [])
+    | GCompTag ( cinfo , _ ) ->
+      TComp( cinfo, _ , _ )
+    
+    |  GCompTagDecl ( cinfo , _ ) ->
+      TCompt(cinfo, _ , _ )
+    
+    | GEnumTag ( einfo , _ ) ->
+      TEnum( einfo, _ )
+    
+    | GEnumTagDecl ( einfo , _ ) ->
+      TEnum (einfo , _ )	
