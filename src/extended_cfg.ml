@@ -218,13 +218,13 @@ struct
     *)
 	    
 
-    private method register_ecfg_entry_point ( funinfo : Cil_types.fundec ) =
+    method private register_ecfg_entry_point ( funinfo : Cil_types.fundec ) =
       if entry_point_set then raise Entry_point_already_registered 
       else
 	begin
 	  let statment_of_ep= make_empty_cil_statement in
-	  let absval_of_ep = front_end#get_empty_point_from_fundec funinfo in
-	  let id_ep = self#register_abstract_state statement_of_ep 
+	  let absval_of_ep = front_end#get_entry_point_from_fundec funinfo in
+	  let id_ep = self#add_abstract_state statment_of_ep 
 	    absval_of_ep in
 	    id_ep
 	   (* returns the id of the node, shall be 0*) 
@@ -456,15 +456,29 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	  
 	  
     method build_fun_ecfg ( funinfo : Cil_types.fundec ) =
-      (*prepareCFG funinfo; computeCFGInfo funinfo true;*)
-      Cfg.cfgFun funinfo;
-      let ecfg_entry_point_id = self#register_ecfg_entry_point  funinfo in 
-      let cil_rootstmt = List.hd funinfo.sallstmts in
-      let croot_abstraction = front_end#get_entry_point_from_fundec funinfo in
-      let root_id = self#add_abstract_state rootstmt root_abstraction in
-      self#register_init_state root_id;
-      self#recursive_build_ecfg  (Hashtbl.find vertices root_id)
-        
+      
+      let ep_succs_iterator (entry_point :  ecfg_vertex ) (next_stmt : Cil_types.stmt) 
+	   (e : (abs_dom_val * trans_label_val ) ) =
+	match e with
+	    ( absvalue , labval ) ->
+	      begin
+		self#add_transition_from_to entry_point next_stmt absvalue
+		  labval  
+	      end
+      in
+	Cfg.cfgFun funinfo;
+	let empty_label = front_end#get_empty_transition_label () in
+	let ecfg_entry_point_id = self#register_ecfg_entry_point funinfo in 
+	let ecfg_entry_point = Hashtbl.find vertices ecfg_entry_point_id in
+	let cil_rootstmt = List.hd funinfo.sallstmts in
+	let succs_of_ecfg_entry_point = front_end#next 
+	  (ecfg_entry_point.abstract_val) empty_label cil_rootstmt.skind
+	in
+	  List.iter ( ep_succs_iterator ecfg_entry_point  cil_rootstmt )  
+	    succs_of_ecfg_entry_point;
+	  self#recursive_build_ecfg  
+	    (Hashtbl.find vertices ecfg_entry_point_id)
+          
 	
     method pprint_node ( node_id : ecfg_id ) =
       Format.sprintf "%d" (get_id_of_ecfg_id node_id)
