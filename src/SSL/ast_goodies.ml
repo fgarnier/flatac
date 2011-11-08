@@ -236,18 +236,22 @@ variable or a casted pointer variable. It returns a Ssl_type.PVar("vname")
 if so, and raise an exception is not.*)
 let rec get_pvar_from_exp_node (expn : Cil_types.exp_node ) =
   match expn with
-      Lval ( Var( p ) , offset ) ->
+      Lval ( Var( p ) , off ) ->
 	begin
+	  Format.printf "get_pvar_from_exp_node : lval is a Var(p) \n";
 	  match p.vtype with 
 	      TPtr(_,_) -> 
 		begin
-		  match offset with (* If lval is a subfield of a structure*)
+		  match off with (* If lval is a subfield of a structure*)
 		      Field (finfo, suboffset) ->
 			let pvar_name = get_subfield_name 
 			  (p.vname) finfo suboffset in
+			Format.printf "Pvar name is : %s \n" pvar_name;
 			  (PVar(pvar_name))
 
-		    | NoOffset -> (PVar(p.vname))
+		    | NoOffset -> 
+		      Format.printf "No offset for pvar \n";
+		      (PVar(p.vname))
 		    |  _ -> raise (Debug_info (" In get_pvar_from_exp : I don't know how to deal with array indexes \n"))
 		end
 		
@@ -259,14 +263,22 @@ let rec get_pvar_from_exp_node (expn : Cil_types.exp_node ) =
       begin
 	match e.enode , off with
 	    (Lval(Var(v'),_),NoOffset) ->
-	      Format.printf "Mem(e) :*%s- \n" v'.vname 
+	      Format.printf "Mem(e) :*%s- \n" v'.vname ;
+	      PVar(v'.vname)
+
 	  | (Lval(Var(v'),_), Field(finfo,offs)) -> 
-	    Format.printf "%s-> %s \n" v'.vname finfo.forig_name
+	    let pointer_name = Format.sprintf "%s->" v'.vname in
+	    let pointer_name = get_subfield_name pointer_name finfo offs in
+	    Format.printf "%s \n" pointer_name;
+	    PVar(pointer_name)
+	    
 	  
-	  | (_,Index(_,_)) -> Format.printf "Some index \n"
+	  | (_,Index(_,_)) -> Format.printf "Some index \n"; 
+	    raise (Debug_info ("In get_pvar_from_exp_node : I don't handle
+  array indexes here and there is no reason why I should do it here.\n"))
 	  | (_,_) -> raise (Debug_info ("Lost in get_pvar_from_exp_node \n"))
-      end;
-	  get_pvar_from_exp e
+      end
+	 
 
     | CastE (TPtr (_,_), e ) ->
 	get_pvar_from_exp e
