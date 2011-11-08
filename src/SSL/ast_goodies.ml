@@ -1,5 +1,8 @@
 open Cil_types
-(*open Option *)
+open Ssl_types
+open Ssl_types.SSL_lex
+
+exception Debug_info of string
 
     let loc_of_instr (inst:Cil_types.instr) =
       match inst with 
@@ -213,6 +216,110 @@ let pprint_slocal_var (slocal : Cil_types.varinfo ) =
 let pprint_slocal_vars ( slocals :  Cil_types.varinfo list ) =
   List.fold_right (fun vinf str -> str^(pprint_slocal_var vinf)^"\n" ) slocals ""
 
+
+
+
+let rec get_subfield_name (prefix : string ) (finfo : Cil_types.fieldinfo)
+    (off : Cil_types.offset) =
+  match off with
+      NoOffset -> prefix^(finfo.forig_name)
+    | Field (subfieldinfo , suboffset ) ->
+	begin
+	  let current_path_name = prefix^(subfieldinfo.forig_name) in
+	    get_subfield_name current_path_name subfieldinfo suboffset
+	end
+    | _ -> raise (Debug_info (" In get_subfield_name : I don't know how to deal with array indexes \n"))
+    
+
+(** This function checks whether the argument is a pointer 
+variable or a casted pointer variable. It returns a Ssl_type.PVar("vname")
+if so, and raise an exception is not.*)
+let rec get_pvar_from_exp_node (expn : Cil_types.exp_node ) =
+  match expn with
+      Lval ( Var( p ) , offset ) ->
+	begin
+	  match p.vtype with 
+	      TPtr(_,_) -> 
+		begin
+		  match offset with (* If lval is a subfield of a structure*)
+		      Field (finfo, suboffset) ->
+			let pvar_name = get_subfield_name 
+			  (p.vname) finfo suboffset in
+			  (PVar(pvar_name))
+
+		    | NoOffset -> (PVar(p.vname))
+		    |  _ -> raise (Debug_info (" In get_pvar_from_exp : I don't know how to deal with array indexes \n"))
+		end
+		
+	    | _ -> raise Contains_no_pvar
+	end
+
+    | Lval(Mem(e), _ ) ->
+      get_pvar_from_exp e
+
+    | CastE (TPtr (_,_), e ) ->
+	get_pvar_from_exp e
+
+    | Const ( CInt64 (i ,_,_)) -> 
+      if (Int64.compare i (Int64.zero)) == 0 then 
+	raise Loc_is_nil
+      else raise (Loc_is_a_constant(i))
+    
+    | BinOp (PlusPI,e1,_,_) 
+    | BinOp (MinusPI,e1,_,_)
+	->
+	get_pvar_from_exp e1
+
+    | BinOp (b,_,_,_) ->
+	let b = pprint_binop_op b in
+	let msg = "[get_pvar_from_exp :] Don't know what
+to do with Binop operator "^b in
+	  raise (Debug_info(msg))
+
+    | Info (_,_) ->raise (Debug_info("[get_pvar_from_exp :] Don't know what
+to do with Info"))
+
+    | AddrOf (_) ->  raise (Debug_info("[get_pvar_from_exp :] Don't know what to do with AddrOf"))
+
+    | _ ->  raise Contains_no_pvar
+	  
+and  get_pvar_from_exp (expr : Cil_types.exp ) =
+  get_pvar_from_exp_node expr.enode
+
+let rec get_first_ptvar_from_lparam ( lparam : Cil_types.exp list ) =
+  Format.printf " I am in get_first_ptvar_from lparam\n"; 
+ match lparam with 
+     [] -> raise No_pvar_in_param_list
+   | h::l' ->
+	 begin
+	   match h.enode with
+	       (Lval(Var(varinfo),off)) ->
+		 begin
+		   match varinfo.vtype with
+		       TPtr(_,_) -> 
+			 get_pvar_from_exp h
+			 
+		     | _ -> get_first_ptvar_from_lparam l'
+		 end
+		    | CastE(_,expr) -> 
+		      begin 
+			Format.printf "J'ai vu un cast dans la liste
+des parametres \n" ;
+			try
+			  get_pvar_from_exp expr
+			with
+			    Contains_no_pvar -> get_first_ptvar_from_lparam l'
+			      
+		      end
+		(* begin
+		 match param.enode with
+		     Lval(Var(varinf),_) -> (PVar(varinf.vname))
+		   | _ -> get_first_ptvar_from_lparam l'
+		 end *)
+       
+		    | _  -> get_first_ptvar_from_lparam l' 
+	 end
+	   
 (*
 let get_cil_type_of_global (g : cil_types.global ) =
   match g with

@@ -32,10 +32,10 @@ let copy_validity_absdomain (v : ssl_validity_absdom ) =
 
 (* This function returns a new domain value with the validity od vinfo updated
 to valid. *)
-let set_var_validity_in_absdomain  (domain : ssl_validity_absdom) ( vinfo : Cil_types.varinfo ) (valid : var_valid) =
+let set_var_validity_in_absdomain  (domain : ssl_validity_absdom) ( vinfo : Cil_types.varinfo )(off : Cil_types.offset option) (valid : var_valid) =
   {
     ssl_part = domain.ssl_part ;
-    validinfos = (set_validity_in domain.validinfos vinfo valid); 
+    validinfos = (set_validity_in domain.validinfos vinfo off valid); 
   }
 
 
@@ -53,7 +53,7 @@ let register_slocals mid (funinfos : Cil_types.fundec ) ( absdom_param : ssl_val
       | _ -> absdom
   in
 let absdom_param = List.fold_left slocals_register_folder absdom_param funinfos.slocals in
-  List.fold_right ( fun vinf_slocal absdom -> set_var_validity_in_absdomain absdom vinf_slocal FalsevarValid ) (funinfos.slocals) absdom_param
+  List.fold_right ( fun vinf_slocal absdom -> set_var_validity_in_absdomain absdom vinf_slocal None FalsevarValid ) (funinfos.slocals) absdom_param
 
 
 
@@ -77,4 +77,4 @@ let register_sformals mid (funinfos : Cil_types.fundec )
       | _ -> absdom
   in
 let absdom_param = List.fold_left formal_register_folder absdom_param funinfos.sformals in
-  List.fold_right ( fun vinf_slocal absdom -> set_var_validity_in_absdomain absdom vinf_slocal DKvarValid ) (funinfos.sformals) absdom_param
+  List.fold_right ( fun vinf_slocal absdom -> set_var_validity_in_absdomain absdom vinf_slocal None  DKvarValid ) (funinfos.sformals) absdom_param

@@ -34,9 +34,7 @@ open Ast_goodies
 exception No_pvar_in_free_expression
 exception Wrong_parameter_type_in_free
 exception Debug_information of string
-exception Contains_no_pvar
-exception Loc_is_nil
-exception Loc_is_a_constant of int64
+
 exception Debug_info of string 
 
 
@@ -107,7 +105,7 @@ let affect_int_val_upon_sslv (v : Cil_types.varinfo) (expr : Cil_types.exp)
     scal_of_exp in
   let ret_absdomain = copy_validity_absdomain sslv in
   let ret_absdomain =
-    set_var_validity_in_absdomain ret_absdomain v validity_of_rval in
+    set_var_validity_in_absdomain ret_absdomain v None validity_of_rval in
     (ret_absdomain , []) :: []
     
 
@@ -121,116 +119,41 @@ pecuiliar to the C-language.
 
 
 
-let rec get_subfield_name (prefix : string ) (finfo : Cil_types.fieldinfo)
-    (off : Cil_types.offset) =
-  match off with
-      NoOffset -> prefix^(finfo.forig_name)
-    | Field (subfieldinfo , suboffset ) ->
+(*If lv is a variable whose type is TPtr(_,_), then return it,
+else raise an exception
+*)
+
+let get_pvarinfo_of_left_value lv =
+  match lv with
+      Var(v) -> 
 	begin
-	  let current_path_name = prefix^(subfieldinfo.forig_name) in
-	    get_subfield_name current_path_name subfieldinfo suboffset
+	  match v.vtype with
+	      TPtr(_,_) -> v
+	    | _ -> raise (Debug_info("I have a variable, but it's not a pointer var, as I expected \n"))
 	end
-    | _ -> raise (Debug_info (" In get_subfield_name : I don't know how to deal with array indexes \n"))
-    
+    | _ -> raise (Debug_info ("This left value is not a variable \n"))
 
-(** This function checks whether the argument is a pointer 
-variable or a casted pointer variable. It returns a Ssl_type.PVar("vname")
-if so, and raise an exception is not.*)
-let rec get_pvar_from_exp_node (expn : Cil_types.exp_node ) =
-  match expn with
-      Lval ( Var( p ) , offset ) ->
+(* If the left value lv is a Ptr variable, then return its name*)
+let get_pvarname_of_left_value lv =
+  match lv with
+      Var(v) -> 
 	begin
-	  match p.vtype with 
-	      TPtr(_,_) -> 
-		begin
-		  match offset with
-		      Field (finfo, suboffset) ->
-			let pvar_name = get_subfield_name 
-			  (p.vname) finfo suboffset in
-			  (PVar(pvar_name))
-
-		    | NoOffset -> (PVar(p.vname))
-		    |  _ -> raise (Debug_info (" In get_pvar_from_exp : I don't know how to deal with array indexes \n"))
-		end
-		
-	    | _ -> raise Contains_no_pvar
+	  match v.vtype with
+	      TPtr(_,_) -> v.vname
+	    | _ -> raise (Debug_info("I have a variable, but it's not a pointer var, as I expected \n"))
 	end
+    | _ -> raise (Debug_info ("This left value is not a variable \n"))
 
-    | Lval(Mem(e), _ ) ->
-      get_pvar_from_exp e
-
-    | CastE (TPtr (_,_), e ) ->
-	get_pvar_from_exp e
-
-    | Const ( CInt64 (i ,_,_)) -> 
-      if (Int64.compare i (Int64.zero)) == 0 then 
-	raise Loc_is_nil
-      else raise (Loc_is_a_constant(i))
-    
-    | BinOp (PlusPI,e1,_,_) 
-    | BinOp (MinusPI,e1,_,_)
-	->
-	get_pvar_from_exp e1
-
-    | BinOp (b,_,_,_) ->
-	let b = pprint_binop_op b in
-	let msg = "[get_pvar_from_exp :] Don't know what
-to do with Binop operator "^b in
-	  raise (Debug_info(msg))
-
-    | Info (_,_) ->raise (Debug_info("[get_pvar_from_exp :] Don't know what
-to do with Info"))
-
-    | AddrOf (_) ->  raise (Debug_info("[get_pvar_from_exp :] Don't know what to do with AddrOf"))
-
-    | _ ->  raise Contains_no_pvar
-	  
-and  get_pvar_from_exp (expr : Cil_types.exp ) =
-  get_pvar_from_exp_node expr.enode
-
-let rec get_first_ptvar_from_lparam ( lparam : Cil_types.exp list ) =
-  Self.debug ~level:0 " I am in get_first_ptvar_from lparam\n"; 
- match lparam with 
-     [] -> raise No_pvar_in_free_expression
-   | h::l' ->
-	 begin
-	   match h.enode with
-	       (Lval(Var(varinfo),off)) ->
-		 begin
-		   match varinfo.vtype with
-		       TPtr(_,_) -> 
-			 get_pvar_from_exp h
-			 
-		     | _ -> get_first_ptvar_from_lparam l'
-		 end
-		    | CastE(_,expr) -> 
-		      begin 
-			Self.debug ~level:0 "J'ai vu un cast dans la liste
-des parametres \n" ;
-			try
-			  get_pvar_from_exp expr
-			with
-			    Contains_no_pvar -> get_first_ptvar_from_lparam l'
-			      
-		      end
-		(* begin
-		 match param.enode with
-		     Lval(Var(varinf),_) -> (PVar(varinf.vname))
-		   | _ -> get_first_ptvar_from_lparam l'
-		 end *)
-       
-		    | _  -> get_first_ptvar_from_lparam l' 
-	 end
-	   
 
 let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) (sslv : ssl_validity_absdom ) =
   Self.debug ~level:0 "Im am in affect_ptr_upon_sslv \n";
   let sslv =  copy_validity_absdomain sslv in
-  
+   let v = get_pvarinfo_of_left_value lv in
+   let varname =  get_pvarname_of_left_value lv in
 (** One need to check that lv is a Var which type is TPtr(_,_)*)
-    try	
-  
-    Format.printf "[affect_ptr_upon_sslv: expression : %s=%s \n]" v.vname (pprint_cil_exp expr);
+    try
+     
+    Format.printf "[affect_ptr_upon_sslv: expression : %s=%s \n]" varname (pprint_cil_exp expr);
     let pvar_left = get_pvar_from_exp_node  (Lval(lv,off)) in
     let pvar_right = get_pvar_from_exp expr in
     Format.printf "I have a pvar \n %!";
@@ -249,7 +172,8 @@ let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) (s
       let offset_var_of_pvar =  offset_ntsivar_of_pvar pvar_left in
       let affect_off = CntAffect(offset_var_of_pvar,offset_of_pexpr) in
       let affect_validity_of_pvar = valid_sym_ptrexp sslv.validinfos sslv.ssl_part param_cscal in
-      let sslv_new = set_var_validity_in_absdomain sslv v affect_validity_of_pvar 
+      let sslv_new = set_var_validity_in_absdomain 
+	sslv v (Some(off)) affect_validity_of_pvar 
       in
 	((sslv_new,affect_off::[])::[]) 
   with
@@ -266,7 +190,7 @@ let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) (s
     | Loc_is_nil -> 
 	begin 
 	  and_atomic_ptnil (Pointsnil((PVar(v.vname)))) sslv.ssl_part;
-	  let new_sslv = set_var_validity_in_absdomain sslv v FalsevarValid in
+	  let new_sslv = set_var_validity_in_absdomain sslv v (Some(off)) FalsevarValid in
 	    (new_sslv , [])::[]
 	end
     | Contains_no_pvar ->
@@ -594,7 +518,7 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 		      begin
 			match v.vtype with
 			    TPtr(_,_)
-			    -> affect_ptr_upon_sslv v expr sslv
+			    -> affect_ptr_upon_sslv  (Var(v),off) expr sslv
 			 (* | TInt(_,_)
 			    -> affect_int_val_upon_sslv v expr sslv
 			 *) 

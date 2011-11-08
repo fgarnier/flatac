@@ -569,6 +569,18 @@ belong belongs to the spacial part, and false if the other case.*)
   
 
 
+(* The two fonction that follow aims at getting the name of the
+lvar and pvar.*)
+  let get_name_of_ptvar ( pvar : ptvar) =
+    match pvar with
+	PVar(name) -> name
+
+
+  let get_name_of_locvar (lvar : locvar ) =
+    match lvar with
+	LVar(name) -> name
+
+
 (** This function takes as input a ssl formula, sslf, and a pointer variable
 name ptvar and returns a location variable l s.t. ptvar->l appears in the
 pure part of sslf. An exception is raised if  ptvar doesn't belong to

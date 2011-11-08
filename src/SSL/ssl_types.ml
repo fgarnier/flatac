@@ -75,5 +75,9 @@ exception Top_heap_exception
 exception Lvar_found 
 exception Get_a_locvar of SSL_lex.locvar
 exception No_such_pvar_in_ssl_formula of string
+exception Contains_no_pvar
+exception Loc_is_nil
+exception Loc_is_a_constant of int64
+exception No_pvar_in_param_list
 
 

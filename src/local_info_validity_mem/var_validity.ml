@@ -46,16 +46,34 @@ let validity_of_byname ( loc_map : validity_loc_map ) ( varname : string ) =
 (** If a binding of v.vname already exists in the map, 
 then it is replaced by the new validity information. *)
 let set_validity_in (loc_map : validity_loc_map ) ( v : Cil_types.varinfo ) 
-  (valid : var_valid) =
+(off : Cil_types.offset option)  (valid : var_valid) =
   match loc_map with 
       Validlocmap( var_name_map ) ->
 	let loc_of_var =  compute_var_cathegory v in
 	let new_valid_info = { validity = valid ;
 			       location = loc_of_var ;
 			     } in
-	let res = Validvarmap.add v.vname new_valid_info var_name_map  in
-	  Validlocmap(res)
-
+	begin
+	  match off with
+	      None ->
+		let res =
+		  Validvarmap.add v.vname new_valid_info var_name_map  in
+		Validlocmap(res)
+		
+	    |  Some(offset_var) ->
+	      begin
+		let pvar_of_struct_field =  
+		  Ast_goodies.get_pvar_from_exp_node 
+		    (Lval(Var(v),offset_var)) in
+		let name_of_pvar_of_struct_field = get_name_of_ptvar 
+		  pvar_of_struct_field in 
+		let res =
+		  Validvarmap.add 
+		    name_of_pvar_of_struct_field new_valid_info var_name_map  
+		in
+		Validlocmap(res)
+	      end
+	end
 
 
 let validity_of  ( loc_map : validity_loc_map ) (v : Cil_types.varinfo ) =
