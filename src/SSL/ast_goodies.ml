@@ -254,8 +254,19 @@ let rec get_pvar_from_exp_node (expn : Cil_types.exp_node ) =
 	    | _ -> raise Contains_no_pvar
 	end
 
-    | Lval(Mem(e), _ ) ->
-      get_pvar_from_exp e
+    | Lval(Mem(e), off ) ->
+      Format.printf "get_pvar_from_exp_node : lval is a Mem(e) \n";
+      begin
+	match e.enode , off with
+	    (Lval(Var(v'),_),NoOffset) ->
+	      Format.printf "Mem(e) :*%s- \n" v'.vname 
+	  | (Lval(Var(v'),_), Field(finfo,offs)) -> 
+	    Format.printf "%s-> %s \n" v'.vname finfo.forig_name
+	  
+	  | (_,Index(_,_)) -> Format.printf "Some index \n"
+	  | (_,_) -> raise (Debug_info ("Lost in get_pvar_from_exp_node \n"))
+      end;
+	  get_pvar_from_exp e
 
     | CastE (TPtr (_,_), e ) ->
 	get_pvar_from_exp e
