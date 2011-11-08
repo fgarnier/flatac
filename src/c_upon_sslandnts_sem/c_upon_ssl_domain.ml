@@ -119,15 +119,40 @@ expressions are prefixed by a cast or any other ugly stuff so
 pecuiliar to the C-language.
 *)
 
+
+
+let rec get_subfield_name (prefix : string ) (finfo : Cil_types.fieldinfo)
+    (off : Cil_types.offset) =
+  match off with
+      NoOffset -> prefix^(finfo.forig_name)
+    | Field (subfieldinfo , suboffset ) ->
+	begin
+	  let current_path_name = prefix^(subfieldinfo.forig_name) in
+	    get_subfield_name current_path_name subfieldinfo suboffset
+	end
+    | _ -> raise (Debug_info (" In get_subfield_name : I don't know how to deal with array indexes \n"))
+    
+
 (** This function checks whether the argument is a pointer 
 variable or a casted pointer variable. It returns a Ssl_type.PVar("vname")
 if so, and raise an exception is not.*)
-let rec get_pvar_from_exp (expr : Cil_types.exp ) =
-  match expr.enode with
-      Lval ( Var( p ) , _ ) ->
+let rec get_pvar_from_exp_node (expn : Cil_types.exp_node ) =
+  match expn with
+      Lval ( Var( p ) , offset ) ->
 	begin
 	  match p.vtype with 
-	      TPtr(_,_) -> (PVar(p.vname))
+	      TPtr(_,_) -> 
+		begin
+		  match offset with
+		      Field (finfo, suboffset) ->
+			let pvar_name = get_subfield_name 
+			  (p.vname) finfo suboffset in
+			  (PVar(pvar_name))
+
+		    | NoOffset -> (PVar(p.vname))
+		    |  _ -> raise (Debug_info (" In get_pvar_from_exp : I don't know how to deal with array indexes \n"))
+		end
+		
 	    | _ -> raise Contains_no_pvar
 	end
 
@@ -160,7 +185,9 @@ to do with Info"))
 
     | _ ->  raise Contains_no_pvar
 	  
-   
+and  get_pvar_from_exp (expr : Cil_types.exp ) =
+  get_pvar_from_exp_node expr.enode
+
 let rec get_first_ptvar_from_lparam ( lparam : Cil_types.exp list ) =
   Self.debug ~level:0 " I am in get_first_ptvar_from lparam\n"; 
  match lparam with 
@@ -168,10 +195,12 @@ let rec get_first_ptvar_from_lparam ( lparam : Cil_types.exp list ) =
    | h::l' ->
 	 begin
 	   match h.enode with
-	       (Lval(Var(varinfo),_)) ->
+	       (Lval(Var(varinfo),off)) ->
 		 begin
 		   match varinfo.vtype with
-		       TPtr(_,_) -> (PVar(varinfo.vname))
+		       TPtr(_,_) -> 
+			 get_pvar_from_exp h
+			 
 		     | _ -> get_first_ptvar_from_lparam l'
 		 end
 		    | CastE(_,expr) -> 
@@ -194,12 +223,15 @@ des parametres \n" ;
 	 end
 	   
 
-let affect_ptr_upon_sslv (v : Cil_types.varinfo)  (expr : Cil_types.exp) (sslv : ssl_validity_absdom ) =
+let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) (sslv : ssl_validity_absdom ) =
   Self.debug ~level:0 "Im am in affect_ptr_upon_sslv \n";
   let sslv =  copy_validity_absdomain sslv in
-  try
+  
+(** One need to check that lv is a Var which type is TPtr(_,_)*)
+    try	
+  
     Format.printf "[affect_ptr_upon_sslv: expression : %s=%s \n]" v.vname (pprint_cil_exp expr);
-    let pvar_left = (PVar(v.vname)) in
+    let pvar_left = get_pvar_from_exp_node  (Lval(lv,off)) in
     let pvar_right = get_pvar_from_exp expr in
     Format.printf "I have a pvar \n %!";
     let sslv = copy_validity_absdomain sslv in
@@ -545,7 +577,7 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 		begin
 		  (Self.debug ~level:0 "The left value is a variablex \n");
 		  match v.vtype with 
-		      TPtr(_,_) -> affect_ptr_upon_sslv v expr sslv 
+		      TPtr(_,_) -> affect_ptr_upon_sslv (lv , off) expr sslv 
 		    (* affect_int_val_upon_sslv set the valitidity of
 		    v to the validity of expr*)
 		    | TInt(_,_) -> affect_int_val_upon_sslv v expr sslv
