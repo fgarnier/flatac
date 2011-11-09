@@ -28,6 +28,6 @@ build_sub_makefiles () {
   done
 }
 
-build_sub_makefiles "SSL/ global_mem/
+build_sub_makefiles "SSL/ composite_types/ global_mem/
 local_info_validity_mem/ c_upon_sslandnts_sem/ flata_cautomata/ ssl_and_validity_abstact_domain/ debug_tools/"
 echo ""

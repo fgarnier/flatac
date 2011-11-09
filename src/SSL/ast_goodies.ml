@@ -2,6 +2,9 @@ open Cil_types
 open Ssl_types
 open Ssl_types.SSL_lex
 
+
+type c_type_name = CTypeName of string
+
 exception Debug_info of string
 
     let loc_of_instr (inst:Cil_types.instr) =

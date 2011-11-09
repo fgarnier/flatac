@@ -1,9 +1,11 @@
 open Cil_types
-open SSL_types
+open Ssl_types
 open Ssl
+open Ast_goodies
 
 
 exception Not_a_composite_type
+exception Forward_declaration_not_yet_handled
 
 (**
 Given a composite type definition, named or unamed, this function 
@@ -17,7 +19,7 @@ let rec get_ptr_fields_of_cil_type (t : Cil_types.typ ) (path : string ) (path_c
 	 TFloat (_,_) | TArray (_,_,_,_)-> ()
    
     | TPtr(ptrtype,_) -> Hashtbl.add path_collection path ptrtype
-    | TNamed(tinfo,_) -> get_ptr_fields_of_cil_type t.ttype path path_collection
+    | TNamed(tinfo,_) -> get_ptr_fields_of_cil_type tinfo.ttype path path_collection
     | TComp (cinfo , _ , _ ) -> unfold_compinfo cinfo path path_collection
     | TEnum (_,_) -> ()
       
@@ -29,23 +31,34 @@ and unfold_compinfo (cinfo : Cil_types.compinfo ) (path : string ) (path_collect
   get_ptr_fields_of_cil_type field_it.ftype current_path path_collection
   in
   List.iter cfields_iterator cinfo.cfields
+
+
+  
  
 
 
-let get_ptr_fields_of_cil_global_type  ( t : Cil_types.global ) (path : string ) (path_collection : (string , Cil_types.typ ) Hashtbl.t) =
-  match t with
-      GType(tinfo , _ ) ->  get_ptr_fields_of_cil_type 
-	tinfo path path_collection
-    
-    | GCompTag (cinfo, _ ) -> get_ptr_fields_of_cil_type
-      cinfo path path_collection
+let get_ptr_fields_of_cil_global_type  ( t : Cil_types.global ) =
 
-    | GCompTagDecl  (cinfo , _ ) -> get_ptr_fields_of_cil_type 
-      cinfo path path_collection
+  let path_collection = (Hashtbl.create 97 :(string , Cil_types.typ) Hashtbl.t ) in
+  let path = "" in
+  match t with
+      GType(tinfo , _ ) -> 
+	get_ptr_fields_of_cil_type 
+	tinfo.ttype path path_collection ;
+	let type_name  = tinfo.tname in
+	(CTypeName(type_name),path_collection)
+    
+    | GCompTag (cinfo, _ ) -> unfold_compinfo
+      cinfo path path_collection;
+      let type_name = cinfo.corig_name in
+      (CTypeName(type_name),path_collection)
+
+    | GCompTagDecl  (cinfo , _ ) ->  
+      raise Forward_declaration_not_yet_handled
       
     | GEnumTagDecl ( einfo, _ ) ->
-       einfo path path_collection
- 
+       raise Forward_declaration_not_yet_handled
+
     | _ -> raise Not_a_composite_type
               (* Not a composite type, hence needn't to be analysed
 		 or stored. *)

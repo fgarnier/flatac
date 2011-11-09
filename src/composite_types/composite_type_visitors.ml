@@ -1,11 +1,22 @@
+open Cil
 open Cil_types
-open SSL_types
+open Ssl_types
 open Ssl
 open Types_2_pvars
-open Visitors
+open Visitor
 open Ast_goodies 
 
 
+exception Not_visited_exception
+
+
+let pprint_composite_type_table (type_name :c_type_name ) ( pointer_path_tables ) (prefix : string) =
+  let path_name_folder (path_name : string ) (t : Cil_types.typ) 
+      (prefix : string) =
+    prefix^(path_name^" : "^(Ast_goodies.pprint_ciltypes t)^" \n")
+  in
+  match type_name with
+      CTypeName(tname) -> Hashtbl.fold path_name_folder pointer_path_tables tname
 
 (** This visitors aims at a recovering information concerning the
 composite types defind in C files, e.g. structs, typedefed structures,
@@ -16,23 +27,50 @@ class global_composite_types_visitor (prj : Project.t) = object (self)
 
   val mutable is_computed = false
   val composite_types = Hashtbl.create 97
-  val (pvar_names_of_composites_types :(Cil_types.typ , (string , Cil_types.typ) Hashtbl.t )) = Hashtbl.create 97
+  val pvar_names_of_composites_types = (Hashtbl.create 97 : (( c_type_name , (string , Cil_types.typ) Hashtbl.t ) Hashtbl.t))
  
 
 
-  method vlog_aux ( g : Cil_types.global ) =
+  method vglob_aux ( g : Cil_types.global ) =
     is_computed <-true ;
-    let root_pathname = "" in
     begin
-      let ptr_set_of_visited_type = Hashtbl.create 97 in
       try
-	Types_2_pvars.get_ptr_fields_of_cil_type 
+	let ptr_set_of_visited_type = 
+	  Types_2_pvars.get_ptr_fields_of_cil_global_type g in
+	begin
+	  match ptr_set_of_visited_type with
+	      (typename , path_collection ) ->
+		Hashtbl.add pvar_names_of_composites_types 
+		  typename path_collection
+	end
       with 
 	| Not_a_composite_type -> ()
+	| Forward_declaration_not_yet_handled ->()
     end;
-    Hashtbl.add pvar_names_of_composite_types  
-      | _ -> DoChildren
+    DoChildren
  
-
+ 
+  method pprint_pvars_of_comp_types =
+    if is_computed then
+      Hashtbl.fold pprint_composite_type_table pvar_names_of_composites_types "" 
+    else raise Not_visited_exception 
 end;;  
 
+(*
+ 
+	  
+	  | GCompTag ( compinfo , location ) ->
+	    
+	  | GCompTagDecl ( compinfo , location ) -> 
+	    raise Forward_declaration_not_yet_handled
+
+	  | GCompTagDecl ( compinfo , location )  -> 
+	    raise Forward_declaration_not_yet_handled
+
+	  | GEnumTag ( enuminfo , location ) -> ()
+	  | GEnumTagDecl of enuminfo * location -> 
+	    raise Forward_declaration_not_yet_handled
+	  
+	  | _ -> DoChildren  
+
+*)
