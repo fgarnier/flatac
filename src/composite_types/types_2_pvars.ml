@@ -45,16 +45,23 @@ let get_ptr_fields_of_cil_global_type  ( t : Cil_types.global ) =
       GType(tinfo , _ ) -> 
 	get_ptr_fields_of_cil_type 
 	tinfo.ttype path path_collection ;
+	
 	let type_name  = tinfo.tname in
+	Format.printf " GTYPE : Adding type %s \n" type_name;
 	(CTypeName(type_name),path_collection)
     
     | GCompTag (cinfo, _ ) -> unfold_compinfo
       cinfo path path_collection;
       let type_name = cinfo.corig_name in
+      Format.printf "GCOMP Tag Adding type %s \n" type_name;
       (CTypeName(type_name),path_collection)
 
     | GCompTagDecl  (cinfo , _ ) ->  
-      raise Forward_declaration_not_yet_handled
+      unfold_compinfo
+      cinfo path path_collection;
+      let type_name = cinfo.corig_name in
+      (CTypeName(type_name),path_collection)
+      (*raise Forward_declaration_not_yet_handled*)
       
     | GEnumTagDecl ( einfo, _ ) ->
        raise Forward_declaration_not_yet_handled
