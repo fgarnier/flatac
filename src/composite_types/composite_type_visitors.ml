@@ -5,6 +5,7 @@ open Ssl
 open Types_2_pvars
 open Visitor
 open Ast_goodies 
+open Composite_types_types
 
 
 exception Not_visited_exception
@@ -54,23 +55,12 @@ class global_composite_types_visitor (prj : Project.t) = object (self)
     if is_computed then
       Hashtbl.fold pprint_composite_type_table pvar_names_of_composites_types "" 
     else raise Not_visited_exception 
+
+     (**)
+  method get_index_of_composite =
+    if is_computed then
+      IndexCompositeTypes(pvar_names_of_composites_types)
+    else
+      raise Not_visited_exception
+	
 end;;  
-
-(*
- 
-	  
-	  | GCompTag ( compinfo , location ) ->
-	    
-	  | GCompTagDecl ( compinfo , location ) -> 
-	    raise Forward_declaration_not_yet_handled
-
-	  | GCompTagDecl ( compinfo , location )  -> 
-	    raise Forward_declaration_not_yet_handled
-
-	  | GEnumTag ( enuminfo , location ) -> ()
-	  | GEnumTagDecl of enuminfo * location -> 
-	    raise Forward_declaration_not_yet_handled
-	  
-	  | _ -> DoChildren  
-
-*)
