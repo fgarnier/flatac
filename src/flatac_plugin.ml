@@ -44,8 +44,8 @@ let pretty_print_cautomata_obj out =
   Cfg.clearFileCFG file_ast;
   let ca_out_name = Printf.sprintf "%s.ca" file_ast.fileName in
   let types_out_name = Printf.sprintf "%s.types" file_ast.fileName in
-  (*Visitor.visitFramacFile (visited_file :> frama_c_copy ) file_ast;
-  visited_file#save_in_file ca_out_name;*)
+  Visitor.visitFramacFile (visited_file :> frama_c_copy ) file_ast;
+  visited_file#save_in_file ca_out_name;
   
   let compile_out = visited_file#pprint_all_ecfgs in
   Format.fprintf out "%s" compile_out;
