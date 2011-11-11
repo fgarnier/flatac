@@ -5,7 +5,7 @@ open Ssl
 open Types_2_pvars
 open Visitor
 open Ast_goodies 
-open Composite_types_types
+open Composite_type_types
 
 
 exception Not_visited_exception

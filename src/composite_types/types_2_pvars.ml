@@ -1,6 +1,7 @@
 open Cil_types
 open Ssl_types
 open Ssl
+open Composite_type_types
 open Ast_goodies
 
 
