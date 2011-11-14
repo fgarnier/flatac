@@ -2,6 +2,7 @@ open Cil_types
 open Ssl_types
 open Ssl
 open Ast_goodies
+open Composite_type_types
 
 
 exception Not_a_composite_type

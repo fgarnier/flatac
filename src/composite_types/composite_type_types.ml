@@ -1,4 +1,4 @@
-
+exception Cant_compute_ciltype_name
 
 type c_type_name = CTypeName of string
 
