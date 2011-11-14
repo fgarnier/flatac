@@ -1,13 +1,14 @@
 open Cil
 open Cil_types
 open Ssl_types
+open SSL_lex
 open Ssl
 open Composite_type_types
+open Global_mem
 
 
 
-
-(**
+(*
 This function computes the impact of the declaration of an element of a composite type, when it is performed on the stack.
 
 Basically, one translate every pointer field of the type into a pointer
@@ -18,19 +19,35 @@ value type.
 *)
 
 
-(*
-let 
 
-let new_struct_on_stack ( struct_varinfo : varinfo ) (ssl : sslf ) 
-    ( typedef_index : index_of_composite_types) =
+let ptrvar_adder_iterator (struct_var_name : string ) sslf mid (field_name : string ) _ =
+  (* add exists fresh l  and PVar(struct_var_name.field_name)-> l in sslf.
+  *)
+  let new_locvar = mid#get_fresh_lvar in
+  let new_pvar = PVar (struct_var_name^"."^field_name) in
+  Ssl.add_quant_var new_locvar sslf;
+  let affectation = Pointsto(new_pvar,new_locvar) in
+  Ssl.and_atomic_affect affectation sslf
+ 
+
+let new_struct_on_stack ( struct_varinfo : varinfo ) (sslf: ssl_formula ) 
+    ( typedef_index : index_of_composite_types) mid =
   
   let struct_vname = struct_varinfo.vname in
   let struct_type = struct_varinfo.vtype in
-  let type_name_of_var = 
+  let type_name_of_var =  
     Typename_of_cil_types.typename_of_ciltype struct_type in
   try
-    let pvar_collection_path = Hashtbl.find typedef_index ()  
-    in
-  with
-*)
+    begin
+      match typedef_index with
+	  IndexCompositeTypes(index_table) -> 
+	    let pvar_collection_path = 
+	      Hashtbl.find index_table type_name_of_var  
+	    in 
+	    let parametrized_iterator = 
+	      ptrvar_adder_iterator struct_vname sslf mid in
+	    Hashtbl.iter parametrized_iterator  pvar_collection_path 
+    end
+ with
+    | Not_found -> raise Not_found
 
