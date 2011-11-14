@@ -1,13 +1,14 @@
 open Cil_types
 open Ssl_types
 open Ssl
+open Composite_type_types
 open Ast_goodies
 open Composite_type_types
 
 
 exception Not_a_composite_type
 exception Forward_declaration_not_yet_handled
-
+exception Dont_know_how_to_parse_type_definition 
 (**
 Given a composite type definition, named or unamed, this function 
 stores in the "path_collection" hashtable, the collection of all the subfield/
@@ -23,6 +24,7 @@ let rec get_ptr_fields_of_cil_type (t : Cil_types.typ ) (path : string ) (path_c
     | TNamed(tinfo,_) -> get_ptr_fields_of_cil_type tinfo.ttype path path_collection
     | TComp (cinfo , _ , _ ) -> unfold_compinfo cinfo path path_collection
     | TEnum (_,_) -> ()
+    | _ -> raise Dont_know_how_to_parse_type_definition
       
 
 and unfold_compinfo (cinfo : Cil_types.compinfo ) (path : string ) (path_collection : (string , Cil_types.typ ) Hashtbl.t) =
