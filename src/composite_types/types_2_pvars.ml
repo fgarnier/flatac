@@ -37,9 +37,6 @@ and unfold_compinfo (cinfo : Cil_types.compinfo ) (path : string ) (path_collect
 
 
   
- 
-
-
 let get_ptr_fields_of_cil_global_type  ( t : Cil_types.global ) =
 
   let path_collection = (Hashtbl.create 97 :(string , Cil_types.typ) Hashtbl.t ) in
@@ -72,4 +69,6 @@ let get_ptr_fields_of_cil_global_type  ( t : Cil_types.global ) =
     | _ -> raise Not_a_composite_type
               (* Not a composite type, hence needn't to be analysed
 		 or stored. *)
+
+
       

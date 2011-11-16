@@ -5,8 +5,8 @@ open SSL_lex
 open Ssl
 open Composite_type_types
 open Global_mem
-
-
+open Var_validity_types
+open Var_validity
 
 (*
 This function computes the impact of the declaration of an element of a composite type, when it is performed on the stack.
@@ -18,7 +18,8 @@ The sslf parameter is a mutable field and the function has unit for returned
 value type.
 *)
 
-
+(* This fonctions states that each pointer fields of a given instance
+of a struc type refers to some existentially quantified location variable,*)
 
 let ptrvar_adder_iterator (struct_var_name : string ) sslf mid (field_name : string ) _ =
   (* add exists fresh l  and PVar(struct_var_name.field_name)-> l in sslf.
@@ -46,7 +47,7 @@ let new_struct_on_stack ( struct_varinfo : varinfo ) (sslf: ssl_formula )
 	    in 
 	    let parametrized_iterator = 
 	      ptrvar_adder_iterator struct_vname sslf mid in
-	    Hashtbl.iter parametrized_iterator  pvar_collection_path 
+	    Hashtbl.iter parametrized_iterator pvar_collection_path 
     end
  with
     | Not_found -> raise Not_found

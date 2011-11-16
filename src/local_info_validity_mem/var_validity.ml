@@ -75,6 +75,21 @@ let set_validity_in (loc_map : validity_loc_map ) ( v : Cil_types.varinfo )
 	      end
 	end
 
+(* This function allows to add to the mapping some infomation concerning
+a variable which name is known. The cathegory must be provided during the
+call.*)
+
+let set_validity_in_by_name (loc_map : validity_loc_map) (vname : string )
+    (valid :  var_valid ) ( cath : var_cathegory ) =
+  match loc_map with 
+      Validlocmap( var_name_map ) ->
+	let new_valid_info = { validity = valid ;
+			       location = cath ;
+			     } in
+	let res =  Validvarmap.add vname new_valid_info var_name_map 
+	in
+	Validlocmap(res)
+  
 
 let validity_of  ( loc_map : validity_loc_map ) (v : Cil_types.varinfo ) =
   if not (is_intvar_or_ptvar v) then
