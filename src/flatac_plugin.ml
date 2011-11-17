@@ -40,13 +40,18 @@ let pretty_print_cautomata_obj out =
   let prj= Project.current() in
   let visited_file = new  flatac_visitor ( prj ) in
   let composite_types = new global_composite_types_visitor ( prj ) in
+  
   let file_ast = Ast.get() in
   Cfg.clearFileCFG file_ast;
+  
   let ca_out_name = Printf.sprintf "%s.ca" file_ast.fileName in
   let types_out_name = Printf.sprintf "%s.types" file_ast.fileName in
+    
+  Visitor.visitFramacFile (composite_types :> frama_c_copy) file_ast;
+  let index = composite_types#get_index_of_composite in 
   Visitor.visitFramacFile (visited_file :> frama_c_copy ) file_ast;
   visited_file#save_in_file ca_out_name;
-  
+
   let compile_out = visited_file#pprint_all_ecfgs in
   Format.fprintf out "%s" compile_out;
   
@@ -59,7 +64,7 @@ let pretty_print_cautomata_obj out =
   let types_out_file = Format.formatter_of_out_channel types_out in
   Visitor.visitFramacFile (visit_bibi :> frama_c_copy ) file_ast;
   visit_bibi#pretty_print_f2ca format_out_file;  
-  Visitor.visitFramacFile (composite_types :> frama_c_copy) file_ast;
+ 
   Format.fprintf types_out_file "%s %!" (composite_types#pprint_pvars_of_comp_types);
   Format.fprintf format_out_file "%!";
   close_out out_file;

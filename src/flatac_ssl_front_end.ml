@@ -4,6 +4,9 @@ counter automata based model which nodes are labelled with values
 of the SSL logic. 
 *)
 (*open Intermediate_language*)
+
+exception IndexOfCompositeTypesNotSet
+
 open Cil_types
 open Sem_and_logic_front_end 
 open Ssl_types
@@ -21,6 +24,12 @@ open Global_mem
 open  Ssl_valid_abs_dom_types
 open  Ssl_valid_abs_dom (*Contains the copy_validity_absdomain function*)
 
+open Composite_type_types
+open Composite_types (* Type definition for analysing C language composite
+		     types, such as structures and enumerations*)
+open Composite_type_visitors
+open Visitor (* Frama-c visitors*)
+
 open Self
 
 let pprint_trans_list_foldleft (s : string ) ( trans : cnt_trans_label ) =
@@ -36,6 +45,15 @@ class ssl_flatac_front_end = object
 
   val mid =  (new global_mem_manager )
 
+  val mutable index_of_pointers_of_composite_types =
+    Composite_types.create_index_of_composite_types
+  val mutable index_of_composite_types_set = false
+    
+  method set_index_of_composite_types ( i : index_of_composite_types ) =
+    index_of_pointers_of_composite_types <- 
+      Composite_types.copy_index_of_composite_types i ;
+    index_of_composite_types_set <- true
+      
   method get_empty_transition_label () =
     []
 
@@ -43,13 +61,27 @@ class ssl_flatac_front_end = object
      Ssl_valid_abs_dom.create_validity_abstdomain
  
   method get_entry_point_from_fundec ( funinfo : Cil_types.fundec ) =
-    let absdom = Ssl_valid_abs_dom.create_validity_abstdomain in
-    let absdom = Ssl_valid_abs_dom.register_slocals mid funinfo absdom in
-    Ssl_valid_abs_dom.register_sformals mid funinfo absdom
+    if ( not index_of_composite_types_set  ) then
+      raise IndexOfCompositeTypesNotSet
+    else
+      let absdom = Ssl_valid_abs_dom.create_validity_abstdomain in
+      let absdom = Ssl_valid_abs_dom.register_slocals mid funinfo absdom in
+      absdom.composite_types_infos <- index_of_pointers_of_composite_types ; 
+      Ssl_valid_abs_dom.register_sformals mid funinfo absdom
+
+(*
+  method get_entry_point_from_fundec_and_type_infos 
+    (funinfo : Cil_types.fundec) (i : index_of_composite_types ) =
+    index_of_composite_type_set <- true;
+    index_of_pointers_of_composite_types <- 
+      copy_index_of_composite_types i;
+    self#get_entry_point_from_fundec funinfo
+*)    
+      
   (*
-  method copy_transit_label (label : Nts_types.cnt_trans_label list ) =
-    []
-²  *)
+    method copy_transit_label (label : Nts_types.cnt_trans_label list ) =
+    [] *)
+	
   method copy_transit_label _ =
     []
 
@@ -90,7 +122,6 @@ class ssl_flatac_front_end = object
     let  str = List.fold_left pprint_trans_list_foldleft "" tlist in
       str
     
-
   method entails sslvg sslvd =
      let etp = {
       left = sslvd.ssl_part ;
