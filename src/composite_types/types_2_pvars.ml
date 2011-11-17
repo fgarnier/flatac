@@ -28,13 +28,17 @@ let rec get_ptr_fields_of_cil_type (t : Cil_types.typ ) (path : string ) (path_c
       
 
 and unfold_compinfo (cinfo : Cil_types.compinfo ) (path : string ) (path_collection : (string , Cil_types.typ ) Hashtbl.t) =
-
+  
   let cfields_iterator (field_it : Cil_types.fieldinfo ) =
-  let current_path = path^"."^field_it.forig_name in
-  get_ptr_fields_of_cil_type field_it.ftype current_path path_collection
+    let current_path =
+      match path with
+	  "" -> field_it.forig_name
+	| _ ->  path^"."^field_it.forig_name
+    in
+    get_ptr_fields_of_cil_type field_it.ftype current_path path_collection
   in
   List.iter cfields_iterator cinfo.cfields
-
+    
 
   
 let get_ptr_fields_of_cil_global_type  ( t : Cil_types.global ) =
