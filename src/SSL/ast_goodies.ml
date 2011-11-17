@@ -1,19 +1,32 @@
 open Cil_types
 open Ssl_types
 open Ssl_types.SSL_lex
-
+open Lexing
 
 
 exception Debug_info of string
 
-    let loc_of_instr (inst:Cil_types.instr) =
-      match inst with 
-	  Set ( _ , _ , loc ) -> loc
-	| Call ( _ , _ , _ , loc ) -> loc 
-	| Asm ( _ , _ , _ , _ , _ , loc ) -> loc
-	| Skip ( loc ) -> loc
-	| Code_annot ( _ , loc ) -> loc
-       
+    
+let pprint_lexing_infos (loc : Cil_types.location) =
+  match loc with
+      (posg , posd ) ->
+	let filename = posg.pos_fname in
+	let begin_line_numb =  posg.pos_lnum in
+	let begin_zone_raw_number = posg.pos_cnum - posg.pos_lnum in
+	let end_line_numb =  posd.pos_lnum in
+	let end_zone_raw_number = posd.pos_cnum - posd.pos_lnum in
+	(Format.sprintf "In file : %s, from line %d col %d to line %d col %d. /n" filename begin_line_numb begin_zone_raw_number end_line_numb end_zone_raw_number)
+	
+
+
+let loc_of_instr (inst:Cil_types.instr) =
+  match inst with 
+      Set ( _ , _ , loc ) -> loc
+    | Call ( _ , _ , _ , loc ) -> loc 
+    | Asm ( _ , _ , _ , _ , _ , loc ) -> loc
+    | Skip ( loc ) -> loc
+    | Code_annot ( _ , loc ) -> loc
+      
       
 (* This function is only here to provide some function that takes as
 input a statement and that returns the location. This function 

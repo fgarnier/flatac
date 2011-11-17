@@ -117,8 +117,6 @@ expressions are prefixed by a cast or any other ugly stuff so
 pecuiliar to the C-language.
 *)
 
-
-
 (*If lv is a variable whose type is TPtr(_,_), then return it,
 else raise an exception
 *)
@@ -632,8 +630,16 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 	(** Here the formula is let untouched*)
 	end
 
-      | _ -> 
-	raise (Debug_info ("I'm lost \n"))
+      | Asm(_,_,_,_,_,_) -> 
+	raise (Debug_info ("I'm lost : ASM block \n"))
+
+      | Skip(position) -> 
+	let msg = Format.sprintf "I'm lost : Skip instruction : To position : %s \n"
+	  (Ast_goodies.pprint_lexing_infos position) in
+	 raise (Debug_info (msg))
+
+      | Code_annot (_,_) -> 
+	raise (Debug_info ("I'm lost : Code_annot block \n"))
 	(*(sslv,[])::[]*)
 (** This is the default case, that's to say when
     the parsed operation doesn't match the semantics.
