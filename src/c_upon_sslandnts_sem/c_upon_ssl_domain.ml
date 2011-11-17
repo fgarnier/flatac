@@ -154,7 +154,7 @@ let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) (s
     try
      
     Format.printf "[affect_ptr_upon_sslv: expression : %s=%s \n]" varname (pprint_cil_exp expr);
-    let pvar_left = get_pvar_from_exp_node  (Lval(lv,off)) in
+    let pvar_left = Ast_goodies.get_pvar_from_exp_node  (Lval(lv,off)) in
     let pvar_right = get_pvar_from_exp expr in
     Format.printf "I have a pvar \n %!";
     let sslv = copy_validity_absdomain sslv in
@@ -177,16 +177,7 @@ let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) (s
       in
 	((sslv_new,affect_off::[])::[]) 
   with
-      (*Not_found ->
-	begin
-	  (* match pvar_right with 
-	     PVar(rvarname) ->*)
-	  (*begin*)
-	  Self.debug ~level:0 "Undefined right member in affectation, affect_ptr_upon_ssl crash";(* Format.printf "Debug : right pvar name is : %s \n" rvarname;*)
-	  raise Not_found
-	    (*end*)
-	end
-      *)  
+     
     | Loc_is_nil -> 
 	begin 
 	  and_atomic_ptnil (Pointsnil((PVar(v.vname)))) sslv.ssl_part;
@@ -198,6 +189,8 @@ let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) (s
       Format.printf "No pvar found in %s \n" exprpvarless;
       raise Contains_no_pvar
 	  
+
+
 	  
 (** This function modifies the sslf formula that abstracts the current
     heap and stack when a call to malloc is performed.*)
@@ -643,11 +636,11 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 	raise (Debug_info ("I'm lost \n"))
 	(*(sslv,[])::[]*)
 (** This is the default case, that's to say when
-		    the parsed operation doesn't match the semantics.
-		    At this point, we shall add some relevant information
-		    dealing with the abstracted part of the ast.
-		*)
-
+    the parsed operation doesn't match the semantics.
+    At this point, we shall add some relevant information
+    dealing with the abstracted part of the ast.
+*)
+	  
 
 
 let next_on_ssl_nts (mid : global_mem_manager ) (sslv  ) (skind : Cil_types.stmtkind )   =

@@ -1,3 +1,12 @@
+(**
+This file contains the function that allow to compute the
+collection of the path of the fields of structure/union types
+that have a pointer type.
+
+Question & remarks : Address to florent dot garnier AT imag dot fr.
+
+*)
+
 open Cil_types
 open Ssl_types
 open Ssl
