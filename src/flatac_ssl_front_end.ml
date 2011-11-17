@@ -65,8 +65,8 @@ class ssl_flatac_front_end = object
       raise IndexOfCompositeTypesNotSet
     else
       let absdom = Ssl_valid_abs_dom.create_validity_abstdomain in
-      let absdom = Ssl_valid_abs_dom.register_slocals mid funinfo absdom in
       absdom.composite_types_infos <- index_of_pointers_of_composite_types ; 
+      let absdom = Ssl_valid_abs_dom.register_slocals mid funinfo absdom in
       Ssl_valid_abs_dom.register_sformals mid funinfo absdom
 
 (*

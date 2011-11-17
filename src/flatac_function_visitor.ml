@@ -49,7 +49,7 @@ class flatac_visitor (prj : Project.t )  = object (self)
     flatac_ssl_frontend#set_index_of_composite_types index;
     let ecfg_of_visited_gfun = 
       new extended_cfg funname funinfos 
-	(flatac_ssl_frontend :> ((Flatac_extended_cfg.Extended_cfg_base_types.abs_dom_val, Flatac_extended_cfg.Extended_cfg_base_types.trans_label_val)Sem_and_logic_front_end.sem_and_logic_front_end) ) 
+	(flatac_ssl_frontend :> ((Flatac_extended_cfg.Extended_cfg_base_types.abs_dom_val, Flatac_extended_cfg.Extended_cfg_base_types.trans_label_val) Sem_and_logic_front_end.sem_and_logic_front_end) ) 
     in
     Hashtbl.add function_tables funname ecfg_of_visited_gfun
 	

@@ -5,14 +5,14 @@ exception CType_not_found of string
 let pprint_index_of_type_pointer_path (i : index_of_composite_types) =
   let pprint_path_folder (path : string ) (ciltype : Cil_types.typ ) 
       (prefix : string) =
-    let prefix = path^":"^( Ast_goodies.pprint_ciltypes ciltype)^"\n"^prefix
+    let prefix = prefix^path^":"^( Ast_goodies.pprint_ciltypes ciltype)^"\n"
     in prefix
   in
   let pprint_type_structure_folder (type_name : c_type_name )  path_table 
       (prefix : string) =
     match type_name  with
         CTypeName (name_type)   ->
-	  let ret = prefix^"\n"^name_type^" : " in
+	  let ret = prefix^"\n"^name_type^": \n" in
 	  let ret = Hashtbl.fold pprint_path_folder 
 	    path_table ret  in
 	  ret 
