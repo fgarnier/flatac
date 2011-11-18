@@ -7,3 +7,5 @@ the path of all fields which type is a pointer type. *)
 
 type index_of_composite_types = IndexCompositeTypes of  
     (( c_type_name , (string , Cil_types.typ) Hashtbl.t ) Hashtbl.t)
+
+type integer_alias_type = IntTypeDefAs of c_type_name * Cil_types.typ

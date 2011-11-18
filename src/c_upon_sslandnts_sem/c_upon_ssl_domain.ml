@@ -633,14 +633,18 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
       | Asm(_,_,_,_,_,_) -> 
 	raise (Debug_info ("I'm lost : ASM block \n"))
 
-      | Skip(position) -> 
+      | Skip(position) ->
+	Format.printf " !!! Skipping instruction !!! to %s \n" (pprint_lexing_infos position);
+	(sslv,[])::[]
+	(*
 	let msg = Format.sprintf "I'm lost : Skip instruction : To position : %s \n"
 	  (Ast_goodies.pprint_lexing_infos position) in
 	 raise (Debug_info (msg))
+	*)
 
       | Code_annot (_,_) -> 
-	raise (Debug_info ("I'm lost : Code_annot block \n"))
-	(*(sslv,[])::[]*)
+	(*raise (Debug_info ("I'm lost : Code_annot block \n"))*)
+	(sslv,[])::[]
 (** This is the default case, that's to say when
     the parsed operation doesn't match the semantics.
     At this point, we shall add some relevant information
@@ -658,6 +662,7 @@ let next_on_ssl_nts (mid : global_mem_manager ) (sslv  ) (skind : Cil_types.stmt
 	
 
     | _ -> 
+      Format.printf " Warning : Not a basic instruction : %s \n" (pprint_skind_basic_infos skind)  ;
       (sslv, [])::[]
 
 

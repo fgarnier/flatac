@@ -123,7 +123,7 @@ struct
       match current_node_id with
 	  Ecfg_id(i) -> 
 	    let nid = i+1 in
-	    current_node_id <- Ecfg_id(nid)
+	    (current_node_id <- Ecfg_id(nid))
 
 	      
    (* Sets a state as being initial.*)
@@ -169,7 +169,7 @@ struct
 	begin
 	  match new_vertex.id with
 	      Ecfg_id(id) ->
-		Format.printf "[ Extended cfg Adding : node id sid : %d node id %d ] \n " new_vertex.statement.sid id
+		Format.printf "[ Extended cfg Adding : Ecfg node id  : %d, Framac sid %d ] \n " new_vertex.statement.sid id
 	end;
 	if front_end#is_error_state absval then
 	  Hashtbl.add error_state new_vertex.id ()
