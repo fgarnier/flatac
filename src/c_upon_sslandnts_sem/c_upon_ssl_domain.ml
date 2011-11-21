@@ -40,7 +40,7 @@ exception Debug_info of string
 
 
 
-
+(*
 let pprint_binop_op (b : Cil_types.binop) =
   match b with
   | 	PlusA  -> "PlusA"	(*	arithmetic +	*)
@@ -65,7 +65,7 @@ let pprint_binop_op (b : Cil_types.binop) =
   | 	BOr -> "BOr"	(*	inclusive-or	*)
   | 	LAnd -> "LAnd" 	(*	logical and. Unlike other expressions this one does not always evaluate both operands. If you want to use these, you must set Cil.useLogicalOperators.	*)
   | 	LOr -> "LOr"
-
+*)
 
 let make_offset_locpvar (v : ptvar ) =
   match  v  with 
