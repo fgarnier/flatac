@@ -497,8 +497,8 @@ let rec c_bool_to_string ( b_exp :  c_bool) =
 	      | LiBEq (_,_) | LiBLt (_,_)
 	      | LiBGt(_,_) | LiBGeq(_,_) 
 	      | LiBLeq (_,_)|  LiBPtrLeq (_ , _) 
-	      |LiBPtrGeq (_,_) | LiBPtrLt (_, _) 
-	      |LiBPtrGt (_, _) | LiBPtrNeq (_, _) 
+	      | LiBPtrGeq (_,_) | LiBPtrLt (_, _) 
+	      | LiBPtrGt (_, _) | LiBPtrNeq (_, _) 
 	      	-> 
 		
 "!"^(c_bool_to_string b) 

@@ -20,7 +20,6 @@ verimad \dot\fr.
 
 
 open My_bigint
-(*open My_bigint.M*)
 open Cil_types
 open Ssl_types
 open Ssl_types.SSL_lex
@@ -269,8 +268,6 @@ let pprint_slocal_var (slocal : Cil_types.varinfo ) =
   
 let pprint_slocal_vars ( slocals :  Cil_types.varinfo list ) =
   List.fold_right (fun vinf str -> str^(pprint_slocal_var vinf)^"\n" ) slocals ""
-
-
 
 
 let rec get_subfield_name (prefix : string ) (finfo : Cil_types.fieldinfo)

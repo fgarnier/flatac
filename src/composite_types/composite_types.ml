@@ -1,4 +1,5 @@
 open Composite_type_types
+open Cil_types
 
 exception CType_not_found of string
 
@@ -54,4 +55,35 @@ let get_index_of_pointer_by_type_name (i: index_of_composite_types ) (ctype : c_
 		end
 	  end
 
+
+
+
+(** This function checkes whether a type --composite, named or anonymous--
+ is an alias for an integer type.
+
+Must check whether a structure that contains only one integer
+type argument can be considered as an integer type.
+*)
+
+let rec is_integer_type ( cilt : Cil_types.typ ) =
+  match cilt with
+      TInt(_,_) | TEnum(_,_) -> 
+	let type_name = Ast_goodies.pprint_ciltypes cilt
+	in 
+	Some(CTypeName(type_name))
+    | TFun(_,_,_,_) | TVoid (_)  
+    | TPtr(_,_)  | TFloat (_,_) | TArray (_,_,_,_) |
+	TBuiltin_va_list (_) | TComp(_) -> None
+
+    | TNamed(tinfo,_) -> 
+      begin
+	let eval_arg = is_integer_type tinfo.ttype in
+	match eval_arg with
+	    Some (tval) -> 
+	      let alias_c_name =CTypeName (tinfo.torig_name) in   
+	      Some(alias_c_name)
+		
+	  | None -> None
+      end
+	
 

@@ -1,9 +1,13 @@
 (**
+
 This file contains the function that allow to compute the
 collection of the path of the fields of structure/union types
 that have a pointer type.
 
-Question & remarks : Address to florent dot garnier AT imag dot fr.
+Verimag 2011.
+
+Question & remarks : 
+Address to florent dot garnier AT imag dot fr.
 
 *)
 
@@ -20,8 +24,9 @@ exception Forward_declaration_not_yet_handled
 exception Dont_know_how_to_parse_type_definition 
 (**
 Given a composite type definition, named or unamed, this function 
-stores in the "path_collection" hashtable, the collection of all the subfield/
-leaves that have a pointer type.
+stores in the "path_collection" hashtable, the collection of all
+   the path that leads from the root of the type definition tree to
+the subfields that have a pointer type.
 *)
 
 let rec get_ptr_fields_of_cil_type (t : Cil_types.typ ) (path : string ) (path_collection : (string , Cil_types.typ ) Hashtbl.t) =
