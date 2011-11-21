@@ -3,6 +3,7 @@
 *.bbl
 *.blg
 *.dvi
+*.ca
 
 *.cmi
 *.cmo
@@ -14,6 +15,8 @@
 *.depend
 *.out
 
+*#*
+*.swo
 *.swp
 *~
 *.DS_STORE
