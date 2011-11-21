@@ -118,7 +118,7 @@ build_global_makefile () {
   echo -e "\t-@mkdir ${DOC_DIR}/html >/dev/null 2>&1" >> Makefile
   echo -e "\t-@mkdir ${DOC_DIR}/latex >/dev/null 2>&1" >> Makefile
   echo -e "\t@cd ${SRC_DIR} &&\
-    ocamldoc ${FRAMA_C_INCLUDES} -html -d ${DOC_DIR}/html *.ml SSL/*.ml\
+    ocamldoc ${FRAMA_C_INCLUDES} -html -d ${DOC_DIR}/html *.ml top_level/*.ml SSL/*.ml\
    global_mem/*.ml composite_types/*.ml  flatac_cautomata/*.ml ssl_and_validity_abstract_domain/*.ml local_info_validity_mem/*.ml c_upon_sslandnts_sem/*.ml " >> Makefile
 
 }
@@ -126,7 +126,7 @@ build_global_makefile () {
 [[ $# == 0 ]] && echo "type : ./configure PATH_TO_FRAMAC_SOURCE" && exit
 
 build_configuration_file $1
-build_global_makefile "SSL/ global_mem/ flata_cautomata/ local_info_validity_mem/ composite_types/  ssl_and_validity_abstact_domain/ c_upon_sslandnts_sem/ debug_tools/"
+build_global_makefile "SSL/ top_level/ global_mem/ flata_cautomata/ local_info_validity_mem/ composite_types/  ssl_and_validity_abstact_domain/ c_upon_sslandnts_sem/ debug_tools/"
 
 echo ""
 echo "Configuration done."
