@@ -19,7 +19,8 @@ verimad \dot\fr.
 *****************************************************************)
 
 
-
+open My_bigint
+(*open My_bigint.M*)
 open Cil_types
 open Ssl_types
 open Ssl_types.SSL_lex
@@ -187,7 +188,10 @@ and  pprint_ciltypes (ciltype : Cil_types.typ ) =
 	  
 and pprint_cil_constant (c : Cil_types.constant ) =
   match c with 
-      CInt64(i,_,_) -> Format.sprintf "%d" (Int64.to_int i)
+      CInt64(i,_,_) -> 
+	let i32 = My_bigint.M.to_int i in 
+	Format.sprintf "%d"  i32
+
     | CStr(s) -> s
     | CEnum(e) -> pprint_enum_item e
     | _ -> "Some non integer and non string constant"
@@ -334,9 +338,9 @@ let rec get_pvar_from_exp_node (expn : Cil_types.exp_node ) =
 	get_pvar_from_exp e
 
     | Const ( CInt64 (i ,_,_)) -> 
-      if (Int64.compare i (Int64.zero)) == 0 then 
+      if (My_bigint.is_zero i)  then 
 	raise Loc_is_nil
-      else raise (Loc_is_a_constant(i))
+      else raise (Loc_is_a_constant(My_bigint.to_int64 i))
     
     | BinOp (PlusPI,e1,_,_) 
     | BinOp (MinusPI,e1,_,_)

@@ -122,7 +122,7 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 
   Format.printf "In cil_expr_2_scalar %s \n" (Ast_goodies.pprint_cil_exp expr );
   match expr.enode with 
-      Const(CInt64(i,_,_))-> LiConst( LiIConst(Int64.to_int i))
+      Const(CInt64(i,_,_))-> LiConst( LiIConst(My_bigint.to_int i))
     | Const(CEnum(e)) -> cil_enumitem_2_scalar e
 
     | Lval(Var(f),_)->
@@ -316,7 +316,7 @@ let rec cil_expr_2_bool (expr : Cil_types.exp) =
       LiBEq(cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
 	
     | Const(CInt64(value,_,_)) ->  
-      LiBScal(LiConst( LiIConst (Int64.to_int value)))
+      LiBScal(LiConst( LiIConst (My_bigint.to_int value)))
     
     | _-> raise ( Bad_expression_type "Trying to parse an expression \
  that can't be evaluated as a boolean \n")
