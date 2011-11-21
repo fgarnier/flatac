@@ -40,32 +40,6 @@ exception Debug_info of string
 
 
 
-(*
-let pprint_binop_op (b : Cil_types.binop) =
-  match b with
-  | 	PlusA  -> "PlusA"	(*	arithmetic +	*)
-  | 	PlusPI -> "PlusPI"	(*	pointer + integer	*)
-  | 	IndexPI -> "IndexPI" 	(*	pointer + integer but only when it arises from an expression e[i] when e is a pointer and not an array. This is semantically the same as PlusPI but CCured uses this as a hint that the integer is probably positive.	*)
-  | 	MinusA -> 	"MinusA" 	(*	arithmetic -	*)
-  | 	MinusPI -> "MinusPI"	(*	pointer - integer	*)
-  | 	MinusPP -> "MinusPP" 	(*	pointer - pointer	*)
-  | 	Mult -> "Mult"
-  | 	Div  -> "Div"	(*	/	*)
-  | 	Mod  ->	"Mod" 	(*	%	*)
-  | 	Shiftlt -> 	"Shiftlt"	(*	shift left	*)
-  | 	Shiftrt -> "Shiftrt" 	(*	shift right	*)
-  | 	Lt  -> "Lt"	(*	< (arithmetic comparison)	*)
-  | 	Gt -> "Gt" 	(*	> (arithmetic comparison)	*)
-  | 	Le -> "Le" 	(*	<= (arithmetic comparison)	*)
-  | 	Ge -> "Ge"	(*	>= (arithmetic comparison)	*)
-  | 	Eq -> "Eq"	(*	== (arithmetic comparison)	*)
-  | 	Ne -> "Ne"	(*	!= (arithmetic comparison)	*)
-  | 	BAnd -> "BAnd"	(*	bitwise and	*)
-  | 	BXor -> "BXor"	(*	exclusive-or	*)
-  | 	BOr -> "BOr"	(*	inclusive-or	*)
-  | 	LAnd -> "LAnd" 	(*	logical and. Unlike other expressions this one does not always evaluate both operands. If you want to use these, you must set Cil.useLogicalOperators.	*)
-  | 	LOr -> "LOr"
-*)
 
 let make_offset_locpvar (v : ptvar ) =
   match  v  with 
@@ -580,7 +554,7 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 		      | _ -> raise ( Debug_info ("Lost in ((Mem(e),_),Lval(Var(f),_)) case of  next_on_ssl_instr "))
 		  end
 		 
-		| _ -> 
+		| _ ->  
 		  begin
 		    let msg = Format.sprintf "[!!! next_on_ssl_instr !!!] The lhs is not a variable : ? = %s, leaving absdomain untouched \n" (pprint_cil_exp exp1 ) in
 		    Format.printf "%s %!" msg;

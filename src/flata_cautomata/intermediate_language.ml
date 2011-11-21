@@ -13,6 +13,8 @@ open Cil_types
 open Int64
 open Validity_types
 open Ast_goodies
+open Composite_type_types
+open Composite_types
 
 (* 
 Boolean doesn't have a peculiar type in ANSI C. 
@@ -28,6 +30,7 @@ type c_int_var = LiIntVar of string
 type c_int_cst = LiIConst of int
 type c_int_sym_const = LiSymIConst of string
 		       | LiTypeSizeof of Cil_types.typ
+		       | LiCAliasTypeSizeof of Composite_type_types.c_type_name
 
 type c_ptr = LiIntPtr of string (*The represented type is indeed an int*)
 
@@ -197,17 +200,55 @@ integer type, which type is neither TInt nor TPtr : %s , type : %s .\n" (pprint_
       end
 	
 
-    | BinOp (PlusA, expg, expd, TInt(_,_) ) ->
-      LiSum (cil_expr_2_scalar expg , cil_expr_2_scalar expd)
+    | BinOp (PlusA, expg, expd, t ) ->
+      let alias_tname = Composite_types.is_integer_type t in
+      begin
+	match alias_tname with
+	    Some(_) ->
+	      LiSum (cil_expr_2_scalar expg , cil_expr_2_scalar expd)
+	  | None -> 
+	    let msg = "[cil_expr_2_scalar :] Trying to define a Sum with non integer type"^(Ast_goodies.pprint_cil_exp expr)
+	    in
+	    raise( Bad_expression_type (msg))
+      end
+
+
+    | BinOp (MinusA, expg, expd, t ) ->
+      let alias_tname = is_integer_type t in
+      begin
+	match alias_tname with
+	    Some(_) -> LiMinus (cil_expr_2_scalar expg ,cil_expr_2_scalar  expd)
+	  | None -> 
+	    let msg = "[cil_expr_2_scalar :] Trying to define a Difference with non integer type"^(Ast_goodies.pprint_cil_exp expr)
+	    in
+	    raise( Bad_expression_type (msg))
+      end
 	
-    | BinOp (MinusA, expg, expd, TInt(_,_) ) ->
-      LiMinus (cil_expr_2_scalar expg ,cil_expr_2_scalar  expd)
-	
-    | BinOp (Mult, expg, expd, TInt(_,_) ) -> 
-      LiProd (cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
+    | BinOp (Mult, expg, expd, t ) -> 
+      let alias_tname = is_integer_type t in
+      begin
+	match alias_tname with
+	    Some(_) ->
+	      LiProd (cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
 	  
-    | BinOp (Mod, expg, expd, TInt(_,_)) -> 
-      LiMod(cil_expr_2_scalar expg ,cil_expr_2_scalar expd )
+	  | None -> 
+	    let msg = "[cil_expr_2_scalar :] Trying to define a Product with non integer type"^(Ast_goodies.pprint_cil_exp expr)
+	    in
+	    raise( Bad_expression_type (msg))
+      end	
+	  
+    | BinOp (Mod, expg, expd, t) ->
+      let alias_tname = is_integer_type t in
+      begin
+	match alias_tname with
+	    Some(_) ->
+	      LiMod(cil_expr_2_scalar expg ,cil_expr_2_scalar expd )
+		
+	  | None -> 
+	    let msg = "[cil_expr_2_scalar :] Trying to define a Modulo operation with non integer type"^(Ast_goodies.pprint_cil_exp expr)
+	    in
+	    raise( Bad_expression_type (msg))
+      end	
 
     | BinOp (MinusPP , expg , expd , optype ) ->
       LiMinusPP(cil_expr_2_ptr expg , cil_expr_2_ptr expd, optype)
@@ -215,7 +256,7 @@ integer type, which type is neither TInt nor TPtr : %s , type : %s .\n" (pprint_
     | UnOp (Neg, exp , TInt(_,_)) ->
       LiUnMin ( cil_expr_2_scalar exp)
        
-    | _ -> raise( Bad_expression_type ("'Can't parse expression in cil_expr_2_scalar : %s \n"^(Ast_goodies.pprint_cil_exp expr)))
+    | _ -> raise( Bad_expression_type ("Can't parse expression in cil_expr_2_scalar : %s \n"^(Ast_goodies.pprint_cil_exp expr)))
 
 and cil_expr_2_ptr (expr : Cil_types.exp ) =
    Format.printf "In cil_expr_2_ptr %s \n" (Ast_goodies.pprint_cil_exp expr );
@@ -230,7 +271,7 @@ and cil_expr_2_ptr (expr : Cil_types.exp ) =
     | BinOp ( MinusPI , expg , expd , optype ) ->
       LiMinusPI ( cil_expr_2_ptr expg , cil_expr_2_scalar expd , optype )
 	
-    |  Lval (Var(vinfo), _ ) ->
+    | Lval (Var(vinfo), _ ) ->
       begin
 	match vinfo.vtype with
 	    TPtr( vtypeptr, _ ) -> LiPVar(Unprimed, LiIntPtr(vinfo.vname),vtypeptr)
@@ -247,8 +288,15 @@ and cil_expr_2_ptr (expr : Cil_types.exp ) =
 	match type_of_e with
 	    TInt(_,_) -> LiAddrOfScal((cil_expr_2_scalar e), type_of_e)
 	  | TPtr(_,_) -> cil_expr_2_ptr e
-	  | _ -> raise  ( Bad_expression_type "Lval Mem(e), e has neither 
-type int nor type TPtr .\n")
+	  | _ -> 
+	    begin
+	      match  (Composite_types.is_integer_type type_of_e) with
+		  Some(_) ->
+		    LiAddrOfScal((cil_expr_2_scalar e), type_of_e)
+		| None ->
+		  raise  ( Bad_expression_type "Lval Mem(e) has neither an interger 
+type nor pointer type TPtr .\n")
+	    end
       end
 
     | CastE ( t , expression ) -> (* If here, one expects the wildcarded
@@ -259,30 +307,35 @@ type int nor type TPtr .\n")
 	    TInt(_,_) -> 
 	      let int_val = cil_expr_2_scalar expression in
 	      LiAddrOfScal ( int_val , t)
-	 
+		
 	  | TPtr(_,_) ->
 	    cil_expr_2_ptr expression
-
 	      
-	  | _ ->  raise ( Bad_expression_type "Trying to cast a value to an
+	  | _ -> 
+	    begin
+	      match (Composite_types.is_integer_type exp_type) with
+		  Some(_) ->
+		    LiAddrOfScal((cil_expr_2_scalar expression), exp_type)
+	
+		| None ->
+		  raise ( Bad_expression_type "Trying to cast a value to an
 address type, which type is neither TInt nor TPtr.\n")
-
-      
+	    end
       end
       	
 	
-    |  (_) ->    begin 
-	    let msg = " There is something I was unable to properly
+    |  _ -> 
+      begin 
+	let msg = " There is something I was unable to properly
 parse in the ci_expr_2_ptr function" 
-	    in let exc =  Bad_expression_type msg in 
-	       raise exc
-    end
+	in let exc =  Bad_expression_type msg in 
+	   raise exc
+      end
 
 and cil_enumitem_2_scalar (enum : Cil_types.enumitem ) =
   let eval = cil_expr_2_scalar enum.eival in
   eval
       
-
 
 let rec cil_expr_2_bool (expr : Cil_types.exp) =
   match expr.enode with 
@@ -323,27 +376,14 @@ let rec cil_expr_2_bool (expr : Cil_types.exp) =
 
 
 
-
-
 (********************************************************************)
 
 (** This function transforms a list of cil expression into a list
 of scalar expression, whenever possible. It raises a Bad_expression_type
 exception if something wrong occured.  *)
 
-
-     (** Replace that by a List.map*)
 (*******************************************************************)
-(*let cil_expr_list_2_scalar_list (expr_list : Cil_types.exp list ) =
-  let rec rec_call (ret_list : c_scal list) (expr_list: Cil_types.exp list )= 
-    match expr_list with
-	[] -> ret_list
-      | l::l' -> rec_call ( (cil_expr_2_scalar l)::ret_list ) l'
-  in
-  List.rev (rec_call [] expr_list)*)
- (* The args have been added in head, therefore the list need to be reversed to respect argument order.
- List reversal O(n) whereas adding elements on list tail costs 0(n²).
-*)
+
 
 let cil_expr_list_2_scalar_list (expr_list : Cil_types.exp list ) =
   List.map cil_expr_2_scalar expr_list
@@ -520,14 +560,14 @@ let rec c_bool_to_string ( b_exp :  c_bool) =
     
     | LiBPtrEq ( ptrg , ptrd ) ->
       "("^(ptrexp_to_str ptrg)^"="^(ptrexp_to_str ptrd)^")"
-
+	
     | LiBPtrLeq ( eg , ed )  ->
       "("^(ptrexp_to_str eg )^"<="^(ptrexp_to_str ed )^")"
-    
-    | 	LiBPtrGeq  ( eg , ed )  -> 
+	
+    | LiBPtrGeq  ( eg , ed )  -> 
       "("^(ptrexp_to_str eg )^">="^(ptrexp_to_str ed )^")"
-    
-    | 	LiBPtrGt  ( eg , ed )  -> 
+	
+    | LiBPtrGt  ( eg , ed )  -> 
       "("^(ptrexp_to_str eg )^">"^(ptrexp_to_str ed )^")"
     
     | LiBPtrLt ( eg , ed )  -> 
