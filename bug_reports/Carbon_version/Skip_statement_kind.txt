@@ -1,0 +1,70 @@
+Title :
+Unsound lexing position --Cil_types.location-- given as argument of 
+the Skip(loc) -- type : Cil_types.instr, in the Carbon-20110201 release. 
++Question about the semantic of the Skip instruction.
+
+
+Body :
+
+Hello,
+I am developing some Frama-c plugin to extract some counter
+automata based models of C programs, and I am currently developing
+this plugin using the Carbon-20110201 release. 
+
+To generate our model, I am using some graph traversal algorithm on
+the Control flow graph computed by Cil, and I do perform 
+some analysis on the the arguments of the instructions. 
+
+At some point, I do traverse a "Skip" type instruction, and the value 
+contained in the the Cil_types.location argument is :
+
+
+"In file : Cabs2cil_start, from line 0 col -1 to line 0 col -1."
+The file  Cabs2cil_start appears to be some Framac file, issued in
+the carbon version. This is strange, because others instruction that
+contains location positions, used to contain value that deal with 
+the analyzed C source code -- And I was expecting to get such a value.
+
+After some time spent on the Mantis BTS, I noticed that some issues
+were the name "Cabs2cil_start" appeared, were solved, but I
+can't figure out if this will solve the problem I get. Maybe I won't get
+this problem anymore, when I will migrate from Carbon to the new
+Nitrogen version, but I prefer to point this strange thing to you.
+
+I have two extra questions : Concerning the Skip instruction, does it
+mean that the control goes through the statement without performing 
+any operation ?
+
+Is it still worth reporting bugs on the Carbon version of Frama-C ?
+
+Best regards,
+ Florent Garnier.
+
+
+ 
+
+
+The Skip "instruction" is defined in the file Cil_types.ml.
+
+
+and stmtkind =
+  | Instr  of instr
+  (** An instruction that does not contain control flow. Control
+   * implicitly falls through. *)
+
+  | Return of exp option * location
+   (** The return statement. This is a leaf in the CFG. *)
+
+
+ [...]
+
+ and instr =
+    Set        of lval * exp * location  (** An assignment. A cast is present
+                                             if the exp has different type
+                                             from lval *)
+  [...]
+
+  | Skip of location
+
+  | Code_annot of code_annotation * location
+

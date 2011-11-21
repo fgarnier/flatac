@@ -1,4 +1,14 @@
 (*
+
+
+Need to add an appropriated copyright Notice at some point.
+
+
+This files belongd to the FLATA-C plugin.
+
+Verimag 2011
+
+
  A compact implementation of the Ecfg, with an emphasis on performance.
  This file is a part of the flatac plugin for FRAMA-C Carbon.
 

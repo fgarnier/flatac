@@ -1,3 +1,25 @@
+(****************************************************************
+
+ This  files contains pretty printers and basic funtion that 
+aims at extracting useful datas from Cil structures, Ast and 
+datatypes. Its purpose consists in offering a debugging support.
+
+More suitable functions might already be defined and provided
+with the Frama-C distribution.
+
+Only use those functions after checking that no corresponding
+function have been provided with you current frama-c issue.
+
+ *** This file might be removed from the major Flata-C plugin
+distribution. ***
+
+For questions and comment, write to florent dot garnier a/t 
+verimad \dot\fr. 
+
+*****************************************************************)
+
+
+
 open Cil_types
 open Ssl_types
 open Ssl_types.SSL_lex
