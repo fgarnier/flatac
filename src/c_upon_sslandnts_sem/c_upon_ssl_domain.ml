@@ -438,7 +438,7 @@ let malloc_ssl_nts_transition ( v : Cil_types.varinfo  option) sslv  lparam mid 
       let ret_list = (r_malloc_failed_with_unvalidcntgard v sslv mid scal_param)@ret_list in
       ret_list
 	      
-	 
+	
 (** mid must be an instance of the class global mem manager*)
 let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom) ( instruction : Cil_types.instr) =
    	Self.debug ~level:0 "\n Dans next_on_ssl_instr \n" ;
@@ -471,9 +471,29 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 		    v to the validity of expr*)
 		    | TInt(_,_) -> affect_int_val_upon_sslv v expr sslv
 			
-		    | _ -> (Self.debug ~level:0 "Unhandled type of variable affectation, skiping it \n");
-		      (sslv,[])::[]
-		      
+		   
+		    | _ ->
+		      let alias_tname = Composite_types.is_integer_type v.vtype in
+		      begin
+			match alias_tname with
+			  | Some(_) ->
+			    affect_int_val_upon_sslv v expr sslv
+			      
+			  | None ->
+			    begin
+				  
+			      (Self.debug ~level:0 "Unhandled type of variable affectation, skiping it \n");
+			      (sslv,[])::[]
+				(*let msg= 
+				  Format.sprintf "[next_on_ssl_instr] Var : %s = %s : %s \n"  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype) in
+				  raise (Debug_info(msg)) *)
+				(* Format.printf "%s" msg;
+				   (sslv,[])::[] *)
+			    end
+		      end
+			
+			
+			
 		end
 	    | Mem(e) ->
 	      begin
@@ -512,34 +532,53 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 		       	Self.debug ~level:0 "\n Dans Call de %s=%s \n" v.vname f.vname ;
 		      match v.vtype with
 			  (*Returned value has an integer type*)
-			   
+			  
 			  TPtr(_,_) -> (*|  TNamed(_,_) ->*)
 			    begin
-
 			      
-			(*The returned value is a variable that has another
-			  type than an integer type. Tpointer, float for instance*)
+			      
+			      (*The returned value is a variable that has another
+				type than an integer type. Tpointer, float for instance*)
 			      match f.vname with
 				  "malloc" | "calloc" -> (malloc_ssl_nts_transition (Some(v)) sslv lparam mid)
 				    
 				|  _ -> 
+				  let msg = Format.sprintf 
+				    "[next_on_ssl_instr] Unhandled operation : Pointer Var : %s = %s(...) \n" v.vname f.vname in
+				  Format.printf "%s" msg;
 				  ((sslv,[])::[])
+			    (*raise (Debug_info(msg))*)
+				    
 			    (** Plug other functions name
-					   that behaves like malloc in this 
-					   space*)
+				that behaves like malloc in this 
+				space*)
 			    end
-
+			      
 			(*| TNamed(tinfo,_) ->
-			  (*In this case, the returned type is a composite
+			(*In this case, the returned type is a composite
 			  one, either a structure or an union.*) *)
-			| _ -> 
+			      
+			| _ ->
+			  let alias_tname = Composite_types.is_integer_type v.vtype in
 			  begin
-			    let msg= Format.sprintf "[next_on_ssl_instr] Var : %s = %s : %s \n"  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype) in
-			    raise (Debug_info(msg))
+			    match alias_tname with
+			      | Some(_) ->
+				let msg= 
+				    Format.sprintf "[next_on_ssl_instr] Integer type Var : %s = %s : %s \n"  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype) in
+				Format.printf "%s" msg;
+				 ((sslv,[])::[])
+
+			      | None ->
+				begin
+				  let msg= 
+				    Format.sprintf "[next_on_ssl_instr] Var : %s = %s : %s \n"  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype) in
+				  raise (Debug_info(msg))
 			  (* Format.printf "%s" msg;
 			     (sslv,[])::[] *)
+				end
 			  end
 		    end
+
 		| ((Mem(e),_), Lval(Var(f),_)) ->
 		  begin
 		    match e.enode with 

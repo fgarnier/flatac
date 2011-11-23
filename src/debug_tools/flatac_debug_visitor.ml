@@ -32,7 +32,7 @@ class flatac_debug_visitor (prj : Project.t) =  object
  
  match p with 
       GFun ( funinfos , _ ) ->   
-	Cfg.prepareCFG funinfos; Cfg.computeCFGInfo funinfos true; 
+	Cfg.prepareCFG funinfos; Cfg.computeCFGInfo funinfos false; 
 	let cauto_fun = new panalyse funinfos in
 	fun_cautomata <- ( cauto_fun :: fun_cautomata);
 	DoChildren

@@ -59,13 +59,13 @@ class c2cautomata_abstraction (funinfos : Cil_types.fundec) = object(self)
 
   method mark_as_visited (key : string ) =
     Hashtbl.add visited key ()
-
+      
   method is_visited (key : string ) =
     Hashtbl.mem visited key
-
+      
   method clear_visited =
     Hashtbl.clear visited
-
+      
   method add_error_state (id : string ) =
     if not (Hashtbl.mem error_states id ) then
       Hashtbl.add error_states id () 
@@ -277,7 +277,8 @@ class panalyse (funinfos : Cil_types.fundec) = object(self)
     begin
       match stmtp.skind with 
 	 
-  
+	| Instr(Skip(loc)) -> 
+	  Format.printf " [Debug visitor] !!! Skipping instruction !!!In statement :%d, skipping to statement %d,  located at  %s %! \n" stmtp.sid iterande.sid (Ast_goodies.pprint_lexing_infos loc)
 
        (*****************************************************************)
  
@@ -286,7 +287,7 @@ class panalyse (funinfos : Cil_types.fundec) = object(self)
 
 
        (*****************************************************************)
-	  Instr( Set ((Var(vinfo),_),expr , _ ) ) ->
+	|  Instr( Set ((Var(vinfo),_),expr , _ ) ) ->
 	    begin
 	      try
 		let rhs = cil_expr_2_scalar expr in
@@ -459,6 +460,8 @@ not affected to a variable type. Not consided in this version")
 	      | Bad_expression_type ( msg ) -> self#register_failure stmtp ("Failed to parse scalar expression in block if[Scalar] "^msg);
 	  end
 	    
+
+
 
 	    (***************************************************************)
 

@@ -42,23 +42,39 @@ let pretty_print_cautomata_obj out =
   let composite_types = new global_composite_types_visitor ( prj ) in
   
   let file_ast = Ast.get() in
-  Cfg.clearFileCFG file_ast;
+  (*Cfg.clearFileCFG file_ast;*)
   
+  (*Printing debug infos using the debug visitor*)
+  let visit_bibi = new  flatac_debug_visitor ( prj ) in
+  let ca_out_name = Printf.sprintf "%s_debug_info.ca" file_ast.fileName in
+  let out_file = open_out ca_out_name in
+  let format_out_file = Format.formatter_of_out_channel out_file in
+  Visitor.visitFramacFile (visit_bibi :> frama_c_copy ) file_ast;
+  visit_bibi#pretty_print_f2ca format_out_file;  
+  Format.printf "f2ca printed the cautomaton ton the file \n %!";
+  Format.fprintf format_out_file "%!";
+  close_out out_file;
+  (*Ending pprint informations.*)
+
+
   let ca_out_name = Printf.sprintf "%s.ca" file_ast.fileName in
+  let out_file = open_out ca_out_name in
   let types_out_name = Printf.sprintf "%s.types" file_ast.fileName in
     
+  let file_ast = Ast.get() in
+  Cfg.clearFileCFG file_ast;
+  
   Visitor.visitFramacFile (composite_types :> frama_c_copy) file_ast;
   let index = composite_types#get_index_of_composite in 
   Visitor.visitFramacFile (visited_file :> frama_c_copy ) file_ast;
   visited_file#save_in_file ca_out_name;
 
   let compile_out = visited_file#pprint_all_ecfgs in
-  Format.fprintf out "%s" compile_out;
+  Format.fprintf out "%s%!" compile_out;
   
   (* This part consists in checking the cfg structure given by Cil*)
-  let visit_bibi = new  flatac_debug_visitor ( prj ) in
-  let ca_out_name = Printf.sprintf "%s_debug_info.ca" file_ast.fileName in
-  let out_file = open_out ca_out_name in
+ 
+
   let types_out = open_out types_out_name in
   let format_out_file = Format.formatter_of_out_channel out_file in
   let types_out_file = Format.formatter_of_out_channel types_out in
