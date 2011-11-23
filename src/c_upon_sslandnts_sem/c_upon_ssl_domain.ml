@@ -120,11 +120,11 @@ let get_pvarname_of_left_value lv =
 let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) (sslv : ssl_validity_absdom ) =
   Self.debug ~level:0 "Im am in affect_ptr_upon_sslv \n";
   let sslv =  copy_validity_absdomain sslv in
-   let v = get_pvarinfo_of_left_value lv in
-   let varname =  get_pvarname_of_left_value lv in
-(** One need to check that lv is a Var which type is TPtr(_,_)*)
-    try
-     
+  let v = get_pvarinfo_of_left_value lv in
+  let varname =  get_pvarname_of_left_value lv in
+    (** One need to check that lv is a Var which type is TPtr(_,_)*)
+  try
+    
     Format.printf "[affect_ptr_upon_sslv: expression : %s=%s \n]" varname (pprint_cil_exp expr);
     let pvar_left = Ast_goodies.get_pvar_from_exp_node  (Lval(lv,off)) in
     let pvar_right = get_pvar_from_exp expr in
@@ -132,11 +132,11 @@ let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) (s
     let sslv = copy_validity_absdomain sslv in
     let lvar_right = get_ptr_affectation sslv.ssl_part pvar_right 
     in
-      begin
-	match lvar_right with
-	    LVar("") ->  Ssl.and_atomic_ptnil (Pointsnil(pvar_right)) sslv.ssl_part
-	  | LVar(_) -> Ssl.change_affect_var (Pointsto(pvar_left,lvar_right)) sslv.ssl_part
-      end;
+    begin
+      match lvar_right with
+	  LVar("") ->  Ssl.and_atomic_ptnil (Pointsnil(pvar_right)) sslv.ssl_part
+	| LVar(_) -> Ssl.change_affect_var (Pointsto(pvar_left,lvar_right)) sslv.ssl_part
+    end;
     Format.printf "On the way to compute cil_expre_2_per of expr %s \n %!" (pprint_cil_exp expr);
       let param_cscal = Intermediate_language.cil_expr_2_ptr expr in
       Format.printf "Operation done \n about to compute interpret_c_ptr_exp_to_cnt \n %!";
@@ -147,15 +147,16 @@ let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) (s
       let sslv_new = set_var_validity_in_absdomain 
 	sslv v (Some(off)) affect_validity_of_pvar 
       in
-	((sslv_new,affect_off::[])::[]) 
+      ((sslv_new,affect_off::[])::[]) 
   with
-     
+      
     | Loc_is_nil -> 
-	begin 
-	  and_atomic_ptnil (Pointsnil((PVar(v.vname)))) sslv.ssl_part;
-	  let new_sslv = set_var_validity_in_absdomain sslv v (Some(off)) FalsevarValid in
-	    (new_sslv , [])::[]
-	end
+      begin 
+	and_atomic_ptnil (Pointsnil((PVar(v.vname)))) sslv.ssl_part;
+	let new_sslv = set_var_validity_in_absdomain sslv v (Some(off)) FalsevarValid in
+	(new_sslv , [])::[]
+      end
+    
     | Contains_no_pvar ->
       let exprpvarless = pprint_cil_exp expr in
       Format.printf "No pvar found in %s \n" exprpvarless;
@@ -261,7 +262,7 @@ let r_malloc_succ (var : Cil_types.varinfo option ) sslv (mid: global_mem_manage
 	ret_list
       end
 
-(** Same function as above, but includes an extra guar that express which constraints the counter evaluation shall satisfy so that Valid(I) is true. *)
+(** Same function as above, but includes an extra guard that express which constraints the counter evaluation shall satisfy so that Valid(I) is true. *)
 let r_malloc_succ_withvalidcntguard (var : Cil_types.varinfo option) sslv (mid: global_mem_manager ) (scal_param : c_scal) =
 	Self.debug ~level:0 "Entering r_malloc_succ_withvalidcntguard ";
   let sslv = copy_validity_absdomain sslv in
