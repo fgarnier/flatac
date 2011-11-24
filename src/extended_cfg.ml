@@ -200,10 +200,22 @@ struct
 		Format.printf "[ Extended cfg Adding : Ecfg node id  : %d, Framac sid %d ] \n " new_vertex.statement.sid id
 	end;
 	if front_end#is_error_state absval then
-	  Hashtbl.add error_state new_vertex.id ()
+	  begin
+	    if Hashtbl.mem error_state new_vertex.id
+	    then ()
+	    else
+ 	      Hashtbl.add error_state new_vertex.id ()
+	  end
+	    
 	else if ( (List.length s.succs) == 0 ) then
-	  Hashtbl.add final_state new_vertex.id ()
+	  begin
+	    if Hashtbl.mem final_state new_vertex.id
+	    then ()
+	    else
+	      Hashtbl.add final_state new_vertex.id ()
+	  end	
 	else
+	  
 	  Hashtbl.add common_state new_vertex.id ();
 	new_vertex.id (**  Returns the id of the created vertex*)
 	  
