@@ -52,8 +52,6 @@ let make_empty_cil_statement =
   }
   
 
-
-
 module Extended_cfg_definition  = 
   functor ( A : sig type abstract_type type label_type end ) ->
 struct
@@ -491,8 +489,14 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	  with
 	     
   	    |  No_outgoing_edges_from_state ( node_id ) ->
-	      Hashtbl.add final_state node_id () (* The current node ahs no successor
-						    in the ecfg*)    	       
+	      begin
+		if not (Hashtbl.mem final_state  node_id  ) 
+		then
+		  Hashtbl.add final_state node_id () 
+	      (* The current node ahs no successor
+		 in the ecfg*)
+    		else ()
+	      end
 	end
 	  
 	  
@@ -569,14 +573,12 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       in
       Hashtbl.fold origin_table_print_folder edges ""
 
-	
-	  
-	
+		
 	
     method private pprint_inits  =
       let elem_left = ref 0 in
       let pprint_folder id () prescript =
-	if (!elem_left) <= 0 then
+	if (!elem_left) <= 1 then
 	  (prescript^(Printf.sprintf "%d" ( get_id_of_ecfg_id  id )))
 	else
 	  begin
@@ -594,7 +596,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
     method private pprint_finals =
       let elem_left = ref 0 in
       let pprint_folder id () prescript =
-	if !elem_left <= 0 then
+	if !elem_left <= 1 then
 	  prescript^(Format.sprintf "%d" ( get_id_of_ecfg_id id ))
 	else
 	  begin
@@ -611,7 +613,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
     method private pprint_error_states  =
       let elem_left = ref 0 in
       let pprint_folder id () prescript =
-	if !elem_left <= 0 then
+	if !elem_left <= 1 then
 	  prescript^(Format.sprintf "%d" ( get_id_of_ecfg_id id ))
 	else
 	  begin
