@@ -80,7 +80,10 @@ let affect_int_val_upon_sslv (v : Cil_types.varinfo) (expr : Cil_types.exp)
   let ret_absdomain = copy_validity_absdomain sslv in
   let ret_absdomain =
     set_var_validity_in_absdomain ret_absdomain v None validity_of_rval in
-    (ret_absdomain , []) :: []
+  let c_scal_exp = cil_expr_2_scalar expr in 
+  let cnt_expr = interpret_c_scal_to_cnt sslv.ssl_part c_scal_exp in
+  let cnt_affect = CntAffect(NtsIVar(v.vname),cnt_expr) in
+    (ret_absdomain , (cnt_affect::[])) :: []
     
 
 
