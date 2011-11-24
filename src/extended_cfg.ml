@@ -145,7 +145,26 @@ struct
 	raise No_such_state_id
 
     
-
+    method private add_ecfg_entry_point  ( s : Cil_types.stmt ) 
+      ( absval : abs_dom_val ) =     
+       let new_vertex = {
+	id = current_node_id;
+	statement = s;
+	abstract_val = absval ; 	
+      }
+       in
+       Hashtbl.add vertices current_node_id new_vertex;
+       let entry_table = Hashtbl.create init_hashtbl_size in
+       Hashtbl.add entry_table current_node_id ();
+       Hashtbl.add unfoldsid_2_abs_map (Sid_class(s.sid)) entry_table;
+       Hashtbl.add fold_abs_map_2_sid new_vertex.id (Sid_class(s.sid));
+       self#incr_current_node_id;
+       Hashtbl.add init_state new_vertex.id ();
+       new_vertex.id
+       
+       
+       
+      
     (** Adds a vertex to the ecfg*)
     method private add_abstract_state ( s : Cil_types.stmt ) 
       ( absval : abs_dom_val ) =      
@@ -174,8 +193,7 @@ struct
 	(*current_node_id <- (current_node_id + 1);*)
 	
 	(* Error states shall be considered as an absorbing class.
-	There must be no states that could be both a final state 
-	or an error state. *)
+	 *)
 	begin
 	  match new_vertex.id with
 	      Ecfg_id(id) ->
@@ -234,8 +252,9 @@ struct
 	begin
 	  let statment_of_ep= make_empty_cil_statement in
 	  let absval_of_ep = front_end#get_entry_point_from_fundec funinfo in
-	  let id_ep = self#add_abstract_state statment_of_ep 
+	  let id_ep = self#add_ecfg_entry_point statment_of_ep 
 	    absval_of_ep in
+	   entry_point_set <- true;
 	    id_ep
 	   (* returns the id of the node, shall be 0*) 
 	      
@@ -597,7 +616,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	
     method pprint_to_nts  = 
       (* let current_ecfg_node = Hashtbl.get vertex current_vertex_id in *)
-      let res_string = Format.sprintf " nts %s; \n" name in
+      let res_string = Format.sprintf "nts %s; \n" name in
       let res_string = res_string^name^" {\n" in
       let res_string = res_string^(self#pprint_inits)^"\n"  in
       let res_string = res_string^(self#pprint_finals)^"\n" in

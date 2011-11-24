@@ -46,14 +46,14 @@ let pretty_print_cautomata_obj out =
   
   (*Printing debug infos using the debug visitor*)
   let visit_bibi = new  flatac_debug_visitor ( prj ) in
-  let ca_out_name = Printf.sprintf "%s_debug_info.ca" file_ast.fileName in
-  let out_file = open_out ca_out_name in
-  let format_out_file = Format.formatter_of_out_channel out_file in
+  let ca_debug_out_name = Printf.sprintf "%s_debug_info.ca" file_ast.fileName in
+  let debug_out_file = open_out ca_debug_out_name in
+  let format_debug_out_file = Format.formatter_of_out_channel debug_out_file in
   Visitor.visitFramacFile (visit_bibi :> frama_c_copy ) file_ast;
-  visit_bibi#pretty_print_f2ca format_out_file;  
+  visit_bibi#pretty_print_f2ca format_debug_out_file;  
   Format.printf "f2ca printed the cautomaton ton the file \n %!";
-  Format.fprintf format_out_file "%!";
-  close_out out_file;
+  Format.fprintf format_debug_out_file "%!";
+  close_out debug_out_file;
   (*Ending pprint informations.*)
 
 
@@ -78,8 +78,8 @@ let pretty_print_cautomata_obj out =
   let types_out = open_out types_out_name in
   let format_out_file = Format.formatter_of_out_channel out_file in
   let types_out_file = Format.formatter_of_out_channel types_out in
-  Visitor.visitFramacFile (visit_bibi :> frama_c_copy ) file_ast;
-  visit_bibi#pretty_print_f2ca format_out_file;  
+ (* Visitor.visitFramacFile (visit_bibi :> frama_c_copy ) file_ast;
+  visit_bibi#pretty_print_f2ca format_out_file;*)  
  
   Format.fprintf types_out_file "%s %!" (composite_types#pprint_pvars_of_comp_types);
   Format.fprintf format_out_file "%!";
