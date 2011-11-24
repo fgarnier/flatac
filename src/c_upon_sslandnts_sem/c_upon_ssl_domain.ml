@@ -44,7 +44,7 @@ exception Debug_info of string
 let make_offset_locpvar (v : ptvar ) =
   match  v  with 
       PVar ( s ) -> let soff =
-	s^"_off" in
+	"offset("^s^")" in
 	NtsIVar(soff)
 
 
