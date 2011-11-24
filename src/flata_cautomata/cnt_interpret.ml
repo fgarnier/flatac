@@ -84,7 +84,7 @@ let offset_cnt_name ( ptvar : c_ptrexp ) =
 
 let int_var_cnt_name ( cexpr : c_scal) =
    match cexpr with
-      LiVar(_,LiIntVar(vname)) -> CntVar(NtsIVar( "intvar("^vname^")" ))
+      LiVar(_,LiIntVar(vname)) -> CntVar(NtsIVar( vname ))
     | _ -> raise Not_LiVar
 
 
