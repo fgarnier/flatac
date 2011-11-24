@@ -167,7 +167,9 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
 	    
 and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
   match ptrexp with 
-      LiPVar( _ , LiIntPtr(vname), _) -> CntVar(NtsIVar(vname))
+      LiPVar(_,_,_) ->  offset_cnt_name ptrexp
+      (*LiPVar( _ , LiIntPtr(vname), _) ->  offset_cnt_var ptrexp *)
+	(*CntVar(NtsIVar(vname))*)
     | LiPlusPI ( cptrexp , scalv, optype ) -> 
 	begin
 	  let ll = interpret_c_ptrexp_to_cnt sslf cptrexp in
