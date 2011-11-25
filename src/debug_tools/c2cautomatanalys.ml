@@ -280,6 +280,10 @@ class panalyse (funinfos : Cil_types.fundec) = object(self)
 	| Instr(Skip(loc)) -> 
 	  Format.printf " [Debug visitor] !!! Skipping instruction !!!In statement :%d, skipping to statement %d,  located at  %s %! \n" stmtp.sid iterande.sid (Ast_goodies.pprint_lexing_infos loc)
 
+	| UnspecifiedSequence ( _ ) -> 
+		Format.printf " [Debug visitor] !!! Unspecified sequence !!! \n"
+		
+
        (*****************************************************************)
  
        
