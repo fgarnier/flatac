@@ -151,11 +151,16 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 	    LiVar(Unprimed,LiIntVar(f.vname))
 
 	  | _-> begin 
-	    let msg = "This variable : "^f.vname ^"isn't of type TInt, but appears in a scalar expression \n" in 
-	    let exc =  Bad_expression_type msg in
-	    raise  exc
-	  
-	  end
+	      let alias_tname = Composite_types.is_integer_type f.vtype in
+		begin
+		  match alias_tname with
+		    | Some(_) -> LiVar(Unprimed,LiIntVar(f.vname))
+		    | None ->
+			let msg = "This variable : "^f.vname ^"isn't of type TInt, but appears in a scalar expression \n" in 
+			let exc =  Bad_expression_type msg in
+			  raise  exc
+		end  
+	    end
       end	
 
     | Lval(Mem(e),_) ->
