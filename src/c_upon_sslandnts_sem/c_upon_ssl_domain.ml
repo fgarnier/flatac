@@ -685,6 +685,13 @@ let next_on_ssl_nts (mid : global_mem_manager ) (sslv  ) (skind : Cil_types.stmt
 	(*let message = ("\n Formula : "^(Ssl_pprinters.pprint_ssl_formula sslv.ssl_part)^"\n") in
 	Format.printf "%s \n" message;*)
 	 next_on_ssl_instr  mid sslv instruction
+
+    | Return (expr) ->
+      let type_of_exp = Cil_typeOf expr in
+      
+      let scal_exp = cil_exp_2_scal expr in
+      let nts_exp = interpret_cscal_to_cnt sslv.ssl_part scal_exp in
+      
 	
 
     | _ -> 

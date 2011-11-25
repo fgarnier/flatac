@@ -24,7 +24,7 @@ open Cil_types
 open Cfg
 open Visitor
 open Sem_and_logic_front_end
-
+open Nts_types
 open Extended_cfg_types
 
 
@@ -65,12 +65,18 @@ struct
   class extended_cfg (name_function : string ) (funinfo : Cil_types.fundec) 
     frontend   = object(self)
 
+     
     val mutable name = name_function 
     val mutable is_computed = false
     val mutable entry_point_set = false (* Initial control state of the 
 					ecfg set ?*)
 
-      
+    val mutable nts_sformal = [] (* Must be replaced when the extended
+				 cfg class will inherit from the nts
+				 class.*)
+    val mutable nts_outval = [] (* same as above.*)
+    val mutable nts_slocals= []
+
     val mutable front_end :  ( (Extended_cfg_base_types.abs_dom_val, 
 				  Extended_cfg_base_types.trans_label_val)
                                  sem_and_logic_front_end ) = frontend 
@@ -125,7 +131,8 @@ struct
 				  to be created node, if any.
 			     *)
       
-    initializer self#build_fun_ecfg funinfo
+    initializer self#build_fun_ecfg funinfo; self#register_in_out_nts_vars;
+      self#register_local_vars
 
     method private incr_current_node_id =
       match current_node_id with
@@ -134,6 +141,33 @@ struct
 	    (current_node_id <- Ecfg_id(nid))
 
 	      
+
+    method register_in_out_nts_vars =
+      let in_out_map_folder (nts_var_list) (v : Cil_types.varinfo ) =
+	match v.vtype with
+	    TPtr(_,_) -> NtsIVar("offset("^v.vname^")")::nts_var_list
+	  | _ ->
+	    begin
+	      match (Composite_types.is_integer_type v.vtype) with
+		  Some(_) -> NtsIVar(v.vname)::nts_var_list
+		| None -> NtsMiscType(v.vname)::nts_var_list
+	    end
+      in 
+      nts_sformal <- (List.fold_left in_out_map_folder [] funinfo.sformals  )
+      
+
+    method register_local_vars =
+      let in_out_map_folder (nts_var_list) (v : Cil_types.varinfo ) =
+	match v.vtype with
+	    TPtr(_,_) -> NtsIVar("offset("^v.vname^")")::nts_var_list
+	  | _ ->
+	    begin
+	      match (Composite_types.is_integer_type v.vtype) with
+		  Some(_) -> NtsIVar(v.vname)::nts_var_list
+		| None -> NtsMiscType(v.vname)::nts_var_list
+	    end
+      in 
+      nts_slocals <- (List.fold_left in_out_map_folder [] funinfo.slocals  )	
    (* Sets a state as being initial.*)
     method private register_init_state ( state_id : ecfg_id ) = 
       if Hashtbl.mem vertices state_id
@@ -609,6 +643,13 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       in
       "final: "^retstring
 	
+
+
+    method private pprint_input_vars =
+       Nts.pprint_typeinfo_nts_var_list nts_sformal
+	 
+    method private pprint_local_vars =
+       Nts.pprint_typeinfo_nts_var_list nts_slocals
 	
     method private pprint_error_states  =
       let elem_left = ref 0 in
@@ -632,6 +673,8 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       (* let current_ecfg_node = Hashtbl.get vertex current_vertex_id in *)
       let res_string = Format.sprintf "nts %s; \n" name in
       let res_string = res_string^name^" {\n" in
+      let res_string = res_string^"in "^self#pprint_input_vars^"\n" in
+      let res_string = res_string^self#pprint_local_vars^"\n" in
       let res_string = res_string^(self#pprint_inits)^"\n"  in
       let res_string = res_string^(self#pprint_finals)^"\n" in
       let res_string = res_string^(self#pprint_error_states)^"\n" in

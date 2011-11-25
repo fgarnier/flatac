@@ -21,10 +21,35 @@ and then send me your message.
 (* This part defines the function used to export the nts trees into
 a NTS compliant syntax -- as well as being human readable.*)
 
-let nts_pprint_nts_ivar (x : nts_var ) = 
+let nts_pprint_nts_var (x : nts_var ) = 
   match x with 
       NtsIVar( vname ) -> vname
+    | NtsRVar ( vname ) -> vname
+    | NtsMiscType ( vname ) -> vname  
 
+
+let nts_pprint_nts_typeinfo_var ( x :nts_var) =
+  match x with 
+      NtsIVar( vname ) -> vname^" :int "
+    (*| NtsBVar( vname ) ->  vname^":  bool"*)
+    | NtsRVar ( vname ) ->vname^" :real "
+    | NtsMiscType ( vname ) ->vname^" :non scalar"
+
+
+let pprint_typeinfo_nts_var_list l =
+  (*let elem_left = ref (List.length l) in*)
+  let pprint_lfold res var =
+    (*if !elem_left > 1 then 
+      begin 
+	elem_left := (!elem_left - 1);*)
+	res^(nts_pprint_nts_typeinfo_var var)^";"
+     (* end
+    else
+      res^(nts_pprint_nts_typeinfo_var var)*)
+  in
+  List.fold_left pprint_lfold  "" l
+
+  
 let rec size_arithm_exp ( exp : cnt_arithm_exp ) =
   match exp with 
        CntCst(_) -> 1
@@ -90,7 +115,7 @@ let rec cnt_pprint_arithm_exp ( exp : cnt_arithm_exp ) =
   match exp with
       CntCst(i) -> let s = Format.sprintf "%d" i in s
     | CntSymCst(str) -> str
-    | CntVar ( ntsvar ) -> nts_pprint_nts_ivar ntsvar
+    | CntVar ( ntsvar ) -> nts_pprint_nts_var ntsvar
 
     | CntSum ( eg , ed ) ->
         (cnt_pprint_arithm_exp eg)^"+"^(cnt_pprint_arithm_exp ed)
@@ -274,7 +299,7 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
   match tlabel with
       CntGuard ( cbool ) -> cnt_pprint_boolexp cbool
     | CntAffect( ntvar ,  expr ) ->
-       (nts_pprint_nts_ivar ntvar)^"'="^(cnt_pprint_arithm_exp expr)
+       (nts_pprint_nts_var ntvar)^"'="^(cnt_pprint_arithm_exp expr)
     | CntFunCall ( funname, retval , largs ) ->
       begin
 	match retval with
