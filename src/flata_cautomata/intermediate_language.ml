@@ -65,6 +65,10 @@ and c_ptrexp = LiPVar of primed * c_ptr *  Cil_types.typ
 	       | LiIndexPI of c_ptrexp * c_scal * Cil_types.typ
 	       | LiMinusPI of c_ptrexp * c_scal * Cil_types.typ
 	       | LiAddrOfScal of c_scal * Cil_types.typ
+
+
+type il_expr = IlScal of c_scal
+	       | IlPtr of c_ptrexp
 	       
 type c_bool = LiBNot of c_bool 
  	      | LiBAnd of c_bool * c_bool 

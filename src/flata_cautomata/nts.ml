@@ -280,9 +280,9 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
 	match retval with
 	    Some(NtsIVar(varname)) ->
 	      begin
-		varname^"'="^(List.fold_left arg_name_left_folder "" largs )
+		varname^"'="^funname^"("^(List.fold_left arg_name_left_folder "" largs )^")"
 	      end
-	  | None -> (List.fold_left arg_name_left_folder "" largs )
+	  | None -> funname^"("^(List.fold_left arg_name_left_folder "" largs )^")"
       end
       
   

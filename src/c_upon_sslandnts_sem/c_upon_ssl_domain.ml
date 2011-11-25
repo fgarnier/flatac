@@ -567,10 +567,19 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 			  begin
 			    match alias_tname with
 			      | Some(_) ->
-				let msg= 
-				    Format.sprintf "[next_on_ssl_instr] Integer type Var : %s = %s : %s \n"  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype) in
+				  let funname = f.vname in
+				  let arg_cscal_list = List.map ( fun s -> cil_expr_2_scalar s) 
+				    lparam in
+				  let arg_nts_list =
+				    List.map ( fun s-> interpret_c_scal_to_cnt sslv.ssl_part s ) 
+				      arg_cscal_list in
+				  let nts_lval = NtsIVar(v.vname) in
+				  let cnt_trans_label = 
+				    CntFunCall(funname,Some(nts_lval),arg_nts_list) in
+				  let msg= 
+				    Format.sprintf "[next_on_ssl_instr] Integer type Var : %s = %s : %s \n[next_on_ssl_instr] argument list %s \n "  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype) (Nts.cnt_pprint_translabel cnt_trans_label ) in
 				Format.printf "%s" msg;
-				 ((sslv,[])::[])
+				 ((sslv,(cnt_trans_label::[]))::[])
 
 			      | None ->
 				begin

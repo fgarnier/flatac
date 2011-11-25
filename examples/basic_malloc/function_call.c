@@ -17,6 +17,12 @@ int main (int argc , char ** argv ){
  buffer ++;
  buffer = (char *)(incr((int)buffer));
  free (buffer);
+
+
+
+ int j = 1;
+ j = incr(j);
+ 
  return(0);
 
 }
