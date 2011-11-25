@@ -686,14 +686,15 @@ let next_on_ssl_nts (mid : global_mem_manager ) (sslv  ) (skind : Cil_types.stmt
 	Format.printf "%s \n" message;*)
 	 next_on_ssl_instr  mid sslv instruction
 
-    | Return (expr) ->
-      let type_of_exp = Cil_typeOf expr in
-      
-      let scal_exp = cil_exp_2_scal expr in
-      let nts_exp = interpret_cscal_to_cnt sslv.ssl_part scal_exp in
-      
-	
+    | Return (Some(expr),_) ->
+      (*let type_of_exp = Cil.typeOf expr in*)
+      let scal_exp = cil_expr_2_scalar expr in
+      let cnt_exp = interpret_c_scal_to_cnt sslv.ssl_part scal_exp in
+      let cnt_affect = CntAffect(NtsIVar(("ret_val_")),cnt_exp) in
+      (sslv , (cnt_affect::[])) :: []
 
+    | Return (None,_) ->
+       (sslv , []) :: []
     | _ -> 
       Format.printf " Warning : Not a basic instruction : %s \n" (pprint_skind_basic_infos skind)  ;
       (sslv, [])::[]
