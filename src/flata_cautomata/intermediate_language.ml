@@ -332,12 +332,25 @@ address type, which type is neither TInt nor TPtr.\n")
 	    end
       end
       	
+
+    | StartOf((Var(v),Index(e,NoOffset)))->
+      begin
+	match v.typ with
+	    TArray(t,_,_,_)->
+	      LiAddr
+      end
 	
     |  _ -> 
       begin 
 	let msg = Format.sprintf " There is something I was unable to properly
 parse in the cil_expr_2_ptr function %s" (Ast_goodies.pprint_cil_exp expr) 
-	in let exc =  Bad_expression_type msg in 
+	in 
+	let format_warning = Format.formatter_of_out_channel stdout in
+	Format.fprintf format_warning "[INtermediate language ] : FATAL, can't interpret expression :";
+	Cil.d_exp format_warning expr;
+	Format.fprintf format_warning " \n[INtermediate language ] raising exception \n %!";
+	
+	let exc =  Bad_expression_type msg in 
 	   raise exc
       end
 
