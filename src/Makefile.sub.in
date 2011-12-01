@@ -24,7 +24,7 @@ all: $(COMPILED_INTERFACES) $(BYTECODE_OBJS)
 .PHONY: clean mrproper
 
 clean: 
-	@rm -f *.o *.cmo *.cmx *.annot
+	@rm -f *.o *.cmo *.cmx *.cmi *.annot
 
 mrproper:
 	@rm -f *.cmi

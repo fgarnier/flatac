@@ -27,7 +27,12 @@ let from_stack_to_heap ( s : Cil_types.stmt ) =
   
 
 
+class dereferenced_var_of_gfun_visitor ( prj : Project.t) =
+object (self)
+  inherit frama_c_inplace as supe
+    
 
+end;;
 
 class deref_to_malloc_visitor (prj : Project.t )  = object (self)
   inherit frama_c_copy (prj)

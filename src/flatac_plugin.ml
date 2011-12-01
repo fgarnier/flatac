@@ -15,8 +15,9 @@ open Flatac_function_visitor
 open Cil_types
 open Cil
 open Self
-open Flatac_debug_visitor
+(*open Flatac_debug_visitor*)
 open Composite_type_visitors
+open Intermediate_language
 
 (*module Self =
   Plugin.Register
@@ -45,7 +46,7 @@ let pretty_print_cautomata_obj out =
   (*Cfg.clearFileCFG file_ast;*)
   
   (*Printing debug infos using the debug visitor*)
-  let visit_bibi = new  flatac_debug_visitor ( prj ) in
+  (*let visit_bibi = new  flatac_debug_visitor ( prj ) in
   let ca_debug_out_name = Printf.sprintf "%s_debug_info.ca" file_ast.fileName in
   let debug_out_file = open_out ca_debug_out_name in
   let format_debug_out_file = Format.formatter_of_out_channel debug_out_file in
@@ -53,7 +54,7 @@ let pretty_print_cautomata_obj out =
   visit_bibi#pretty_print_f2ca format_debug_out_file;  
   Format.printf "f2ca printed the cautomaton ton the file \n %!";
   Format.fprintf format_debug_out_file "%!";
-  close_out debug_out_file;
+  close_out debug_out_file;*)
   (*Ending pprint informations.*)
 
 

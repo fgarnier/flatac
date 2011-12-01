@@ -335,8 +335,8 @@ address type, which type is neither TInt nor TPtr.\n")
 	
     |  _ -> 
       begin 
-	let msg = " There is something I was unable to properly
-parse in the ci_expr_2_ptr function" 
+	let msg = Format.sprintf " There is something I was unable to properly
+parse in the cil_expr_2_ptr function %s" (Ast_goodies.pprint_cil_exp expr) 
 	in let exc =  Bad_expression_type msg in 
 	   raise exc
       end

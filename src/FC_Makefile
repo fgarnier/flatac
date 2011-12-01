@@ -14,8 +14,9 @@ typename_of_cil_types new_composite_type_upon_ssl \
 ssl_valid_abs_dom_types ssl_valid_abs_dom \
 c_upon_ssl_domain\
 extended_cfg flatac_ssl_front_end \
-cautomata c2cautomatanalys flata_language flatac_debug_visitor \
 flatac_function_visitor flatac_plugin
+
+#cautomata c2cautomatanalys flata_language flatac_debug_visitor \
 
 include Makefile.conf
 include $(FRAMAC_SHARE)/Makefile.dynamic

@@ -20,13 +20,14 @@ int main() {
     if (strstr(line, "put") == line) {
       // put the string, including the final '\0'
       printf("main: put '%s' ... \n", line+3);
-      put(&b, strlen(line)-2, line+3);
+      put(b, strlen(line)-2, line+3);
     }
     if (strstr(line, "get") == line) {
-      char* data; int size;
-      if ( get(&b, &size, &data) == OK) {
+      char** data; 
+	int * size = malloc(sizeof(int));
+      if ( get(b, size, data) == OK) {
 	printf("main: get '%s' ...\n", data);
-	free( data );
+	free( (*data) );
       }
     }
     if (strstr(line, "end") == line)
