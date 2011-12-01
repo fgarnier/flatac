@@ -1,0 +1,55 @@
+
+
+
+
+Good evening,
+ I would like to perform some program transformation using Cil, 
+and I have some question to ask concerning some technical issues.
+
+
+Basically, I want to be able to remove, add and replace some statements (Cil_types.stmt)
+within some code blocks. To do so, I can
+define a visitor that inherits from a frama_c_copy_visitor in
+which I can overload the method vblock, in which I can replace
+the visited node by a new subtree thanks to the ChangeDoChildrenPost() action visit.
+
+Well, I have the following issue :
+
+To define new statements, I need to be able to define new expressions.
+ Each time I want to define an expression --Cil_types.exp--
+I need to be able to provide three non mutable fields, namely :
+ eid, enode, eloc.
+
+The field eid must be unique. I think it is possible to 
+compute an unite eid, by computing the maximum value of all
+the eid in the Ast, thanks to a dedicated visitor. However,
+I think there might be some function that allows to register
+the expression inside some dedicated data struture, just as
+it is the case for the statements. 
+
+I found the function, defined in the Cil module, that might help
+me to do what I want :
+
+"
+val new_exp : loc:Cil_types.location -> Cil_types.exp_node -> Cil_types.exp
+" 
+
+However, I don't know which value I should assign to loc:Cil_types.location parameter. 
+For instance,
+if I define some expressions, I have no clue where they shall be ultimately inserted in 
+the final file  --location is a tuple of two Lexing.positions values.
+
+In the section 5.11 of the plugin development guide, it is explained that all the result
+of computation shall be attached to the AST using either high lever or low level functors.
+I tried to find out the interface and the API documentation of such functors, to figure
+out whether they might help me to solve my issue --this is not clear to me. However, 
+I have not been able to find the modules and functors described in the guide, and I
+reported this issue in the Mantis bug tracker system.
+
+ Thanks in advance for helping me, I must admit I'm a bit lost right now !
+
+
+
+Best regards,
+ Florent.
+
