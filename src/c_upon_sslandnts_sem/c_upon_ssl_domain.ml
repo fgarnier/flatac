@@ -358,7 +358,7 @@ let r_malloc_neg_or_zero_arg (var : Cil_types.varinfo option ) sslv  (mid: globa
 	begin
 	  let new_abstract = copy_validity_absdomain sslv in
 	  let pvar = (PVar( v.vname )) in
-	  let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
+	  let interpret_param = interpret_c_scal_to_cnt new_abstract.ssl_part 
 	    scal_param in
 	  let aff_to_nil = Pointsnil(pvar) in
 	  and_atomic_ptnil aff_to_nil new_abstract.ssl_part;
@@ -370,7 +370,7 @@ let r_malloc_neg_or_zero_arg (var : Cil_types.varinfo option ) sslv  (mid: globa
     | None ->
       	begin
 	  let new_abstract = copy_validity_absdomain sslv in
-	  let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
+	  let interpret_param = interpret_c_scal_to_cnt new_abstract.ssl_part 
 	    scal_param in
 	  let guard_leq_zero =  CntGuard(CntBool(CntLeq,interpret_param,CntCst(0))) 
 	  in 
@@ -389,9 +389,9 @@ let r_malloc_neg_or_zero_arg_withvalidityguard (var : Cil_types.varinfo option )
 	begin
 	  let new_abstract = copy_validity_absdomain sslv in
 	  let pvar = PVar( v.vname ) in
-	  let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
+	  let valid_paral_malloc = valid_cscal new_abstract.ssl_part scal_param in
 	  let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
-	  let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
+	  let interpret_param = interpret_c_scal_to_cnt new_abstract.ssl_part 
 	    scal_param in
 	  let aff_to_nil = Pointsnil(pvar) in
 	  and_atomic_ptnil aff_to_nil new_abstract.ssl_part;
@@ -404,9 +404,9 @@ let r_malloc_neg_or_zero_arg_withvalidityguard (var : Cil_types.varinfo option )
     | None ->
       begin
 	let new_abstract = copy_validity_absdomain sslv in
-	let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
+	let valid_paral_malloc = valid_cscal new_abstract.ssl_part scal_param in
 	let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
-	let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
+	let interpret_param = interpret_c_scal_to_cnt new_abstract.ssl_part 
 	  scal_param in
 	let interpret_leq_zero = CntBool(CntLeq,interpret_param,CntCst(0)) 
 	in 

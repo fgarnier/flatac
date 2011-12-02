@@ -674,7 +674,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       let res_string = Format.sprintf "nts %s; \n" name in
       let res_string = res_string^name^" {\n" in
       let res_string = res_string^"in "^self#pprint_input_vars^"\n" in
-      let res_string = res_string^self#pprint_local_vars^"\n" in
+      let res_string = res_string^"locals "^self#pprint_local_vars^"\n" in
       let res_string = res_string^(self#pprint_inits)^"\n"  in
       let res_string = res_string^(self#pprint_finals)^"\n" in
       let res_string = res_string^(self#pprint_error_states)^"\n" in
