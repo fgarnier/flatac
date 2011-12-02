@@ -27,6 +27,7 @@ open Lexing
 
 
 exception Debug_info of string
+exception Not_an_array_offset
 
 
     
@@ -393,7 +394,10 @@ des parametres \n" ;
        
 		    | _  -> get_first_ptvar_from_lparam l' 
 	 end
-	   
+
+
+
+
 (*
 let get_cil_type_of_global (g : cil_types.global ) =
   match g with

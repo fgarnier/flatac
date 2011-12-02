@@ -1,6 +1,7 @@
 open Ssl_types
 open Ssl
 open SSL_lex
+open Ssl_types
 open Ssl_valid_abs_dom_types
 open Var_validity_types
 open Var_validity
@@ -20,6 +21,8 @@ let create_validity_abstdomain =
     composite_types_infos =  index_types ;
   }
 
+let add_alloc_cell_to_validity_abstdomain  (lvar : locvar) (domain :ssl_validity_absdom) =
+  Ssl.add_alloc_cell lvar domain.ssl_part 
 
 let add_atomic_affect_to_validity_abstdomain  (equ : SSL_lex.affect) (domain :ssl_validity_absdom) =
   Ssl.and_atomic_affect equ domain.ssl_part 
@@ -48,9 +51,6 @@ let set_var_validity_in_absdomain  (domain : ssl_validity_absdom) ( vinfo : Cil_
     composite_types_infos = domain.composite_types_infos ;
   }
 
-
-
- 
   
 
 (* Registers the set of local variables in the validity table*)
@@ -71,7 +71,22 @@ let register_slocals mid (funinfos : Cil_types.fundec ) ( absdom_param : ssl_val
 	  add_atomic_affect_to_validity_abstdomain atom_aff absdom;
 	  absdom
 	end 
-	  
+
+
+      | TArray( atyp, opt_size, _ , _ ) ->
+	begin
+	  let fresh_lvar = mid#get_fresh_lvar in
+	  let atom_aff = (Pointsto((PVar(sform.vname)),fresh_lvar)) in
+	  add_atomic_affect_to_validity_abstdomain atom_aff absdom;
+	  begin
+	    match opt_size with
+		None -> ()
+	      | Some(array_size) ->
+		add_alloc_cell_to_validity_abstdomain fresh_lvar absdom
+	  end;
+	  absdom
+	end
+
       | TComp(_,_,_) | TNamed(_,_) ->
 	begin
 	  let sslf_abstr = absdom_param.ssl_part in

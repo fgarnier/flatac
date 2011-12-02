@@ -200,6 +200,13 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
 	let  sizeof_ptr_type = interpret_ciltypes_size optype in
 	CntProd(ll,sizeof_ptr_type)
       end
+
+    | LiBaseAddrOfArray (_,cpvar,_,t) ->
+      begin
+	let var_name  = LiPVar(Unprimed,cpvar,t) in
+	interpret_c_ptrexp_to_cnt sslf var_name 
+      end
+      
 (** Returns the type of the pointer expression, that is
 basically the type of the varname. Returns the type of the
 innermost pointer variable the expression tree.
@@ -208,8 +215,10 @@ One need to check that this procedure is sufficient, but
 it may not be.
 *)
 let rec type_of_ptrexp ptrexp =
-   match ptrexp with 
+  match ptrexp with 
       LiPVar( _ , LiIntPtr(vname), vtype) -> vtype
+    | LiBaseAddrOfArray(_,_,_,t)-> t
+    
     | LiPlusPI ( cptrexp , _ ,_) -> 
 	type_of_ptrexp cptrexp
     | LiMinusPI ( cptrexp , scalv,_ ) ->

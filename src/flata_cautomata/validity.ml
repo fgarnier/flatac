@@ -36,6 +36,7 @@ let rec base_var_ptrexp ( ptr_exp : c_ptrexp ) =
       LiPVar ( _ , LiIntPtr(vname), _ ) ->
 	PVar(vname) (* That's indeed the name of the pointer
 		    var we are looking for.*)
+     | LiBaseAddrOfArray(_,cptr,_,t) -> base_var_ptrexp  (LiPVar(Unprimed,cptr,t))
 
     | LiPlusPI ( cptr , _ , _) -> base_var_ptrexp  cptr
     | LiIndexPI ( cptr , _ , _) -> base_var_ptrexp  cptr
@@ -66,11 +67,14 @@ let rec base_ptrexp (sslf : ssl_formula )( ptr_exp : c_ptrexp ) =
     | LiIndexPI ( cptr , _ , _) -> base_ptrexp sslf cptr
     | LiMinusPI ( cptr , _ , _) -> base_ptrexp sslf cptr
     | LiAddrOfScal( scalar , _ ) -> base_cscalptrexp sslf scalar
+    | LiBaseAddrOfArray (_,cptr,_,t) -> 
+      base_ptrexp sslf (LiPVar(Unprimed,cptr,t))   
 and
     base_cscalptrexp (sslf : ssl_formula )( scal : c_scal ) =
   match scal with
       LiScalOfAddr(ptrexp , _ ) -> base_ptrexp sslf ptrexp
     | _ -> LVar("") (*Nil*)
+
 
 
 (** Generates counter based expressions that allow to determinate
@@ -162,6 +166,20 @@ and valid_ptrexp (sslf : ssl_formula ) ( ptrexp :  c_ptrexp ) =
 
     | LiAddrOfScal ( scal_exp , _ ) ->
       valid_cscal sslf scal_exp
+
+
+    | LiBaseAddrOfArray(_,ptrexp,size,t) ->
+      begin
+	let val_ptr_exp = 
+	  valid_ptrexp sslf (LiPVar(Unprimed,ptrexp,t)) in
+	let val_size_exp =
+	  match size with
+	    | LiArraySizeUnknown -> TrueValid
+	    | LiArraySize(scal_size) ->
+	      valid_cscal sslf scal_size 
+	in
+      and_valid val_ptr_exp val_size_exp
+      end
 
 (*
 

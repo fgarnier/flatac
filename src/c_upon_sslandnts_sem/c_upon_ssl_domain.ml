@@ -37,8 +37,43 @@ exception Debug_information of string
 
 exception Debug_info of string 
 
+(*
+type il_expr = IlScal of c_scal
+	       | IlPtr of c_ptrexp
+*)
 
-
+let compile_param_list_2_cnt_list sslv ( lparam : Cil_types.exp list) =
+  let cilexp_2_il_iterator e =
+    let type_of_e = Cil.typeOf e in
+    match type_of_e with
+	TPtr(_,_) | TArray(_,_,_,_) -> 
+	  begin
+	    let ptr_exp = cil_expr_2_ptr e in
+	    IlPtr(ptr_exp)
+	  end
+      | _ ->
+	begin
+	  let alias_tname = 
+	    Composite_types.is_integer_type type_of_e in
+	  match alias_tname with 
+	      Some(_) ->
+		begin
+		  let scal_exp = cil_expr_2_scalar e in
+		  IlScal(scal_exp)
+		end
+	    | None ->
+	      raise (Debug_info ("compile_param_list_2_cnt_list : I have an argume which type is neither an integer value nor a pointer/array"))
+	end
+  in
+  let ilexp_2_cnt_iterator i =
+    match i with
+	IlPtr(e) -> interpret_c_ptrexp_to_cnt sslv.ssl_part e
+      | IlScal(e) -> interpret_c_scal_to_cnt sslv.ssl_part e
+  in
+  let il_list = List.map ( cilexp_2_il_iterator ) lparam in
+  let ret_list = List.map (ilexp_2_cnt_iterator ) il_list
+  in ret_list
+ (*  contains the ret_list *)
 
 
 let make_offset_locpvar (v : ptvar ) =
@@ -46,6 +81,8 @@ let make_offset_locpvar (v : ptvar ) =
       PVar ( s ) -> let soff =
 	"offset("^s^")" in
 	NtsIVar(soff)
+
+
 
 
 
@@ -568,11 +605,10 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 			    match alias_tname with
 			      | Some(_) ->
 				  let funname = f.vname in
-				  let arg_cscal_list = List.map ( fun s -> cil_expr_2_scalar s) 
-				    lparam in
+				  
 				  let arg_nts_list =
-				    List.map ( fun s-> interpret_c_scal_to_cnt sslv.ssl_part s ) 
-				      arg_cscal_list in
+				     compile_param_list_2_cnt_list sslv lparam in
+				   (* List.map ( fun s-> interpret_c_scal_to_cnt sslv.ssl_part s ) *)
 				  let nts_lval = NtsIVar(v.vname) in
 				  let cnt_trans_label = 
 				    CntFunCall(funname,Some(nts_lval),arg_nts_list) in

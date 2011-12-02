@@ -35,6 +35,7 @@ type c_int_sym_const = LiSymIConst of string
 type c_ptr = LiIntPtr of string (*The represented type is indeed an int*)
 
 
+
 (* We define the type of  the scalars as follows.
 basicaly, the scalar we consider in this language are all the scalars
 that are the evaluation of arithmetic
@@ -61,10 +62,15 @@ type c_scal = LiVar of primed * c_int_var
 					 integer type*) 
 		  
 and c_ptrexp = LiPVar of primed * c_ptr *  Cil_types.typ
+	       | LiBaseAddrOfArray (* Base address of an array*)
+		   of primed * c_ptr * li_array_size * Cil_types.typ
 	       | LiPlusPI of c_ptrexp * c_scal  * Cil_types.typ
 	       | LiIndexPI of c_ptrexp * c_scal * Cil_types.typ
 	       | LiMinusPI of c_ptrexp * c_scal * Cil_types.typ
 	       | LiAddrOfScal of c_scal * Cil_types.typ
+
+and li_array_size = LiArraySize of c_scal
+		     | LiArraySizeUnknown
 
 
 type il_expr = IlScal of c_scal
@@ -333,13 +339,55 @@ address type, which type is neither TInt nor TPtr.\n")
       end
       	
 
-    | StartOf((Var(v),Index(e,NoOffset)))->
+    | StartOf((Var(v),NoOffset))-> (* Implicit conversion form 
+				  an array to a pointer.*)
       begin
-	match v.typ with
-	    TArray(t,_,_,_)->
-	      LiAddr
+	match v.vtype with
+	    TArray(t,e,_,_)->
+	      begin
+		match e with
+		  |  Some(size_exp) ->
+		    let size_c_scal =  cil_expr_2_scalar size_exp in 
+		    LiBaseAddrOfArray(Unprimed, LiIntPtr(v.vname),
+				      LiArraySize( size_c_scal), t )
+		      
+		  | None -> 
+		    LiBaseAddrOfArray(Unprimed, LiIntPtr(v.vname),LiArraySizeUnknown, t)
+	      end
+
       end
 	
+
+    | StartOf((Var(v),Index(index,_)))->
+      (*Getting the address that corresponds to the Indexed element
+      of the array --Type, name contained in Var(v)
+	nota bene : This algorithm doesn't handle multi dimentional
+	arrays.
+      *)
+      begin
+	match v.vtype with
+	    TArray(t,e,_,_)->
+	      begin
+		let expr_of_index = cil_expr_2_scalar index in
+		let base_addre =  
+		  begin
+		    match e with
+		      |  Some(size_exp) ->
+			let size_c_scal =  cil_expr_2_scalar size_exp in
+			LiBaseAddrOfArray(Unprimed, LiIntPtr(v.vname),
+					  LiArraySize( size_c_scal), t )
+			  
+		      | None ->
+			LiBaseAddrOfArray(Unprimed, LiIntPtr(v.vname),LiArraySizeUnknown, t)
+		  end
+		in
+		let addr =  LiIndexPI(base_addre,expr_of_index,t)
+		in addr
+	      end
+
+      end
+	
+
     |  _ -> 
       begin 
 	let msg = Format.sprintf " There is something I was unable to properly
@@ -529,6 +577,12 @@ and ptrexp_to_str ( cptr : c_ptrexp ) =
     
       LiPVar ( Primed , LiIntPtr ( vname), _ ) ->
 	vname^"'"
+
+    | LiBaseAddrOfArray(_,LiIntPtr(vname),LiArraySize(size),t) ->
+      Format.sprintf "&(%s : %s[%s])" vname (Ast_goodies.pprint_ciltypes t) (scal_to_string size)
+	
+    | LiBaseAddrOfArray(_,LiIntPtr(vname),LiArraySizeUnknown,t) ->
+      Format.sprintf "&(%s : %s[Array of unknown size]" vname (pprint_ciltypes t) 	
     
     | LiPVar ( Unprimed , LiIntPtr ( vname ), _) ->
       vname
