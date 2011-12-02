@@ -17,6 +17,7 @@ exception Invalid_nts_expression
 
 type nts_base_types = NtsIntType
 		      | NtsRealType
+		      | NtsBool
 		      | NtsArray of string * int * nts_base_types   
 (* An array has a name, a size and contains the type of
 each element 

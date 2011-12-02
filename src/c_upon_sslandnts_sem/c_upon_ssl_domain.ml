@@ -584,10 +584,26 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 				  "malloc" | "calloc" -> (malloc_ssl_nts_transition (Some(v)) sslv lparam mid)
 				    
 				|  _ -> 
-				  let msg = Format.sprintf 
+
+				  let funname = f.vname in
+				  
+				  let arg_nts_list =
+				     compile_param_list_2_cnt_list sslv lparam in
+				   (* List.map ( fun s-> interpret_c_scal_to_cnt sslv.ssl_part s ) *)
+				  let nts_lval = NtsIVar(v.vname) in
+				  let cnt_trans_label = 
+				    CntFunCall(funname,Some(nts_lval),arg_nts_list) in
+				  let msg= 
+				    Format.sprintf "[next_on_ssl_instr] Pointer type Var : %s = %s : %s \n[next_on_ssl_instr] argument list %s \n "  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype) (Nts.cnt_pprint_translabel cnt_trans_label ) in
+				Format.printf "%s" msg;
+				 ((sslv,(cnt_trans_label::[]))::[]) 
+
+
+
+			(*	  let msg = Format.sprintf 
 				    "[next_on_ssl_instr] Unhandled operation : Pointer Var : %s = %s(...) \n" v.vname f.vname in
 				  Format.printf "%s" msg;
-				  ((sslv,[])::[])
+				  ((sslv,[])::[]) *)
 			    (*raise (Debug_info(msg))*)
 				    
 			    (** Plug other functions name
