@@ -141,6 +141,8 @@ struct
 	    (current_node_id <- Ecfg_id(nid))
 
 	      
+    method get_name =
+      name
 
     method register_in_out_nts_vars =
       let in_out_map_folder (nts_var_list) (v : Cil_types.varinfo ) =
@@ -682,7 +684,19 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       in
       let res_string = res_string^"\n}" in
       res_string
+
+
+
+    method pprint_ecfg_vertex  =
+      let ecfg_vertex_folder id vertex str =
+	match id  with
+	    Ecfg_id(id_reg) ->
+	      str^(Format.sprintf "Key_id %d, absval : %s \n" id_reg (front_end#pretty  vertex.abstract_val) )
+
+      in 
+      let prefix = Format.sprintf " \n States of : %s \n" name in
+	Hashtbl.fold  ecfg_vertex_folder vertices prefix
 	
-  end;; (* End of the class ecfg*)
+  end;; (* End of the class ecfg*) 
 end;; (* End of the module extended_cfg.ml*)
 

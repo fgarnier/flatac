@@ -71,8 +71,10 @@ let pretty_print_cautomata_obj out =
   visited_file#save_in_file ca_out_name;
 
   let compile_out = visited_file#pprint_all_ecfgs in
-  Format.fprintf out "%s%!" compile_out;
-  
+    Format.fprintf out "%s%!" compile_out;
+    
+    let states_out = visited_file#pprint_all_ecfgs_states in
+      Format.fprintf out "%s%!" states_out;
   (* This part consists in checking the cfg structure given by Cil*)
  
 

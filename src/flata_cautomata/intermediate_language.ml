@@ -291,7 +291,7 @@ and cil_expr_2_ptr (expr : Cil_types.exp ) =
 	match vinfo.vtype with
 	    TPtr( vtypeptr, _ ) -> LiPVar(Unprimed, LiIntPtr(vinfo.vname),vtypeptr)
 	  | _ ->  begin 
-	    let msg = "This variable : "^vinfo.vname ^"is a pointer which isn't of  type TInt, but that appears in a scalar expression \n" 
+	    let msg = "This variable : "^vinfo.vname ^"is a pointer which isn't of  type TPtr, but that appears in a Lvalue expression that should have type pointer type \n" 
 	    in let exc =  Bad_expression_type msg in 
 	       raise exc
 	  end
