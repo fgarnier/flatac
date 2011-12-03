@@ -1,7 +1,9 @@
+#include <stdlib.h>
+
 char *mymalloc(int size)
 {
-  short *newmem;
-
+  short *newmem=NULL;
+  
   newmem = (short *) malloc(size + sizeof(short));
   *newmem = 1; /* initialize reference count */
   return (char *) (newmem + 1);

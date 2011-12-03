@@ -131,8 +131,8 @@ struct
 				  to be created node, if any.
 			     *)
       
-    initializer self#build_fun_ecfg funinfo; self#register_in_out_nts_vars;
-      self#register_local_vars
+    initializer  self#register_in_out_nts_vars;
+      self#register_local_vars; self#build_fun_ecfg funinfo
 
     method private incr_current_node_id =
       match current_node_id with

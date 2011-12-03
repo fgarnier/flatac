@@ -42,6 +42,36 @@ type il_expr = IlScal of c_scal
 	       | IlPtr of c_ptrexp
 *)
 
+let compile_cil_exp_2_cnt sslv ( e : Cil_types.exp ) =
+  let type_of_e = Cil.typeOf e 
+  in 
+  let i =
+    match type_of_e with
+	TPtr(_,_) | TArray(_,_,_,_) -> 
+	  begin
+	    let ptr_exp = cil_expr_2_ptr e in
+	      IlPtr(ptr_exp)
+	  end
+      | _ ->
+	  begin
+	    let alias_tname = 
+	      Composite_types.is_integer_type type_of_e in
+	      match alias_tname with 
+		  Some(_) ->
+		    begin
+		      let scal_exp = cil_expr_2_scalar e in
+			IlScal(scal_exp)
+		    end
+		| None ->
+		    raise (Debug_info ("compile_cil_exp_2_cnt : I have an argume which type is neither an integer value nor a pointer/array"))
+	  end
+  in
+    match i with
+	IlPtr(ep) -> interpret_c_ptrexp_to_cnt sslv.ssl_part ep
+      | IlScal(ep) -> interpret_c_scal_to_cnt sslv.ssl_part ep
+	  
+		      
+
 let compile_param_list_2_cnt_list sslv ( lparam : Cil_types.exp list) =
   let cilexp_2_il_iterator e =
     let type_of_e = Cil.typeOf e in
@@ -739,9 +769,8 @@ let next_on_ssl_nts (mid : global_mem_manager ) (sslv  ) (skind : Cil_types.stmt
 	 next_on_ssl_instr  mid sslv instruction
 
     | Return (Some(expr),_) ->
-      (*let type_of_exp = Cil.typeOf expr in*)
-      let scal_exp = cil_expr_2_scalar expr in
-      let cnt_exp = interpret_c_scal_to_cnt sslv.ssl_part scal_exp in
+      
+      let cnt_exp =  compile_cil_exp_2_cnt sslv expr in
       let cnt_affect = CntAffect(NtsIVar(("ret_val_")),cnt_exp) in
       (sslv , (cnt_affect::[])) :: []
 
