@@ -62,8 +62,46 @@ let register_slocals mid (funinfos : Cil_types.fundec ) ( absdom_param : ssl_val
       LocalVar in
     res
   in
+
+  let path_to_pointer_field_folder_of_ptr_struct (struct_name : string ) (path : string)  _ (loc_map : validity_loc_map) =
+    let pvar_name = struct_name^"->"^path in
+    let res = set_validity_in_by_name loc_map pvar_name  FalsevarValid 
+      LocalVar in
+      res
+  in
   let slocals_register_folder absdom sform =
     match sform.vtype with 
+	
+      | TPtr( TComp(_,_,_) ,_) | TPtr( TNamed(_,_) ,_) ->
+	  begin
+	    let sslf_abstr = absdom_param.ssl_part in
+	    let vname = sform.vname in
+	    let typedef_index =  absdom_param.composite_types_infos in
+	    let typedef_name = Typename_of_cil_types.typename_of_ciltype 
+	      sform.vtype
+	    in
+	    let index_of_pointer_field = 
+	      Composite_types.get_index_of_pointer_by_type_name
+		typedef_index typedef_name
+	    in
+	    let valid_info_res = absdom_param.validinfos in
+	    let valid_info_res = 
+	      Hashtbl.fold ( path_to_pointer_field_folder_of_ptr_struct vname)
+		index_of_pointer_field valid_info_res in
+	      new_struct_on_stack sform sslf_abstr typedef_index mid;
+	      let new_absinfos =
+		{
+		  ssl_part = sslf_abstr ;
+		  validinfos = valid_info_res ;
+		  composite_types_infos = typedef_index ;
+		}
+	      in
+		new_absinfos
+	(* A factoriser avec le bloc plus bas ... La, c'est pour la démo,
+	mais c'est crade ... *)
+	  end
+     
+
       | TPtr(_,_) ->
 	begin
 	  let fresh_lvar = mid#get_fresh_lvar in
