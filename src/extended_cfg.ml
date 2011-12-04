@@ -184,7 +184,7 @@ struct
        let new_vertex = {
 	id = current_node_id;
 	statement = s;
-	abstract_val = absval ; 	
+	abstract_val = front_end#copy_absdom_label absval ; 	
       }
        in
        Hashtbl.add vertices current_node_id new_vertex;
