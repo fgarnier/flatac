@@ -10,6 +10,7 @@ open Composite_type_types
 open Composite_types
 open New_composite_type_upon_ssl
  
+exception Debug_info of string
 
 let create_validity_abstdomain () = 
   let sslf = create_ssl_f () in
@@ -53,6 +54,7 @@ let set_var_validity_in_absdomain  (domain : ssl_validity_absdom) ( vinfo : Cil_
 
   
 
+
 (* Registers the set of local variables in the validity table*)
 let register_slocals mid (funinfos : Cil_types.fundec ) ( absdom_param : ssl_validity_absdom ) =
 
@@ -77,8 +79,13 @@ let register_slocals mid (funinfos : Cil_types.fundec ) ( absdom_param : ssl_val
 	    let sslf_abstr = absdom_param.ssl_part in
 	    let vname = sform.vname in
 	    let typedef_index =  absdom_param.composite_types_infos in
+	    let sfield_type = 
+	      match sform.vtype with
+		  TPtr(ttype,_) ->ttype
+		| _ -> raise (Debug_info("This must be a pointer \n")) 
+	    in
 	    let typedef_name = Typename_of_cil_types.typename_of_ciltype 
-	      sform.vtype
+	      sfield_type
 	    in
 	    let index_of_pointer_field = 
 	      Composite_types.get_index_of_pointer_by_type_name
