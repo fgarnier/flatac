@@ -277,7 +277,7 @@ let free_upon_sslv (pvar : ptvar)(sslv : ssl_validity_absdom ) =
 	let offset_of_pvar = Cnt_interpret.offset_cnt_of_pvar pvar in
 	let eq_zero_guard = CntBool(CntEq,offset_of_pvar,CntCst(0)) in
 	let non_zero_guard =   CntBool(CntNeq,offset_of_pvar,CntCst(0)) in
-	let fucked_up_case =  create_validity_abstdomain in
+	let fucked_up_case =  create_validity_abstdomain () in
 	Ssl.set_heap_to_top fucked_up_case.ssl_part;
 	let trans_list= (fucked_up_case, (CntGuard(non_zero_guard))::[])::[] 
 	in
@@ -448,7 +448,7 @@ let r_malloc_neg_or_zero_arg_withvalidityguard (var : Cil_types.varinfo option )
 let r_malloc_failed_with_unvalidcntgard _ sslv  (mid: global_mem_manager ) (scal_param : c_scal) =
    Self.debug ~level:0 " r_malloc_failed_with_unvalidcntgard ";
   let sslv = copy_validity_absdomain sslv in
-  let abst_domain = create_validity_abstdomain in
+  let abst_domain = create_validity_abstdomain () in
   set_heap_to_top abst_domain.ssl_part ;
   let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
   let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
@@ -498,7 +498,7 @@ let malloc_ssl_nts_transition ( v : Cil_types.varinfo  option) sslv  lparam mid 
 	end
 		
     | FalsevarValid ->
-      let abs_domain = create_validity_abstdomain in
+      let abs_domain = create_validity_abstdomain () in
       set_heap_to_top abs_domain.ssl_part ;
       (abs_domain,[])::[] (** in this case, we transit right to an error
 				state*)
@@ -574,7 +574,8 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 		      begin
 			match v.vtype with
 			    TPtr(_,_)
-			    -> affect_ptr_upon_sslv  (Var(v),off) expr sslv
+			    -> ((sslv,[])::[])
+			      (*affect_ptr_upon_sslv  (Var(v),off) expr sslv*)
 			 (* | TInt(_,_)
 			    -> affect_int_val_upon_sslv v expr sslv
 			 *) 

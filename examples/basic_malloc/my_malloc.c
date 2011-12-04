@@ -9,6 +9,7 @@ char *mymalloc(int size)
   return (char *) (newmem + 1);
 }
 
+
 main() {
   int *i;
   i = (int *) mymalloc(sizeof(int));

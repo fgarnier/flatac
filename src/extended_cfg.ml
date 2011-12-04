@@ -301,6 +301,8 @@ struct
 	  let id_ep = self#add_ecfg_entry_point statment_of_ep 
 	    absval_of_ep in
 	   entry_point_set <- true;
+	    Format.printf "[reigster_ecfg_entry_point] : Abs_formula : %s \n"
+	      (front_end#pretty absval_of_ep);
 	    id_ep
 	   (* returns the id of the node, shall be 0*) 
 	      

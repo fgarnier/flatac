@@ -11,7 +11,7 @@ open Composite_types
 open New_composite_type_upon_ssl
  
 
-let create_validity_abstdomain = 
+let create_validity_abstdomain () = 
   let sslf = create_ssl_f () in
   let val_map = new_valid_map () in
   let index_types = Composite_types.create_index_of_composite_types in

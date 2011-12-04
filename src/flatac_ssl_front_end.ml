@@ -50,24 +50,32 @@ class ssl_flatac_front_end = object
   val mutable index_of_composite_types_set = false
     
   method set_index_of_composite_types ( i : index_of_composite_types ) =
-    index_of_pointers_of_composite_types <- 
-      Composite_types.copy_index_of_composite_types i ;
-    index_of_composite_types_set <- true
+    if not index_of_composite_types_set then
+      begin
+	index_of_pointers_of_composite_types <- 
+	  Composite_types.copy_index_of_composite_types i ;
+	index_of_composite_types_set <- true
+      end
+    else ()
       
   method get_empty_transition_label () =
     []
 
   method get_entry_point_abstraction () =
-     Ssl_valid_abs_dom.create_validity_abstdomain
+     Ssl_valid_abs_dom.create_validity_abstdomain ()
  
   method get_entry_point_from_fundec ( funinfo : Cil_types.fundec ) =
     if ( not index_of_composite_types_set  ) then
       raise IndexOfCompositeTypesNotSet
     else
-      let absdom = Ssl_valid_abs_dom.create_validity_abstdomain in
+      let absdom = Ssl_valid_abs_dom.create_validity_abstdomain () in
+	Format.printf "[get°entry_point_from_fundec ]  New absdom : %s \n" (Ssl_pprinters.pprint_ssl_formula_tex absdom.ssl_part);
       absdom.composite_types_infos <- index_of_pointers_of_composite_types ; 
       let absdom = Ssl_valid_abs_dom.register_slocals mid funinfo absdom in
-      Ssl_valid_abs_dom.register_sformals mid funinfo absdom
+	Format.printf "[get°entry_point_from_fundec ]  Absdom after registering slocals : %s \n" (Ssl_pprinters.pprint_ssl_formula_tex absdom.ssl_part);
+	let absdom = Ssl_valid_abs_dom.register_sformals mid funinfo absdom in
+	Format.printf "[get°entry_point_from_fundec ]  Absdom after registering sformals : %s \n" (Ssl_pprinters.pprint_ssl_formula_tex absdom.ssl_part);
+	  absdom
 
 (*
   method get_entry_point_from_fundec_and_type_infos 
@@ -124,8 +132,8 @@ class ssl_flatac_front_end = object
     
   method entails sslvg sslvd =
      let etp = {
-      left = sslvd.ssl_part ;
-      right = sslvg.ssl_part;
+      left = Ssl.copy sslvd.ssl_part ;
+      right = Ssl.copy sslvg.ssl_part;
     }
     in
      (Ssl_entailement.does_entail etp )
@@ -139,8 +147,8 @@ class ssl_flatac_front_end = object
     the next state abstraction is sslfg (Inverted order) *)
    
     let etp = {
-      left = sslvd.ssl_part ;
-      right = sslvg.ssl_part;
+      left = Ssl.copy sslvd.ssl_part ;
+      right = Ssl.copy sslvg.ssl_part;
     }
     in
     not (Ssl_entailement.does_entail etp )
