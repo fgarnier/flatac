@@ -227,11 +227,11 @@ let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) (s
 	(new_sslv , [])::[]
       end
     
-    | Contains_no_pvar ->
+    (*| Contains_no_pvar ->
       let exprpvarless = pprint_cil_exp expr in
       Format.printf "No pvar found in %s \n" exprpvarless;
       raise Contains_no_pvar
-	  
+    *)	  
 
 
 	  
