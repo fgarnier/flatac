@@ -38,7 +38,7 @@ let new_struct_on_stack ( struct_varinfo : varinfo ) (sslf: ssl_formula )
   let struct_type = struct_varinfo.vtype in
   let type_name_of_var =  
     Typename_of_cil_types.typename_of_ciltype struct_type in
-  try
+ (* try *)
     begin
       match typedef_index with
 	  IndexCompositeTypes(index_table) -> 
@@ -49,8 +49,8 @@ let new_struct_on_stack ( struct_varinfo : varinfo ) (sslf: ssl_formula )
 	      ptrvar_adder_iterator struct_vname sslf mid in
 	    Hashtbl.iter parametrized_iterator pvar_collection_path 
     end
- with
-    | Not_found -> raise Not_found
+(* with
+    | Not_found -> raise Not_found *)
 
 
 
