@@ -21,19 +21,21 @@ and then send me your message.
 (* This part defines the function used to export the nts trees into
 a NTS compliant syntax -- as well as being human readable.*)
 
-let nts_pprint_nts_var (x : nts_var ) = 
+let rec nts_pprint_nts_var (x : nts_var ) = 
   match x with 
       NtsIVar( vname ) -> vname
     | NtsRVar ( vname ) -> vname
-    | NtsMiscType ( vname ) -> vname  
+    | NtsMiscType ( vname ) -> vname
+  (*  | NtsArray (vname,size,_) -> Format.printf "%s[%d]" vname size*)
 
 
-let nts_pprint_nts_typeinfo_var ( x :nts_var) =
+let rec nts_pprint_nts_typeinfo_var ( x :nts_var) =
   match x with 
       NtsIVar( vname ) -> vname^" :int "
     (*| NtsBVar( vname ) ->  vname^":  bool"*)
     | NtsRVar ( vname ) ->vname^" :real "
     | NtsMiscType ( vname ) ->vname^" :non scalar"
+   (* | NtsArray ( name, size , base_type) -> "Tab : "^vname^"["^(Format.printf "%d" size)^"] "^(nts_pprint_nts_typeinfo_var base_type )*)
 
 
 let pprint_typeinfo_nts_var_list l =

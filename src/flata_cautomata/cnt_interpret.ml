@@ -201,10 +201,9 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
 	CntProd(ll,sizeof_ptr_type)
       end
 
-    | LiBaseAddrOfArray (_,cpvar,_,t) ->
+    | LiBaseAddrOfArray (_,_,_,_) ->
       begin
-	let var_name  = LiPVar(Unprimed,cpvar,t) in
-	interpret_c_ptrexp_to_cnt sslf var_name 
+	CntCst(0) (* Offset of an array set to zero*)
       end
       
 (** Returns the type of the pointer expression, that is

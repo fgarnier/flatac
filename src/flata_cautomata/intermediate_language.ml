@@ -46,6 +46,11 @@ and integers constants.
 
 exception Bad_expression_type of string
 
+let get_name_of_c_ptr p =
+  match p with
+      LiIntPtr s -> s
+
+
 (** The type of integers scalar expressions*)
 type c_scal = LiVar of primed * c_int_var
 	      | LiConst of c_int_cst
@@ -68,7 +73,7 @@ and c_ptrexp = LiPVar of primed * c_ptr *  Cil_types.typ
 	       | LiIndexPI of c_ptrexp * c_scal * Cil_types.typ
 	       | LiMinusPI of c_ptrexp * c_scal * Cil_types.typ
 	       | LiAddrOfScal of c_scal * Cil_types.typ
-
+	       
 and li_array_size = LiArraySize of c_scal
 		     | LiArraySizeUnknown
 
@@ -137,7 +142,7 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
   match expr.enode with 
       Const(CInt64(i,_,_))-> LiConst( LiIConst(My_bigint.to_int i))
     | Const(CEnum(e)) -> cil_enumitem_2_scalar e
-
+    	  
     | Lval(Var(f),_)->
       begin
 	match f.vtype with
@@ -387,7 +392,14 @@ address type, which type is neither TInt nor TPtr.\n")
 
       end
 	
+    | Const(CStr(s))->
+	begin
+	  let l = String.length s in
+	  let t = TInt(IChar,[]) in
+	    LiBaseAddrOfArray(Unprimed,LiIntPtr(""),LiArraySize(LiConst(LiIConst(l))),t)
+	end
 
+	
     |  _ -> 
       begin 
 	let msg = Format.sprintf " There is something I was unable to properly

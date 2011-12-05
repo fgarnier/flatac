@@ -3,6 +3,11 @@ open Cil_types
 
 exception CType_not_found of string
 
+let pprint_composite_type_name t =
+  match t with 
+      CTypeName(name) -> name
+    
+
 let pprint_index_of_type_pointer_path (i : index_of_composite_types) =
   let pprint_path_folder (path : string ) (ciltype : Cil_types.typ ) 
       (prefix : string) =

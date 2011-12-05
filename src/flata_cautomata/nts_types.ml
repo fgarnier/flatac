@@ -18,7 +18,9 @@ exception Invalid_nts_expression
 type nts_base_types = NtsIntType
 		      | NtsRealType
 		      | NtsBool
-		      | NtsArray of string * int * nts_base_types   
+		      
+type nts_array =  NtsArray of string * int * nts_base_types
+		  |  NtsMDimArray of string * int * nts_array  
 (* An array has a name, a size and contains the type of
 each element 
 This type definition allows to encode multi dimentional arrays.
@@ -43,7 +45,7 @@ type cnt_binop = CntEq
 		 
 type cnt_arithm_exp = CntCst of int
 		      | CntSymCst of string
-		      | CntVar of nts_var
+		      | CntVar of nts_var 
 		      | CntMinus of cnt_arithm_exp * cnt_arithm_exp
 		      | CntSum of cnt_arithm_exp * cnt_arithm_exp
 		      | CntProd of cnt_arithm_exp * cnt_arithm_exp

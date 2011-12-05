@@ -95,7 +95,7 @@ let register_slocals mid (funinfos : Cil_types.fundec ) ( absdom_param : ssl_val
 	    let valid_info_res = 
 	      Hashtbl.fold ( path_to_pointer_field_folder_of_ptr_struct vname)
 		index_of_pointer_field valid_info_res in
-	      new_struct_on_stack sform sslf_abstr typedef_index mid;
+	      new_struct_pointer_on_stack sform sslf_abstr typedef_index mid;
 	      let new_absinfos =
 		{
 		  ssl_part = sslf_abstr ;

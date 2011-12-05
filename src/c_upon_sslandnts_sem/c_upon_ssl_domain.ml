@@ -47,23 +47,35 @@ let compile_cil_exp_2_cnt sslv ( e : Cil_types.exp ) =
   in 
   let i =
     match type_of_e with
-	TPtr(_,_) | TArray(_,_,_,_) -> 
+	TPtr(_,_) | TArray(_,_,_,_) ->
 	  begin
 	    let ptr_exp = cil_expr_2_ptr e in
 	      IlPtr(ptr_exp)
 	  end
+    
       | _ ->
 	  begin
-	    let alias_tname = 
-	      Composite_types.is_integer_type type_of_e in
-	      match alias_tname with 
-		  Some(_) ->
-		    begin
-		      let scal_exp = cil_expr_2_scalar e in
-			IlScal(scal_exp)
-		    end
-		| None ->
-		    raise (Debug_info ("compile_cil_exp_2_cnt : I have an argume which type is neither an integer value nor a pointer/array"))
+	    
+	    match e.enode with
+	      | Const(CStr(_)) -> 
+		  begin
+		    let ptr_exp = cil_expr_2_ptr e in
+		      IlPtr(ptr_exp) 
+		  end
+	      
+	      | _ ->
+		  begin
+		    let alias_tname = 
+		      Composite_types.is_integer_type type_of_e in
+		      match alias_tname with 
+			  Some(_) ->
+			    begin
+			      let scal_exp = cil_expr_2_scalar e in
+				IlScal(scal_exp)
+			    end
+			| None ->
+			    raise (Debug_info ("compile_cil_exp_2_cnt : I have an argume which type is neither an integer value nor a pointer/array"))
+		  end
 	  end
   in
     match i with

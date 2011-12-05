@@ -3,11 +3,14 @@ open Cil_types
 open Ssl_types
 open SSL_lex
 open Ssl
+open Composite_types
 open Composite_type_types
 open Global_mem
 open Var_validity_types
 open Var_validity
 
+
+exception Debug_info of string
 (*
 This function computes the impact of the declaration of an element of a composite type, when it is performed on the stack.
 
@@ -39,6 +42,7 @@ let new_struct_on_stack ( struct_varinfo : varinfo ) (sslf: ssl_formula )
   let type_name_of_var =  
     Typename_of_cil_types.typename_of_ciltype struct_type in
  (* try *)
+    Format.printf "[new_struct_on_stack:] type name definition : %s \n" (pprint_composite_type_name type_name_of_var);
     begin
       match typedef_index with
 	  IndexCompositeTypes(index_table) -> 
@@ -69,8 +73,15 @@ let new_struct_pointer_on_stack ( struct_varinfo : varinfo ) (sslf: ssl_formula 
   
   let struct_vname = struct_varinfo.vname in
   let struct_type = struct_varinfo.vtype in
-  let type_name_of_var =  
-    Typename_of_cil_types.typename_of_ciltype struct_type in
+
+  let sfield_type = 
+    match struct_type with
+	TPtr(ttype,_) ->ttype
+      | _ -> raise (Debug_info("This must be a pointer \n")) 
+  in
+  let type_name_of_var = Typename_of_cil_types.typename_of_ciltype 
+    sfield_type
+  in
     try
       begin
 	match typedef_index with
