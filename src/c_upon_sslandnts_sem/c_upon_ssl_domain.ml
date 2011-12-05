@@ -594,14 +594,16 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 			  | _ ->
 			    
 			let msg =
-			  Format.sprintf "Mem(e) with e.node : Lval(Var(v),off), not yet supported, where v = %s and offset = %s \n, %s <- %s" v.vname (Ast_goodies.pprint_offset off ) v.vname (pprint_cil_exp expr) in
-			(*Format.printf "%s" msg;
-			 (sslv,[])::[]*)
-			raise (Debug_info (msg))
+			  Format.sprintf "Mem(e) with e.node : Lval(Var(v),off), not yet supported, where v = %s and offset = %s \n, %s <- %s. Need to check alignement and bloc size." v.vname (Ast_goodies.pprint_offset off ) v.vname (pprint_cil_exp expr) in
+			Format.printf "%s" msg;
+			 ((sslv,[])::[])
+			(*raise (Debug_info (msg))*)
 		      end
 			| _ -> 
-			  let msg = Format.sprintf "[next_on_ssl_affect :]Paramater e in Mem(e) is not a Lval(Var(),_), e is : %s \n" (pprint_cil_exp e) in
-			  raise (Debug_info (msg))
+			  let msg = Format.sprintf "[next_on_ssl_affect :]Paramater e in Mem(e) is not a Lval(Var(),_), e is : %s. Need to check block size and segmentation here \n" (pprint_cil_exp e) in
+			  Format.printf "%s" msg;
+			  (*raise (Debug_info (msg))*)
+			  ((sslv,[])::[])
 	      end
 	    | _ ->  Self.debug ~level:0 "The left member of this affectation is not a variable, skiping it \n"; 
 	      (sslv,[])::[]
