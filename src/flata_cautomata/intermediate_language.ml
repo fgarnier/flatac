@@ -435,7 +435,7 @@ let rec cil_expr_2_bool (expr : Cil_types.exp) =
 	 
     | BinOp(Lt,expg,expd,_) -> 
       begin
-	let targs = Cil.typeOf expr in
+	let targs = Cil.typeOf expg in
 	match targs with
 	    TPtr(_,_) -> LiBPtrLt(cil_expr_2_ptr expg, cil_expr_2_ptr expd)
 	  | _ -> 	LiBLt(cil_expr_2_scalar expg ,cil_expr_2_scalar expd) 
@@ -443,7 +443,7 @@ let rec cil_expr_2_bool (expr : Cil_types.exp) =
 	
     | BinOp(Gt,expg,expd,_) ->
       begin
-	let targs = Cil.typeOf expr in
+	let targs = Cil.typeOf expg in
 	match targs with
 	    TPtr(_,_) -> LiBPtrGt(cil_expr_2_ptr expg, cil_expr_2_ptr expd)
 	  | _ -> LiBGt(cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
@@ -451,7 +451,7 @@ let rec cil_expr_2_bool (expr : Cil_types.exp) =
 
     | BinOp(Le,expg,expd,_) ->
       begin
-	let targs = Cil.typeOf expr in
+	let targs = Cil.typeOf expg in
 	match targs with
 	    TPtr(_,_) ->  LiBPtrLeq(cil_expr_2_ptr expg, cil_expr_2_ptr expd)
 	  | _->   LiBLeq(cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
@@ -459,7 +459,7 @@ let rec cil_expr_2_bool (expr : Cil_types.exp) =
 
     | BinOp(Ge,expg,expd,_) ->
       begin
-	let targs = Cil.typeOf expr in
+	let targs = Cil.typeOf expg in
 	match targs with
 	    TPtr(_,_) ->  LiBPtrGeq(cil_expr_2_ptr expg, cil_expr_2_ptr expd)
 	  | _ ->LiBGeq(cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
@@ -467,29 +467,26 @@ let rec cil_expr_2_bool (expr : Cil_types.exp) =
 	
     | BinOp(Ne,expg,expd,_) ->
        begin
-	let targs = Cil.typeOf expr in
+	let targs = Cil.typeOf expg in
 	match targs with
 	    TPtr(_,_) ->  LiBPtrNeq(cil_expr_2_ptr expg, cil_expr_2_ptr expd)
 	  |_-> LiBNeq(cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
        end
 
 
-    | BinOp (Eq , expg , expd , TPtr ( _ , _)) ->
-       begin
-	 LiBPtrEq(cil_expr_2_ptr expg, cil_expr_2_ptr expd)
-   
-       end
+    | BinOp (Eq , expg , expd , _) ->
+	begin
+	  let targs = Cil.typeOf expg in
+	    match targs with
+		TPtr(_,_) ->  LiBPtrEq(cil_expr_2_ptr expg, cil_expr_2_ptr expd)
+	      | _ -> LiBEq(cil_expr_2_scalar expg, cil_expr_2_scalar expd)	
+	end
 
-
-    | BinOp (Eq , expg, expd, _) ->
-      begin
-	LiBEq(cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
-      end
 
     | Const(CInt64(value,_,_)) ->  
       LiBScal(LiConst( LiIConst (My_bigint.to_int value)))
     
-    | _-> 
+    | _->
 
       begin
 	let etype = Cil.typeOf expr in
