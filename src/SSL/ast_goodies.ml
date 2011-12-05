@@ -29,7 +29,8 @@ open Lexing
 exception Debug_info of string
 exception Not_an_array_offset
 
-
+let debug_out =
+  Format.formatter_of_out_channel stdout
     
 let pprint_lexing_infos (loc : Cil_types.location) =
   match loc with

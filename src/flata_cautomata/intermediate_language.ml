@@ -139,6 +139,7 @@ let rec negate_bool_bot ( b_exp : c_bool ) =
 let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 
   Format.printf "In cil_expr_2_scalar %s \n" (Ast_goodies.pprint_cil_exp expr );
+  Cil.d_exp Ast_goodies.debug_out expr;
   match expr.enode with 
       Const(CInt64(i,_,_))-> LiConst( LiIConst(My_bigint.to_int i))
     | Const(CEnum(e)) -> cil_enumitem_2_scalar e
@@ -276,10 +277,13 @@ integer type, which type is neither TInt nor TPtr : %s , type : %s .\n" (pprint_
     | UnOp (Neg, exp , TInt(_,_)) ->
       LiUnMin ( cil_expr_2_scalar exp)
        
-    | _ -> raise( Bad_expression_type ("Can't parse expression in cil_expr_2_scalar : %s \n"^(Ast_goodies.pprint_cil_exp expr)))
+    | _ -> 
+      Cil.d_exp Ast_goodies.debug_out expr;
+      raise( Bad_expression_type ("Can't parse expression in cil_expr_2_scalar : %s \n"^(Ast_goodies.pprint_cil_exp expr)))
 
 and cil_expr_2_ptr (expr : Cil_types.exp ) =
    Format.printf "In cil_expr_2_ptr %s \n" (Ast_goodies.pprint_cil_exp expr );
+  Cil.d_exp Ast_goodies.debug_out expr;
   match expr.enode with
     
       BinOp (PlusPI, expg, expd , optype ) ->
@@ -396,7 +400,7 @@ address type, which type is neither TInt nor TPtr.\n")
 	begin
 	  let l = String.length s in
 	  let t = TInt(IChar,[]) in
-	    LiBaseAddrOfArray(Unprimed,LiIntPtr(""),LiArraySize(LiConst(LiIConst(l))),t)
+	    (LiBaseAddrOfArray(Unprimed,LiIntPtr(""),LiArraySize(LiConst(LiIConst(l))),t))
 	end
 
 	
@@ -430,32 +434,91 @@ let rec cil_expr_2_bool (expr : Cil_types.exp) =
 	 LiBNot(cil_expr_2_bool exp)
 	 
     | BinOp(Lt,expg,expd,_) -> 
-	LiBLt(cil_expr_2_scalar expg ,cil_expr_2_scalar expd) 
+      begin
+	let targs = Cil.typeOf expr in
+	match targs with
+	    TPtr(_,_) -> LiBPtrLt(cil_expr_2_ptr expg, cil_expr_2_ptr expd)
+	  | _ -> 	LiBLt(cil_expr_2_scalar expg ,cil_expr_2_scalar expd) 
+      end
 	
     | BinOp(Gt,expg,expd,_) ->
-	LiBGt(cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
+      begin
+	let targs = Cil.typeOf expr in
+	match targs with
+	    TPtr(_,_) -> LiBPtrGt(cil_expr_2_ptr expg, cil_expr_2_ptr expd)
+	  | _ -> LiBGt(cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
+      end
 
     | BinOp(Le,expg,expd,_) ->
-	LiBLeq(cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
+      begin
+	let targs = Cil.typeOf expr in
+	match targs with
+	    TPtr(_,_) ->  LiBPtrLeq(cil_expr_2_ptr expg, cil_expr_2_ptr expd)
+	  | _->   LiBLeq(cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
+      end
 
     | BinOp(Ge,expg,expd,_) ->
-	LiBGeq(cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
-
+      begin
+	let targs = Cil.typeOf expr in
+	match targs with
+	    TPtr(_,_) ->  LiBPtrGeq(cil_expr_2_ptr expg, cil_expr_2_ptr expd)
+	  | _ ->LiBGeq(cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
+      end
+	
     | BinOp(Ne,expg,expd,_) ->
-	LiBNeq(cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
+       begin
+	let targs = Cil.typeOf expr in
+	match targs with
+	    TPtr(_,_) ->  LiBPtrNeq(cil_expr_2_ptr expg, cil_expr_2_ptr expd)
+	  |_-> LiBNeq(cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
+       end
 
-    | BinOp (Eq , expg , expd , TPtr (TInt(_,_) , _)) ->
-      LiBPtrEq ( cil_expr_2_ptr expg ,  cil_expr_2_ptr expd )
-	
-    | BinOp(Eq,expg,expd,_) ->
-      LiBEq(cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
-	
+
+    | BinOp (Eq , expg , expd , TPtr ( _ , _)) ->
+       begin
+	 LiBPtrEq(cil_expr_2_ptr expg, cil_expr_2_ptr expd)
+   
+       end
+
+
+    | BinOp (Eq , expg, expd, _) ->
+      begin
+	LiBEq(cil_expr_2_scalar expg ,cil_expr_2_scalar expd)
+      end
+
     | Const(CInt64(value,_,_)) ->  
       LiBScal(LiConst( LiIConst (My_bigint.to_int value)))
     
-    | _-> raise ( Bad_expression_type "Trying to parse an expression \
- that can't be evaluated as a boolean \n")
+    | _-> 
 
+      begin
+	let etype = Cil.typeOf expr in
+	match etype with
+	    TInt(_,_) -> 
+	      begin
+		let cscal_exp =cil_expr_2_scalar expr in
+		LiBNeq(cscal_exp,LiConst(LiIConst(0)))
+	      end
+		
+	  | _ ->
+	    begin
+	      let alias_tname = Composite_types.is_integer_type etype in
+	      match alias_tname with
+		| Some(_) -> 
+		  let cscal_exp =cil_expr_2_scalar expr in
+		  LiBNeq(cscal_exp,LiConst(LiIConst(0)))
+		    
+		| None ->
+		  let msg = Format.sprintf "Trying to parse an expression \
+ that can't be evaluated as a boolean : %s\n" (Ast_goodies.pprint_cil_exp expr )
+		  in
+		  raise ( Bad_expression_type msg )
+
+	    end  
+      end
+	
+	
+     
 
 
 (********************************************************************)

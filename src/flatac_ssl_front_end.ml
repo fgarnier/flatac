@@ -29,6 +29,8 @@ open Composite_types (* Type definition for analysing C language composite
 		     types, such as structures and enumerations*)
 open Composite_type_visitors
 open Visitor (* Frama-c visitors*)
+open Intermediate_language
+open Cnt_interpret
 
 open Self
 
@@ -113,6 +115,29 @@ class ssl_flatac_front_end = object
     Ssl_pprinters.pprint_ssl_formula_tex sslv.ssl_part
 
     
+  method next_on_if_statement (sslv : ssl_validity_absdom ) 
+    (cdition : Cil_types.exp) =
+    begin
+      let cbool_cdition = cil_expr_2_bool cdition in
+      let neg_cbool_cdition =  negate_bool_bot cbool_cdition in 
+      let nts_cdition = c_bool_to_cnt_bool 
+	sslv.ssl_part cbool_cdition 
+      in
+      let neg_of_nts_cdition =  c_bool_to_cnt_bool 
+	sslv.ssl_part neg_cbool_cdition in
+      let abs_val_true = Ssl_valid_abs_dom.copy_validity_absdomain sslv in
+      let abs_val_false = Ssl_valid_abs_dom.copy_validity_absdomain  sslv in
+      let nts_trans_yes = (abs_val_true ,(CntGuard(nts_cdition))::[])
+      in
+      let nts_trans_no = 
+	(abs_val_false ,(CntGuard(neg_of_nts_cdition))::[])
+      in
+      let ret_list = (nts_trans_yes::[]) in
+      nts_trans_no::ret_list	
+    end
+    
+    
+
   method next (sslv : ssl_validity_absdom ) _
     (skind : Cil_types.stmtkind) =
    (** we now need to copy the current sslf_formula of sslv. 

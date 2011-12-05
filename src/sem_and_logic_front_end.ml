@@ -45,6 +45,7 @@ object
   * statement kind. *)
   method virtual next : 'a -> 'b -> stmtkind -> ('a * 'b) list
   
+  method virtual next_on_if_statement : 'a ->  Cil_types.exp -> ('a * 'b) list
   (** Abstraction pretty printer *)
   method virtual pretty : 'a -> string
 

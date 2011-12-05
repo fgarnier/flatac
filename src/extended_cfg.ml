@@ -26,6 +26,8 @@ open Visitor
 open Sem_and_logic_front_end
 open Nts_types
 open Extended_cfg_types
+open Intermediate_language
+open Cnt_interpret
 
 
 exception Entry_point_already_registered 
@@ -459,8 +461,9 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
        on all the nodes that are registered as successor of  the parameter
        current_node. *)	    
     method private recursive_build_ecfg ( current_node : ecfg_vertex ) =
-     
-      (*let current_sid = current_node.statement.sid in*)
+     (*Current_skind is here to deal with the control flow related instruction
+     at this level. Other instructions sementic are define in c_upon_ssl_domain.ml*)
+      let current_stmt = current_node.statement in 
       let ecfg_succ_recursor  (index : ecfg_id ) _ =
 	Format.printf "recursor : successor id is %d \n" 
 	  ( get_id_of_ecfg_id index);
@@ -495,13 +498,25 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 
       in
       let build_iterator ( succs_stmt : Cil_types.stmt ) =
-	let current_absvalue = front_end#copy_absdom_label 
-	  current_node.abstract_val
-	in
-	let empty_label = front_end#get_empty_transition_label () in
-	let succs_list = front_end#next current_absvalue empty_label 
-	  succs_stmt.skind 
-	in
+	let succs_list =
+	  match current_stmt.skind with 
+	      If(cdition,_,_,_) ->
+		begin
+		  let sslv = front_end#copy_absdom_label current_node.abstract_val in
+		  front_end#next_on_if_statement sslv cdition 
+		end
+	    
+	    | _ ->
+	      begin
+		let current_absvalue = front_end#copy_absdom_label 
+		  current_node.abstract_val
+		in
+		let empty_label = 
+		  front_end#get_empty_transition_label () in
+		front_end#next current_absvalue empty_label 
+		  succs_stmt.skind
+	      end
+	in (* succs_list is now set*)
 	List.iter (next_list_adder_iterator succs_stmt) succs_list
       (* End of the build_iterator definition *)
       in 
