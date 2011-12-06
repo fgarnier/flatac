@@ -90,3 +90,74 @@ let get_ptr_fields_of_cil_global_type  ( t : Cil_types.global ) =
 
 
       
+let rec get_int_fields_of_cil_type (t : Cil_types.typ ) (path : string ) (path_collection : (string , Cil_types.typ ) Hashtbl.t) =
+  match t with
+     TFun(_,_,_,_) | TVoid (_) | 
+	 TFloat (_,_) | TArray (_,_,_,_)-> ()
+  
+
+    | TInt(inttype,b) -> Hashtbl.add path_collection path (TInt(inttype,b))
+    | TNamed(tinfo,_) -> get_int_fields_of_cil_type tinfo.ttype path path_collection
+    | TComp (cinfo , _ , _ ) -> unfold_compinfo cinfo path path_collection
+    | TEnum (_,_) -> ()
+    | _ -> 
+      begin
+	let alias_tname = Composite_types.is_integer_type t in
+		begin
+		  match alias_tname with
+		    | Some(_) -> Hashtbl.add path_collection path t
+		    | None ->
+			let msg = "This type : "^(Ast_goodies.pprint_ciltypes t)^"isn't of type TInt, dropped form integer fields" in 
+			Format.printf "%s \n" msg 
+		end  
+	    end
+      
+     
+      
+
+and unfold_i_compinfo (cinfo : Cil_types.compinfo ) (path : string ) (path_collection : (string , Cil_types.typ ) Hashtbl.t) =
+  
+  let cfields_int_iterator (field_it : Cil_types.fieldinfo ) =
+    let current_path =
+      match path with
+	  "" -> field_it.forig_name
+	| _ ->  path^"."^field_it.forig_name
+    in
+    get_int_fields_of_cil_type field_it.ftype current_path path_collection
+  in
+  List.iter cfields_int_iterator cinfo.cfields
+    
+
+  
+let get_int_fields_of_cil_global_type  ( t : Cil_types.global ) =
+
+  let path_collection = (Hashtbl.create 97 :(string , Cil_types.typ) Hashtbl.t ) in
+  let path = "" in
+  match t with
+      GType(tinfo , _ ) -> 
+	get_int_fields_of_cil_type 
+	tinfo.ttype path path_collection ;
+	
+	let type_name  = tinfo.tname in
+	Format.printf " GTYPE : Adding type %s \n" type_name;
+	(CTypeName(type_name),path_collection)
+    
+    | GCompTag (cinfo, _ ) -> unfold_i_compinfo
+      cinfo path path_collection;
+      let type_name = cinfo.corig_name in
+      Format.printf "GCOMP Tag Adding type %s \n" type_name;
+      (CTypeName(type_name),path_collection)
+
+    | GCompTagDecl  (cinfo , _ ) ->  
+      unfold_i_compinfo
+      cinfo path path_collection;
+      let type_name = cinfo.corig_name in
+      (CTypeName(type_name),path_collection)
+      (*raise Forward_declaration_not_yet_handled*)
+      
+    | GEnumTagDecl ( einfo, _ ) ->
+       raise Forward_declaration_not_yet_handled
+
+    | _ -> raise Not_a_composite_type
+              (* Not a composite type, hence needn't to be analysed
+		 or stored. *)

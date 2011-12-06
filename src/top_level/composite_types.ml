@@ -20,7 +20,7 @@ let pprint_index_of_type_pointer_path (i : index_of_composite_types) =
         CTypeName (name_type)   ->
 	  let ret = prefix^"\n"^name_type^": \n" in
 	  let ret = Hashtbl.fold pprint_path_folder 
-	    path_table ret  in
+	    path_table.pointers ret  in
 	  ret 
   in
   match i with 
