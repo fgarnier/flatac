@@ -272,15 +272,17 @@ let pprint_slocal_vars ( slocals :  Cil_types.varinfo list ) =
   List.fold_right (fun vinf str -> str^(pprint_slocal_var vinf)^"\n" ) slocals ""
 
 
+
 let rec get_subfield_name (prefix : string ) (finfo : Cil_types.fieldinfo)
     (off : Cil_types.offset) =
   match off with
       NoOffset -> prefix^(finfo.forig_name)
     | Field (subfieldinfo , suboffset ) ->
 	begin
-	  let current_path_name = prefix^(subfieldinfo.forig_name) in
+	  let current_path_name = prefix^(finfo.forig_name) in
 	    get_subfield_name current_path_name subfieldinfo suboffset
 	end
+    
     | _ -> raise (Debug_info (" In get_subfield_name : I don't know how to deal with array indexes \n"))
     
 
@@ -291,7 +293,9 @@ let rec get_pvar_from_exp_node (expn : Cil_types.exp_node ) =
   match expn with
       Lval ( Var( p ) , off ) ->
 	begin
-	  Format.printf "get_pvar_from_exp_node : lval is a Var(p) \n";
+	  Format.fprintf  debug_out "get_pvar_from_exp_node : lval is a Var(p) \n";
+	  Cil.d_lval debug_out  ( Var(p), off);
+	  Format.fprintf  debug_out "\n";
 	  match p.vtype with 
 	      TPtr(_,_) -> 
 		begin

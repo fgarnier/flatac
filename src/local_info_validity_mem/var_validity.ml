@@ -13,6 +13,37 @@ exception Neither_intvar_nor_ptvar
 exception Unregistered_var of string
 exception Relation_between_vars_out_of_ssl_context
 
+
+
+let pprint_var_cath ( v : var_cathegory) =
+    match v with
+	LocalVar -> "local"
+      | ParameterVar -> "formal"
+      | GlobalVar -> "global"
+
+
+let pprint_var_valid_entry (v : var_valid_entry)  =
+  match v.validity with
+    | TruevarValid -> "Valid, "^pprint_var_cath v.location
+    | FalsevarValid -> "Not valid, "^pprint_var_cath v.location
+    | DKvarValid -> "Unknown validity, "^pprint_var_cath v.location  
+
+
+let pprint_validity_loc_map ( m : validity_loc_map) =
+  
+  let print_folder (key : string ) (v :  var_valid_entry ) (prefix : string) =
+    Format.sprintf "%s %s %s \n" prefix key (pprint_var_valid_entry v)
+  in
+  match m with 
+       Validlocmap( mapping) -> 
+	 Validvarmap.fold print_folder mapping "" 
+
+
+
+
+
+
+
 let compute_var_cathegory ( v : Cil_types.varinfo ) =
   if v.vformal then ParameterVar
   else if v.vglob then GlobalVar
@@ -38,7 +69,11 @@ let validity_of_byname ( loc_map : validity_loc_map ) ( varname : string ) =
 	    let res = Validvarmap.find varname var_name_map  in
 	      res
 	  with
-	      Not_found -> raise (Unregistered_var(varname))
+	      
+	      Not_found -> 
+		let error_msg =
+		  Format.sprintf "Variable %s does'nt apprear in: Loc map contains : %s \n" varname (pprint_validity_loc_map loc_map) in
+		raise (Unregistered_var(error_msg))
 	end
 	  
 (**  return a new validity mapping *)

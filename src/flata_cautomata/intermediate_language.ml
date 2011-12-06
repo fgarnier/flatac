@@ -175,12 +175,15 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 	    end
       end	
 
-    | Lval(Mem(e),_) ->
+    | Lval(Mem(e),offset) ->
       begin
 	let t = Cil.typeOf e in
 	match t with
-	    TPtr(t,_) ->
-	      let ptr_addr_e = cil_expr_2_ptr e in
+	    TPtr(tparam,_) ->
+	      Format.fprintf  debug_out "[cil_expr_2_cscal] : lval is a Mem(e) \n";
+	      Cil.d_lval debug_out  ( Mem(e), offset);
+	      Format.fprintf  debug_out "\n";
+	      let ptr_addr_e = cil_expr_2_ptr expr in
 	      LiScalOfAddr(ptr_addr_e,t)
 
 	  | _ -> 
@@ -283,7 +286,7 @@ integer type, which type is neither TInt nor TPtr : %s , type : %s .\n" (pprint_
 
 and cil_expr_2_ptr (expr : Cil_types.exp ) =
    Format.printf "In cil_expr_2_ptr %s \n" (Ast_goodies.pprint_cil_exp expr );
-  Cil.d_exp Ast_goodies.debug_out expr;
+  Cil.d_exp Ast_goodies.debug_out expr; Format.fprintf Ast_goodies.debug_out "\n";
   match expr.enode with
     
       BinOp (PlusPI, expg, expd , optype ) ->
@@ -298,7 +301,14 @@ and cil_expr_2_ptr (expr : Cil_types.exp ) =
     | Lval (Var(vinfo), _ ) ->
       begin
 	match vinfo.vtype with
-	    TPtr( vtypeptr, _ ) -> LiPVar(Unprimed, LiIntPtr(vinfo.vname),vtypeptr)
+	    TPtr( vtypeptr, _ ) ->
+	      begin  
+		let pvar = Ast_goodies.get_pvar_from_exp_node expr.enode  in
+		let vname = Ssl.get_name_of_ptvar pvar in
+		Format.printf "[cil_expr_2_ptr Lval (Var(vinfo), _ )] : TPtr, vname =  %s \n" vname;
+		LiPVar(Unprimed,LiIntPtr(vname),vtypeptr)
+	      end
+	
 	  | _ ->  begin 
 	    let msg = "This variable : "^vinfo.vname ^"is a pointer which isn't of  type TPtr, but that appears in a Lvalue expression that should have type pointer type \n" 
 	    in let exc =  Bad_expression_type msg in 
@@ -306,12 +316,28 @@ and cil_expr_2_ptr (expr : Cil_types.exp ) =
 	  end
       end
 
-    | Lval (Mem(e), _ ) -> 
+    | Lval (Mem(e), offset ) -> 
       let type_of_e = Cil.typeOf e in
       begin
+	Format.printf "[cil_expr_2_ptr] :  Lval (Mem(e), offset ) \n";
 	match type_of_e with
 	    TInt(_,_) -> LiAddrOfScal((cil_expr_2_scalar e), type_of_e)
-	  | TPtr(_,_) -> cil_expr_2_ptr e
+	  | TPtr(_,_) ->
+	    begin
+	      match offset with
+		| Field (finfo,_) -> 
+		  
+		  Format.printf "[cil_expr_2_ptr] Warning, loosing fieldinfo offset at some point : %s \n" finfo.forig_name;
+		  let pvar =  Ast_goodies.get_pvar_from_exp_node expr.enode
+		  in 
+		  let vname = Ssl.get_name_of_ptvar pvar in
+		  LiPVar(Unprimed,LiIntPtr(vname),type_of_e)
+		
+		| _ ->  cil_expr_2_ptr e
+		 
+	    end
+	 
+
 	  | _ -> 
 	    begin
 	      match  (Composite_types.is_integer_type type_of_e) with
@@ -396,6 +422,11 @@ address type, which type is neither TInt nor TPtr.\n")
 
       end
 	
+
+
+    (*| AddrOf *)
+
+      
     | Const(CStr(s))->
 	begin
 	  let l = String.length s in

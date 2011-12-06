@@ -4,7 +4,7 @@ open Map
 
 
 
-type var_valid = TruevarValid 
+type var_valid = TruevarValid  
 		 | FalsevarValid
 		 | DKvarValid
 

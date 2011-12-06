@@ -743,8 +743,19 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 			end
 		    | "malloc" | "calloc" -> (malloc_ssl_nts_transition  None sslv lparam mid)
 		    | _ -> 
-
-		      (sslv,[])::[]
+		      let funname = f.vname in
+		      
+		      let arg_nts_list =
+			compile_param_list_2_cnt_list sslv lparam in
+				   (* List.map ( fun s-> interpret_c_scal_to_cnt sslv.ssl_part s ) *)
+		      
+		      let cnt_trans_label = 
+			CntFunCall(funname,None,arg_nts_list) in
+		      let msg= 
+			Format.sprintf "[next_on_ssl_instr] Call to function: %s : %s \n[next_on_ssl_instr] argument list %s \n "  funname ( pprint_ciltypes f.vtype) (Nts.cnt_pprint_translabel cnt_trans_label ) in
+		      Format.printf "%s" msg;
+		      ((sslv,(cnt_trans_label::[]))::[]) 
+		       
 		(** All other function name that are dropped leads 
 			       here*)
 		end
