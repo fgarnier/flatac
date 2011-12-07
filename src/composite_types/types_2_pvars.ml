@@ -98,7 +98,7 @@ let rec get_int_fields_of_cil_type (t : Cil_types.typ ) (path : string ) (path_c
 
     | TInt(inttype,b) -> Hashtbl.add path_collection path (TInt(inttype,b))
     | TNamed(tinfo,_) -> get_int_fields_of_cil_type tinfo.ttype path path_collection
-    | TComp (cinfo , _ , _ ) -> unfold_compinfo cinfo path path_collection
+    | TComp (cinfo , _ , _ ) -> unfold_i_compinfo cinfo path path_collection
     | TEnum (_,_) -> ()
     | _ -> 
       begin
@@ -161,3 +161,17 @@ let get_int_fields_of_cil_global_type  ( t : Cil_types.global ) =
     | _ -> raise Not_a_composite_type
               (* Not a composite type, hence needn't to be analysed
 		 or stored. *)
+
+
+let get_fields_of_cil_global_type ( g : Cil_types.global ) =
+  let (tname, ptrs ) =  get_ptr_fields_of_cil_global_type g in
+  let (_, intvals ) =  get_int_fields_of_cil_global_type g in
+  let tables = { 
+    pointers = ptrs ;
+    integer_values = intvals;
+  }
+  in
+  (tname,tables)
+
+
+

@@ -84,7 +84,7 @@ let pretty_print_cautomata_obj out =
  (* Visitor.visitFramacFile (visit_bibi :> frama_c_copy ) file_ast;
   visit_bibi#pretty_print_f2ca format_out_file;*)  
  
-  Format.fprintf types_out_file "%s %!" (composite_types#pprint_pvars_of_comp_types);
+  Format.fprintf types_out_file "%s %!" (composite_types#pprint_pvars_of_comp_types ());
   Format.fprintf format_out_file "%!";
   close_out out_file;
   close_out types_out

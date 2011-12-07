@@ -15,7 +15,7 @@ exception Debug_info of string
 let create_validity_abstdomain () = 
   let sslf = create_ssl_f () in
   let val_map = new_valid_map () in
-  let index_types = Composite_types.create_index_of_composite_types in
+  let index_types = Composite_types.create_index_of_composite_types () in
   {
     ssl_part = sslf ;
     validinfos = val_map ;
@@ -94,7 +94,11 @@ let register_slocals mid (funinfos : Cil_types.fundec ) ( absdom_param : ssl_val
 	    let valid_info_res = absdom_param.validinfos in
 	    let valid_info_res = 
 	      Hashtbl.fold ( path_to_pointer_field_folder_of_ptr_struct vname)
-		index_of_pointer_field valid_info_res in
+		index_of_pointer_field.pointers valid_info_res in
+	    let valid_info_res = 
+	      Hashtbl.fold ( path_to_pointer_field_folder_of_ptr_struct vname)
+		index_of_pointer_field.integer_values valid_info_res in
+	   
 	      new_struct_pointer_on_stack sloc sslf_abstr typedef_index mid;
 	      let new_absinfos =
 		{
@@ -147,7 +151,10 @@ let register_slocals mid (funinfos : Cil_types.fundec ) ( absdom_param : ssl_val
 	  let valid_info_res = absdom_param.validinfos in
 	  let valid_info_res = 
 	   Hashtbl.fold ( path_to_pointer_field_folder vname)
-	    index_of_pointer_field valid_info_res in
+	    index_of_pointer_field.pointers valid_info_res in
+	  let valid_info_res = 
+	   Hashtbl.fold ( path_to_pointer_field_folder vname)
+	    index_of_pointer_field.integer_values valid_info_res in
 	  new_struct_on_stack sloc sslf_abstr typedef_index mid;
 	  let new_absinfos =
 	    {
@@ -232,7 +239,10 @@ let register_sformals mid (funinfos : Cil_types.fundec ) ( absdom_param : ssl_va
 	    let valid_info_res = absdom_param.validinfos in
 	    let valid_info_res = 
 	      Hashtbl.fold ( path_to_pointer_field_folder_of_ptr_struct vname)
-		index_of_pointer_field valid_info_res in
+		index_of_pointer_field.pointers valid_info_res in
+	    let valid_info_res = 
+	      Hashtbl.fold ( path_to_pointer_field_folder_of_ptr_struct vname)
+		index_of_pointer_field.integer_values valid_info_res in
 	      new_struct_pointer_on_stack sform sslf_abstr typedef_index mid;
 	      let new_absinfos =
 		{
@@ -289,7 +299,10 @@ let register_sformals mid (funinfos : Cil_types.fundec ) ( absdom_param : ssl_va
 	  let valid_info_res = absdom_param.validinfos in
 	  let valid_info_res = 
 	   Hashtbl.fold ( path_to_pointer_field_folder vname)
-	    index_of_pointer_field valid_info_res in
+	    index_of_pointer_field.pointers valid_info_res in
+	  let valid_info_res = 
+	   Hashtbl.fold ( path_to_pointer_field_folder vname)
+	    index_of_pointer_field.integer_values valid_info_res in
 	  new_struct_on_stack sform sslf_abstr typedef_index mid;
 	  let new_absinfos =
 	    {

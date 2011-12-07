@@ -42,8 +42,16 @@ class global_composite_types_visitor (prj : Project.t) = object (self)
   inherit Visitor.generic_frama_c_visitor (prj) (Cil.inplace_visit())
 
   val mutable is_computed = false
-  val pvar_names_of_composites_types = (Hashtbl.create 97 : (( c_type_name , composite_type ) Hashtbl.t))
+  val var_names_of_composites_types =  
+    Composite_types.create_index_of_composite_types ()
+ (*   (Hashtbl.create 97 : (( c_type_name , composite_type ) Hashtbl.t)) *)
  
+
+
+  method private add_entry_to_ctype_table e =
+    match var_names_of_composites_types, e with
+	(IndexCompositeTypes(table) , (typename , path_collection )  ) ->
+	  Hashtbl.add table typename path_collection 
 
 
   method vglob_aux ( g : Cil_types.global ) =
@@ -52,13 +60,13 @@ class global_composite_types_visitor (prj : Project.t) = object (self)
       try
 	let fields_of_visited_type = 
 	  Types_2_pvars.get_fields_of_cil_global_type g in
-	
-	begin
-	  match ptr_set_of_visited_type with
+	self#add_entry_to_ctype_table fields_of_visited_type
+	  
+	  (*match fields_of_visited_type with
 	      (typename , path_collection ) ->
 		Hashtbl.add pvar_names_of_composites_types 
-		  typename path_collection
-	end;
+		  typename path_collection *)
+       
 	
 
       with 
@@ -69,14 +77,25 @@ class global_composite_types_visitor (prj : Project.t) = object (self)
  
  
   method pprint_pvars_of_comp_types () =
-    if is_computed then
-      Hashtbl.fold pprint_composite_type_table pvar_names_of_composites_types "" 
-    else raise Not_visited_exception 
+    match var_names_of_composites_types with
+	IndexCompositeTypes(table) -> 
+	   
+	  if is_computed then
+	    let out_put = "Pointers : \n" in
+	    let out_put =
+	      Hashtbl.fold pprint_composite_type_pointer_table table out_put 
+	    in
+	    let out_put = 
+	      Hashtbl.fold pprint_composite_type_pointer_table table
+		(out_put^"\nInteger values : \n")
+	    in
+	    out_put					 
+	  else raise Not_visited_exception 
 
   
   method get_index_of_composite () =
     if is_computed then
-      IndexCompositeTypes(pvar_names_of_composites_types)
+      var_names_of_composites_types
     else
       raise Not_visited_exception
 	

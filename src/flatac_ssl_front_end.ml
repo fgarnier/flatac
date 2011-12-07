@@ -48,14 +48,14 @@ class ssl_flatac_front_end = object
   val mid =  (new global_mem_manager )
 
   val mutable index_of_pointers_of_composite_types =
-    Composite_types.create_index_of_composite_types
+    Composite_types.create_index_of_composite_types ()
   val mutable index_of_composite_types_set = false
     
   method set_index_of_composite_types ( i : index_of_composite_types ) =
     if not index_of_composite_types_set then
       begin
 	index_of_pointers_of_composite_types <- 
-	  Composite_types.copy_index_of_composite_types i ;
+	  (Composite_types.copy_index_of_composite_types i );
 	index_of_composite_types_set <- true
       end
     else ()

@@ -34,14 +34,14 @@ class flatac_visitor (prj : Project.t )  = object (self)
   val function_tables = Hashtbl.create 97
   
   val mutable index_of_pointers_of_composite_types =
-    Composite_types.create_index_of_composite_types
+    Composite_types.create_index_of_composite_types ()
   val mutable index_of_composite_types_set = false
 
   method private register_ecfg_of_gfun ( funinfos : Cil_types.fundec ) =
     let gtype_info_visitor = new global_composite_types_visitor ( prj ) 
     in 
     Visitor.visitFramacFile ( gtype_info_visitor :> frama_c_copy) local_file_ast;
-    let index = gtype_info_visitor#get_index_of_composite in
+    let index = gtype_info_visitor#get_index_of_composite () in
     let debug_msg = pprint_index_of_type_pointer_path index in
     Format.printf "flatac_visitor: Index of global types : %s \n" debug_msg;
     let funname = funinfos.svar.vname in

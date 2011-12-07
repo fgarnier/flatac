@@ -31,8 +31,8 @@ let pprint_index_of_type_pointer_path (i : index_of_composite_types) =
       
 
 
-let create_index_of_composite_types =
-  let table = Hashtbl.create 97 in
+let create_index_of_composite_types ()=
+  let table = ( Hashtbl.create 97 : (( c_type_name , composite_type ) Hashtbl.t)) in
   IndexCompositeTypes(table)
 
 
@@ -40,6 +40,7 @@ let copy_index_of_composite_types ( i : index_of_composite_types ) =
   match i with 
        IndexCompositeTypes(table) ->
 	 let table_bis = Hashtbl.copy table in
+
 	 IndexCompositeTypes(table_bis)
 
 

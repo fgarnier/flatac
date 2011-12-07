@@ -51,7 +51,7 @@ let new_struct_on_stack ( struct_varinfo : varinfo ) (sslf: ssl_formula )
 	    in 
 	    let parametrized_iterator = 
 	      ptrvar_adder_iterator struct_vname sslf mid in
-	    Hashtbl.iter parametrized_iterator pvar_collection_path 
+	    Hashtbl.iter parametrized_iterator pvar_collection_path.pointers 
     end
 (* with
     | Not_found -> raise Not_found *)
@@ -91,7 +91,7 @@ let new_struct_pointer_on_stack ( struct_varinfo : varinfo ) (sslf: ssl_formula 
 	      in 
 	      let parametrized_iterator = 
 		ptrvar_adder_iterator_fponstack struct_vname sslf mid in
-	      Hashtbl.iter parametrized_iterator pvar_collection_path 
+	      Hashtbl.iter parametrized_iterator pvar_collection_path.pointers 
       end
     with
       | Not_found -> raise Not_found
