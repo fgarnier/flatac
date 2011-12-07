@@ -118,7 +118,7 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
 	 begin
 	   let lg = interpret_c_scal_to_cnt sslf l in
 	   let ld = interpret_c_scal_to_cnt sslf r in
-	     CntProd ( lg , ld )
+	     CntSum ( lg , ld )
 	 end
     | LiMinus ( l , r ) ->
 	begin

@@ -175,7 +175,7 @@ let rec cnt_pprint_arithm_exp ( exp : cnt_arithm_exp ) =
        let pprint_outputg = ref "" 
        in
        begin
-	 if size_arithmexp_deeper_than ed 2 then
+	 if size_arithmexp_deeper_than ed 1 then
 	   begin
 	     pprint_outputd := "("^(cnt_pprint_arithm_exp ed)^")";
 	   end
@@ -183,7 +183,7 @@ let rec cnt_pprint_arithm_exp ( exp : cnt_arithm_exp ) =
 	   pprint_outputd := cnt_pprint_arithm_exp ed;
        end;
         begin
-	 if size_arithmexp_deeper_than eg 2 then
+	 if size_arithmexp_deeper_than eg 1 then
 	   begin
 	     pprint_outputg := "("^(cnt_pprint_arithm_exp eg)^")";
 	   end
