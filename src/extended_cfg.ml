@@ -43,7 +43,7 @@ let get_id_of_ecfg_id ( id : ecfg_id) =
       Ecfg_id(i) -> i
 
 
-let make_empty_cil_statement =
+let make_empty_cil_statement () =
   {
     labels = [] ;
     skind = UnspecifiedSequence ([]) ;
@@ -133,20 +133,20 @@ struct
 				  to be created node, if any.
 			     *)
       
-    initializer  self#register_in_out_nts_vars;
-      self#register_local_vars; self#build_fun_ecfg funinfo
+    initializer  self#register_in_out_nts_vars ();
+      self#register_local_vars(); self#build_fun_ecfg funinfo
 
-    method private incr_current_node_id =
+    method private incr_current_node_id () =
       match current_node_id with
 	  Ecfg_id(i) -> 
 	    let nid = i+1 in
 	    (current_node_id <- Ecfg_id(nid))
 
 	      
-    method get_name =
+    method get_name () =
       name
 
-    method register_in_out_nts_vars =
+    method register_in_out_nts_vars () =
       let in_out_map_folder (nts_var_list) (v : Cil_types.varinfo ) =
 	match v.vtype with
 	    TPtr(_,_) -> NtsIVar("offset("^v.vname^")")::nts_var_list
@@ -160,7 +160,7 @@ struct
       nts_sformal <- (List.fold_left in_out_map_folder [] funinfo.sformals  )
       
 
-    method register_local_vars =
+    method register_local_vars () =
       let in_out_map_folder (nts_var_list) (v : Cil_types.varinfo ) =
 	match v.vtype with
 	    TPtr(_,_) -> NtsIVar("offset("^v.vname^")")::nts_var_list
@@ -194,7 +194,7 @@ struct
        Hashtbl.add entry_table current_node_id ();
        Hashtbl.add unfoldsid_2_abs_map (Sid_class(s.sid)) entry_table;
        Hashtbl.add fold_abs_map_2_sid new_vertex.id (Sid_class(s.sid));
-       self#incr_current_node_id;
+       self#incr_current_node_id ();
        Hashtbl.add init_state new_vertex.id ();
        new_vertex.id
        
@@ -225,7 +225,7 @@ struct
 	      Hashtbl.add unfoldsid_2_abs_map (Sid_class(s.sid)) entry_table
 	  end;
 	Hashtbl.add fold_abs_map_2_sid new_vertex.id (Sid_class(s.sid));
-	self#incr_current_node_id;
+	self#incr_current_node_id ();
 	(*current_node_id <- (current_node_id + 1);*)
 	
 	(* Error states shall be considered as an absorbing class.
@@ -298,7 +298,7 @@ struct
       if entry_point_set then raise Entry_point_already_registered 
       else
 	begin
-	  let statment_of_ep= make_empty_cil_statement in
+	  let statment_of_ep= make_empty_cil_statement () in
 	  let absval_of_ep = front_end#get_entry_point_from_fundec funinfo in
 	  let id_ep = self#add_ecfg_entry_point statment_of_ep 
 	    absval_of_ep in
@@ -525,7 +525,8 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       then  (* One stops the recursive call on the set of
 	       states whose abstract domain value is an erro
 	       state, i.e. memory leak or broken heap *)
-	self#mark_as_error_state current_node.id
+	( Format.printf "I am an error state  \n";
+	self#mark_as_error_state current_node.id )
       else
 	begin 
 	  try
