@@ -198,7 +198,8 @@ let entail_r4 ( subst_ref : (entail_subst ref) option )( etp : entail_problem ) 
       if   ((is_exists_quantified  locv_right etp.right)
 	&&   ( is_exists_quantified  locv_left etp.left) )
       then
-	let fresh_flvar = fresh_locvar_name_from_etp etp in
+	let fresh_flvar = 
+	  fresh_locvar_name_from_etp etp in
 	let fresh_lvar = flvar_to_locvar fresh_flvar in
 	let subst_table_left = Hashtbl.create SSL_lex.size_hash in
 	let subst_table_right = Hashtbl.create SSL_lex.size_hash in
@@ -210,15 +211,19 @@ let entail_r4 ( subst_ref : (entail_subst ref) option )( etp : entail_problem ) 
 	Hashtbl.remove etp.left.pure.affectations pvar ;
 	subst_against_ssl subst_right etp.right;
 	subst_against_ssl subst_left etp.left;
+
 	match subst_ref with 
 	    Some ( overall_subst ) -> 
 	      overall_subst := 
 		{lsubst = (Ssl_substitution.compose_subst subst_left !overall_subst.rsubst );
 		 rsubst = (Ssl_substitution.compose_subst subst_right !overall_subst.lsubst );
-}
+		}
 	  | None -> ()
   in
-  Hashtbl.iter r4_iterator etp.right.pure.affectations;
+  try
+    Hashtbl.iter r4_iterator etp.right.pure.affectations;
+  with
+      Top_heap_exception -> ();
   var_elim etp.left;
   var_elim etp.right
 
@@ -397,7 +402,7 @@ let does_entail (etp : entail_problem ) =
     try 
       ssl_entailement etp_prime;
     with
-	Top_heap_exception -> raise Top_heap_exception         
+	Top_heap_exception -> raise Top_heap_exception          
 	  (** We shall not deal with exception
 					at this point. This treatment is here
 					for testing purpose, until a proper
