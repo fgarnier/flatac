@@ -28,7 +28,7 @@ open Nts_types
 open Extended_cfg_types
 open Intermediate_language
 open Cnt_interpret
-
+open Queue
 
 exception Entry_point_already_registered 
 exception Marking_unregistered_vertex of ecfg_id
@@ -63,6 +63,9 @@ struct
   
   
 
+
+
+
   
   class extended_cfg (name_function : string ) (funinfo : Cil_types.fundec) 
     frontend   = object(self)
@@ -79,10 +82,14 @@ struct
     val mutable nts_outval = [] (* same as above.*)
     val mutable nts_slocals= []
 
+
+    val not_visited_vertices = Queue.create ()
+
     val mutable front_end :  ( (Extended_cfg_base_types.abs_dom_val, 
 				  Extended_cfg_base_types.trans_label_val)
                                  sem_and_logic_front_end ) = frontend 
 
+      
     
     val edges : ( ecfg_id , (ecfg_id , trans_label_val ) Hashtbl.t ) Hashtbl.t = 
       Hashtbl.create init_hashtbl_size
@@ -119,7 +126,7 @@ struct
       Hashtbl.create init_hashtbl_size
 
     (* Associates to each
-       abstract id the correspond
+       abstract id the corresponding
        sid. Used to spare a double
        call on Hashtbl.find.
        Encodes the inverse relation of unfoldsid_2_abs_map.
@@ -198,7 +205,7 @@ struct
        Hashtbl.add init_state new_vertex.id ();
        new_vertex.id
        
-       
+     
        
       
     (** Adds a vertex to the ecfg*)
@@ -226,10 +233,7 @@ struct
 	  end;
 	Hashtbl.add fold_abs_map_2_sid new_vertex.id (Sid_class(s.sid));
 	self#incr_current_node_id ();
-	(*current_node_id <- (current_node_id + 1);*)
 	
-	(* Error states shall be considered as an absorbing class.
-	 *)
 	begin
 	  match new_vertex.id with
 	      Ecfg_id(id) ->
@@ -454,9 +458,76 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	    raise  (No_outgoing_edges_from_state(node.id))
 	    
 
+	      
+    method private get_abstract_succs_of_ecfg_node (node : ecfg_vertex)
+     (succs_stmt : Cil_types.stmt )=
+      match node.statement.skind with
+	  If(cdition,_,_,_) ->
+	    begin
+	      let sslv = front_end#copy_absdom_label 
+		node.abstract_val in
+	      front_end#next_on_if_statement sslv cdition 
+	    end
+	      
+	| _ ->
+	  begin
+	    let current_absvalue = front_end#copy_absdom_label 
+	      node.abstract_val
+	    in
+	    let empty_label = 
+	      front_end#get_empty_transition_label () in
+	    front_end#next current_absvalue empty_label 
+	      succs_stmt.skind
+	  end
 
 
+    method private build_ecfg () =
 
+      let add_to_not_visited_iterator (current_node : ecfg_vertex)
+	  (next_stmt : Cil_types.stmt) 
+	  ((abs , label ) :( abs_dom_val * trans_label_val )) =
+
+	let is_entailed_by_existing_vertex_abs = 
+	  self#entailed_by_same_id_absvalue next_stmt abs 
+	in
+	
+	match is_entailed_by_existing_vertex_abs with
+	    (true, more_genid ) ->
+	      begin
+		self#register_edge current_node.id more_genid label  
+	      end
+	  | (false , _ ) ->
+	    begin
+	      let new_ecfg_vertex_id = 
+		self#add_abstract_state next_stmt abs in
+	      self#register_edge current_node.id new_ecfg_vertex_id label;
+	      if (not (front_end#is_error_state abs))
+	      then
+		Queue.push new_ecfg_vertex_id not_visited_vertices
+	      else ()
+	    end
+      in
+      let succs_fc_sid_iterator (current_node : ecfg_vertex) 
+	  (succ_sid : Cil_types.stmt ) =
+	let abs_succ_list = 
+	  self#get_abstract_succs_of_ecfg_node current_node succ_sid 
+	in
+	List.iter (add_to_not_visited_iterator current_node succ_sid ) 
+	  abs_succ_list
+      in
+      
+      try
+	while ( not (Queue.is_empty not_visited_vertices) )
+	do
+	  let current_node_id = Queue.pop not_visited_vertices in
+	  let current_node = Hashtbl.find vertices current_node_id in
+	  let framac_sid_successor_list = current_node.statement.succs in
+	  List.iter (succs_fc_sid_iterator current_node ) 
+	    framac_sid_successor_list  
+	done
+      with
+	  Empty -> raise Empty
+	  
     (* This function is used to recursivey call recusive_build_ecfg 
        on all the nodes that are registered as successor of  the parameter
        current_node. *)	    
