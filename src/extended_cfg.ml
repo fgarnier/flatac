@@ -190,8 +190,6 @@ struct
       nts_slocals <- (List.fold_left in_out_map_folder [] funinfo.slocals  )	
  
 
-
-
       
     (** Adds a vertex to the ecfg*)
     method private add_abstract_state ( s : Cil_types.stmt ) 
@@ -325,31 +323,7 @@ struct
       with
 	  Not_found -> (false ,Ecfg_id(-2)) 
 	    
-(*
-    method is_sid_visited ( sid : sid_class ) =
-      Hashtbl.mem visited_index sid
 
-    method is_ecfg_vertex_id_visited ( id  : ecfg_id ) =
-      let sid_of_id = Hashtbl.find fold_abs_map_2_sid id in
-      try
-	let visit_tbl_of_sid = Hashtbl.find visited_index sid_of_id in
-	Hashtbl.mem visit_tbl_of_sid id
-      with
-	| Not_found -> false (* No ecfg node whose sid equals sid_of_id has
-			     yet been visited*)
-
-*)
-
-(** Returns true if the s * abs has not yet been visited for building the ecfg.*)
-(*    method recurse_to_abs_succs ( s : Cil_types.stmt ) ( abs : abs_dom_val ) =
-      let sid_of_stmt = Sid_class( s.sid ) in
-      if (not (Hashtbl.mem visited_index sid_of_stmt ) )
-      then true 
-      else
-	let ( is_entailed , _ ) = self#entailed_by_same_id_absvalue s abs in
-	  is_entailed
-	  
-*)
   
     method mark_as_error_state (vertex_id : ecfg_id ) =
       if not (Hashtbl.mem error_state vertex_id)
@@ -516,128 +490,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 
       end
 	  
-    (* This function is used to recursivey call recusive_build_ecfg 
-       on all the nodes that are registered as successor of  the parameter
-       current_node. *)	    
-  (*  method private recursive_build_ecfg ( current_node : ecfg_vertex ) =
-     (*Current_skind is here to deal with the control flow related instruction
-     at this level. Other instructions sementic are define in c_upon_ssl_domain.ml*)
-      let current_stmt = current_node.statement in 
-      let ecfg_succ_recursor  (index : ecfg_id ) _ =
-	Format.printf "recursor : successor id is %d \n" 
-	  ( get_id_of_ecfg_id index);
-	
-	let next_ecfg_vertex = Hashtbl.find vertices index in
-	if( self#is_ecfg_vertex_id_visited index)
-	then 
-	  begin
-	    Format.printf "Ecfg vertex %d already visided \n" 
-	      (get_id_of_ecfg_id index)
-	  end
-
-	else if ( self#recurse_to_abs_succs next_ecfg_vertex.statement
-		    next_ecfg_vertex.abstract_val ) 
-	then
-	  begin
-	    Format.printf "Ecfg vertex %d not yet marked as visited \n" 
-	      ( get_id_of_ecfg_id index);
-	    self#recursive_build_ecfg next_ecfg_vertex
-	  end
-	else ()
-      in
-      let next_list_adder_iterator (next_stmt : Cil_types.stmt) 
-	  (e : (abs_dom_val * trans_label_val ) ) =
-	match e with
-	    ( absvalue , labval ) ->
-	      begin
-		self#add_transition_from_to current_node next_stmt absvalue
-		  labval  
-	      end
-      (* End of  next_list_adder_iterator *)
-
-      in
-      let build_iterator ( succs_stmt : Cil_types.stmt ) =
-	let succs_list =
-	  match current_stmt.skind with 
-	      If(cdition,_,_,_) ->
-		begin
-		  let sslv = front_end#copy_absdom_label current_node.abstract_val in
-		  front_end#next_on_if_statement sslv cdition 
-		end
-	    
-	    | _ ->
-	      begin
-		let current_absvalue = front_end#copy_absdom_label 
-		  current_node.abstract_val
-		in
-		let empty_label = 
-		  front_end#get_empty_transition_label () in
-		front_end#next current_absvalue empty_label 
-		  succs_stmt.skind
-	      end
-	in (* succs_list is now set*)
-	List.iter (next_list_adder_iterator succs_stmt) succs_list
-      (* End of the build_iterator definition *)
-      in 
-      self#mark_as_visited current_node.id;
-      if (front_end#is_error_state current_node.abstract_val) 
-      then  (* One stops the recursive call on the set of
-	       states whose abstract domain value is an erro
-	       state, i.e. memory leak or broken heap *)
-	( Format.printf "I am an error state  \n";
-	self#mark_as_error_state current_node.id )
-      else
-	begin 
-	  try
-	    let current_statment_successors = current_node.statement.succs 
-	    in
-	    List.iter build_iterator current_statment_successors;
-		(* We get the set of the current vertex successor and
-		   we iterate on each of them*)
-	    let ecfg_succs_indexes = self#get_succs_of_ecfg_node current_node 
-	    in 
-	    Hashtbl.iter ecfg_succ_recursor ecfg_succs_indexes
-	      
-	(* The recursive call is performed in the iterator*)
-	  with
-	     
-  	    |  No_outgoing_edges_from_state ( node_id ) ->
-	      begin
-		if not (Hashtbl.mem final_state  node_id  ) 
-		then
-		  Hashtbl.add final_state node_id () 
-	      (* The current node ahs no successor
-		 in the ecfg*)
-    		else ()
-	      end
-	end
-	  
-	  
-    method build_fun_ecfg ( funinfo : Cil_types.fundec ) =
-      
-      let ep_succs_iterator (entry_point :  ecfg_vertex ) (next_stmt : Cil_types.stmt) 
-	   (e : (abs_dom_val * trans_label_val ) ) =
-	match e with
-	    ( absvalue , labval ) ->
-	      begin
-		self#add_transition_from_to entry_point next_stmt absvalue
-		  labval  
-	      end
-      in
-	Cfg.cfgFun funinfo;
-	let empty_label = front_end#get_empty_transition_label () in
-	let ecfg_entry_point_id = self#register_ecfg_entry_point funinfo in 
-	let ecfg_entry_point = Hashtbl.find vertices ecfg_entry_point_id in
-	let cil_rootstmt = List.hd funinfo.sallstmts in
-	let succs_of_ecfg_entry_point = front_end#next 
-	  (ecfg_entry_point.abstract_val) empty_label cil_rootstmt.skind
-	in
-	  List.iter ( ep_succs_iterator ecfg_entry_point  cil_rootstmt )  
-	    succs_of_ecfg_entry_point;
-	  self#recursive_build_ecfg  
-	    (Hashtbl.find vertices ecfg_entry_point_id)
-          
-  *)
+   
 
 	
     method pprint_node ( node_id : ecfg_id ) =
