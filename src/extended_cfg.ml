@@ -30,6 +30,7 @@ open Intermediate_language
 open Cnt_interpret
 open Queue
 
+exception Entry_point_not_registered 
 exception Entry_point_already_registered 
 exception Marking_unregistered_vertex of ecfg_id
 exception Ecfg_vertex_not_registered
@@ -52,7 +53,19 @@ let make_empty_cil_statement () =
     preds = [] ;
     ghost = true ;
   }
+
+
+let make_empty_cil_statement_with_successor ( successor : Cil_types.stmt) =
+   {
+    labels = [] ;
+    skind = UnspecifiedSequence ([]) ;
+    sid = -2 ;
+    succs = (successor::[]) ;
+    preds = [] ;
+    ghost = true ;
+  }
   
+
 
 module Extended_cfg_definition  = 
   functor ( A : sig type abstract_type type label_type end ) ->
@@ -61,11 +74,6 @@ struct
   open Extended_cfg_base_types
   
   
-  
-
-
-
-
   
   class extended_cfg (name_function : string ) (funinfo : Cil_types.fundec) 
     frontend   = object(self)
@@ -140,8 +148,9 @@ struct
 				  to be created node, if any.
 			     *)
       
-    initializer  self#register_in_out_nts_vars ();
-      self#register_local_vars(); self#build_fun_ecfg funinfo
+    initializer Cfg.cfgFun funinfo; self#register_in_out_nts_vars ();
+      self#register_local_vars(); self#register_ecfg_entry_point funinfo;
+      self#build_ecfg ()
 
     method private incr_current_node_id () =
       match current_node_id with
@@ -179,34 +188,10 @@ struct
 	    end
       in 
       nts_slocals <- (List.fold_left in_out_map_folder [] funinfo.slocals  )	
-   (* Sets a state as being initial.*)
-    method private register_init_state ( state_id : ecfg_id ) = 
-      if Hashtbl.mem vertices state_id
-      then 
-	Hashtbl.add init_state state_id ()
-      else
-	raise No_such_state_id
+ 
 
-    
-    method private add_ecfg_entry_point  ( s : Cil_types.stmt ) 
-      ( absval : abs_dom_val ) =     
-       let new_vertex = {
-	id = current_node_id;
-	statement = s;
-	abstract_val = front_end#copy_absdom_label absval ; 	
-      }
-       in
-       Hashtbl.add vertices current_node_id new_vertex;
-       let entry_table = Hashtbl.create init_hashtbl_size in
-       Hashtbl.add entry_table current_node_id ();
-       Hashtbl.add unfoldsid_2_abs_map (Sid_class(s.sid)) entry_table;
-       Hashtbl.add fold_abs_map_2_sid new_vertex.id (Sid_class(s.sid));
-       self#incr_current_node_id ();
-       Hashtbl.add init_state new_vertex.id ();
-       new_vertex.id
-       
-     
-       
+
+
       
     (** Adds a vertex to the ecfg*)
     method private add_abstract_state ( s : Cil_types.stmt ) 
@@ -299,21 +284,22 @@ struct
 	    
 
     method private register_ecfg_entry_point ( funinfo : Cil_types.fundec ) =
+      
       if entry_point_set then raise Entry_point_already_registered 
       else
-	begin
-	  let statment_of_ep= make_empty_cil_statement () in
+	begin 
+	  
 	  let absval_of_ep = front_end#get_entry_point_from_fundec funinfo in
-	  let id_ep = self#add_ecfg_entry_point statment_of_ep 
+	  let first_cil_statement_of_cfg = List.hd funinfo.sallstmts in
+	  let stmt_of_ecfg_entry_point =  
+	    make_empty_cil_statement_with_successor first_cil_statement_of_cfg 
+	  in
+	  let id_ep = self#add_abstract_state stmt_of_ecfg_entry_point 
 	    absval_of_ep in
-	   entry_point_set <- true;
-	    Format.printf "[reigster_ecfg_entry_point] : Abs_formula : %s \n"
-	      (front_end#pretty absval_of_ep);
-	    id_ep
-	   (* returns the id of the node, shall be 0*) 
-	      
-	end 
-
+	  Queue.push id_ep not_visited_vertices;	
+	  entry_point_set <- true 
+	end
+	   
 
 
     method entailed_by_same_id_absvalue  (next_stmt : Cil_types.stmt)
@@ -333,19 +319,13 @@ struct
       in
       try
 	let brotherhood_abs = Hashtbl.find unfoldsid_2_abs_map (Sid_class(next_stmt.sid)) in
-	let candidate = (Hashtbl.fold entail_folder brotherhood_abs (false , Ecfg_id( - 1 ))) in
+	let candidate = (Hashtbl.fold entail_folder brotherhood_abs (false , Ecfg_id( - 2 ))) in
 	candidate
-      (*match candidate with 
-	    (true, _ ) -> candidate
-	  if id_candidate >= 0 then
-	    (true , id_candidate )
-	  else
-	    (false , -1 )
-	*)
+     
       with
-	  Not_found -> (false ,Ecfg_id(-1)) 
+	  Not_found -> (false ,Ecfg_id(-2)) 
 	    
-
+(*
     method is_sid_visited ( sid : sid_class ) =
       Hashtbl.mem visited_index sid
 
@@ -358,9 +338,10 @@ struct
 	| Not_found -> false (* No ecfg node whose sid equals sid_of_id has
 			     yet been visited*)
 
+*)
 
 (** Returns true if the s * abs has not yet been visited for building the ecfg.*)
-    method recurse_to_abs_succs ( s : Cil_types.stmt ) ( abs : abs_dom_val ) =
+(*    method recurse_to_abs_succs ( s : Cil_types.stmt ) ( abs : abs_dom_val ) =
       let sid_of_stmt = Sid_class( s.sid ) in
       if (not (Hashtbl.mem visited_index sid_of_stmt ) )
       then true 
@@ -368,7 +349,8 @@ struct
 	let ( is_entailed , _ ) = self#entailed_by_same_id_absvalue s abs in
 	  is_entailed
 	  
-
+*)
+  
     method mark_as_error_state (vertex_id : ecfg_id ) =
       if not (Hashtbl.mem error_state vertex_id)
       then Hashtbl.add error_state vertex_id ()
@@ -445,9 +427,6 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	  Not_found -> raise (Debug_exception("Method add_edge_by_id, Not_found caught"))  
 
 
-
-
-  
     method private get_succs_of_ecfg_node ( node : ecfg_vertex ) =
       try
 	let prim_table = Hashtbl.find edges (node.id) 
@@ -482,6 +461,8 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 
 
     method private build_ecfg () =
+      if (not entry_point_set ) then raise Entry_point_not_registered
+      else begin
 
       let add_to_not_visited_iterator (current_node : ecfg_vertex)
 	  (next_stmt : Cil_types.stmt) 
@@ -503,8 +484,12 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	      self#register_edge current_node.id new_ecfg_vertex_id label;
 	      if (not (front_end#is_error_state abs))
 	      then
+		begin
+		Format.printf "Scheduling another vertex for execution \n";
 		Queue.push new_ecfg_vertex_id not_visited_vertices
-	      else ()
+		end
+	      else 
+		Format.printf "This state goes nowhere \n"
 	    end
       in
       let succs_fc_sid_iterator (current_node : ecfg_vertex) 
@@ -527,11 +512,14 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	done
       with
 	  Empty -> raise Empty
+
+
+      end
 	  
     (* This function is used to recursivey call recusive_build_ecfg 
        on all the nodes that are registered as successor of  the parameter
        current_node. *)	    
-    method private recursive_build_ecfg ( current_node : ecfg_vertex ) =
+  (*  method private recursive_build_ecfg ( current_node : ecfg_vertex ) =
      (*Current_skind is here to deal with the control flow related instruction
      at this level. Other instructions sementic are define in c_upon_ssl_domain.ml*)
       let current_stmt = current_node.statement in 
@@ -649,6 +637,8 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	  self#recursive_build_ecfg  
 	    (Hashtbl.find vertices ecfg_entry_point_id)
           
+  *)
+
 	
     method pprint_node ( node_id : ecfg_id ) =
       Format.sprintf "%d" (get_id_of_ecfg_id node_id)
