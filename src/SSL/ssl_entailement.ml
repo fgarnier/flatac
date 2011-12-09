@@ -198,32 +198,37 @@ let entail_r4 ( subst_ref : (entail_subst ref) option )( etp : entail_problem ) 
       if   ((is_exists_quantified  locv_right etp.right)
 	&&   ( is_exists_quantified  locv_left etp.left) )
       then
-	let fresh_flvar = 
-	  fresh_locvar_name_from_etp etp in
-	let fresh_lvar = flvar_to_locvar fresh_flvar in
-	let subst_table_left = Hashtbl.create SSL_lex.size_hash in
-	let subst_table_right = Hashtbl.create SSL_lex.size_hash in
-	Hashtbl.add subst_table_left locv_left fresh_lvar;
-	Hashtbl.add subst_table_right locv_right fresh_lvar;
-	let subst_left = Subst ( subst_table_left ) in
-	let subst_right = Subst ( subst_table_right ) in
-	Hashtbl.remove etp.right.pure.affectations pvar; 
-	Hashtbl.remove etp.left.pure.affectations pvar ;
-	subst_against_ssl subst_right etp.right;
-	subst_against_ssl subst_left etp.left;
+	begin
+	  (*try*) 
+	    let fresh_flvar = 
+	      fresh_locvar_name_from_etp etp in
+	    let fresh_lvar = flvar_to_locvar fresh_flvar in
+	    let subst_table_left = Hashtbl.create SSL_lex.size_hash in
+	    let subst_table_right = Hashtbl.create SSL_lex.size_hash in
+	    Hashtbl.add subst_table_left locv_left fresh_lvar;
+	    Hashtbl.add subst_table_right locv_right fresh_lvar;
+	    let subst_left = Subst ( subst_table_left ) in
+	    let subst_right = Subst ( subst_table_right ) in
+	    Hashtbl.remove etp.right.pure.affectations pvar; 
+	    Hashtbl.remove etp.left.pure.affectations pvar ;
+	    subst_against_ssl subst_right etp.right;
+	    subst_against_ssl subst_left etp.left;
+	 
 
-	match subst_ref with 
-	    Some ( overall_subst ) -> 
-	      overall_subst := 
-		{lsubst = (Ssl_substitution.compose_subst subst_left !overall_subst.rsubst );
-		 rsubst = (Ssl_substitution.compose_subst subst_right !overall_subst.lsubst );
+
+	      match subst_ref with 
+		  Some ( overall_subst ) -> 
+		    overall_subst := 
+		      {lsubst = (Ssl_substitution.compose_subst subst_left !overall_subst.rsubst );
+		       rsubst = (Ssl_substitution.compose_subst subst_right !overall_subst.lsubst );
 		}
-	  | None -> ()
+		| None -> ()
+ 
+	 (* with
+	      Top_heap_exception -> ()*)
+	end
   in
-  try
-    Hashtbl.iter r4_iterator etp.right.pure.affectations;
-  with
-      Top_heap_exception -> ();
+  Hashtbl.iter r4_iterator etp.right.pure.affectations;
   var_elim etp.left;
   var_elim etp.right
 
@@ -466,10 +471,10 @@ let accept_new_abstraction (etp : entail_problem ) =
   Self.feedback ~level:0 "I reached does_entail \n";
   Format.printf " \n [ accept_new_abstraction ] %s \n " (pprint_entailement_problem etp);  
   begin
-    try 
-      ssl_entailement etp_prime;
-    with
-	Top_heap_exception -> raise Top_heap_exception         
+(*    try *)
+      ssl_entailement etp_prime
+   (* with *
+	Top_heap_exception -> raise Top_heap_exception *)        
 	  (** We shall not deal with exception
 					at this point. This treatment is here
 					for testing purpose, until a proper

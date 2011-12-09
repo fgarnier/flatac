@@ -132,8 +132,8 @@ class ssl_flatac_front_end = object
       let nts_trans_no = 
 	(abs_val_false ,(CntGuard(neg_of_nts_cdition))::[])
       in
-      let ret_list = (nts_trans_yes::[]) in
-      nts_trans_no::ret_list	
+      let ret_true_false = (nts_trans_yes,nts_trans_no) in
+      ret_true_false
     end
     
     
@@ -161,8 +161,8 @@ class ssl_flatac_front_end = object
       right = Ssl.copy sslvg.ssl_part;
     }
     in
-     (Ssl_entailement.does_entail etp )
-     (*not (accept_new_abstraction etp)*)
+     (*(Ssl_entailement.accept_new_abstraction etp )*)
+     not (accept_new_abstraction etp)
 
 
   method accepts sslvg sslvd =
@@ -176,8 +176,8 @@ class ssl_flatac_front_end = object
       right = Ssl.copy sslvg.ssl_part;
     }
     in
-    not (Ssl_entailement.does_entail etp )
-    (*Ssl_entailement.accept_new_abstraction etp*)
+    (*not (Ssl_entailement.does_entail etp )*)
+    Ssl_entailement.accept_new_abstraction etp
 
 end
 

@@ -321,16 +321,16 @@ struct
 	candidate
      
       with
-	  Not_found -> (false ,Ecfg_id(-2)) 
+	  Not_found -> (false ,Ecfg_id(-1)) 
 	    
 
-  
+  (*
     method mark_as_error_state (vertex_id : ecfg_id ) =
       if not (Hashtbl.mem error_state vertex_id)
       then Hashtbl.add error_state vertex_id ()
       else ()
-      
-
+  *)  
+(*
     method mark_as_visited ( vertex_id : ecfg_id ) =      
       let v = Hashtbl.find vertices vertex_id in
       try    
@@ -348,7 +348,7 @@ struct
       with
 	  Not_found -> let excep = Marking_unregistered_vertex ( vertex_id ) in
 		       raise excep
-
+*)
    (*
       This operation takes as input the current state and the next abstract
       state, and :
@@ -371,10 +371,19 @@ struct
 	    match is_entailed_abstraction with
 		(false , _ ) -> 
 		  begin
-		    Format.printf "Adding new node to ecfg \n";
+		    Format.printf "Add transition from to Adding new node to ecfg \n";
 		  let new_abs_state_id = 
 		    self#add_abstract_state next_stmt next_abs in
-		    self#register_edge current.id new_abs_state_id label
+		    self#register_edge current.id new_abs_state_id label;
+		  if (not (front_end#is_error_state next_abs ))
+		  then
+		    begin
+		      Format.printf "[add_transition_from_to] Queuing a new ecfg node id \n";
+		       Queue.push new_abs_state_id not_visited_vertices
+		    end
+		  else 
+		    Format.printf "This state goes nowhere \n"
+		  
 		  end
 	      | (true , entailing_state_id ) ->
 		 Format.printf "Not adding a new node, creating a new edge\n";
@@ -414,24 +423,40 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	      
     method private get_abstract_succs_of_ecfg_node (node : ecfg_vertex)
      (succs_stmt : Cil_types.stmt )=
-      match node.statement.skind with
-	  If(cdition,_,_,_) ->
+    (*  match node.statement.skind with
+	  If(cdition,byes,bfalse,_) ->
 	    begin
 	      let sslv = front_end#copy_absdom_label 
 		node.abstract_val in
 	      front_end#next_on_if_statement sslv cdition 
 	    end
 	      
-	| _ ->
+	| _ ->*)
 	  begin
-	    let current_absvalue = front_end#copy_absdom_label 
-	      node.abstract_val
+	    let current_absvalue =
+	      node.abstract_val (*This value is copied in the next method
+				of the front end.*)
 	    in
 	    let empty_label = 
 	      front_end#get_empty_transition_label () in
 	    front_end#next current_absvalue empty_label 
 	      succs_stmt.skind
 	  end
+
+
+	    (*  Create ecfg nodes for If stmt successors if necessary
+	    and then adds the labelled edges between the current state
+		and the two next ones.*)
+	    
+    method private register_if_statement_successors 
+      current_node ((abs_true,trans_true),(abs_false,trans_false)) 
+      (true_stmt,false_stmt) =
+      
+      self#add_transition_from_to
+	current_node true_stmt abs_true trans_true;
+      self#add_transition_from_to
+	current_node false_stmt abs_false trans_false
+     
 
 
     method private build_ecfg () =
@@ -468,13 +493,26 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       in
       let succs_fc_sid_iterator (current_node : ecfg_vertex) 
 	  (succ_sid : Cil_types.stmt ) =
-	let abs_succ_list = 
-	  self#get_abstract_succs_of_ecfg_node current_node succ_sid 
-	in
-	List.iter (add_to_not_visited_iterator current_node succ_sid ) 
-	  abs_succ_list
+	match current_node.statement.skind with
+	    If(cdition,_,_,_) ->
+	      begin
+		let sslv = front_end#copy_absdom_label 
+		  current_node.abstract_val in
+		let (trans_true,trans_false) = 
+		  front_end#next_on_if_statement sslv cdition in
+		
+		let (true_stmt,false_stmt)  = Ast_goodies.get_two_first_elem_of_list
+		  current_node.statement.succs in
+		self#register_if_statement_successors current_node
+		  (trans_true,trans_false)(true_stmt,false_stmt)
+	      end
+	  | _ ->
+	    let abs_succ_list =     
+	      self#get_abstract_succs_of_ecfg_node current_node  succ_sid
+	    in
+	    List.iter (add_to_not_visited_iterator current_node succ_sid ) 
+	      abs_succ_list
       in
-      
       try
 	while ( not (Queue.is_empty not_visited_vertices) )
 	do

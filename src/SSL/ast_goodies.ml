@@ -28,6 +28,10 @@ open Lexing
 
 exception Debug_info of string
 exception Not_an_array_offset
+exception  Not_Ablock
+exception No_2_successors_for_if_successor of int
+exception Less_than_two_elem_in_this_list
+
 
 let debug_out =
   Format.formatter_of_out_channel stdout
@@ -42,6 +46,38 @@ let pprint_lexing_infos (loc : Cil_types.location) =
 	let end_zone_raw_number = posd.pos_cnum - posd.pos_bol in
 	(Format.sprintf "In file : %s, from line %d col %d to line %d col %d. /n" filename begin_line_numb begin_zone_raw_number end_line_numb end_zone_raw_number)
 	
+
+(** Get the fists statement of block. May raise an Empty exception. *)
+let first_stmt_of_block (b : Cil_types.block) =
+  List.hd b.bstmts
+ 
+
+let get_two_first_elem_of_list l =
+    match l with
+	e::l' ->
+	  begin
+	    match l' with
+		e'::r -> (e,e')
+	      | [] -> raise Less_than_two_elem_in_this_list
+	  end
+      | [] -> raise Less_than_two_elem_in_this_list
+	
+
+
+(*
+let get_if_else_successor (if_statement : Cil_types.stmt ) =
+  match  if_statement.skind with
+      If(_,_,_,_) ->
+	begin
+	  let num_succs = List.length if_statement.succs in
+	  if num_succs != 2
+	  then
+	    raise No_2_successors_for_if_successor (num_succs)
+	  else
+	    
+	    
+*)
+	  
 
 
 let loc_of_instr (inst:Cil_types.instr) =
