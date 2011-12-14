@@ -37,7 +37,11 @@ exception Ecfg_vertex_not_registered
 exception No_outgoing_edges_from_state of ecfg_id
 exception No_such_state_id
 exception Building_an_edge_between_inexisting_node_ids of ecfg_id
+exception Label_already_registered_for_this_edge
+
 exception Debug_exception of string
+
+
 
 let get_id_of_ecfg_id ( id : ecfg_id) =
   match id with
@@ -74,6 +78,21 @@ struct
   open Extended_cfg_base_types
   
   
+
+
+  let is_label_registered dest_ref label_ref 
+	  (dest_table : (ecfg_id, trans_label_val) Hashtbl.t ) =
+    let answer_iterator dest_ref label_ref dest label =
+      if label = label_ref && dest = dest_ref then
+	raise Label_already_registered_for_this_edge
+      else ()
+    in
+      try
+	Hashtbl.iter (answer_iterator dest_ref label_ref) dest_table;
+      false
+      with
+	| Label_already_registered_for_this_edge -> true
+
   
   class extended_cfg (name_function : string ) (funinfo : Cil_types.fundec) 
     frontend   = object(self)
@@ -245,8 +264,13 @@ struct
 
     (** Adds a labelled edge between two vertexes of the
 	extended control flow graph.*)
+
+
     method private register_edge (origin : ecfg_id ) ( dest : ecfg_id )
       (label : trans_label_val ) =
+      (*Used to check whether there alredy exists a (dest,label) binding
+      in order to ensure uniquedeness of edges labelling*)
+      
       try
 	if not (Hashtbl.mem edges origin) then
 	  begin
@@ -254,8 +278,13 @@ struct
 	    Hashtbl.add edges origin tabl_for_origin
 	  end;
 	
-	let entry_tab = Hashtbl.find edges origin in
-	  Hashtbl.add entry_tab dest label;
+	let entry_tab =( Hashtbl.find edges origin) in
+	  begin
+	  if not (is_label_registered  dest label entry_tab) 
+	  then
+	    Hashtbl.add entry_tab dest label
+	  else ()
+	  end;
 	  if Hashtbl.mem edges_inv dest then
 	    begin
 	      let reverse_table = Hashtbl.find edges_inv dest in
@@ -324,31 +353,7 @@ struct
 	  Not_found -> (false ,Ecfg_id(-1)) 
 	    
 
-  (*
-    method mark_as_error_state (vertex_id : ecfg_id ) =
-      if not (Hashtbl.mem error_state vertex_id)
-      then Hashtbl.add error_state vertex_id ()
-      else ()
-  *)  
-(*
-    method mark_as_visited ( vertex_id : ecfg_id ) =      
-      let v = Hashtbl.find vertices vertex_id in
-      try    
-	if Hashtbl.mem visited_index (Sid_class(v.statement.sid)) then 
-	  begin
-	    let sid_table = Hashtbl.find visited_index (Sid_class(v.statement.sid)) in
-	    if Hashtbl.mem sid_table vertex_id then ()
-	    else Hashtbl.add sid_table vertex_id ()
-	  end
-	else
-	  let new_visited_tab = Hashtbl.create init_hashtbl_size in
-	  Hashtbl.add new_visited_tab vertex_id ();
-	  Hashtbl.add visited_index (Sid_class(v.statement.sid)) new_visited_tab
-	  
-      with
-	  Not_found -> let excep = Marking_unregistered_vertex ( vertex_id ) in
-		       raise excep
-*)
+ 
    (*
       This operation takes as input the current state and the next abstract
       state, and :
@@ -378,7 +383,8 @@ struct
 		  if (not (front_end#is_error_state next_abs ))
 		  then
 		    begin
-		      Format.printf "[add_transition_from_to] Queuing a new ecfg node id \n";
+		      Format.printf 
+			"[add_transition_from_to] Queuing a new ecfg node id \n";
 		       Queue.push new_abs_state_id not_visited_vertices
 		    end
 		  else 
@@ -394,7 +400,6 @@ struct
 raise (Debug_exception("In method add_transition_from_to, a Not_found exception was raised"))
 
 
-	    
 
  (* Pre and post reprensent the identificators of the abstract states,
  i.e. states in the sid * abs_dom_val cross product.*)
@@ -524,8 +529,6 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	done
       with
 	  Empty -> raise Empty
-
-
       end
 	  
    
