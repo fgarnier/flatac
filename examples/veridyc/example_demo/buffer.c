@@ -14,11 +14,12 @@
 
 int init(buffer_t* b, int size) {
   // make size a multiple of 4
-  size += (size % 4) ? (4 - size % 4) : 0;
+  //size += (size % 4) ? (4 - size % 4) : 0;
   // allocate memory
-  b->size = size;
-  b->head = malloc( b->size );
-  if (b->head == NULL) {
+  /*b->size = size;*/
+  
+	b->head = malloc( b->size );
+  /*if (b->head == NULL) {
     trace("init: aborted, not enough memory");
     return KO_NOMEM;
   }
@@ -32,7 +33,7 @@ int init(buffer_t* b, int size) {
   b->count = 0;
 
   trace("init: ok");
-  return OK;
+  return OK;*/
 }
 
 /*
