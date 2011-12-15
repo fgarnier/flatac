@@ -37,8 +37,11 @@ object
 
   method virtual entails: 'a -> 'a -> bool
 
-  (** Returns true if the given state is an error state. *)
+  (** Returns true if the given  abstract value of the current 
+ state is an error state. *)
   method virtual is_error_state: 'a -> bool
+ 
+  method virtual is_control_state_erroneous : Cil_types.stmtkind -> bool
 
   (** Returns a list of abstract interpretation and counter automata label
   * couple based on the current abstraction, the current counter, and the 

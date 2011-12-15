@@ -37,6 +37,9 @@ exception Debug_information of string
 
 exception Debug_info of string 
 
+
+exception Assert_fail_exception 
+
 (*
 type il_expr = IlScal of c_scal
 	       | IlPtr of c_ptrexp
@@ -742,6 +745,14 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 			    (sslv,[])::[]
 			end
 		    | "malloc" | "calloc" -> (malloc_ssl_nts_transition  None sslv lparam mid)
+		    
+		    (*| "__assert_fail" ->
+			raise Assert_fail_exception*) (* Used to notify that
+						    the current control state
+						    do correspond to an 
+						    assertion failure. Heap
+						    and stack aren't 
+						       necessarily flawed.*)
 		    | _ -> 
 		      let funname = f.vname in
 		      

@@ -241,7 +241,8 @@ struct
 	      Ecfg_id(id) ->
 		Format.printf "[ Extended cfg Adding : Ecfg node id  : %d, Framac sid %d ] \n " new_vertex.statement.sid id
 	end;
-	if front_end#is_error_state absval then
+	if (front_end#is_error_state absval || 
+	      front_end#is_control_state_erroneous s.skind )then
 	  begin
 	    if Hashtbl.mem error_state new_vertex.id
 	    then ()
@@ -414,39 +415,30 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       with
 	  Not_found -> raise (Debug_exception("Method add_edge_by_id, Not_found caught"))  
 
-
+	    
     method private get_succs_of_ecfg_node ( node : ecfg_vertex ) =
       try
 	let prim_table = Hashtbl.find edges (node.id) 
 	in
-	prim_table
+	  prim_table
       with
 	  Not_found -> 
 	    raise  (No_outgoing_edges_from_state(node.id))
-	    
-
+	      
+	      
 	      
     method private get_abstract_succs_of_ecfg_node (node : ecfg_vertex)
-     (succs_stmt : Cil_types.stmt )=
-    (*  match node.statement.skind with
-	  If(cdition,byes,bfalse,_) ->
-	    begin
-	      let sslv = front_end#copy_absdom_label 
-		node.abstract_val in
-	      front_end#next_on_if_statement sslv cdition 
-	    end
-	      
-	| _ ->*)
-	  begin
-	    let current_absvalue =
-	      node.abstract_val (*This value is copied in the next method
-				of the front end.*)
-	    in
-	    let empty_label = 
-	      front_end#get_empty_transition_label () in
-	    front_end#next current_absvalue empty_label 
-	      succs_stmt.skind
-	  end
+      (succs_stmt : Cil_types.stmt )=
+  
+      let current_absvalue =
+	node.abstract_val (*This value is copied in the next method
+			    of the front end.*)
+      in
+      let empty_label = 
+	front_end#get_empty_transition_label () in
+	front_end#next current_absvalue empty_label 
+	  succs_stmt.skind
+    
 
 
 	    (*  Create ecfg nodes for If stmt successors if necessary
@@ -486,7 +478,8 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	      let new_ecfg_vertex_id = 
 		self#add_abstract_state next_stmt abs in
 	      self#register_edge current_node.id new_ecfg_vertex_id label;
-	      if (not (front_end#is_error_state abs))
+	      if (not (front_end#is_error_state abs || 
+			 front_end#is_control_state_erroneous next_stmt.skind))
 	      then
 		begin
 		Format.printf "Scheduling another vertex for execution \n";
@@ -506,17 +499,19 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 		let (trans_true,trans_false) = 
 		  front_end#next_on_if_statement sslv cdition in
 		
-		let (true_stmt,false_stmt)  = Ast_goodies.get_two_first_elem_of_list
+		let (true_stmt,false_stmt)  = 
+		  Ast_goodies.get_two_first_elem_of_list
 		  current_node.statement.succs in
 		self#register_if_statement_successors current_node
 		  (trans_true,trans_false)(true_stmt,false_stmt)
 	      end
 	  | _ ->
-	    let abs_succ_list =     
-	      self#get_abstract_succs_of_ecfg_node current_node  succ_sid
-	    in
-	    List.iter (add_to_not_visited_iterator current_node succ_sid ) 
-	      abs_succ_list
+	      let abs_succ_list =     
+		self#get_abstract_succs_of_ecfg_node current_node  succ_sid
+	      in
+		List.iter (add_to_not_visited_iterator current_node succ_sid ) 
+		  abs_succ_list
+		  
       in
       try
 	while ( not (Queue.is_empty not_visited_vertices) )
@@ -583,7 +578,6 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       Hashtbl.fold origin_table_print_folder edges ""
 
 		
-	
     method private pprint_inits  =
       let elem_left = ref 0 in
       let pprint_folder id () prescript =
@@ -600,8 +594,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       in
       "init: "^retstring
 	
-	
-	
+
     method private pprint_finals =
       let elem_left = ref 0 in
       let pprint_folder id () prescript =

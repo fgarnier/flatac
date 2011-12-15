@@ -109,7 +109,27 @@ class ssl_flatac_front_end = object
 	    then  ( (Ssl_decision.garbage_ssl sslv.ssl_part) )
 	    else false
 	  end
-	    
+
+
+
+(* this method tells whether one consider some Cil statements as
+being error states.*)
+  method is_control_state_erroneous (skind : Cil_types.stmtkind ) =
+    match skind with
+      |  Instr(Call( None , exp1, lparam , _ ))->
+           begin
+             match  exp1.enode with
+                 Lval((Var(f),_))  ->
+                   begin
+                     match f.vname with
+                         "__assert_fail" ->
+                           true
+		       | _ -> false
+		   end
+	       | _ -> false
+	   end
+      | _ -> false
+
 
   method pretty (sslv : ssl_validity_absdom ) =
     Ssl_pprinters.pprint_ssl_formula_tex sslv.ssl_part
