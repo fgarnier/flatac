@@ -94,7 +94,7 @@ struct
 	| Label_already_registered_for_this_edge -> true
 
   
-  class extended_cfg (name_function : string ) (funinfo : Cil_types.fundec) 
+  class extended_cfg (name_function : string )(finfo : Cil_types.file) (funinfo : Cil_types.fundec) 
     frontend   = object(self)
 
      
@@ -317,7 +317,7 @@ struct
       else
 	begin 
 	  
-	  let absval_of_ep = front_end#get_entry_point_from_fundec funinfo in
+	  let absval_of_ep = front_end#get_entry_point_from_fundec finfo funinfo in
 	  let first_cil_statement_of_cfg = List.hd funinfo.sallstmts in
 	  let stmt_of_ecfg_entry_point =  
 	    make_empty_cil_statement_with_successor first_cil_statement_of_cfg 

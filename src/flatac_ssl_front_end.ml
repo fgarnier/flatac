@@ -66,7 +66,7 @@ class ssl_flatac_front_end = object
   method get_entry_point_abstraction () =
      Ssl_valid_abs_dom.create_validity_abstdomain ()
  
-  method get_entry_point_from_fundec ( funinfo : Cil_types.fundec ) =
+  method get_entry_point_from_fundec (finfo : Cil_types.file) ( funinfo : Cil_types.fundec ) =
     if ( not index_of_composite_types_set  ) then
       raise IndexOfCompositeTypesNotSet
     else
@@ -76,8 +76,9 @@ class ssl_flatac_front_end = object
       let absdom = Ssl_valid_abs_dom.register_slocals mid funinfo absdom in
 	Format.printf "[get°entry_point_from_fundec ]  Absdom after registering slocals : %s \n" (Ssl_pprinters.pprint_ssl_formula_tex absdom.ssl_part);
 	let absdom = Ssl_valid_abs_dom.register_sformals mid funinfo absdom in
-	Format.printf "[get°entry_point_from_fundec ]  Absdom after registering sformals : %s \n" (Ssl_pprinters.pprint_ssl_formula_tex absdom.ssl_part);
-	  absdom
+	  Format.printf "[get°entry_point_from_fundec ]  Absdom after registering sformals : %s \n" (Ssl_pprinters.pprint_ssl_formula_tex absdom.ssl_part);
+	  let absdom = register_globals mid finfo absdom in
+	    absdom
 
 (*
   method get_entry_point_from_fundec_and_type_infos 
