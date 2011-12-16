@@ -80,18 +80,7 @@ class ssl_flatac_front_end = object
 	  let absdom = register_globals mid finfo absdom in
 	    absdom
 
-(*
-  method get_entry_point_from_fundec_and_type_infos 
-    (funinfo : Cil_types.fundec) (i : index_of_composite_types ) =
-    index_of_composite_type_set <- true;
-    index_of_pointers_of_composite_types <- 
-      copy_index_of_composite_types i;
-    self#get_entry_point_from_fundec funinfo
-*)    
-      
-  (*
-    method copy_transit_label (label : Nts_types.cnt_trans_label list ) =
-    [] *)
+
 	
   method copy_transit_label _ =
     []
