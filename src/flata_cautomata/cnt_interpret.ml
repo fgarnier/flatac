@@ -66,7 +66,7 @@ let rec interpret_ciltypes_size (ciltype : Cil_types.typ ) =
 
 let offset_cnt_of_pvar (pvar : ptvar) =
   match pvar with 
-      PVar(vname) -> CntVar ( NtsIVar("offset("^vname^")") )
+      PVar(vname) -> CntVar ( NtsIVar("offset__"^vname^"_") )
 
 
 (** Same as above, but more conveninant to express CntAffectation,
@@ -75,13 +75,14 @@ match structure to get the embeded NtsIVar(name).
 *)
 let offset_ntsivar_of_pvar (pvar : ptvar ) =
    match pvar with 
-      PVar(vname) -> NtsIVar("offset("^vname^")") 
+      PVar(vname) -> NtsIVar("offset__"^vname^"_") 
 
+   
 (** This function aims at computing the name of the counter var name
 associated to the offset of a pointer variable*)
 let offset_cnt_name ( ptvar : c_ptrexp ) =  
   match ptvar with
-      LiPVar(_,LiIntPtr(vname),_) -> CntVar ( NtsIVar("offset("^vname^")") )
+      LiPVar(_,LiIntPtr(vname),_) -> CntVar ( NtsIVar("offset__"^vname^"_") )
     | _ -> raise Not_LiPVar
   
 

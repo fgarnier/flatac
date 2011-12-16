@@ -124,10 +124,14 @@ let compile_param_list_2_cnt_list sslv ( lparam : Cil_types.exp list) =
 let make_offset_locpvar (v : ptvar ) =
   match  v  with 
       PVar ( s ) -> let soff =
-	"offset("^s^")" in
+	"offset__"^s^"_" in
 	NtsIVar(soff)
 
-
+let make_validity_varpvar ( v : ptvar) =
+  match  v  with 
+      PVar ( s ) -> let vdty =
+	"validity__"^s^"_" in
+	NtsIVar(vdty)
 
 
 
@@ -252,10 +256,10 @@ let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) (s
 	  
 (** This function modifies the sslf formula that abstracts the current
     heap and stack when a call to malloc is performed.*)
-let malloc_upon_ssl  ( v : Cil_types.varinfo option ) ( mid : global_mem_manager )  (sslf : ssl_formula ) =
-  match v with Some (vinfo) ->
+let malloc_upon_ssl  ( lhs : Cil_types.lval option ) ( mid : global_mem_manager )  (sslf : ssl_formula ) =
+  match lhs with Some ((lv,off)) ->
     let lvar = mid#lvar_from_malloc () in
-    let pvar = (PVar(vinfo.vname)) in
+    let pvar = get_pvar_from_exp_node (Lval(lv,off)) in
     let affect = (Pointsto (pvar,lvar)) in
       Ssl.add_quant_var lvar sslf;
       Ssl.change_affect_var affect sslf;
@@ -313,23 +317,27 @@ let free_upon_sslv (pvar : ptvar)(sslv : ssl_validity_absdom ) =
   
 (** This function computes the heap shape after a successful call to malloc,
 i.e. when Valid(I) and [I]_{\phi} > 0*)
-let r_malloc_succ (var : Cil_types.varinfo option ) sslv (mid: global_mem_manager ) (scal_param : c_scal) =
+let r_malloc_succ ( lhs : Cil_types.lval option ) sslv (mid: global_mem_manager ) (scal_param : c_scal) =
   	Self.debug ~level:0 "Entering r_malloc_succ";
   let sslv = copy_validity_absdomain sslv in
-  match var with
-      Some(v) ->
+  match lhs with
+      Some((lv,off)) ->
 	begin
 	let new_abstract = copy_validity_absdomain sslv in
-	malloc_upon_ssl (Some(v)) mid new_abstract.ssl_part;
+	malloc_upon_ssl lhs mid new_abstract.ssl_part;
 	let l = mid#get_last_lvar () in
 	let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
 	  scal_param in
+	let lhs_pvar = get_pvar_from_exp_node (Lval(lv,off)) in
+	let valid_var_cnt_aff =   make_validity_varpvar lhs_pvar in
+	let valid_var_aff = CntAffect( valid_var_cnt_aff , CntCst(1)) in
 	let interpret_gt_zero = CntBool(CntGt,interpret_param,CntCst(0)) in
-	let list_locvar_cnt_affect = make_size_locvar l mid interpret_param in
-	let cnt_ptvar_offset =  make_offset_locpvar (PVar(v.vname)) in
+	let list_locvar_cnt_affect = make_size_locvar l mid interpret_param in 
+	let cnt_ptvar_offset =  make_offset_locpvar lhs_pvar in
 	let zero_pvar_offset =  CntAffect( cnt_ptvar_offset, CntCst(0)) in
 	let transit_list =  (CntGuard(interpret_gt_zero)) :: list_locvar_cnt_affect  in
 	let transit_list = zero_pvar_offset :: transit_list in
+	let transit_list = valid_var_aff :: transit_list in
 	let ret_list = (( new_abstract , transit_list) :: []) in
 	ret_list
 	end
@@ -348,27 +356,32 @@ let r_malloc_succ (var : Cil_types.varinfo option ) sslv (mid: global_mem_manage
       end
 
 (** Same function as above, but includes an extra guard that express which constraints the counter evaluation shall satisfy so that Valid(I) is true. *)
-let r_malloc_succ_withvalidcntguard (var : Cil_types.varinfo option) sslv (mid: global_mem_manager ) (scal_param : c_scal) =
+let r_malloc_succ_withvalidcntguard ( lhs : Cil_types.lval option) sslv (mid: global_mem_manager ) (scal_param : c_scal) =
 	Self.debug ~level:0 "Entering r_malloc_succ_withvalidcntguard ";
   let sslv = copy_validity_absdomain sslv in
-  match var with 
-      Some(v) ->
+  match lhs with 
+      Some((lv,off)) ->
 	begin
 	  let new_abstract = copy_validity_absdomain sslv in
-	  malloc_upon_ssl (Some(v)) mid new_abstract.ssl_part;
-	  let l = mid#get_last_lvar () in
-	  let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
+	  malloc_upon_ssl lhs mid new_abstract.ssl_part;
+	   
+	    let l = mid#get_last_lvar () in
+	    let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
 	  let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
 	  let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
 	    scal_param in
 	  let interpret_gt_zero = CntBool(CntGt,interpret_param,CntCst(0)) in
 	  let good_malloc_guard = CntBAnd(validity_guard_cnt,interpret_gt_zero)
 	  in 
+	  let pvar_of_lhs = get_pvar_from_exp_node (Lval(lv,off)) in
+	  let valid_lhs_var = make_validity_varpvar pvar_of_lhs in
 	  let list_locvar_cnt_affect = make_size_locvar l mid interpret_param in
-	  let cnt_ptvar_offset =  make_offset_locpvar (PVar(v.vname)) in
+	  let cnt_ptvar_offset =  make_offset_locpvar pvar_of_lhs in
 	  let zero_pvar_offset =  CntAffect( cnt_ptvar_offset, CntCst(0)) in
+	  let valid_aff_lhs =  CntAffect( valid_lhs_var, CntCst(1)) in
 	  let transit_list =  (CntGuard(good_malloc_guard)) :: list_locvar_cnt_affect  in
 	  let transit_list = zero_pvar_offset :: transit_list in
+	  let transit_list = valid_aff_lhs :: transit_list in
 	  let ret_list = ( new_abstract , transit_list) :: [] in
 	  ret_list
 	end
@@ -394,15 +407,15 @@ let r_malloc_succ_withvalidcntguard (var : Cil_types.varinfo option) sslv (mid: 
 
 (** this function computes the labels and the new heap shape when a
 call of malloc is performed using a negative or zero parameter.*)	
-let r_malloc_neg_or_zero_arg (var : Cil_types.varinfo option ) sslv  (mid: global_mem_manager ) (scal_param : c_scal) =
+let r_malloc_neg_or_zero_arg ( lhs : Cil_types.lval option ) sslv  (mid: global_mem_manager ) (scal_param : c_scal) =
 
   Self.debug ~level:0 "Entering r_malloc_neg_or_zero_arg ";
   let sslv = copy_validity_absdomain sslv in
-  match var with
-      Some(v) ->
+  match lhs with
+      Some((lv,off)) ->
 	begin
 	  let new_abstract = copy_validity_absdomain sslv in
-	  let pvar = (PVar( v.vname )) in
+	  let pvar = get_pvar_from_exp_node (Lval(lv,off)) in
 	  let interpret_param = interpret_c_scal_to_cnt new_abstract.ssl_part 
 	    scal_param in
 	  let aff_to_nil = Pointsnil(pvar) in
@@ -426,14 +439,14 @@ let r_malloc_neg_or_zero_arg (var : Cil_types.varinfo option ) sslv  (mid: globa
 (** Same as above, but includes a NTS guard that express the validity condition
 w.r.t. counters assigne values.*)
 
-let r_malloc_neg_or_zero_arg_withvalidityguard (var : Cil_types.varinfo option ) sslv  (mid: global_mem_manager ) (scal_param : c_scal) =
+let r_malloc_neg_or_zero_arg_withvalidityguard (lhs : Cil_types.lval option ) sslv  (mid: global_mem_manager ) (scal_param : c_scal) =
   Self.debug ~level:0 " r_malloc_neg_or_zero_arg_withvalidityguard ";
   let sslv = copy_validity_absdomain sslv in
-  match var with 
-      Some(v) ->
+  match lhs with 
+      Some((lv,off)) ->
 	begin
 	  let new_abstract = copy_validity_absdomain sslv in
-	  let pvar = PVar( v.vname ) in
+	  let pvar = get_pvar_from_exp_node (Lval(lv,off)) in
 	  let valid_paral_malloc = valid_cscal new_abstract.ssl_part scal_param in
 	  let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
 	  let interpret_param = interpret_c_scal_to_cnt new_abstract.ssl_part 
@@ -486,7 +499,7 @@ and the value sslf_post is used to express the successful
 application of the malloc call. i.e. when the condition
 expressed by the guards are met.*)
 
-let malloc_ssl_nts_transition ( v : Cil_types.varinfo  option) sslv  lparam mid  = 
+let malloc_ssl_nts_transition ( lhs : lval  option ) sslv  lparam mid  = 
   Self.debug ~level:0 " malloc_ssl_nts_transition ";
   let sslv = copy_validity_absdomain sslv in
   (** Case of a malloc success *)
@@ -506,8 +519,8 @@ let malloc_ssl_nts_transition ( v : Cil_types.varinfo  option) sslv  lparam mid 
 	      before runtime, hence we have to generate both transition
 		so that flata can do the job.*)
 	begin
-	  let ret_list = r_malloc_succ v sslv mid scal_param in
-	  let ret_list = (r_malloc_neg_or_zero_arg v sslv mid scal_param )@ret_list 
+	  let ret_list = r_malloc_succ lhs sslv mid scal_param in
+	  let ret_list = (r_malloc_neg_or_zero_arg lhs sslv mid scal_param )@ret_list 
 	  in
 	  ret_list
 	end
@@ -519,9 +532,9 @@ let malloc_ssl_nts_transition ( v : Cil_types.varinfo  option) sslv  lparam mid 
 				state*)
 	  (* In this case, the empty list is returned*)
     | DKvarValid ->
-      let ret_list =  r_malloc_succ_withvalidcntguard  v sslv  mid scal_param in
-      let ret_list = (r_malloc_neg_or_zero_arg_withvalidityguard v sslv mid scal_param)@ret_list in
-      let ret_list = (r_malloc_failed_with_unvalidcntgard v sslv mid scal_param)@ret_list in
+      let ret_list =  r_malloc_succ_withvalidcntguard  lhs sslv  mid scal_param in
+      let ret_list = (r_malloc_neg_or_zero_arg_withvalidityguard lhs sslv mid scal_param)@ret_list in
+      let ret_list = (r_malloc_failed_with_unvalidcntgard lhs sslv mid scal_param)@ret_list in
       ret_list
 	      
 	
@@ -629,7 +642,7 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 			      (*The returned value is a variable that has another
 				type than an integer type. Tpointer, float for instance*)
 			      match f.vname with
-				  "malloc" | "calloc" -> (malloc_ssl_nts_transition (Some(v)) sslv lparam mid)
+				  "malloc" | "calloc" -> (malloc_ssl_nts_transition (Some(lvo)) sslv lparam mid)
 				    
 				|  _ -> 
 
@@ -698,7 +711,7 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 			Lval(Var(v),_) ->
 			  begin
 			    match f.vname with
-				"malloc" | "calloc" -> (malloc_ssl_nts_transition (Some(v)) sslv lparam mid)
+				"malloc" | "calloc" -> (malloc_ssl_nts_transition (Some(lvo)) sslv lparam mid)
 			  
 			      |  _ -> 
 				raise ( Debug_info ("Lost in call of malloc/calloc of ((Mem(e),_),Lval(Var(f),_)) case of  next_on_ssl_instr "))
