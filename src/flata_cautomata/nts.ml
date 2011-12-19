@@ -279,7 +279,7 @@ let rec cnt_pprint_boolexp (bexp :cnt_bool ) =
       	 CntBTrue -> "true"
 	| CntBFalse-> "false"
 	| CntNot ( exp ) ->
-	  if size_boolexp_deeper_than exp 2 then
+	  if size_boolexp_deeper_than exp 1 then
 	    "not ("^(cnt_pprint_boolexp exp)^")"
 	  else 
 	    "not"^cnt_pprint_boolexp exp
@@ -292,7 +292,7 @@ let rec cnt_pprint_boolexp (bexp :cnt_bool ) =
 	    let pprint_outputg = ref "" 
 	    in
 	    begin
-	      if size_boolexp_deeper_than ed 2 then
+	      if size_boolexp_deeper_than ed 1 then
 		begin
 	     pprint_outputd := "("^(cnt_pprint_boolexp ed)^")";
 		end
@@ -300,7 +300,7 @@ let rec cnt_pprint_boolexp (bexp :cnt_bool ) =
 		pprint_outputd := cnt_pprint_boolexp ed;
 	    end;
 	    begin
-	      if size_boolexp_deeper_than eg 2 then
+	      if size_boolexp_deeper_than eg 1 then
 		begin
 		  pprint_outputg := "("^(cnt_pprint_boolexp eg)^")";
 		end

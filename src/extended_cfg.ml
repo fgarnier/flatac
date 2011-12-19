@@ -196,7 +196,7 @@ struct
     method register_in_out_nts_vars () =
       let in_out_map_folder (nts_var_list) (v : Cil_types.varinfo ) =
 	match v.vtype with
-	    TPtr(_,_) -> NtsIVar("offset("^v.vname^")")::nts_var_list
+	    TPtr(_,_) -> NtsIVar("offset__"^v.vname^"_")::nts_var_list
 	  | _ ->
 	    begin
 	      match (Composite_types.is_integer_type v.vtype) with
@@ -210,7 +210,7 @@ struct
     method register_local_vars () =
       let in_out_map_folder (nts_var_list) (v : Cil_types.varinfo ) =
 	match v.vtype with
-	    TPtr(_,_) -> NtsIVar("offset("^v.vname^")")::nts_var_list
+	    TPtr(_,_) -> NtsIVar("offset__"^v.vname^"_")::nts_var_list
 	  | _ ->
 	    begin
 	      match (Composite_types.is_integer_type v.vtype) with
