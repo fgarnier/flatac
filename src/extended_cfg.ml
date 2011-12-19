@@ -459,6 +459,46 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
     
 
 
+    method private add_to_not_visited_iterator (current_node : ecfg_vertex)
+      (next_stmt : Cil_types.stmt) 
+      ((abs , label ) :( abs_dom_val * trans_label_val )) =
+      
+      let is_entailed_by_existing_vertex_abs = 
+	self#entailed_by_same_id_absvalue next_stmt abs 
+      in
+	
+      match is_entailed_by_existing_vertex_abs with
+	  (true, more_genid ) ->
+	    begin
+	      self#register_edge current_node.id more_genid label;
+	      if not (self#is_visited more_genid) then
+		Queue.push more_genid not_visited_vertices
+	    end
+	| (false , _ ) ->
+	  begin
+	    let new_ecfg_vertex_id = 
+	      self#add_abstract_state next_stmt abs in
+	    self#register_edge current_node.id new_ecfg_vertex_id label;
+	    if (not (front_end#is_error_state abs || 
+		       front_end#is_control_state_erroneous next_stmt.skind))
+	    then
+	      begin
+		Format.printf "Scheduling another vertex for execution \n";
+		Queue.push new_ecfg_vertex_id not_visited_vertices
+	      end
+	      else 
+	      begin
+		Format.printf "This state is an error state, I'm not going to traverse it.\n";
+		self#mark_as_visited new_ecfg_vertex_id
+		(* Hashtbl.add error_state new_ecfg_vertex_id ()*)
+		(*;
+		  Queue.push  new_ecfg_vertex_id not_visited_vertices
+		*)       
+		(*Hashtbl.add error_state new_ecfg_vertex_id ()*)
+	      end
+	  end
+	    
+
 	    (*  Create ecfg nodes for If stmt successors if necessary
 	    and then adds the labelled edges between the current state
 		and the two next ones.*)
@@ -466,56 +506,28 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
     method private register_if_statement_successors 
       current_node ((abs_true,trans_true),(abs_false,trans_false)) 
       (true_stmt,false_stmt) =
-      
-      self#add_transition_from_to
+      (* Calculer le front_end_next pour chaque noeuds ... *)
+      let true_case_succs_abs_list = front_end#next abs_true trans_true 
+	true_stmt.skind in
+      let false_case_succs_abs_list = front_end#next abs_false trans_false
+	false_stmt.skind in
+      List.iter (self#add_to_not_visited_iterator current_node true_stmt) true_case_succs_abs_list;
+      List.iter (self#add_to_not_visited_iterator current_node false_stmt) false_case_succs_abs_list
+   (*   self#add_transition_from_to
 	current_node true_stmt abs_true trans_true;
       self#add_transition_from_to
 	current_node false_stmt abs_false trans_false
-     
+   *)
+(*	self#add_to_not_visited_iterator *)
+
+
 
 
     method private build_ecfg () =
       if (not entry_point_set ) then raise Entry_point_not_registered
       else begin
 
-      let add_to_not_visited_iterator (current_node : ecfg_vertex)
-	  (next_stmt : Cil_types.stmt) 
-	  ((abs , label ) :( abs_dom_val * trans_label_val )) =
-
-	let is_entailed_by_existing_vertex_abs = 
-	  self#entailed_by_same_id_absvalue next_stmt abs 
-	in
-	
-	match is_entailed_by_existing_vertex_abs with
-	    (true, more_genid ) ->
-	      begin
-		self#register_edge current_node.id more_genid label;
-		if not (self#is_visited more_genid) then
-		  Queue.push more_genid not_visited_vertices
-	      end
-	  | (false , _ ) ->
-	    begin
-	      let new_ecfg_vertex_id = 
-		self#add_abstract_state next_stmt abs in
-	      self#register_edge current_node.id new_ecfg_vertex_id label;
-	      if (not (front_end#is_error_state abs || 
-			 front_end#is_control_state_erroneous next_stmt.skind))
-	      then
-		begin
-		Format.printf "Scheduling another vertex for execution \n";
-		Queue.push new_ecfg_vertex_id not_visited_vertices
-		end
-	      else 
-		begin
-		  Format.printf "This state goes nowhere \n";
-		  self#mark_as_visited new_ecfg_vertex_id
-		(*;
-		  Queue.push  new_ecfg_vertex_id not_visited_vertices
-		*)       
-		  (*Hashtbl.add error_state new_ecfg_vertex_id ()*)
-		end
-	    end
-      in
+      
       let succs_fc_sid_iterator (current_node : ecfg_vertex) 
 	  (succ_sid : Cil_types.stmt ) =
 	match current_node.statement.skind with
@@ -536,7 +548,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	      let abs_succ_list =     
 		self#get_abstract_succs_of_ecfg_node current_node  succ_sid
 	      in
-		List.iter (add_to_not_visited_iterator current_node succ_sid ) 
+		List.iter (self#add_to_not_visited_iterator current_node succ_sid ) 
 		  abs_succ_list
 		  
       in
@@ -569,27 +581,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       let str_res = (self#pprint_node orig)^"->"^(self#pprint_node dest)^" "^str_label in
       str_res
 	
-	(*
-    method private pprint_to_nts_rec (current_vertex_id : ecfg_id )(printed_index : (ecfg_id , unit ) Hashtbl.t ) (pre_print : string ) =
-      let transitions_folder (id : ecfg_id ) _ (previous_trans : string ) =
-	let previous_trans = 
-	  previous_trans^(self#pprint_edge current_vertex_id id) 
-	in
-	previous_trans
-      in
-      let  recurse_folder (succs_id : ecfg_id ) _ ( nts_script : string ) =
-	if Hashtbl.mem vertices succs_id then  nts_script
-	else self#pprint_to_nts_rec succs_id printed_index nts_script 
-      in
-      Hashtbl.add printed_index current_vertex_id (); (* Marks the
-							 current vertex as 
-							 visited
-						      *)
-      let succ_id = Hashtbl.find edges current_vertex_id in
-      let trans_from_current = Hashtbl.fold transitions_folder succ_id "" in
-      let ret_succs  = pre_print^trans_from_current in
-      Hashtbl.fold recurse_folder succ_id ret_succs
-	*)
+
 	
     method pprint_transitions =
       let dest_table_print_folder ( origin : ecfg_id ) (dest : ecfg_id ) label 
