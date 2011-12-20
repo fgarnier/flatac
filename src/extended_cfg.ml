@@ -490,11 +490,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	      begin
 		Format.printf "This state is an error state, I'm not going to traverse it.\n";
 		self#mark_as_visited new_ecfg_vertex_id
-		(* Hashtbl.add error_state new_ecfg_vertex_id ()*)
-		(*;
-		  Queue.push  new_ecfg_vertex_id not_visited_vertices
-		*)       
-		(*Hashtbl.add error_state new_ecfg_vertex_id ()*)
+	
 	      end
 	  end
 	    
@@ -511,15 +507,11 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	true_stmt.skind in
       let false_case_succs_abs_list = front_end#next abs_false trans_false
 	false_stmt.skind in
-      List.iter (self#add_to_not_visited_iterator current_node true_stmt) true_case_succs_abs_list;
-      List.iter (self#add_to_not_visited_iterator current_node false_stmt) false_case_succs_abs_list
-   (*   self#add_transition_from_to
-	current_node true_stmt abs_true trans_true;
-      self#add_transition_from_to
-	current_node false_stmt abs_false trans_false
-   *)
-(*	self#add_to_not_visited_iterator *)
-
+      List.iter (self#add_to_not_visited_iterator current_node true_stmt)
+	true_case_succs_abs_list;
+      List.iter (self#add_to_not_visited_iterator current_node false_stmt) 
+	false_case_succs_abs_list
+   
 
 
 

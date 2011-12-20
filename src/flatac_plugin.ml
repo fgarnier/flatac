@@ -41,8 +41,10 @@ let pretty_print_cautomata_obj out =
   let prj= Project.current() in
   let visited_file = new  flatac_visitor ( prj ) in
   let composite_types = new global_composite_types_visitor ( prj ) in
-  
+  let project_name = Project.get_name prj in
+  Format.printf "Current project name is : %s \n" project_name ;
   let file_ast = Ast.get() in
+  
   (*Cfg.clearFileCFG file_ast;*)
   
   (*Printing debug infos using the debug visitor*)
