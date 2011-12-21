@@ -12,6 +12,7 @@ open Composite_type_types
 open Composite_types
 
 exception Untraversed_ast
+exception No_file_name_given
 
 module Flatac_extended_cfg =  
   Extended_cfg_definition (
@@ -30,6 +31,13 @@ class flatac_visitor (prj : Project.t )  = object (self)
   inherit Visitor.generic_frama_c_visitor (prj) (Cil.inplace_visit())
     
   val local_file_ast = Ast.get ()
+  val source_file_name = 
+    begin 
+      match ( Kernel.Files.get() ) with
+	  [] -> raise No_file_name_given
+	| f::_ -> f
+    end
+
   val mutable is_computed = false
   val function_tables = Hashtbl.create 97
   
@@ -87,7 +95,7 @@ class flatac_visitor (prj : Project.t )  = object (self)
       let current_ecfg_output = registered_ecfg#pprint_ecfg_vertex in
 	pre_msg^current_ecfg_output^"\n"
     in
-      Hashtbl.fold  pprint_folder function_tables ""
+      Hashtbl.fold  pprint_folder function_tables ("nts "^source_file_name^";")
 
 
 

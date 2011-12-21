@@ -653,8 +653,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	
     method pprint_to_nts  = 
       (* let current_ecfg_node = Hashtbl.get vertex current_vertex_id in *)
-      let res_string = Format.sprintf "nts %s; \n" name in
-      let res_string = res_string^name^" {\n" in
+      let res_string = name^" {\n" in
       let res_string = res_string^"in ("^self#pprint_input_vars^")\n" in
       let pprint_loc = self#pprint_local_vars in
       let res_string = (
