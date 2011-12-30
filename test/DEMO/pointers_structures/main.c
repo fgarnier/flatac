@@ -9,7 +9,7 @@ struct S {
 void foo(struct S x, int b) {
   x.a = b;
   x.p = (char *) malloc(x.a+sizeof(char));
-  x.p[x.a] = b;
+  /*x.p[x.a] = b;*/
 }
 
 int main() {
@@ -17,7 +17,7 @@ int main() {
   int z;
 
   foo(s,100);
-  z = s.p[100];
+ /* z = s.p[100];*/
 
   assert(z == 100);
 

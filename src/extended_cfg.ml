@@ -94,7 +94,7 @@ struct
 	| Label_already_registered_for_this_edge -> true
 
   
-  class extended_cfg (name_function : string ) (funinfo : Cil_types.fundec) 
+  class extended_cfg (name_function : string )(finfo : Cil_types.file) (funinfo : Cil_types.fundec) 
     frontend   = object(self)
 
      
@@ -142,16 +142,18 @@ struct
 	
     (** The key shall be the Cil_stmt.sid and the second element contains
      all the ids of the ecfg nodes that were visited.*)
-    val visited_index : ( sid_class ,  (ecfg_id ,  unit ) Hashtbl.t ) Hashtbl.t =
-      Hashtbl.create init_hashtbl_size
+    (*val visited_index : ( sid_class ,  (ecfg_id ,  unit ) Hashtbl.t ) Hashtbl.t =
+      Hashtbl.create init_hashtbl_size*)
 
+    val visited_nodes_id = Hashtbl.create init_hashtbl_size
+      
     (* The key corresponds to the Cil_type.stmt.sid and the corresponding
        hash table contains all the id of the note of the ecfg which have
        the same sid as the key.*)
-	
+      
     val unfoldsid_2_abs_map : (sid_class , (ecfg_id , unit ) Hashtbl.t) Hashtbl.t =
       Hashtbl.create init_hashtbl_size
-
+	
     (* Associates to each
        abstract id the corresponding
        sid. Used to spare a double
@@ -177,14 +179,24 @@ struct
 	    let nid = i+1 in
 	    (current_node_id <- Ecfg_id(nid))
 
-	      
+	
+
+      
     method get_name () =
       name
+
+    method private mark_as_visited (e : ecfg_id ) =
+      if not (Hashtbl.mem visited_nodes_id e) then
+	Hashtbl.add visited_nodes_id e ()
+
+    method private is_visited (e : ecfg_id ) =
+       Hashtbl.mem visited_nodes_id e 
+	
 
     method register_in_out_nts_vars () =
       let in_out_map_folder (nts_var_list) (v : Cil_types.varinfo ) =
 	match v.vtype with
-	    TPtr(_,_) -> NtsIVar("offset("^v.vname^")")::nts_var_list
+	    TPtr(_,_) -> NtsIVar("offset__"^v.vname^"_")::nts_var_list
 	  | _ ->
 	    begin
 	      match (Composite_types.is_integer_type v.vtype) with
@@ -198,7 +210,7 @@ struct
     method register_local_vars () =
       let in_out_map_folder (nts_var_list) (v : Cil_types.varinfo ) =
 	match v.vtype with
-	    TPtr(_,_) -> NtsIVar("offset("^v.vname^")")::nts_var_list
+	    TPtr(_,_) -> NtsIVar("offset__"^v.vname^"_")::nts_var_list
 	  | _ ->
 	    begin
 	      match (Composite_types.is_integer_type v.vtype) with
@@ -317,14 +329,15 @@ struct
       else
 	begin 
 	  
-	  let absval_of_ep = front_end#get_entry_point_from_fundec funinfo in
+	  let absval_of_ep = front_end#get_entry_point_from_fundec finfo funinfo in
 	  let first_cil_statement_of_cfg = List.hd funinfo.sallstmts in
 	  let stmt_of_ecfg_entry_point =  
 	    make_empty_cil_statement_with_successor first_cil_statement_of_cfg 
 	  in
 	  let id_ep = self#add_abstract_state stmt_of_ecfg_entry_point 
 	    absval_of_ep in
-	  Queue.push id_ep not_visited_vertices;	
+	  Queue.push id_ep not_visited_vertices;
+	  Hashtbl.add init_state id_ep ();
 	  entry_point_set <- true 
 	end
 	   
@@ -388,13 +401,18 @@ struct
 			"[add_transition_from_to] Queuing a new ecfg node id \n";
 		       Queue.push new_abs_state_id not_visited_vertices
 		    end
-		  else 
-		    Format.printf "This state goes nowhere \n"
+		  else
+		    begin
+		      Format.printf "Next state is an error state. not schduled for travesal. This state goes nowhere \n";
+		      Hashtbl.add error_state new_abs_state_id ()
+		    end
 		  
 		  end
 	      | (true , entailing_state_id ) ->
 		 Format.printf "Not adding a new node, creating a new edge\n";
-		  self#register_edge current.id entailing_state_id label
+		  self#register_edge current.id entailing_state_id label;
+		  if not( self#is_visited entailing_state_id ) then
+		    Queue.push entailing_state_id not_visited_vertices
 	  end
       with
 	  Not_found -> 
@@ -441,6 +459,42 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
     
 
 
+    method private add_to_not_visited_iterator (current_node : ecfg_vertex)
+      (next_stmt : Cil_types.stmt) 
+      ((abs , label ) :( abs_dom_val * trans_label_val )) =
+      
+      let is_entailed_by_existing_vertex_abs = 
+	self#entailed_by_same_id_absvalue next_stmt abs 
+      in
+	
+      match is_entailed_by_existing_vertex_abs with
+	  (true, more_genid ) ->
+	    begin
+	      self#register_edge current_node.id more_genid label;
+	      if not (self#is_visited more_genid) then
+		Queue.push more_genid not_visited_vertices
+	    end
+	| (false , _ ) ->
+	  begin
+	    let new_ecfg_vertex_id = 
+	      self#add_abstract_state next_stmt abs in
+	    self#register_edge current_node.id new_ecfg_vertex_id label;
+	    if (not (front_end#is_error_state abs || 
+		       front_end#is_control_state_erroneous next_stmt.skind))
+	    then
+	      begin
+		Format.printf "Scheduling another vertex for execution \n";
+		Queue.push new_ecfg_vertex_id not_visited_vertices
+	      end
+	      else 
+	      begin
+		Format.printf "This state is an error state, I'm not going to traverse it.\n";
+		self#mark_as_visited new_ecfg_vertex_id
+	
+	      end
+	  end
+	    
+
 	    (*  Create ecfg nodes for If stmt successors if necessary
 	    and then adds the labelled edges between the current state
 		and the two next ones.*)
@@ -448,47 +502,24 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
     method private register_if_statement_successors 
       current_node ((abs_true,trans_true),(abs_false,trans_false)) 
       (true_stmt,false_stmt) =
-      
-      self#add_transition_from_to
-	current_node true_stmt abs_true trans_true;
-      self#add_transition_from_to
-	current_node false_stmt abs_false trans_false
-     
+      (* Calculer le front_end_next pour chaque noeuds ... *)
+      let true_case_succs_abs_list = front_end#next abs_true trans_true 
+	true_stmt.skind in
+      let false_case_succs_abs_list = front_end#next abs_false trans_false
+	false_stmt.skind in
+      List.iter (self#add_to_not_visited_iterator current_node true_stmt)
+	true_case_succs_abs_list;
+      List.iter (self#add_to_not_visited_iterator current_node false_stmt) 
+	false_case_succs_abs_list
+   
+
 
 
     method private build_ecfg () =
       if (not entry_point_set ) then raise Entry_point_not_registered
       else begin
 
-      let add_to_not_visited_iterator (current_node : ecfg_vertex)
-	  (next_stmt : Cil_types.stmt) 
-	  ((abs , label ) :( abs_dom_val * trans_label_val )) =
-
-	let is_entailed_by_existing_vertex_abs = 
-	  self#entailed_by_same_id_absvalue next_stmt abs 
-	in
-	
-	match is_entailed_by_existing_vertex_abs with
-	    (true, more_genid ) ->
-	      begin
-		self#register_edge current_node.id more_genid label  
-	      end
-	  | (false , _ ) ->
-	    begin
-	      let new_ecfg_vertex_id = 
-		self#add_abstract_state next_stmt abs in
-	      self#register_edge current_node.id new_ecfg_vertex_id label;
-	      if (not (front_end#is_error_state abs || 
-			 front_end#is_control_state_erroneous next_stmt.skind))
-	      then
-		begin
-		Format.printf "Scheduling another vertex for execution \n";
-		Queue.push new_ecfg_vertex_id not_visited_vertices
-		end
-	      else 
-		Format.printf "This state goes nowhere \n"
-	    end
-      in
+      
       let succs_fc_sid_iterator (current_node : ecfg_vertex) 
 	  (succ_sid : Cil_types.stmt ) =
 	match current_node.statement.skind with
@@ -509,7 +540,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	      let abs_succ_list =     
 		self#get_abstract_succs_of_ecfg_node current_node  succ_sid
 	      in
-		List.iter (add_to_not_visited_iterator current_node succ_sid ) 
+		List.iter (self#add_to_not_visited_iterator current_node succ_sid ) 
 		  abs_succ_list
 		  
       in
@@ -517,6 +548,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	while ( not (Queue.is_empty not_visited_vertices) )
 	do
 	  let current_node_id = Queue.pop not_visited_vertices in
+	  self#mark_as_visited current_node_id;
 	  let current_node = Hashtbl.find vertices current_node_id in
 	  let framac_sid_successor_list = current_node.statement.succs in
 	  List.iter (succs_fc_sid_iterator current_node ) 
@@ -541,32 +573,12 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       let str_res = (self#pprint_node orig)^"->"^(self#pprint_node dest)^" "^str_label in
       str_res
 	
-	
-    method private pprint_to_nts_rec (current_vertex_id : ecfg_id )(printed_index : (ecfg_id , unit ) Hashtbl.t ) (pre_print : string ) =
-      let transitions_folder (id : ecfg_id ) _ (previous_trans : string ) =
-	let previous_trans = 
-	  previous_trans^(self#pprint_edge current_vertex_id id) 
-	in
-	previous_trans
-      in
-      let  recurse_folder (succs_id : ecfg_id ) _ ( nts_script : string ) =
-	if Hashtbl.mem vertices succs_id then  nts_script
-	else self#pprint_to_nts_rec succs_id printed_index nts_script 
-      in
-      Hashtbl.add printed_index current_vertex_id (); (* Marks the
-							 current vertex as 
-							 visited
-						      *)
-      let succ_id = Hashtbl.find edges current_vertex_id in
-      let trans_from_current = Hashtbl.fold transitions_folder succ_id "" in
-      let ret_succs  = pre_print^trans_from_current in
-      Hashtbl.fold recurse_folder succ_id ret_succs
-	
+
 	
     method pprint_transitions =
       let dest_table_print_folder ( origin : ecfg_id ) (dest : ecfg_id ) label 
 	  (prescript : string ) =
-	let post_script = Format.sprintf "%s \n %d -> %d { %s } \n" prescript ( get_id_of_ecfg_id origin)  ( get_id_of_ecfg_id dest) 
+	let post_script = Format.sprintf "%s \n s%d -> s%d { %s } \n" prescript ( get_id_of_ecfg_id origin)  ( get_id_of_ecfg_id dest) 
 	  (front_end#pretty_label label)
 	in 
 	post_script 
@@ -582,34 +594,34 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       let elem_left = ref 0 in
       let pprint_folder id () prescript =
 	if (!elem_left) <= 1 then
-	  (prescript^(Printf.sprintf "%d" ( get_id_of_ecfg_id  id )))
+	  (prescript^(Printf.sprintf "s%d" ( get_id_of_ecfg_id  id )))
 	else
 	  begin
 	    elem_left  := (!elem_left) - 1;
-	    prescript^(Printf.sprintf "%d," ( get_id_of_ecfg_id  id ))
+	    prescript^(Printf.sprintf "s%d," ( get_id_of_ecfg_id  id ))
 	  end
       in 
       elem_left := (Hashtbl.length init_state);
       let retstring = Hashtbl.fold pprint_folder init_state ""
       in
-      "init: "^retstring
+      "initial "^retstring^";"
 	
 
     method private pprint_finals =
       let elem_left = ref 0 in
       let pprint_folder id () prescript =
 	if !elem_left <= 1 then
-	  prescript^(Format.sprintf "%d" ( get_id_of_ecfg_id id ))
+	  prescript^(Format.sprintf "s%d" ( get_id_of_ecfg_id id ))
 	else
 	  begin
 	    elem_left := !elem_left-1;
-	    prescript^(Format.sprintf "%d," ( get_id_of_ecfg_id id ))
+	    prescript^(Format.sprintf "s%d," ( get_id_of_ecfg_id id ))
 	  end
       in
       elem_left := (Hashtbl.length final_state);
       let retstring = Hashtbl.fold pprint_folder final_state ""
       in
-      "final: "^retstring
+      "final "^retstring^";"
 	
 
 
@@ -623,29 +635,35 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       let elem_left = ref 0 in
       let pprint_folder id () prescript =
 	if !elem_left <= 1 then
-	  prescript^(Format.sprintf "%d" ( get_id_of_ecfg_id id ))
+	  prescript^(Format.sprintf "s%d" ( get_id_of_ecfg_id id ))
 	else
 	  begin
 	    elem_left := !elem_left-1;
-	    prescript^(Format.sprintf "%d," ( get_id_of_ecfg_id id ))
+	    prescript^(Format.sprintf "s%d," ( get_id_of_ecfg_id id ))
 	  end
       in
       elem_left := (Hashtbl.length error_state);
       let retstring = Hashtbl.fold pprint_folder error_state ""
       in
-      "error: "^retstring
+      if String.length retstring > 0 then 
+      "error: "^retstring^"\n"
+      else ""
 
 	
 	
     method pprint_to_nts  = 
       (* let current_ecfg_node = Hashtbl.get vertex current_vertex_id in *)
-      let res_string = Format.sprintf "nts %s; \n" name in
-      let res_string = res_string^name^" {\n" in
-      let res_string = res_string^"in "^self#pprint_input_vars^"\n" in
-      let res_string = res_string^"locals "^self#pprint_local_vars^"\n" in
+      let res_string = name^" {\n" in
+      let res_string = res_string^"in ("^self#pprint_input_vars^")\n" in
+      let pprint_loc = self#pprint_local_vars in
+      let res_string = (
+	if String.length pprint_loc > 0 
+	then res_string^"\n"^pprint_loc^"\n"
+	else
+	  res_string ) in
       let res_string = res_string^(self#pprint_inits)^"\n"  in
       let res_string = res_string^(self#pprint_finals)^"\n" in
-      let res_string = res_string^(self#pprint_error_states)^"\n" in
+      let res_string = res_string^(self#pprint_error_states) in
       let res_string = res_string^(self#pprint_transitions)
       in
       let res_string = res_string^"\n}" in

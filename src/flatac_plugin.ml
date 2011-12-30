@@ -26,6 +26,9 @@ open Intermediate_language
       let shortname = "FlataC"
       let help= "Extracts flat counter automata based model of C program for memory faults detection."
      end) *)
+
+
+exception No_file_name_given
     
 module Enabled =
         Self.False
@@ -41,26 +44,22 @@ let pretty_print_cautomata_obj out =
   let prj= Project.current() in
   let visited_file = new  flatac_visitor ( prj ) in
   let composite_types = new global_composite_types_visitor ( prj ) in
+  let project_name = Project.get_name prj in
+  Format.printf "Current project name is : %s \n" project_name ;
+ 
+ 
+  let kernel_file_name =  
+    begin match ( Kernel.Files.get() ) with
+	[] -> raise No_file_name_given
+      | f::_ -> f
+    end
+  in
+  Format.printf "File name provided by the Kernel.Files.get function is %s \n" kernel_file_name;
   
-  let file_ast = Ast.get() in
-  (*Cfg.clearFileCFG file_ast;*)
-  
-  (*Printing debug infos using the debug visitor*)
-  (*let visit_bibi = new  flatac_debug_visitor ( prj ) in
-  let ca_debug_out_name = Printf.sprintf "%s_debug_info.ca" file_ast.fileName in
-  let debug_out_file = open_out ca_debug_out_name in
-  let format_debug_out_file = Format.formatter_of_out_channel debug_out_file in
-  Visitor.visitFramacFile (visit_bibi :> frama_c_copy ) file_ast;
-  visit_bibi#pretty_print_f2ca format_debug_out_file;  
-  Format.printf "f2ca printed the cautomaton ton the file \n %!";
-  Format.fprintf format_debug_out_file "%!";
-  close_out debug_out_file;*)
-  (*Ending pprint informations.*)
-
-
-  let ca_out_name = Printf.sprintf "%s.ca" file_ast.fileName in
+ 
+  let ca_out_name = Printf.sprintf "%s.ca" kernel_file_name in
   let out_file = open_out ca_out_name in
-  let types_out_name = Printf.sprintf "%s.types" file_ast.fileName in
+  let types_out_name = Printf.sprintf "%s.types" kernel_file_name in
     
   let file_ast = Ast.get() in
   Cfg.clearFileCFG file_ast;
@@ -71,10 +70,10 @@ let pretty_print_cautomata_obj out =
   visited_file#save_in_file ca_out_name;
 
   let compile_out = visited_file#pprint_all_ecfgs in
-    Format.fprintf out "%s%!" compile_out;
-    
-    let states_out = visited_file#pprint_all_ecfgs_states in
-      Format.fprintf out "%s%!" states_out;
+  Format.fprintf out "%s%!" compile_out;
+  
+  let states_out = visited_file#pprint_all_ecfgs_states in
+  Format.fprintf out "%s%!" states_out;
   (* This part consists in checking the cfg structure given by Cil*)
  
 

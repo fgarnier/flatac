@@ -12,6 +12,7 @@ open Composite_type_types
 open Composite_types
 
 exception Untraversed_ast
+exception No_file_name_given
 
 module Flatac_extended_cfg =  
   Extended_cfg_definition (
@@ -30,6 +31,13 @@ class flatac_visitor (prj : Project.t )  = object (self)
   inherit Visitor.generic_frama_c_visitor (prj) (Cil.inplace_visit())
     
   val local_file_ast = Ast.get ()
+  val source_file_name = 
+    begin 
+      match ( Kernel.Files.get() ) with
+	  [] -> raise No_file_name_given
+	| f::_ -> f
+    end
+
   val mutable is_computed = false
   val function_tables = Hashtbl.create 97
   
@@ -48,7 +56,7 @@ class flatac_visitor (prj : Project.t )  = object (self)
     let flatac_ssl_frontend = new ssl_flatac_front_end in
     flatac_ssl_frontend#set_index_of_composite_types index;
     let ecfg_of_visited_gfun = 
-      new extended_cfg funname funinfos 
+      new extended_cfg  funname local_file_ast funinfos 
 	(flatac_ssl_frontend :> ((Flatac_extended_cfg.Extended_cfg_base_types.abs_dom_val, Flatac_extended_cfg.Extended_cfg_base_types.trans_label_val) Sem_and_logic_front_end.sem_and_logic_front_end) ) 
     in
     Hashtbl.add function_tables funname ecfg_of_visited_gfun
@@ -87,7 +95,7 @@ class flatac_visitor (prj : Project.t )  = object (self)
       let current_ecfg_output = registered_ecfg#pprint_ecfg_vertex in
 	pre_msg^current_ecfg_output^"\n"
     in
-      Hashtbl.fold  pprint_folder function_tables ""
+      Hashtbl.fold  pprint_folder function_tables ("nts "^source_file_name^";")
 
 
 

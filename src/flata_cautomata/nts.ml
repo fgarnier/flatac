@@ -51,6 +51,55 @@ let pprint_typeinfo_nts_var_list l =
   in
   List.fold_left pprint_lfold  "" l
 
+
+(* Pretty prints the list of the names of a Nts variable list.*)
+let pprint_nts_var_list l =
+  let rec pprint_nts_var_list_fold str l =
+    match str, l with 
+	(_,[]) -> str
+      | ("",(h::l')) -> pprint_nts_var_list_fold (nts_pprint_nts_var h) l'
+      | (_,(h::l')) -> pprint_nts_var_list_fold (str^","^(nts_pprint_nts_var h)) l' 
+  in
+  (pprint_nts_var_list_fold "" l)
+
+
+
+let concat_if_first_arg_nonzero s1 s2 =
+  if String.length s1 != 0
+  then s1^s2
+  else ""
+
+let concat_comma_both_arg_non_empty s1 s2 =
+  if String.length s1 != 0 then
+    begin
+      if  String.length s2 != 0 then
+	s1^","^s2
+      else
+	s1
+    end
+  else
+    s2
+
+
+
+let pprint_typeinfo_nts_var_list l =
+  let is_int_var  = function
+  NtsIVar( vname ) -> true
+    | _ ->false
+  in
+  let is_real_var  = function
+  NtsRVar( vname ) -> true
+    | _ ->false
+  in
+  let int_var_list = List.filter ( is_int_var) l in
+  let real_var_list =  List.filter ( is_real_var) l in
+  let pp_of_list_of_int =  
+    concat_if_first_arg_nonzero (pprint_nts_var_list int_var_list) " : int" in
+  let pp_of_list_of_real = 
+    concat_if_first_arg_nonzero (pprint_nts_var_list real_var_list) " : real" in
+  concat_comma_both_arg_non_empty pp_of_list_of_int pp_of_list_of_real
+ 
+    
   
 let rec size_arithm_exp ( exp : cnt_arithm_exp ) =
   match exp with 
@@ -230,7 +279,7 @@ let rec cnt_pprint_boolexp (bexp :cnt_bool ) =
       	 CntBTrue -> "true"
 	| CntBFalse-> "false"
 	| CntNot ( exp ) ->
-	  if size_boolexp_deeper_than exp 2 then
+	  if size_boolexp_deeper_than exp 1 then
 	    "not ("^(cnt_pprint_boolexp exp)^")"
 	  else 
 	    "not"^cnt_pprint_boolexp exp
@@ -243,7 +292,7 @@ let rec cnt_pprint_boolexp (bexp :cnt_bool ) =
 	    let pprint_outputg = ref "" 
 	    in
 	    begin
-	      if size_boolexp_deeper_than ed 2 then
+	      if size_boolexp_deeper_than ed 1 then
 		begin
 	     pprint_outputd := "("^(cnt_pprint_boolexp ed)^")";
 		end
@@ -251,7 +300,7 @@ let rec cnt_pprint_boolexp (bexp :cnt_bool ) =
 		pprint_outputd := cnt_pprint_boolexp ed;
 	    end;
 	    begin
-	      if size_boolexp_deeper_than eg 2 then
+	      if size_boolexp_deeper_than eg 1 then
 		begin
 		  pprint_outputg := "("^(cnt_pprint_boolexp eg)^")";
 		end

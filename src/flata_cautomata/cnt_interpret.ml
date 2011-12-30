@@ -77,6 +77,7 @@ let offset_ntsivar_of_pvar (pvar : ptvar ) =
    match pvar with 
       PVar(vname) -> NtsIVar("offset__"^vname^"_") 
 
+   
 (** This function aims at computing the name of the counter var name
 associated to the offset of a pointer variable*)
 let offset_cnt_name ( ptvar : c_ptrexp ) =  

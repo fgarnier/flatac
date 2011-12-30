@@ -40,6 +40,11 @@ let pprint_trans_list_foldleft (s : string ) ( trans : cnt_trans_label ) =
     | _ -> s^" and "^(cnt_pprint_translabel trans )
   
 
+let prefix_trans_label_list (prefix : Nts_types.cnt_trans_label list ) 
+    ((abs, labels):(ssl_validity_absdom * Nts_types.cnt_trans_label list )) 
+     =
+  (abs,prefix@labels)
+  
 
 class ssl_flatac_front_end = object 
   inherit [ssl_validity_absdom , Nts_types.cnt_trans_label list ]  sem_and_logic_front_end
@@ -66,7 +71,7 @@ class ssl_flatac_front_end = object
   method get_entry_point_abstraction () =
      Ssl_valid_abs_dom.create_validity_abstdomain ()
  
-  method get_entry_point_from_fundec ( funinfo : Cil_types.fundec ) =
+  method get_entry_point_from_fundec (finfo : Cil_types.file) ( funinfo : Cil_types.fundec ) =
     if ( not index_of_composite_types_set  ) then
       raise IndexOfCompositeTypesNotSet
     else
@@ -76,21 +81,11 @@ class ssl_flatac_front_end = object
       let absdom = Ssl_valid_abs_dom.register_slocals mid funinfo absdom in
 	Format.printf "[get°entry_point_from_fundec ]  Absdom after registering slocals : %s \n" (Ssl_pprinters.pprint_ssl_formula_tex absdom.ssl_part);
 	let absdom = Ssl_valid_abs_dom.register_sformals mid funinfo absdom in
-	Format.printf "[get°entry_point_from_fundec ]  Absdom after registering sformals : %s \n" (Ssl_pprinters.pprint_ssl_formula_tex absdom.ssl_part);
-	  absdom
+	  Format.printf "[get°entry_point_from_fundec ]  Absdom after registering sformals : %s \n" (Ssl_pprinters.pprint_ssl_formula_tex absdom.ssl_part);
+	  let absdom = register_globals mid finfo absdom in
+	    absdom
 
-(*
-  method get_entry_point_from_fundec_and_type_infos 
-    (funinfo : Cil_types.fundec) (i : index_of_composite_types ) =
-    index_of_composite_type_set <- true;
-    index_of_pointers_of_composite_types <- 
-      copy_index_of_composite_types i;
-    self#get_entry_point_from_fundec funinfo
-*)    
-      
-  (*
-    method copy_transit_label (label : Nts_types.cnt_trans_label list ) =
-    [] *)
+
 	
   method copy_transit_label _ =
     []
@@ -116,7 +111,7 @@ class ssl_flatac_front_end = object
 being error states.*)
   method is_control_state_erroneous (skind : Cil_types.stmtkind ) =
     match skind with
-      |  Instr(Call( None , exp1, lparam , _ ))->
+      |  Instr(Call( None , exp1, _ , _ ))->
            begin
              match  exp1.enode with
                  Lval((Var(f),_))  ->
@@ -138,15 +133,15 @@ being error states.*)
   method next_on_if_statement (sslv : ssl_validity_absdom ) 
     (cdition : Cil_types.exp) =
     begin
+      let abs_val_true = Ssl_valid_abs_dom.copy_validity_absdomain sslv in
+      let abs_val_false = Ssl_valid_abs_dom.copy_validity_absdomain  sslv in
       let cbool_cdition = cil_expr_2_bool cdition in
       let neg_cbool_cdition =  negate_bool_bot cbool_cdition in 
       let nts_cdition = c_bool_to_cnt_bool 
-	sslv.ssl_part cbool_cdition 
+	abs_val_true.ssl_part cbool_cdition 
       in
       let neg_of_nts_cdition =  c_bool_to_cnt_bool 
-	sslv.ssl_part neg_cbool_cdition in
-      let abs_val_true = Ssl_valid_abs_dom.copy_validity_absdomain sslv in
-      let abs_val_false = Ssl_valid_abs_dom.copy_validity_absdomain  sslv in
+	abs_val_false.ssl_part neg_cbool_cdition in
       let nts_trans_yes = (abs_val_true ,(CntGuard(nts_cdition))::[])
       in
       let nts_trans_no = 
@@ -158,16 +153,21 @@ being error states.*)
     
     
 
-  method next (sslv : ssl_validity_absdom ) _
+  method next (sslv : ssl_validity_absdom ) prefix_trans_label
     (skind : Cil_types.stmtkind) =
    (** we now need to copy the current sslf_formula of sslv. 
        validinfo is not a persistant structure, as it is based
        upon a standard library Map.
    *)
     let sslv_local =Ssl_valid_abs_dom.copy_validity_absdomain sslv in
-    C_upon_ssl_domain.next_on_ssl_nts mid sslv_local skind (* translist;*) 
-    
-    
+    if List.length prefix_trans_label == 0  then
+	C_upon_ssl_domain.next_on_ssl_nts mid sslv_local skind (* translist;*) 
+    else
+      let trans_with_suffix_labels = 
+	C_upon_ssl_domain.next_on_ssl_nts mid sslv_local skind 
+      in
+      List.map (prefix_trans_label_list prefix_trans_label) 
+	trans_with_suffix_labels
 
   (* Pretty prints each elements of tlist and concatenates it on the
   returned string.*)

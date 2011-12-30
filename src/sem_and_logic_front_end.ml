@@ -22,7 +22,7 @@ class virtual ['a, 'b] sem_and_logic_front_end =
 object 
  
   method virtual get_entry_point_abstraction : unit -> 'a
-  method virtual get_entry_point_from_fundec : Cil_types.fundec  -> 'a
+  method virtual get_entry_point_from_fundec : Cil_types.file -> Cil_types.fundec  -> 'a
 
   (** Returns a label without any consequence on sub transition label *)
   method virtual get_empty_transition_label : unit -> 'b 
