@@ -1,0 +1,2226 @@
+[kernel] preprocessing with "gcc -C -E -I.  main2.c"
+[kernel] createGlobal: __ctype_get_mb_cur_max
+[kernel] makeGlobalVarinfo isadef=false vi.vname=__ctype_get_mb_cur_max (lookup = __ctype_get_mb_cur_max)
+[kernel] __ctype_get_mb_cur_max not in the env already
+[kernel] first definition for __ctype_get_mb_cur_max(362)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: atof
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=atof (lookup = atof)
+[kernel] atof not in the env already
+[kernel] first definition for atof(365)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: atoi
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=atoi (lookup = atoi)
+[kernel] atoi not in the env already
+[kernel] first definition for atoi(369)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: atol
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=atol (lookup = atol)
+[kernel] atol not in the env already
+[kernel] first definition for atol(373)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: atoll
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=atoll (lookup = atoll)
+[kernel] atoll not in the env already
+[kernel] first definition for atoll(377)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: strtod
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=strtod (lookup = strtod)
+[kernel] strtod not in the env already
+[kernel] first definition for strtod(383)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: strtof
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=strtof (lookup = strtof)
+[kernel] strtof not in the env already
+[kernel] first definition for strtof(390)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: strtold
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=strtold (lookup = strtold)
+[kernel] strtold not in the env already
+[kernel] first definition for strtold(397)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: strtol
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=strtol (lookup = strtol)
+[kernel] strtol not in the env already
+[kernel] first definition for strtol(406)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: strtoul
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=strtoul (lookup = strtoul)
+[kernel] strtoul not in the env already
+[kernel] first definition for strtoul(416)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: strtoq
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=strtoq (lookup = strtoq)
+[kernel] strtoq not in the env already
+[kernel] first definition for strtoq(426)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: strtouq
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=strtouq (lookup = strtouq)
+[kernel] strtouq not in the env already
+[kernel] first definition for strtouq(436)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: strtoll
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=strtoll (lookup = strtoll)
+[kernel] strtoll not in the env already
+[kernel] first definition for strtoll(446)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: strtoull
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=strtoull (lookup = strtoull)
+[kernel] strtoull not in the env already
+[kernel] first definition for strtoull(456)
+[kernel] createGlobal: l64a
+[kernel] makeGlobalVarinfo isadef=false vi.vname=l64a (lookup = l64a)
+[kernel] l64a not in the env already
+[kernel] first definition for l64a(462)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: a64l
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=a64l (lookup = a64l)
+[kernel] a64l not in the env already
+[kernel] first definition for a64l(466)
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] ConstFold to 2
+[kernel] Fits in int 1024 : true
+[kernel] kinteger64_repr 1024
+[kernel] Truncate to int: 1024
+[kernel] Fits in int 1024 : true
+[kernel] Fits in int 8 : true
+[kernel] kinteger64_repr 8
+[kernel] Truncate to int: 8
+[kernel] Fits in int 8 : true
+[kernel] ConstFold to (unsigned int)1024 / ((unsigned int)8 * sizeof(unsigned long))
+[kernel] ConstFold to (unsigned int)1024
+[kernel] ConstFold CAST to to unsigned int
+[kernel] ConstFold to 1024
+[kernel] ConstFold to unsigned int : 1024
+[kernel] kinteger64_repr 1024
+[kernel] Truncate to unsigned int: 1024
+[kernel] Fits in unsigned int 1024 : true
+[kernel] ConstFold to (unsigned int)8 * sizeof(unsigned long)
+[kernel] ConstFold to (unsigned int)8
+[kernel] ConstFold CAST to to unsigned int
+[kernel] ConstFold to 8
+[kernel] ConstFold to unsigned int : 8
+[kernel] kinteger64_repr 8
+[kernel] Truncate to unsigned int: 8
+[kernel] Fits in unsigned int 8 : true
+[kernel] ConstFold to sizeof(unsigned long)
+[kernel] kinteger64_repr 4
+[kernel] Truncate to unsigned int: 4
+[kernel] Fits in unsigned int 4 : true
+[kernel] kinteger64_repr 32
+[kernel] Truncate to unsigned int: 32
+[kernel] Fits in unsigned int 32 : true
+[kernel] kinteger64_repr 32
+[kernel] Truncate to unsigned int: 32
+[kernel] Fits in unsigned int 32 : true
+[kernel] Fits in int 1024 : true
+[kernel] kinteger64_repr 1024
+[kernel] Truncate to int: 1024
+[kernel] Fits in int 1024 : true
+[kernel] Fits in int 8 : true
+[kernel] kinteger64_repr 8
+[kernel] Truncate to int: 8
+[kernel] Fits in int 8 : true
+[kernel] /usr/include/sys/select.h:75: castTo:(source) unsigned int->int
+[kernel] castTo: ot=unsigned int nt=int
+[kernel]   result is (int)sizeof(__fd_mask)
+[kernel] ConstFold to 1024 / (8 * (int)sizeof(__fd_mask))
+[kernel] ConstFold to 1024
+[kernel] ConstFold to 8 * (int)sizeof(__fd_mask)
+[kernel] ConstFold to 8
+[kernel] ConstFold to (int)sizeof(__fd_mask)
+[kernel] ConstFold CAST to to int
+[kernel] ConstFold to sizeof(__fd_mask)
+[kernel] kinteger64_repr 4
+[kernel] Truncate to unsigned int: 4
+[kernel] Fits in unsigned int 4 : true
+[kernel] ConstFold to int : 4
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 32
+[kernel] Truncate to int: 32
+[kernel] Fits in int 32 : true
+[kernel] kinteger64_repr 32
+[kernel] Truncate to int: 32
+[kernel] Fits in int 32 : true
+[kernel] createGlobal: select
+[kernel] makeGlobalVarinfo isadef=false vi.vname=select (lookup = select)
+[kernel] select not in the env already
+[kernel] first definition for select(478)
+[kernel] createGlobal: pselect
+[kernel] makeGlobalVarinfo isadef=false vi.vname=pselect (lookup = pselect)
+[kernel] pselect not in the env already
+[kernel] first definition for pselect(496)
+[kernel] createGlobal: gnu_dev_major
+[kernel] makeGlobalVarinfo isadef=false vi.vname=gnu_dev_major (lookup = gnu_dev_major)
+[kernel] gnu_dev_major not in the env already
+[kernel] first definition for gnu_dev_major(505)
+[kernel] createGlobal: gnu_dev_minor
+[kernel] makeGlobalVarinfo isadef=false vi.vname=gnu_dev_minor (lookup = gnu_dev_minor)
+[kernel] gnu_dev_minor not in the env already
+[kernel] first definition for gnu_dev_minor(509)
+[kernel] createGlobal: gnu_dev_makedev
+[kernel] makeGlobalVarinfo isadef=false vi.vname=gnu_dev_makedev (lookup = gnu_dev_makedev)
+[kernel] gnu_dev_makedev not in the env already
+[kernel] first definition for gnu_dev_makedev(515)
+[kernel] Fits in int 36 : true
+[kernel] kinteger64_repr 36
+[kernel] Truncate to int: 36
+[kernel] Fits in int 36 : true
+[kernel] ConstFold to 36
+[kernel] Fits in int 24 : true
+[kernel] kinteger64_repr 24
+[kernel] Truncate to int: 24
+[kernel] Fits in int 24 : true
+[kernel] ConstFold to 24
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] ConstFold to 4
+[kernel] Fits in int 48 : true
+[kernel] kinteger64_repr 48
+[kernel] Truncate to int: 48
+[kernel] Fits in int 48 : true
+[kernel] ConstFold to 48
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] ConstFold to 4
+[kernel] Fits in int 32 : true
+[kernel] kinteger64_repr 32
+[kernel] Truncate to int: 32
+[kernel] Fits in int 32 : true
+[kernel] ConstFold to 32
+[kernel] Fits in int 8 : true
+[kernel] kinteger64_repr 8
+[kernel] Truncate to int: 8
+[kernel] Fits in int 8 : true
+[kernel] ConstFold to 8
+[kernel] Fits in int 20 : true
+[kernel] kinteger64_repr 20
+[kernel] Truncate to int: 20
+[kernel] Fits in int 20 : true
+[kernel] ConstFold to 20
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] ConstFold to 4
+[kernel] createGlobal: random
+[kernel] makeGlobalVarinfo isadef=false vi.vname=random (lookup = random)
+[kernel] random not in the env already
+[kernel] first definition for random(520)
+[kernel] createGlobal: srandom
+[kernel] makeGlobalVarinfo isadef=false vi.vname=srandom (lookup = srandom)
+[kernel] srandom not in the env already
+[kernel] first definition for srandom(523)
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] createGlobal: initstate
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=initstate (lookup = initstate)
+[kernel] initstate not in the env already
+[kernel] first definition for initstate(531)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: setstate
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=setstate (lookup = setstate)
+[kernel] setstate not in the env already
+[kernel] first definition for setstate(537)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] createGlobal: random_r
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=random_r (lookup = random_r)
+[kernel] random_r not in the env already
+[kernel] first definition for random_r(543)
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] createGlobal: srandom_r
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=srandom_r (lookup = srandom_r)
+[kernel] srandom_r not in the env already
+[kernel] first definition for srandom_r(550)
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] createGlobal: initstate_r
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=initstate_r (lookup = initstate_r)
+[kernel] initstate_r not in the env already
+[kernel] first definition for initstate_r(561)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] createGlobal: setstate_r
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=setstate_r (lookup = setstate_r)
+[kernel] setstate_r not in the env already
+[kernel] first definition for setstate_r(570)
+[kernel] createGlobal: rand
+[kernel] makeGlobalVarinfo isadef=false vi.vname=rand (lookup = rand)
+[kernel] rand not in the env already
+[kernel] first definition for rand(575)
+[kernel] createGlobal: srand
+[kernel] makeGlobalVarinfo isadef=false vi.vname=srand (lookup = srand)
+[kernel] srand not in the env already
+[kernel] first definition for srand(578)
+[kernel] createGlobal: rand_r
+[kernel] makeGlobalVarinfo isadef=false vi.vname=rand_r (lookup = rand_r)
+[kernel] rand_r not in the env already
+[kernel] first definition for rand_r(582)
+[kernel] createGlobal: drand48
+[kernel] makeGlobalVarinfo isadef=false vi.vname=drand48 (lookup = drand48)
+[kernel] drand48 not in the env already
+[kernel] first definition for drand48(586)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] createGlobal: erand48
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=erand48 (lookup = erand48)
+[kernel] erand48 not in the env already
+[kernel] first definition for erand48(589)
+[kernel] createGlobal: lrand48
+[kernel] makeGlobalVarinfo isadef=false vi.vname=lrand48 (lookup = lrand48)
+[kernel] lrand48 not in the env already
+[kernel] first definition for lrand48(593)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] createGlobal: nrand48
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=nrand48 (lookup = nrand48)
+[kernel] nrand48 not in the env already
+[kernel] first definition for nrand48(596)
+[kernel] createGlobal: mrand48
+[kernel] makeGlobalVarinfo isadef=false vi.vname=mrand48 (lookup = mrand48)
+[kernel] mrand48 not in the env already
+[kernel] first definition for mrand48(600)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] createGlobal: jrand48
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=jrand48 (lookup = jrand48)
+[kernel] jrand48 not in the env already
+[kernel] first definition for jrand48(603)
+[kernel] createGlobal: srand48
+[kernel] makeGlobalVarinfo isadef=false vi.vname=srand48 (lookup = srand48)
+[kernel] srand48 not in the env already
+[kernel] first definition for srand48(607)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] createGlobal: seed48
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=seed48 (lookup = seed48)
+[kernel] seed48 not in the env already
+[kernel] first definition for seed48(611)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 7 : true
+[kernel] kinteger64_repr 7
+[kernel] Truncate to int: 7
+[kernel] Fits in int 7 : true
+[kernel] Truncate to int: 7
+[kernel] Fits in int 7 : true
+[kernel] createGlobal: lcong48
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 7 : true
+[kernel] kinteger64_repr 7
+[kernel] Truncate to int: 7
+[kernel] Fits in int 7 : true
+[kernel] Truncate to int: 7
+[kernel] Fits in int 7 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=lcong48 (lookup = lcong48)
+[kernel] lcong48 not in the env already
+[kernel] first definition for lcong48(615)
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] ConstFold to 3
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] ConstFold to 3
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] createGlobal: drand48_r
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=drand48_r (lookup = drand48_r)
+[kernel] drand48_r not in the env already
+[kernel] first definition for drand48_r(621)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] createGlobal: erand48_r
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=erand48_r (lookup = erand48_r)
+[kernel] erand48_r not in the env already
+[kernel] first definition for erand48_r(630)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] createGlobal: lrand48_r
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=lrand48_r (lookup = lrand48_r)
+[kernel] lrand48_r not in the env already
+[kernel] first definition for lrand48_r(638)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] createGlobal: nrand48_r
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=nrand48_r (lookup = nrand48_r)
+[kernel] nrand48_r not in the env already
+[kernel] first definition for nrand48_r(647)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] createGlobal: mrand48_r
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=mrand48_r (lookup = mrand48_r)
+[kernel] mrand48_r not in the env already
+[kernel] first definition for mrand48_r(655)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] createGlobal: jrand48_r
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=jrand48_r (lookup = jrand48_r)
+[kernel] jrand48_r not in the env already
+[kernel] first definition for jrand48_r(664)
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] createGlobal: srand48_r
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=srand48_r (lookup = srand48_r)
+[kernel] srand48_r not in the env already
+[kernel] first definition for srand48_r(672)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] createGlobal: seed48_r
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=seed48_r (lookup = seed48_r)
+[kernel] seed48_r not in the env already
+[kernel] first definition for seed48_r(679)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] Fits in int 7 : true
+[kernel] kinteger64_repr 7
+[kernel] Truncate to int: 7
+[kernel] Fits in int 7 : true
+[kernel] Truncate to int: 7
+[kernel] Fits in int 7 : true
+[kernel] createGlobal: lcong48_r
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] Fits in int 7 : true
+[kernel] kinteger64_repr 7
+[kernel] Truncate to int: 7
+[kernel] Fits in int 7 : true
+[kernel] Truncate to int: 7
+[kernel] Fits in int 7 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=lcong48_r (lookup = lcong48_r)
+[kernel] lcong48_r not in the env already
+[kernel] first definition for lcong48_r(686)
+[kernel] createGlobal: malloc
+[kernel] makeGlobalVarinfo isadef=false vi.vname=malloc (lookup = malloc)
+[kernel] malloc not in the env already
+[kernel] first definition for malloc(691)
+[kernel] createGlobal: calloc
+[kernel] makeGlobalVarinfo isadef=false vi.vname=calloc (lookup = calloc)
+[kernel] calloc not in the env already
+[kernel] first definition for calloc(697)
+[kernel] createGlobal: realloc
+[kernel] makeGlobalVarinfo isadef=false vi.vname=realloc (lookup = realloc)
+[kernel] realloc not in the env already
+[kernel] first definition for realloc(704)
+[kernel] createGlobal: free
+[kernel] makeGlobalVarinfo isadef=false vi.vname=free (lookup = free)
+[kernel] free not in the env already
+[kernel] first definition for free(709)
+[kernel] createGlobal: cfree
+[kernel] makeGlobalVarinfo isadef=false vi.vname=cfree (lookup = cfree)
+[kernel] cfree not in the env already
+[kernel] first definition for cfree(713)
+[kernel] createGlobal: alloca
+[kernel] makeGlobalVarinfo isadef=false vi.vname=alloca (lookup = alloca)
+[kernel] alloca not in the env already
+[kernel] first definition for alloca(717)
+[kernel] createGlobal: valloc
+[kernel] makeGlobalVarinfo isadef=false vi.vname=valloc (lookup = valloc)
+[kernel] valloc not in the env already
+[kernel] first definition for valloc(721)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: posix_memalign
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=posix_memalign (lookup = posix_memalign)
+[kernel] posix_memalign not in the env already
+[kernel] first definition for posix_memalign(729)
+[kernel] createGlobal: abort
+[kernel] makeGlobalVarinfo isadef=false vi.vname=abort (lookup = abort)
+[kernel] abort not in the env already
+[kernel] first definition for abort(735)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: atexit
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=atexit (lookup = atexit)
+[kernel] atexit not in the env already
+[kernel] first definition for atexit(740)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: on_exit
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=on_exit (lookup = on_exit)
+[kernel] on_exit not in the env already
+[kernel] first definition for on_exit(750)
+[kernel] createGlobal: exit
+[kernel] makeGlobalVarinfo isadef=false vi.vname=exit (lookup = exit)
+[kernel] exit not in the env already
+[kernel] first definition for exit(755)
+[kernel] createGlobal: _Exit
+[kernel] makeGlobalVarinfo isadef=false vi.vname=_Exit (lookup = _Exit)
+[kernel] _Exit not in the env already
+[kernel] first definition for _Exit(759)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: getenv
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=getenv (lookup = getenv)
+[kernel] getenv not in the env already
+[kernel] first definition for getenv(763)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: __secure_getenv
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=__secure_getenv (lookup = __secure_getenv)
+[kernel] __secure_getenv not in the env already
+[kernel] first definition for __secure_getenv(767)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: putenv
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=putenv (lookup = putenv)
+[kernel] putenv not in the env already
+[kernel] first definition for putenv(771)
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] createGlobal: setenv
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=setenv (lookup = setenv)
+[kernel] setenv not in the env already
+[kernel] first definition for setenv(779)
+[kernel] createGlobal: unsetenv
+[kernel] makeGlobalVarinfo isadef=false vi.vname=unsetenv (lookup = unsetenv)
+[kernel] unsetenv not in the env already
+[kernel] first definition for unsetenv(785)
+[kernel] createGlobal: clearenv
+[kernel] makeGlobalVarinfo isadef=false vi.vname=clearenv (lookup = clearenv)
+[kernel] clearenv not in the env already
+[kernel] first definition for clearenv(789)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: mktemp
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=mktemp (lookup = mktemp)
+[kernel] mktemp not in the env already
+[kernel] first definition for mktemp(792)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: mkstemp
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=mkstemp (lookup = mkstemp)
+[kernel] mkstemp not in the env already
+[kernel] first definition for mkstemp(796)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: mkstemps
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=mkstemps (lookup = mkstemps)
+[kernel] mkstemps not in the env already
+[kernel] first definition for mkstemps(802)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: mkdtemp
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=mkdtemp (lookup = mkdtemp)
+[kernel] mkdtemp not in the env already
+[kernel] first definition for mkdtemp(807)
+[kernel] createGlobal: system
+[kernel] makeGlobalVarinfo isadef=false vi.vname=system (lookup = system)
+[kernel] system not in the env already
+[kernel] first definition for system(811)
+[kernel] createGlobal: realpath
+[kernel] makeGlobalVarinfo isadef=false vi.vname=realpath (lookup = realpath)
+[kernel] realpath not in the env already
+[kernel] first definition for realpath(817)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] Fits in int 5 : true
+[kernel] kinteger64_repr 5
+[kernel] Truncate to int: 5
+[kernel] Fits in int 5 : true
+[kernel] createGlobal: bsearch
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 2 : true
+[kernel] kinteger64_repr 2
+[kernel] Truncate to int: 2
+[kernel] Fits in int 2 : true
+[kernel] Fits in int 5 : true
+[kernel] kinteger64_repr 5
+[kernel] Truncate to int: 5
+[kernel] Fits in int 5 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=bsearch (lookup = bsearch)
+[kernel] bsearch not in the env already
+[kernel] first definition for bsearch(832)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] createGlobal: qsort
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=qsort (lookup = qsort)
+[kernel] qsort not in the env already
+[kernel] first definition for qsort(846)
+[kernel] createGlobal: abs
+[kernel] makeGlobalVarinfo isadef=false vi.vname=abs (lookup = abs)
+[kernel] abs not in the env already
+[kernel] first definition for abs(853)
+[kernel] createGlobal: labs
+[kernel] makeGlobalVarinfo isadef=false vi.vname=labs (lookup = labs)
+[kernel] labs not in the env already
+[kernel] first definition for labs(857)
+[kernel] createGlobal: llabs
+[kernel] makeGlobalVarinfo isadef=false vi.vname=llabs (lookup = llabs)
+[kernel] llabs not in the env already
+[kernel] first definition for llabs(861)
+[kernel] createGlobal: div
+[kernel] makeGlobalVarinfo isadef=false vi.vname=div (lookup = div)
+[kernel] div not in the env already
+[kernel] first definition for div(867)
+[kernel] createGlobal: ldiv
+[kernel] makeGlobalVarinfo isadef=false vi.vname=ldiv (lookup = ldiv)
+[kernel] ldiv not in the env already
+[kernel] first definition for ldiv(874)
+[kernel] createGlobal: lldiv
+[kernel] makeGlobalVarinfo isadef=false vi.vname=lldiv (lookup = lldiv)
+[kernel] lldiv not in the env already
+[kernel] first definition for lldiv(881)
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] createGlobal: ecvt
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=ecvt (lookup = ecvt)
+[kernel] ecvt not in the env already
+[kernel] first definition for ecvt(892)
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] createGlobal: fcvt
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=fcvt (lookup = fcvt)
+[kernel] fcvt not in the env already
+[kernel] first definition for fcvt(905)
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] createGlobal: gcvt
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=gcvt (lookup = gcvt)
+[kernel] gcvt not in the env already
+[kernel] first definition for gcvt(916)
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] createGlobal: qecvt
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=qecvt (lookup = qecvt)
+[kernel] qecvt not in the env already
+[kernel] first definition for qecvt(928)
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] createGlobal: qfcvt
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=qfcvt (lookup = qfcvt)
+[kernel] qfcvt not in the env already
+[kernel] first definition for qfcvt(941)
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] createGlobal: qgcvt
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=qgcvt (lookup = qgcvt)
+[kernel] qgcvt not in the env already
+[kernel] first definition for qgcvt(952)
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] Fits in int 5 : true
+[kernel] kinteger64_repr 5
+[kernel] Truncate to int: 5
+[kernel] Fits in int 5 : true
+[kernel] createGlobal: ecvt_r
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] Fits in int 5 : true
+[kernel] kinteger64_repr 5
+[kernel] Truncate to int: 5
+[kernel] Fits in int 5 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=ecvt_r (lookup = ecvt_r)
+[kernel] ecvt_r not in the env already
+[kernel] first definition for ecvt_r(968)
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] Fits in int 5 : true
+[kernel] kinteger64_repr 5
+[kernel] Truncate to int: 5
+[kernel] Fits in int 5 : true
+[kernel] createGlobal: fcvt_r
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] Fits in int 5 : true
+[kernel] kinteger64_repr 5
+[kernel] Truncate to int: 5
+[kernel] Fits in int 5 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=fcvt_r (lookup = fcvt_r)
+[kernel] fcvt_r not in the env already
+[kernel] first definition for fcvt_r(987)
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] Fits in int 5 : true
+[kernel] kinteger64_repr 5
+[kernel] Truncate to int: 5
+[kernel] Fits in int 5 : true
+[kernel] createGlobal: qecvt_r
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] Fits in int 5 : true
+[kernel] kinteger64_repr 5
+[kernel] Truncate to int: 5
+[kernel] Fits in int 5 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=qecvt_r (lookup = qecvt_r)
+[kernel] qecvt_r not in the env already
+[kernel] first definition for qecvt_r(1006)
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] Fits in int 5 : true
+[kernel] kinteger64_repr 5
+[kernel] Truncate to int: 5
+[kernel] Fits in int 5 : true
+[kernel] createGlobal: qfcvt_r
+[kernel] Fits in int 3 : true
+[kernel] kinteger64_repr 3
+[kernel] Truncate to int: 3
+[kernel] Fits in int 3 : true
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] Fits in int 5 : true
+[kernel] kinteger64_repr 5
+[kernel] Truncate to int: 5
+[kernel] Fits in int 5 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=qfcvt_r (lookup = qfcvt_r)
+[kernel] qfcvt_r not in the env already
+[kernel] first definition for qfcvt_r(1025)
+[kernel] createGlobal: mblen
+[kernel] makeGlobalVarinfo isadef=false vi.vname=mblen (lookup = mblen)
+[kernel] mblen not in the env already
+[kernel] first definition for mblen(1036)
+[kernel] createGlobal: mbtowc
+[kernel] makeGlobalVarinfo isadef=false vi.vname=mbtowc (lookup = mbtowc)
+[kernel] mbtowc not in the env already
+[kernel] first definition for mbtowc(1045)
+[kernel] createGlobal: wctomb
+[kernel] makeGlobalVarinfo isadef=false vi.vname=wctomb (lookup = wctomb)
+[kernel] wctomb not in the env already
+[kernel] first definition for wctomb(1053)
+[kernel] createGlobal: mbstowcs
+[kernel] makeGlobalVarinfo isadef=false vi.vname=mbstowcs (lookup = mbstowcs)
+[kernel] mbstowcs not in the env already
+[kernel] first definition for mbstowcs(1062)
+[kernel] createGlobal: wcstombs
+[kernel] makeGlobalVarinfo isadef=false vi.vname=wcstombs (lookup = wcstombs)
+[kernel] wcstombs not in the env already
+[kernel] first definition for wcstombs(1072)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: rpmatch
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=rpmatch (lookup = rpmatch)
+[kernel] rpmatch not in the env already
+[kernel] first definition for rpmatch(1078)
+[kernel] createGlobal: posix_openpt
+[kernel] makeGlobalVarinfo isadef=false vi.vname=posix_openpt (lookup = posix_openpt)
+[kernel] posix_openpt not in the env already
+[kernel] first definition for posix_openpt(1082)
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] createGlobal: getloadavg
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] makeGlobalVarinfo isadef=false vi.vname=getloadavg (lookup = getloadavg)
+[kernel] getloadavg not in the env already
+[kernel] first definition for getloadavg(1088)
+[kernel] Definition of alloc at main2.c:3
+[kernel] makeGlobalVarinfo isadef=true vi.vname=alloc (lookup = alloc)
+[kernel] alloc not in the env already
+[kernel] Starting a new initializer for p : char *
+[kernel] doInit for p  (current p). Looking at: {(char*) malloc( size + 4)}
+[kernel] Fits in int 4 : true
+[kernel] kinteger64_repr 4
+[kernel] Truncate to int: 4
+[kernel] Fits in int 4 : true
+[kernel] main2.c:4: castTo: int->size_t
+[kernel] castTo: ot=int nt=unsigned int
+[kernel]   result is (unsigned int)(size + 4)
+[kernel] main2.c:4: castTo:(source) char *->char *
+[kernel] castTo: ot=char * nt=char *
+[kernel]   result is tmp
+[kernel] oneinit'=tmp, t'=char *, so.soTyp=char *
+[kernel] main2.c:4: castTo: char *->char *
+[kernel] no cast to perform
+[kernel] set p := tmp
+[kernel] Setting eof to true
+[kernel] doInit for p (eof) (current p). Looking at: []
+[kernel] Collecting the initializer for p
+[kernel] Finished the initializer for p
+[kernel]   init=tmp
+[kernel]   typ=char *
+[kernel]   acc=/* UNDEFINED ORDER */
+[kernel]       tmp{ tmp = (char *)malloc((unsigned int)(size + 4)); /*()  <- 
+[kernel]            Calls: tmp = (char *)malloc((unsigned int)(size + 4));*/ }
+[kernel] main2.c:4: castTo: char *->char *
+[kernel] no cast to perform
+[kernel] main2.c:5: castTo:(source) char *->int *
+[kernel] castTo: ot=char * nt=int *
+[kernel]   result is (int *)p
+[kernel] main2.c:5: castTo: int->int
+[kernel] no cast to perform
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] main2.c:6: castTo:(source) char *->int *
+[kernel] castTo: ot=char * nt=int *
+[kernel]   result is (int *)(p + 1)
+[kernel] main2.c:6: castTo: int *->int *
+[kernel] no cast to perform
+[kernel] Definition of dispose at main2.c:9
+[kernel] makeGlobalVarinfo isadef=true vi.vname=dispose (lookup = dispose)
+[kernel] dispose not in the env already
+[kernel] main2.c:11: castTo: int *->void *
+[kernel] castTo: ot=int * nt=void *
+[kernel]   result is (void *)x
+[kernel] main2.c:13: castTo: int *->void *
+[kernel] castTo: ot=int * nt=void *
+[kernel]   result is (void *)x
+[kernel] main2.c:14: castTo: int *->void *
+[kernel] castTo: ot=int * nt=void *
+[kernel]   result is (void *)y
+[kernel] Definition of main at main2.c:18
+[kernel] makeGlobalVarinfo isadef=true vi.vname=main (lookup = main)
+[kernel] main not in the env already
+[kernel] Starting a new initializer for i : int
+[kernel] doInit for i  (current i). Looking at: {0}
+[kernel] Fits in int 0 : true
+[kernel] kinteger64_repr 0
+[kernel] Truncate to int: 0
+[kernel] Fits in int 0 : true
+[kernel] oneinit'=0, t'=int, so.soTyp=int
+[kernel] main2.c:20: castTo: int->int
+[kernel] no cast to perform
+[kernel] set i := 0
+[kernel] Setting eof to true
+[kernel] doInit for i (eof) (current i). Looking at: []
+[kernel] Collecting the initializer for i
+[kernel] Finished the initializer for i
+[kernel]   init=0
+[kernel]   typ=int
+[kernel]   acc=/* UNDEFINED ORDER */
+[kernel]       {  }
+[kernel] main2.c:20: castTo: int->int
+[kernel] no cast to perform
+[kernel] main2.c:23: castTo: int->int
+[kernel] no cast to perform
+[kernel] main2.c:24: castTo: int->int
+[kernel] no cast to perform
+[kernel] main2.c:25: castTo: void *->int *
+[kernel] castTo: ot=void * nt=int *
+[kernel]   result is (int *)q
+[kernel] main2.c:25: castTo: void *->int *
+[kernel] castTo: ot=void * nt=int *
+[kernel]   result is (int *)p
+[kernel] Fits in int 1 : true
+[kernel] kinteger64_repr 1
+[kernel] Truncate to int: 1
+[kernel] Fits in int 1 : true
+[kernel] Fits in int 0 : true
+[kernel] kinteger64_repr 0
+[kernel] Truncate to int: 0
+[kernel] Fits in int 0 : true
+[kernel] main2.c:28: castTo: int->int
+[kernel] no cast to perform
+[kernel] Merging global typedef unsigned int size_t;
+[kernel] Merging global extern  __attribute__((__nothrow__)) void *malloc(size_t __size) __attribute__((
+[kernel] __malloc__));
+[kernel] Merging global declaration extern  __attribute__((__nothrow__)) void *malloc(
+[kernel] size_t __size) __attribute__((__malloc__));
+[kernel] No spec_to_merge for declaration
+[kernel] Renamed to
+[kernel] Merging global extern  __attribute__((__nothrow__)) void free(void *__ptr);
+[kernel] Merging global declaration extern  __attribute__((__nothrow__)) void free(
+[kernel] void *__ptr);
+[kernel] No spec_to_merge for declaration
+[kernel] Renamed to
+[kernel] Merging global int *alloc(int size)
+[kernel] {
+[kernel]   
+[kernel]   /* p */
+[kernel]   char *p;
+[kernel]   p = (char *)malloc((unsigned int)(size + 4));
+[kernel]   *((int *)p) = size;
+[kernel]   return ((int *)(p + 1));
+[kernel] }
+[kernel] Merging global definition int *alloc(int size)
+[kernel] {
+[kernel]   
+[kernel]   /* p */
+[kernel]   char *p;
+[kernel]   p = (char *)malloc((unsigned int)(size + 4));
+[kernel]   *((int *)p) = size;
+[kernel]   return ((int *)(p + 1));
+[kernel] }
+[kernel] No spec_to_merge
+[kernel] Merging global void dispose(int *x, int *y)
+[kernel] {
+[kernel]   
+[kernel]   /*  */
+[kernel]   
+[kernel]   if (x == y) { 
+[kernel]     /*  */
+[kernel]     free((void *)x); }
+[kernel]   else { 
+[kernel]     /*  */
+[kernel]     free((void *)x); free((void *)y); }
+[kernel]   return;
+[kernel] }
+[kernel] Merging global definition void dispose(int *x, int *y)
+[kernel] {
+[kernel]   
+[kernel]   /*  */
+[kernel]   
+[kernel]   if (x == y) { 
+[kernel]     /*  */
+[kernel]     free((void *)x); }
+[kernel]   else { 
+[kernel]     /*  */
+[kernel]     free((void *)x); free((void *)y); }
+[kernel]   return;
+[kernel] }
+[kernel] No spec_to_merge
+[kernel] Merging global int main(void)
+[kernel] {
+[kernel]   
+[kernel]   /* p, q, i */
+[kernel]   void *p;
+[kernel]   void *q;
+[kernel]   int i;
+[kernel]   i = 0;
+[kernel]   while (1) {
+[kernel]     
+[kernel]     /*  */
+[kernel]     { 
+[kernel]       /* tmp, tmp_0 */
+[kernel]       int tmp; int tmp_0;
+[kernel]       { /*undefined sequence*/  tmp = i; i += 1;  p = (void *)alloc(tmp); }
+[kernel]       { /*undefined sequence*/  tmp_0 = i; i += 1;  q = (void *)alloc(tmp_0);
+[kernel]       } dispose((int *)p,(int *)q);
+[kernel]     }
+[kernel]     
+[kernel]   }
+[kernel]   return (0);
+[kernel] }
+[kernel] Merging global definition int main(void)
+[kernel] {
+[kernel]   
+[kernel]   /* p, q, i */
+[kernel]   void *p;
+[kernel]   void *q;
+[kernel]   int i;
+[kernel]   i = 0;
+[kernel]   while (1) {
+[kernel]     
+[kernel]     /*  */
+[kernel]     { 
+[kernel]       /* tmp, tmp_0 */
+[kernel]       int tmp; int tmp_0;
+[kernel]       { /*undefined sequence*/  tmp = i; i += 1;  p = (void *)alloc(tmp); }
+[kernel]       { /*undefined sequence*/  tmp_0 = i; i += 1;  q = (void *)alloc(tmp_0);
+[kernel]       } dispose((int *)p,(int *)q);
+[kernel]     }
+[kernel]     
+[kernel]   }
+[kernel]   return (0);
+[kernel] }
+[kernel] No spec_to_merge
+[kernel] Register declaration malloc with specification ""
+[kernel] Register declaration free with specification ""
+[kernel] Register definition alloc with specification ""
+[kernel] Register definition dispose with specification ""
+[kernel] Register definition main with specification ""
+/* Generated by Frama-C */
+typedef unsigned int size_t;
+extern  __attribute__((__nothrow__)) void *malloc(size_t __size) __attribute__((
+__malloc__));
+extern  __attribute__((__nothrow__)) void free(void *__ptr);
+int *alloc(int size)
+{
+  
+  /* __retres, p */
+  int *__retres;
+  char *p;
+  /*sid:1*/
+  p = (char *)malloc((unsigned int)(size + 4));
+  /*sid:2*/
+  *((int *)p) = size;
+  /*sid:3*/
+  __retres = (int *)(p + 1);
+  /*sid:28*/
+  return (__retres);
+}
+
+void dispose(int *x, int *y)
+{
+  
+  /*  */
+  /*sid:6*/
+  if (x == y) { 
+    /*  */
+    /*sid:7*/ free((void *)x); }
+  else { 
+    /*  */
+    /*sid:8*/ free((void *)x); /*sid:9*/ free((void *)y); }
+  /*sid:30*/
+  return;
+}
+
+int main(void)
+{
+  
+  /* __retres, p, q, i */
+  int __retres;
+  void *p;
+  void *q;
+  int i;
+  /*sid:12*/
+  i = 0;
+  /*sid:13*/
+  while (1) {
+    
+    /*  */
+    /*sid:14*/
+    /*block:begin*/
+      { 
+        /* tmp, tmp_0 */
+        int tmp; int tmp_0; /*sid:15*/
+        { /*undefined sequence*/ 
+          /*sid:16*/
+          tmp = i;
+          /*effects: (p) <- */
+          /*sid:17*/
+          i += 1;
+          /*effects: (p)i <- */
+          /*sid:18*/
+          ;
+          /*effects: (p) <- tmp*/
+          /*sid:19*/
+          p = (void *)alloc(tmp);
+          /*effects: ()p <- */
+        } /*sid:20*/
+        { /*undefined sequence*/ 
+          /*sid:21*/
+          tmp_0 = i;
+          /*effects: (q) <- */
+          /*sid:22*/
+          i += 1;
+          /*effects: (q)i <- */
+          /*sid:23*/
+          ;
+          /*effects: (q) <- tmp_0*/
+          /*sid:24*/
+          q = (void *)alloc(tmp_0);
+          /*effects: ()q <- */
+        } /*sid:25*/ dispose((int *)p,(int *)q);
+      }
+      
+    /*block:end*/
+  }
+  /*sid:26*/
+  __retres = 0;
+  /*sid:32*/
+  return (__retres);
+}
+
+
+ GTYPE : Adding type size_t 
+ GTYPE : Adding type size_t 
+SLOCAL [ __retres:(int)* ] = 
+SLOCAL [ p:(char)* ] = 
+ 
+ GTYPE : Adding type size_t 
+ GTYPE : Adding type size_t 
+flatac_visitor: Index of global types : 
+size_t: 
+ 
+[get°entry_point_from_fundec ]  New absdom : $\Formula{\texttt{true}}{\Emp}$ 
+[get°entry_point_from_fundec ]  Absdom after registering slocals : $\Formula{ \wedge (p \mapsto l_1) \wedge (__retres \mapsto l_2)}{\Emp}$ 
+[get°entry_point_from_fundec ]  Absdom after registering sformals : $\Formula{ \wedge (p \mapsto l_1) \wedge (__retres \mapsto l_2)}{\Emp}$ 
+Registering globlal variable malloc' validity 
+Registering globlal variable free' validity 
+[ Extended cfg Adding : Ecfg node id  : -2, Framac sid 0 ] 
+ [FlataC] Dans next_on_ssl_instr
+[FlataC] I have a call with some affectation to a variable
+[FlataC] Dans Call de p=malloc
+[FlataC] malloc_ssl_nts_transition
+Malloc parametter is : ( CAST unsigned_int,PlusA(Var size : int,4) : int)In cil_expr_2_scalar ( CAST unsigned_int,PlusA(Var size : int,4) : int) 
+In cil_expr_2_scalar PlusA(Var size : int,4) : int 
+In cil_expr_2_scalar 4 
+In cil_expr_2_scalar Var size : int 
+[FlataC] [malloc_ssl_nts_transition] Pre valid_sym_cscal
+[FlataC] [malloc_ssl_nts_transition] Post valid_sym_cscal
+[FlataC] Entering r_malloc_succ_withvalidcntguard
+(unsigned int)(size + 4)size + 44sizeget_pvar_from_exp_node : lval is a Var(p) 
+p
+No offset for pvar 
+get_pvar_from_exp_node : lval is a Var(p) 
+p
+No offset for pvar 
+[FlataC] r_malloc_neg_or_zero_arg_withvalidityguard
+get_pvar_from_exp_node : lval is a Var(p) 
+p
+No offset for pvar 
+[FlataC] r_malloc_failed_with_unvalidcntgard
+[ Extended cfg Adding : Ecfg node id  : 42, Framac sid 1 ] 
+ This state is an error state, I'm not going to traverse it.
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;__retres->l_2]Ptnil [;p-> Nil]} || Space{Emp}
+ Right formula  
+Exists [ ]Pure{Eq []Aff []Ptnil []} || Space{Top_heap}
+*********************** 
+ 
+ 
+  [ does_entail ] FALSE, Rhs has Top_heap
+whilst Lhs don't, accepting it[ Extended cfg Adding : Ecfg node id  : 42, Framac sid 2 ] 
+ Scheduling another vertex for execution 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ;mid_1]Pure{Eq []Aff [;p->mid_1;__retres->l_2]Ptnil []} || Space{Space [*Alloc(mid_1,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff []Ptnil []} || Space{Top_heap}
+*********************** 
+ 
+ 
+  [ does_entail ] FALSE, Rhs has Top_heap
+whilst Lhs don't, accepting it[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ;mid_1]Pure{Eq []Aff [;p->mid_1;__retres->l_2]Ptnil []} || Space{Space [*Alloc(mid_1,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;__retres->l_2]Ptnil [;p-> Nil]} || Space{Emp}
+*********************** 
+ 
+  
+ [ accept_entailement ] TRUE, heap of different size 
+[ Extended cfg Adding : Ecfg node id  : 42, Framac sid 3 ] 
+ Scheduling another vertex for execution 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[next_on_ssl_affect :]Paramater e in Mem(e) is not a Lval(Var(),_), e is : ( CAST (int)*,Var p : (char)*). Need to check block size and segmentation here 
+[ Extended cfg Adding : Ecfg node id  : 43, Framac sid 4 ] 
+ Scheduling another vertex for execution 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[next_on_ssl_affect :]Paramater e in Mem(e) is not a Lval(Var(),_), e is : ( CAST (int)*,Var p : (char)*). Need to check block size and segmentation here 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ;mid_1]Pure{Eq []Aff [;p->mid_1;__retres->l_2]Ptnil []} || Space{Space [*Alloc(mid_1,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;__retres->l_2]Ptnil [;p-> Nil]} || Space{Emp}
+*********************** 
+ 
+  
+ [ accept_entailement ] TRUE, heap of different size 
+[ Extended cfg Adding : Ecfg node id  : 43, Framac sid 5 ] 
+ Scheduling another vertex for execution 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Im am in affect_ptr_upon_sslv
+[affect_ptr_upon_sslv: expression : __retres=( CAST (int)*,PlusPI(Var p : (char)*,1) : (char)*) 
+]get_pvar_from_exp_node : lval is a Var(p) 
+__retres
+No offset for pvar 
+get_pvar_from_exp_node : lval is a Var(p) 
+p
+No offset for pvar 
+I have a pvar 
+ On the way to compute cil_expre_2_per of expr ( CAST (int)*,PlusPI(Var p : (char)*,1) : (char)*) 
+ (int *)(
+p + 1)
+In cil_expr_2_ptr ( CAST (int)*,PlusPI(Var p : (char)*,1) : (char)*) 
+In cil_expr_2_ptr PlusPI(Var p : (char)*,1) : (char)* 
+p + 1
+In cil_expr_2_scalar 1 
+1In cil_expr_2_ptr Var p : (char)* 
+p
+get_pvar_from_exp_node : lval is a Var(p) 
+p
+No offset for pvar 
+[cil_expr_2_ptr Lval (Var(vinfo), _ )] : TPtr, vname =  p 
+Operation done 
+ about to compute interpret_c_ptr_exp_to_cnt 
+ get_pvar_from_exp_node : lval is a Var(p) 
+__retres
+No offset for pvar 
+[ Extended cfg Adding : Ecfg node id  : 44, Framac sid 6 ] 
+ Scheduling another vertex for execution 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Im am in affect_ptr_upon_sslv
+[affect_ptr_upon_sslv: expression : __retres=( CAST (int)*,PlusPI(Var p : (char)*,1) : (char)*) 
+]get_pvar_from_exp_node : lval is a Var(p) 
+__retres
+No offset for pvar 
+get_pvar_from_exp_node : lval is a Var(p) 
+p
+No offset for pvar 
+I have a pvar 
+ On the way to compute cil_expre_2_per of expr ( CAST (int)*,PlusPI(Var p : (char)*,1) : (char)*) 
+ (int *)(
+p + 1)
+In cil_expr_2_ptr ( CAST (int)*,PlusPI(Var p : (char)*,1) : (char)*) 
+In cil_expr_2_ptr PlusPI(Var p : (char)*,1) : (char)* 
+p + 1
+In cil_expr_2_scalar 1 
+1In cil_expr_2_ptr Var p : (char)* 
+p
+get_pvar_from_exp_node : lval is a Var(p) 
+p
+No offset for pvar 
+[cil_expr_2_ptr Lval (Var(vinfo), _ )] : TPtr, vname =  p 
+Operation done 
+ about to compute interpret_c_ptr_exp_to_cnt 
+ get_pvar_from_exp_node : lval is a Var(p) 
+__retres
+[FlataC] I reached does_entail
+No offset for pvar 
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ;mid_1]Pure{Eq []Aff [;p->mid_1;__retres->mid_1]Ptnil []} || Space{Space [*Alloc(mid_1,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;__retres->l_2]Ptnil [;p-> Nil]} || Space{Emp}
+*********************** 
+ 
+  
+ [ accept_entailement ] TRUE, heap of different size 
+[ Extended cfg Adding : Ecfg node id  : 44, Framac sid 7 ] 
+ Scheduling another vertex for execution 
+In cil_expr_2_ptr Var __retres : (int)* 
+__retres
+get_pvar_from_exp_node : lval is a Var(p) 
+__retres
+No offset for pvar 
+[cil_expr_2_ptr Lval (Var(vinfo), _ )] : TPtr, vname =  __retres 
+[ Extended cfg Adding : Ecfg node id  : 45, Framac sid 8 ] 
+ Scheduling another vertex for execution 
+In cil_expr_2_ptr Var __retres : (int)* 
+__retres
+get_pvar_from_exp_node : lval is a Var(p) 
+__retres
+No offset for pvar 
+[cil_expr_2_ptr Lval (Var(vinfo), _ )] : TPtr, vname =  __retres 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ;mid_1]Pure{Eq []Aff [;p->mid_1;__retres->mid_1]Ptnil []} || Space{Space [*Alloc(mid_1,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;__retres->l_2]Ptnil [;p-> Nil]} || Space{Emp}
+*********************** 
+ 
+  
+ [ accept_entailement ] TRUE, heap of different size 
+[ Extended cfg Adding : Ecfg node id  : 45, Framac sid 9 ] 
+ Scheduling another vertex for execution 
+ 
+ GTYPE : Adding type size_t 
+ GTYPE : Adding type size_t 
+flatac_visitor: Index of global types : 
+size_t: 
+ 
+[get°entry_point_from_fundec ]  New absdom : $\Formula{\texttt{true}}{\Emp}$ 
+[get°entry_point_from_fundec ]  Absdom after registering slocals : $\Formula{\texttt{true}}{\Emp}$ 
+[get°entry_point_from_fundec ]  Absdom after registering sformals : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2)}{\Emp}$ 
+Registering globlal variable malloc' validity 
+Registering globlal variable free' validity 
+[ Extended cfg Adding : Ecfg node id  : -2, Framac sid 0 ] 
+  Warning : Not a basic instruction : IfIn file : main2.c, from line 10 col 6 to line 10 col 12. /n 
+[ Extended cfg Adding : Ecfg node id  : 47, Framac sid 1 ] 
+ Scheduling another vertex for execution 
+In cil_expr_2_ptr Var y : (int)* 
+y
+get_pvar_from_exp_node : lval is a Var(p) 
+y
+No offset for pvar 
+[cil_expr_2_ptr Lval (Var(vinfo), _ )] : TPtr, vname =  y 
+In cil_expr_2_ptr Var x : (int)* 
+x
+get_pvar_from_exp_node : lval is a Var(p) 
+x
+No offset for pvar 
+[cil_expr_2_ptr Lval (Var(vinfo), _ )] : TPtr, vname =  x 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] I've got a call with no affectation of the returned value
+[next_on_ssl_instr:] expr1 = Var free : Function of return type : Void 
+[FlataC] Called function is free
+ I am in get_first_ptvar_from lparam
+J'ai vu un cast dans la liste
+des parametres 
+get_pvar_from_exp_node : lval is a Var(p) 
+x
+No offset for pvar 
+[FlataC] Pvar name is : x
+[FlataC] Entering free_upon_sslv
+[FlataC] Dans next_on_ssl_instr
+[FlataC] I've got a call with no affectation of the returned value
+[next_on_ssl_instr:] expr1 = Var free : Function of return type : Void 
+[FlataC] Called function is free
+ I am in get_first_ptvar_from lparam
+J'ai vu un cast dans la liste
+des parametres 
+get_pvar_from_exp_node : lval is a Var(p) 
+x
+No offset for pvar 
+[FlataC] Pvar name is : x
+[FlataC] Entering free_upon_sslv
+[ Extended cfg Adding : Ecfg node id  : 48, Framac sid 2 ] 
+ This state is an error state, I'm not going to traverse it.
+[ Extended cfg Adding : Ecfg node id  : 49, Framac sid 3 ] 
+ This state is an error state, I'm not going to traverse it.
+In cil_expr_2_ptr Var y : (int)* 
+y
+get_pvar_from_exp_node : lval is a Var(p) 
+y
+No offset for pvar 
+[cil_expr_2_ptr Lval (Var(vinfo), _ )] : TPtr, vname =  y 
+In cil_expr_2_ptr Var x : (int)* 
+x
+get_pvar_from_exp_node : lval is a Var(p) 
+x
+No offset for pvar 
+[cil_expr_2_ptr Lval (Var(vinfo), _ )] : TPtr, vname =  x 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] I've got a call with no affectation of the returned value
+[next_on_ssl_instr:] expr1 = Var free : Function of return type : Void 
+[FlataC] Called function is free
+ I am in get_first_ptvar_from lparam
+J'ai vu un cast dans la liste
+des parametres 
+get_pvar_from_exp_node : lval is a Var(p) 
+x
+No offset for pvar 
+[FlataC] Pvar name is : x
+[FlataC] Entering free_upon_sslv
+[FlataC] Dans next_on_ssl_instr
+[FlataC] I've got a call with no affectation of the returned value
+[next_on_ssl_instr:] expr1 = Var free : Function of return type : Void 
+[FlataC] Called function is free
+ I am in get_first_ptvar_from lparam
+J'ai vu un cast dans la liste
+des parametres 
+get_pvar_from_exp_node : lval is a Var(p) 
+x
+No offset for pvar 
+[FlataC] Pvar name is : x
+[FlataC] Entering free_upon_sslv
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2]Ptnil []} || Space{Top_heap}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2]Ptnil []} || Space{Top_heap}
+*********************** 
+ 
+  
+ [ does_entail ] FALSE, False formula aren't
+added, as all are equivalent [FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2]Ptnil []} || Space{Top_heap}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2]Ptnil []} || Space{Top_heap}
+*********************** 
+ 
+  
+ [ does_entail ] FALSE, False formula aren't
+added, as all are equivalent SLOCAL [ __retres:int ] = 
+SLOCAL [ tmp_0:int ] = 
+SLOCAL [ tmp:int ] = 
+SLOCAL [ i:int ] = 
+SLOCAL [ q:(Void)* ] = 
+SLOCAL [ p:(Void)* ] = 
+ 
+ GTYPE : Adding type size_t 
+ GTYPE : Adding type size_t 
+flatac_visitor: Index of global types : 
+size_t: 
+ 
+[get°entry_point_from_fundec ]  New absdom : $\Formula{\texttt{true}}{\Emp}$ 
+[get°entry_point_from_fundec ]  Absdom after registering slocals : $\Formula{ \wedge (p \mapsto l_1) \wedge (q \mapsto l_2)}{\Emp}$ 
+[get°entry_point_from_fundec ]  Absdom after registering sformals : $\Formula{ \wedge (p \mapsto l_1) \wedge (q \mapsto l_2)}{\Emp}$ 
+Registering globlal variable malloc' validity 
+Registering globlal variable free' validity 
+[ Extended cfg Adding : Ecfg node id  : -2, Framac sid 0 ] 
+ [FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[ Extended cfg Adding : Ecfg node id  : 53, Framac sid 1 ] 
+ Scheduling another vertex for execution 
+ Warning : Not a basic instruction : Loop In file : main2.c, from line 22 col 2 to line 26 col 3. /n 
+[ Extended cfg Adding : Ecfg node id  : 54, Framac sid 2 ] 
+ Scheduling another vertex for execution 
+ Warning : Not a basic instruction : Block 
+ 
+[ Extended cfg Adding : Ecfg node id  : 55, Framac sid 3 ] 
+ Scheduling another vertex for execution 
+ Warning : Not a basic instruction : Unspecified sequence 
+ 
+[ Extended cfg Adding : Ecfg node id  : 56, Framac sid 4 ] 
+ Scheduling another vertex for execution 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar Var i : int 
+iIn cil_expr_2_scalar Var i : int 
+i[ Extended cfg Adding : Ecfg node id  : 57, Framac sid 5 ] 
+ Scheduling another vertex for execution 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar PlusA(Var i : int,1) : int 
+
+i + 1In cil_expr_2_scalar 1 
+1In cil_expr_2_scalar Var i : int 
+iIn cil_expr_2_scalar PlusA(Var i : int,1) : int 
+In cil_expr_2_scalar 1 
+i + 11In cil_expr_2_scalar Var i : int 
+i[ Extended cfg Adding : Ecfg node id  : 58, Framac sid 6 ] 
+ Scheduling another vertex for execution 
+[FlataC] Dans next_on_ssl_instr
+ !!! Skipping instruction !!! to In file : main2.c, from line 23 col 8 to line 23 col 19. /n 
+[ Extended cfg Adding : Ecfg node id  : 59, Framac sid 7 ] 
+ Scheduling another vertex for execution 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] I have a call with some affectation to a variable
+[FlataC] Dans Call de p=alloc
+In cil_expr_2_scalar Var tmp : int 
+tmp[next_on_ssl_instr] Pointer type Var : p = Var alloc : Function of return type : (int)* : (Void)* 
+[next_on_ssl_instr] argument list p'=alloc(tmp) 
+ [ Extended cfg Adding : Ecfg node id  : 60, Framac sid 8 ] 
+ Scheduling another vertex for execution 
+ Warning : Not a basic instruction : Unspecified sequence 
+ 
+[ Extended cfg Adding : Ecfg node id  : 61, Framac sid 9 ] 
+ Scheduling another vertex for execution 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar Var i : int 
+iIn cil_expr_2_scalar Var i : int 
+i[ Extended cfg Adding : Ecfg node id  : 62, Framac sid 10 ] 
+ Scheduling another vertex for execution 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar PlusA(Var i : int,1) : int 
+In cil_expr_2_scalar 1 
+i + 11In cil_expr_2_scalar Var i : int 
+iIn cil_expr_2_scalar PlusA(Var i : int,1) : int 
+In cil_expr_2_scalar 1 
+i + 11In cil_expr_2_scalar Var i : int 
+i[ Extended cfg Adding : Ecfg node id  : 63, Framac sid 11 ] 
+ Scheduling another vertex for execution 
+[FlataC] Dans next_on_ssl_instr
+ !!! Skipping instruction !!! to In file : main2.c, from line 24 col 8 to line 24 col 19. /n 
+[ Extended cfg Adding : Ecfg node id  : 64, Framac sid 12 ] 
+ Scheduling another vertex for execution 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] I have a call with some affectation to a variable
+[FlataC] Dans Call de q=alloc
+In cil_expr_2_scalar Var tmp_0 : int 
+tmp_0[next_on_ssl_instr] Pointer type Var : q = Var alloc : Function of return type : (int)* : (Void)* 
+[next_on_ssl_instr] argument list q'=alloc(tmp_0) 
+ [ Extended cfg Adding : Ecfg node id  : 65, Framac sid 13 ] 
+ Scheduling another vertex for execution 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] I've got a call with no affectation of the returned value
+[next_on_ssl_instr:] expr1 = Var dispose : Function of return type : Void 
+[FlataC] Called function is dispose
+In cil_expr_2_ptr ( CAST (int)*,Var p : (Void)*) 
+(int *)p
+In cil_expr_2_ptr Var p : (Void)* 
+p
+get_pvar_from_exp_node : lval is a Var(p) 
+p
+No offset for pvar 
+[cil_expr_2_ptr Lval (Var(vinfo), _ )] : TPtr, vname =  p 
+In cil_expr_2_ptr ( CAST (int)*,Var q : (Void)*) 
+(int *)q
+In cil_expr_2_ptr Var q : (Void)* 
+q
+get_pvar_from_exp_node : lval is a Var(p) 
+q
+No offset for pvar 
+[cil_expr_2_ptr Lval (Var(vinfo), _ )] : TPtr, vname =  q 
+[next_on_ssl_instr] Call to function: dispose : Function of return type : Void 
+[next_on_ssl_instr] argument list dispose(offset__p_,offset__q_) 
+ [ Extended cfg Adding : Ecfg node id  : 66, Framac sid 14 ] 
+ Scheduling another vertex for execution 
+ Warning : Not a basic instruction : Loop In file : main2.c, from line 22 col 2 to line 26 col 3. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;p->l_1;q->l_2]Ptnil []} || Space{Emp}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;p->l_1;q->l_2]Ptnil []} || Space{Emp}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] nts main; 
+[FlataC] main {
+[FlataC] in ()
+[FlataC] 
+[FlataC] __retres,tmp_0,tmp,i,offset(q),offset(p) : int
+[FlataC] initial s0;
+[FlataC] final ;
+[FlataC]  
+[FlataC]  s0 -> s1 { i'=0 } 
+[FlataC]  
+[FlataC]  s1 -> s2 {  } 
+[FlataC]  
+[FlataC]  s2 -> s3 {  } 
+[FlataC]  
+[FlataC]  s3 -> s4 {  } 
+[FlataC]  
+[FlataC]  s4 -> s5 { tmp'=i } 
+[FlataC]  
+[FlataC]  s5 -> s6 { i'=i+1 } 
+[FlataC]  
+[FlataC]  s6 -> s7 {  } 
+[FlataC]  
+[FlataC]  s7 -> s8 { p'=alloc(tmp) } 
+[FlataC]  
+[FlataC]  s8 -> s9 {  } 
+[FlataC]  
+[FlataC]  s9 -> s10 { tmp_0'=i } 
+[FlataC]  
+[FlataC]  s10 -> s11 { i'=i+1 } 
+[FlataC]  
+[FlataC]  s11 -> s12 {  } 
+[FlataC]  
+[FlataC]  s12 -> s13 { q'=alloc(tmp_0) } 
+[FlataC]  
+[FlataC]  s13 -> s14 { dispose(offset__p_,offset__q_) } 
+[FlataC]  
+[FlataC]  s14 -> s2 {  } 
+[FlataC] 
+[FlataC] }
+[FlataC] nts alloc; 
+[FlataC] alloc {
+[FlataC] in (size : int)
+[FlataC] 
+[FlataC] offset(__retres),offset(p) : int
+[FlataC] initial s0;
+[FlataC] final s8,s9;
+[FlataC] error: s1
+[FlataC]  
+[FlataC]  s0 -> s1 { notsize = 1 and true } 
+[FlataC]  
+[FlataC]  s0 -> s2 { size = 1 and true and size+4 <=  0 } 
+[FlataC]  
+[FlataC]  s0 -> s3 { validity__p_'=1 and offset__p_'=0 and size = 1 and true and size+4 > 0 and mid_1_size'=size+4 and mid_1_base'=1 } 
+[FlataC]  
+[FlataC]  s2 -> s4 {  } 
+[FlataC]  
+[FlataC]  s3 -> s5 {  } 
+[FlataC]  
+[FlataC]  s4 -> s6 { offset____retres_'=offset__p_+1*sizeof_char } 
+[FlataC]  
+[FlataC]  s5 -> s7 { offset____retres_'=offset__p_+1*sizeof_char } 
+[FlataC]  
+[FlataC]  s6 -> s8 { ret_val_'=offset____retres_ } 
+[FlataC]  
+[FlataC]  s7 -> s9 { ret_val_'=offset____retres_ } 
+[FlataC] 
+[FlataC] }
+[FlataC] nts dispose; 
+[FlataC] dispose {
+[FlataC] in (offset(y),offset(x) : int)
+[FlataC] initial s0;
+[FlataC] final ;
+[FlataC] error: s2,s3
+[FlataC]  
+[FlataC]  s0 -> s1 {  } 
+[FlataC]  
+[FlataC]  s1 -> s2 { offset__x_ = offset__y_ } 
+[FlataC]  
+[FlataC]  s1 -> s3 { offset__x_ != offset__y_ } 
+[FlataC] 
+[FlataC] }
+[FlataC]  
+[FlataC]  States of : main 
+[FlataC] Key_id 0, absval : $\Formula{ \wedge (p \mapsto l_1) \wedge (q \mapsto l_2)}{\Emp}$ 
+[FlataC] Key_id 1, absval : $\Formula{ \wedge (p \mapsto l_1) \wedge (q \mapsto l_2)}{\Emp}$ 
+[FlataC] Key_id 2, absval : $\Formula{ \wedge (p \mapsto l_1) \wedge (q \mapsto l_2)}{\Emp}$ 
+[FlataC] Key_id 3, absval : $\Formula{ \wedge (p \mapsto l_1) \wedge (q \mapsto l_2)}{\Emp}$ 
+[FlataC] Key_id 4, absval : $\Formula{ \wedge (p \mapsto l_1) \wedge (q \mapsto l_2)}{\Emp}$ 
+[FlataC] Key_id 5, absval : $\Formula{ \wedge (p \mapsto l_1) \wedge (q \mapsto l_2)}{\Emp}$ 
+[FlataC] Key_id 6, absval : $\Formula{ \wedge (p \mapsto l_1) \wedge (q \mapsto l_2)}{\Emp}$ 
+[FlataC] Key_id 7, absval : $\Formula{ \wedge (p \mapsto l_1) \wedge (q \mapsto l_2)}{\Emp}$ 
+[FlataC] Key_id 8, absval : $\Formula{ \wedge (p \mapsto l_1) \wedge (q \mapsto l_2)}{\Emp}$ 
+[FlataC] Key_id 9, absval : $\Formula{ \wedge (p \mapsto l_1) \wedge (q \mapsto l_2)}{\Emp}$ 
+[FlataC] Key_id 10, absval : $\Formula{ \wedge (p \mapsto l_1) \wedge (q \mapsto l_2)}{\Emp}$ 
+[FlataC] Key_id 11, absval : $\Formula{ \wedge (p \mapsto l_1) \wedge (q \mapsto l_2)}{\Emp}$ 
+[FlataC] Key_id 12, absval : $\Formula{ \wedge (p \mapsto l_1) \wedge (q \mapsto l_2)}{\Emp}$ 
+[FlataC] Key_id 13, absval : $\Formula{ \wedge (p \mapsto l_1) \wedge (q \mapsto l_2)}{\Emp}$ 
+[FlataC] Key_id 14, absval : $\Formula{ \wedge (p \mapsto l_1) \wedge (q \mapsto l_2)}{\Emp}$ 
+[FlataC] 
+[FlataC]  
+[FlataC]  States of : alloc 
+[FlataC] Key_id 0, absval : $\Formula{ \wedge (p \mapsto l_1) \wedge (__retres \mapsto l_2)}{\Emp}$ 
+[FlataC] Key_id 1, absval : $\Formula{\texttt{true}}{\top}$ 
+[FlataC] Key_id 2, absval : $\Formula{ \wedge (__retres \mapsto l_2)\wedge p\mapsto \nil}{\Emp}$ 
+[FlataC] Key_id 3, absval : $\Formula{\exists mid_1. \wedge (p \mapsto mid_1) \wedge (__retres \mapsto l_2)}{ Alloc(mid_1,1) }$ 
+[FlataC] Key_id 4, absval : $\Formula{ \wedge (__retres \mapsto l_2)\wedge p\mapsto \nil}{\Emp}$ 
+[FlataC] Key_id 5, absval : $\Formula{\exists mid_1. \wedge (p \mapsto mid_1) \wedge (__retres \mapsto l_2)}{ Alloc(mid_1,1) }$ 
+[FlataC] Key_id 6, absval : $\Formula{ \wedge (__retres \mapsto l_2)\wedge p\mapsto \nil}{\Emp}$ 
+[FlataC] Key_id 7, absval : $\Formula{\exists mid_1. \wedge (p \mapsto mid_1) \wedge (__retres \mapsto mid_1)}{ Alloc(mid_1,1) }$ 
+[FlataC] Key_id 8, absval : $\Formula{ \wedge (__retres \mapsto l_2)\wedge p\mapsto \nil}{\Emp}$ 
+[FlataC] Key_id 9, absval : $\Formula{\exists mid_1. \wedge (p \mapsto mid_1) \wedge (__retres \mapsto mid_1)}{ Alloc(mid_1,1) }$ 
+[FlataC] 
+[FlataC]  
+[FlataC]  States of : dispose 
+[FlataC] Key_id 0, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2)}{\Emp}$ 
+[FlataC] Key_id 1, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2)}{\Emp}$ 
+[FlataC] Key_id 2, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2)}{\top}$ 
+[FlataC] Key_id 3, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2)}{\top}$
+Starting
+Visiting alloc
+Visiting dispose
+Visiting main
+Found skip at main2.c:23/main2.c:23; succ: p = (void *)alloc(tmp);
+Found skip at main2.c:24/main2.c:24; succ: q = (void *)alloc(tmp_0);
+ [Debug visitor] !!! Skipping instruction !!!In statement :83, skipping to statement 84,  located at  In file : , from line 0 col -1 to line 0 col -1. /n  
+ [Debug visitor] !!! Unspecified sequence !!! 
+ [Debug visitor] !!! Skipping instruction !!!In statement :88, skipping to statement 89,  located at  In file : main2.c, from line 23 col 8 to line 23 col 19. /n  
+ [Debug visitor] !!! Unspecified sequence !!! 
+ [Debug visitor] !!! Skipping instruction !!!In statement :93, skipping to statement 94,  located at  In file : main2.c, from line 24 col 8 to line 24 col 19. /n  
+f2ca printed the cautomaton ton the file 
+ 
