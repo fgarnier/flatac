@@ -1,4 +1,4 @@
-import re, sys, subprocess
+import re, sys, subprocess, os
 
 
 def individual_test(dir_name,root_filename):
@@ -7,17 +7,19 @@ def individual_test(dir_name,root_filename):
     ca_gen_file=dir_name+root_filename+".ca"
     c_test_file=dir_name+root_filename+".c"
     try:
-        subprocess.check_call("frama-c","-flatac",c_test_file)
-    except CalledProcessError as (errno):
-        print "[Frama-c/FLATAC failure] Call to {0} returned {1}".format(c_test_file,errno)
+        print 'calling frama-c -flatac on file {0}{1}.c\n'.format(dir_name,root_filename) 
+        subprocess.check_call(['frama-c','-flatac',c_test_file])
+        
+    except subprocess.CalledProcessError as errcode:    
+        print "[Frama-c/FLATAC failure] Call to {0} returned {1}".format(c_test_file,errcode)
         failure_collection.append(c_test_file)
         return failure_collection
     try:
-        subprocess.check_call("cmp",ca_gen_file,ca_ref_file)
+        subprocess.check_call(["cmp",ca_gen_file,ca_ref_file])
         print "[PASSED] : {0} \n".format(c_test_file)
         return []
     
-    except CalledProcessError as (errno):
+    except subprocess.CalledProcessError as errno:
         print "[Frama-c/FLATAC failure] Call to {0} returned {1}".format(c_test_file,errno)
         failure_collection.append(c_test_file)
         return failure_collection
@@ -25,21 +27,33 @@ def individual_test(dir_name,root_filename):
 
 def check_each_dir(dir_list):
     failed_test=[]
-    dir_name=re.search('.*(?=\n)',entry)
-    dir_list=sys.listdir(dirname) # List of all files in dirname
-    for entry in dir_list:
-        root_filename=re.search('.*(?=[.c])',entry)
-        failure_list = individual_test(entry,root_filename)
-        failed_test.extend(failure_list)
+    for dir_entry in dir_list: 
+        dir_name_groups=re.search('.*(?=\n)',dir_entry)
+        dir_name=dir_name_groups.group(0)
+        print 'Entering directory {0} \n'.format(dir_name)
+        file_list=os.listdir(dir_name) # List of all files in dirname
+        for file_entry in file_list:
+            root_filename_group=re.search('.*(?=[.]c)',file_entry)
+            root_filename=root_filename_group.group(0)
+            failure_list = individual_test(dir_name,root_filename)
+            failed_test.extend(failure_list)
+            
     return failed_test
 
 def runtests(test_dirs):
     try:
-        file_descr = open(test_dirs,'r'),
-        dir_list = file_descr.readlines(),
+        file_obj = open(test_dirs,'r')
+        dir_list = file_obj.readlines()
         check_each_dir(dir_list)
         
     except IOError as (errno, strerror):
         print "I/O error({0}):{1}".format(errno, strerror),
         return false
         
+if __name__ == "__main__":
+    print "Running test sequence \n" 
+    runtests('./test_dirs')
+else:
+    print "Not in the main function \n"
+    print "Function name : {0} \n".format(__name__)
+    
