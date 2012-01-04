@@ -1,0 +1,32 @@
+sum3 {
+in (c,b,a : int)
+
+sum : int
+initial s0;
+final s3;
+ 
+ s0 -> s1 { sum'=0 } 
+ 
+ s1 -> s2 { sum'=a+b+c } 
+ 
+ s2 -> s3 { ret_val_'=sum } 
+
+}
+main {
+in (offset__argv_,argc : int)
+
+__retres,x : int
+initial s0;
+final s5;
+ 
+ s0 -> s1 { x'=1 } 
+ 
+ s1 -> s2 { x'=sum3(x,x,x) } 
+ 
+ s2 -> s3 { x'=sum3(x,x,x) } 
+ 
+ s3 -> s4 { __retres'=0 } 
+ 
+ s4 -> s5 { ret_val_'=__retres } 
+
+}
