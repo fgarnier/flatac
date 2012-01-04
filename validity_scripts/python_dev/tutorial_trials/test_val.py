@@ -1,3 +1,15 @@
+# 
+# This set of functions are used to perform automatic verification
+# tests on the flatac frama-c plugin
+# Flata-c Framac, Verimag 2012
+#
+# 
+# List of directory list shall be containes in the file ./test_dirs
+# Each directory shall contain some pairs of files (file.c,file.ca_ref)
+# This script launch frama-c -flatac on each file file.c and compare
+# the output file file.ca to file.ca_ref. Test succeed iff there is
+# no difference between file.ca and file.ca_ref. 
+
 import re, sys, subprocess, os
 
 
@@ -44,7 +56,8 @@ def runtests(test_dirs):
     try:
         file_obj = open(test_dirs,'r')
         dir_list = file_obj.readlines()
-        check_each_dir(dir_list)
+        failed_test=check_each_dir(dir_list)
+        
         
     except IOError as (errno, strerror):
         print "I/O error({0}):{1}".format(errno, strerror),
