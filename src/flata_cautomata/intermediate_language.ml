@@ -144,7 +144,7 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
       Const(CInt64(i,_,_))-> LiConst( LiIConst(My_bigint.to_int i))
     | Const(CEnum(e)) -> cil_enumitem_2_scalar e
     	  
-    | Lval(Var(f),_)->
+    | Lval(Var(f),offset)->
       begin
 	match f.vtype with
 	    TInt(_,_) -> LiVar(Unprimed,LiIntVar(f.vname))
@@ -162,6 +162,8 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 	  | TEnum(e,_) -> 
 	    LiVar(Unprimed,LiIntVar(f.vname))
 
+
+	  | TArray
 	  | _-> begin 
 	      let alias_tname = Composite_types.is_integer_type f.vtype in
 		begin

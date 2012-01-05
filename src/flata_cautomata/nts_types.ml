@@ -19,13 +19,24 @@ type nts_base_types = NtsIntType
 		      | NtsRealType
 		      | NtsBool
 		      
-type nts_array =  NtsArray of string * int * nts_base_types
+
+
+(*type nts_array =  NtsArray of string * int * nts_base_types
 		  |  NtsMDimArray of string * int * nts_array  
+*)
 (* An array has a name, a size and contains the type of
 each element 
 This type definition allows to encode multi dimentional arrays.
 *)   			      
  
+type ref_nts_array = RefBasicTypeArray of nts_base_types
+		     | RefMultDimArray of ref_nts_array
+
+type nts_array = RefNtsArray of ref_nts_array
+		 | FixedSizeNtsArray of fixed_size_nts_array
+
+and fixed_size_nts_array = FixedSizeBasicTypeNtsArray of int * nts_base_types
+			| FixedSizeNtsArray of int * nts_array 
 			      
 
 type nts_var = NtsIVar of string (*Integer type variable*)
@@ -64,4 +75,7 @@ type cnt_bool = CntBool of cnt_binop *  cnt_arithm_exp * cnt_arithm_exp
 type cnt_trans_label = CntGuard of cnt_bool
 		   | CntFunCall of string * nts_var option *cnt_arithm_exp list
 		   | CntAffect of nts_var * cnt_arithm_exp
-
+		   | CntHavoc of nts_val list (* The value of the listed 
+						 variables are not copied.
+						 See NTL documentation.
+					       *)
