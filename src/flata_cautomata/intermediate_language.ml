@@ -45,10 +45,20 @@ and integers constants.
 *)
 
 exception Bad_expression_type of string
+exception Array_elements_not_integers
+exception Not_Array_Index
+exception Not_Array_type
+
+
 
 let get_name_of_c_ptr p =
   match p with
       LiIntPtr s -> s
+
+
+
+type c_tab = LiTab of (int option) list * Cil_types.typ
+	     (*| LiMultDimTab of int list * Cil_types.typ*)
 
 
 (** The type of integers scalar expressions*)
@@ -64,11 +74,14 @@ type c_scal = LiVar of primed * c_int_var
 	      | LiMinusPP of c_ptrexp * c_ptrexp *  Cil_types.typ
 	      | LiScalOfAddr of c_ptrexp * Cil_types.typ 
                                         (* While casting a ptr to an 
-					 integer type*) 
-		  
+					   integer type*) 
+	      | LiElemOfCTab of int list * c_tab 
+
 and c_ptrexp = LiPVar of primed * c_ptr *  Cil_types.typ
 	       | LiBaseAddrOfArray (* Base address of an array*)
-		   of primed * c_ptr * li_array_size * Cil_types.typ
+		   of int list * c_tab (* the index list specifies
+				        which subtab we are refering to.
+				       *)
 	       | LiPlusPI of c_ptrexp * c_scal  * Cil_types.typ
 	       | LiIndexPI of c_ptrexp * c_scal * Cil_types.typ
 	       | LiMinusPI of c_ptrexp * c_scal * Cil_types.typ
@@ -135,6 +148,19 @@ let rec negate_bool_bot ( b_exp : c_bool ) =
     | LiBPtrLeq (eg ,ed ) -> LiBPtrGt (eg ,ed)
 
 
+let get_base_type_of_array (t : Cil_types.typ) =
+  let rec base_type vtype =
+    match vtype with
+	TArray(t,_,_,_) ->
+	  base_type t
+      | _ -> vtype
+  in
+  match t with
+      TArray(t,_,_,_) -> base_type t
+    | _ -> raise Not_Array_type
+      
+
+
 
 let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 
@@ -163,7 +189,20 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 	    LiVar(Unprimed,LiIntVar(f.vname))
 
 
-	  | TArray
+	  | TArray(tinfo,Some(size),_,_)->
+	    let index = get_array_index offset [] in
+	    let dim_of_tabs  =  array_dim f.vtype [] in
+	    let c_array = LiTab(dim_of_tabs,tinfo) in
+	    LiElemOfCTab(index,c_array)
+
+
+	  | TArray(tinfo,None,_,_)->
+	    let index = get_array_index offset [] in 
+	    let dim_of_tabs = array_dim f.vtype [] in 
+	    let c_array = LiTab(dim_of_tabs,tinfo) in
+	    LiElemOfCTab(index,c_array)
+	      
+
 	  | _-> begin 
 	      let alias_tname = Composite_types.is_integer_type f.vtype in
 		begin
@@ -376,12 +415,18 @@ address type, which type is neither TInt nor TPtr.\n")
       end
       	
 
-    | StartOf((Var(v),NoOffset))-> (* Implicit conversion form 
+    | StartOf((Var(v),offset_access))-> (* Implicit conversion form 
 				  an array to a pointer.*)
       begin
 	match v.vtype with
 	    TArray(t,e,_,_)->
 	      begin
+		let c_array_dim = array_dim v.vtype [] in 
+		let base_type = get_base_type_of_array t  in
+		let c_array= LiTab(c_array_dim, base_type) in
+		let index_access =  get_array_index offset_access [] in
+		LiBaseAddrOfArray(index_access,c_array)
+      (*
 		match e with
 		  |  Some(size_exp) ->
 		    let size_c_scal =  cil_expr_2_scalar size_exp in 
@@ -389,13 +434,13 @@ address type, which type is neither TInt nor TPtr.\n")
 				      LiArraySize( size_c_scal), t )
 		      
 		  | None -> 
-		    LiBaseAddrOfArray(Unprimed, LiIntPtr(v.vname),LiArraySizeUnknown, t)
+		    LiBaseAddrOfArray(Unprimed, LiIntPtr(v.vname),LiArraySizeUnknown, t)*)
 	      end
 
       end
 	
 
-    | StartOf((Var(v),Index(index,_)))->
+    (*| StartOf((Var(v),Index(index,offset)))->
       (*Getting the address that corresponds to the Indexed element
       of the array --Type, name contained in Var(v)
 	nota bene : This algorithm doesn't handle multi dimentional
@@ -423,7 +468,7 @@ address type, which type is neither TInt nor TPtr.\n")
 	      end
 
       end
-	
+    *)	
 
 
     (*| AddrOf *)
@@ -454,7 +499,42 @@ parse in the cil_expr_2_ptr function %s" (Ast_goodies.pprint_cil_exp expr)
 and cil_enumitem_2_scalar (enum : Cil_types.enumitem ) =
   let eval = cil_expr_2_scalar enum.eival in
   eval
-      
+
+(*Computes the index at which an array is accessed *) 
+and  get_array_index (offset : Cil_types.offset) 
+    ( i_list : int list ) =
+  match offset with 
+      Index( e , off) -> 
+	let i_list = i_list@(cil_expr_2_scalar e) in
+	get_array_index off i_list
+    
+    | NoOffset -> i_list
+    | _ -> raise Not_Array_Index 
+
+(* Computes the dimention of an array when this information is
+available at compilation time.*)
+and  array_dim (tinfo : Cil_types.typ)
+    (index_list : (int option) list)=
+  match tinfo with
+      TArray(tinfo,Some(size),_,_)->
+	begin
+	  let size = Some((cil_expr_2_scalar size)) in
+	  let index_list = index_list@size in
+	  array_dim tinfo index_list
+	end
+    |  TArray(tinfo,None,_,_)->
+	begin
+	  let size = None in
+	  let index_list = index_list@size in
+	  array_dim tinfo index_list
+	end
+    | _ -> let type_name_if_int_type = 
+	     Composite_type.is_integer_type tinfo in
+	   match type_name_if_int_type with
+	       Some(_) -> index_list
+	     | _ -> raise Array_elements_not_integers
+	       
+
 
 let rec cil_expr_2_bool (expr : Cil_types.exp) =
   match expr.enode with 

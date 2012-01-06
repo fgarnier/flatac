@@ -43,9 +43,7 @@ type nts_var = NtsIVar of string (*Integer type variable*)
 	       | NtsRVar of string (*Real valued variable*)
 	       (*| NtsBVar of String (*Boolean variable*)*)
 	       | NtsMiscType of string (* Just here for the demo*)
-		
-
-
+	       
 
 type cnt_binop = CntEq
 		 | CntNeq
