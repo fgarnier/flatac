@@ -57,7 +57,7 @@ let get_name_of_c_ptr p =
 
 
 
-type c_tab = LiTab of (int option) list * Cil_types.typ
+(*type c_tab*)
 	     (*| LiMultDimTab of int list * Cil_types.typ*)
 
 
@@ -75,11 +75,11 @@ type c_scal = LiVar of primed * c_int_var
 	      | LiScalOfAddr of c_ptrexp * Cil_types.typ 
                                         (* While casting a ptr to an 
 					   integer type*) 
-	      | LiElemOfCTab of int list * c_tab 
+	      | LiElemOfCTab of c_scal list * c_tab 
 
 and c_ptrexp = LiPVar of primed * c_ptr *  Cil_types.typ
 	       | LiBaseAddrOfArray (* Base address of an array*)
-		   of int list * c_tab (* the index list specifies
+		   of c_scal list * c_tab (* the index list specifies
 				        which subtab we are refering to.
 				       *)
 	       | LiPlusPI of c_ptrexp * c_scal  * Cil_types.typ
@@ -90,6 +90,7 @@ and c_ptrexp = LiPVar of primed * c_ptr *  Cil_types.typ
 and li_array_size = LiArraySize of c_scal
 		     | LiArraySizeUnknown
 
+and c_tab = LiTab of string option * (c_scal option) list * Cil_types.typ
 
 type il_expr = IlScal of c_scal
 	       | IlPtr of c_ptrexp
@@ -192,14 +193,14 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 	  | TArray(tinfo,Some(size),_,_)->
 	    let index = get_array_index offset [] in
 	    let dim_of_tabs  =  array_dim f.vtype [] in
-	    let c_array = LiTab(dim_of_tabs,tinfo) in
+	    let c_array = LiTab(Some(f.vname),dim_of_tabs,tinfo) in
 	    LiElemOfCTab(index,c_array)
 
 
 	  | TArray(tinfo,None,_,_)->
 	    let index = get_array_index offset [] in 
 	    let dim_of_tabs = array_dim f.vtype [] in 
-	    let c_array = LiTab(dim_of_tabs,tinfo) in
+	    let c_array = LiTab(Some(f.vname),dim_of_tabs,tinfo) in
 	    LiElemOfCTab(index,c_array)
 	      
 
@@ -423,7 +424,7 @@ address type, which type is neither TInt nor TPtr.\n")
 	      begin
 		let c_array_dim = array_dim v.vtype [] in 
 		let base_type = get_base_type_of_array t  in
-		let c_array= LiTab(c_array_dim, base_type) in
+		let c_array= LiTab(Some(v.vname),c_array_dim, base_type) in
 		let index_access =  get_array_index offset_access [] in
 		LiBaseAddrOfArray(index_access,c_array)
       (*
@@ -476,9 +477,10 @@ address type, which type is neither TInt nor TPtr.\n")
       
     | Const(CStr(s))->
 	begin
-	  let l = String.length s in
+	  let l = LiConst(LiIConst((String.length s))) in
 	  let t = TInt(IChar,[]) in
-	    (LiBaseAddrOfArray(Unprimed,LiIntPtr(""),LiArraySize(LiConst(LiIConst(l))),t))
+	  let str_array = LiTab(None,(Some(l))::[],t) in
+	  LiBaseAddrOfArray([],str_array)   
 	end
 
 	
@@ -502,10 +504,10 @@ and cil_enumitem_2_scalar (enum : Cil_types.enumitem ) =
 
 (*Computes the index at which an array is accessed *) 
 and  get_array_index (offset : Cil_types.offset) 
-    ( i_list : int list ) =
+    ( i_list : c_scal list ) =
   match offset with 
       Index( e , off) -> 
-	let i_list = i_list@(cil_expr_2_scalar e) in
+	let i_list = i_list@((cil_expr_2_scalar e)::[]) in
 	get_array_index off i_list
     
     | NoOffset -> i_list
@@ -514,22 +516,22 @@ and  get_array_index (offset : Cil_types.offset)
 (* Computes the dimention of an array when this information is
 available at compilation time.*)
 and  array_dim (tinfo : Cil_types.typ)
-    (index_list : (int option) list)=
+    (index_list : (c_scal option) list)=
   match tinfo with
       TArray(tinfo,Some(size),_,_)->
 	begin
-	  let size = Some((cil_expr_2_scalar size)) in
-	  let index_list = index_list@size in
+	  let size_array = Some((cil_expr_2_scalar size)) in
+	  let index_list = index_list@(size_array::[]) in
 	  array_dim tinfo index_list
 	end
     |  TArray(tinfo,None,_,_)->
 	begin
-	  let size = None in
-	  let index_list = index_list@size in
+	  let size_array = None in
+	  let index_list = index_list@(size_array::[]) in
 	  array_dim tinfo index_list
 	end
     | _ -> let type_name_if_int_type = 
-	     Composite_type.is_integer_type tinfo in
+	     Composite_types.is_integer_type tinfo in
 	   match type_name_if_int_type with
 	       Some(_) -> index_list
 	     | _ -> raise Array_elements_not_integers
