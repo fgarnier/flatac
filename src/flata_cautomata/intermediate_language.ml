@@ -785,7 +785,25 @@ and ptrexp_to_str ( cptr : c_ptrexp ) =
     | LiMinusPI (ptr_in , offset , _ ) ->
       ( ptrexp_to_str  ptr_in )^"["^(scal_to_string offset)^"]"
     
-   
+and c_tab_to_string tab =
+  let pprint_tabname name =
+    match name with
+	Some(ptitnom)-> ptitnom
+      | None -> "Anonymous"
+  in
+  let pprint_size prefix l =
+    let pprint_folder strarg elem =
+      match elem with 
+	  Some(size)-> strarg^(Format.sprintf "[%s]" size)
+	| None -> strarg^"[]"
+    in
+    List.fold_left pprint_folder sizelem prefix 
+  in
+  match tab with 
+    LiTab(name,size_list,typ) ->
+      let prefix = pprint_tabname name in
+      List.fold pprint_size prefix size_list 
+    
 
   
 (** One need to make sure that the output syntax complies with the NTS-lib
