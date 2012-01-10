@@ -79,7 +79,7 @@ type c_scal = LiVar of primed * c_int_var
 
 and c_ptrexp = LiPVar of primed * c_ptr *  Cil_types.typ
 	       | LiBaseAddrOfArray (* Base address of an array*)
-		   of c_scal list * c_tab (* the index list specifies
+		   of (c_scal ) list * c_tab (* the index list specifies
 				        which subtab we are refering to.
 				       *)
 	       | LiPlusPI of c_ptrexp * c_scal  * Cil_types.typ
@@ -765,11 +765,16 @@ and ptrexp_to_str ( cptr : c_ptrexp ) =
       LiPVar ( Primed , LiIntPtr ( vname), _ ) ->
 	vname^"'"
 
-    | LiBaseAddrOfArray(_,LiIntPtr(vname),LiArraySize(size),t) ->
-      Format.sprintf "&(%s : %s[%s])" vname (Ast_goodies.pprint_ciltypes t) (scal_to_string size)
+    (*| LiBaseAddrOfArray(_,LiIntPtr(vname),LiArraySize(size),t) ->
+      Format.sprintf "&(%s : %s[%s])" vname (Ast_goodies.pprint_ciltypes t) (scal_to_string size)*)
+	  
+    | LiBaseAddrOfArray	(index_list,cptr)-> 
+      Format.sprintf "Address  of index %s of %s" 
+	(pprint_accessed_elem "" index_list)
+	( c_tab_to_string cptr)
 	
-    | LiBaseAddrOfArray(_,LiIntPtr(vname),LiArraySizeUnknown,t) ->
-      Format.sprintf "&(%s : %s[Array of unknown size]" vname (pprint_ciltypes t) 	
+    (*| LiBaseAddrOfArray(_,LiIntPtr(vname),LiArraySizeUnknown,t) ->
+      Format.sprintf "&(%s : %s[Array of unknown size]" vname (pprint_ciltypes t) *)	
     
     | LiPVar ( Unprimed , LiIntPtr ( vname ), _) ->
       vname
@@ -784,26 +789,38 @@ and ptrexp_to_str ( cptr : c_ptrexp ) =
     
     | LiMinusPI (ptr_in , offset , _ ) ->
       ( ptrexp_to_str  ptr_in )^"["^(scal_to_string offset)^"]"
-    
+  
+(* Used to print the dimention of arrays as well as the accessed
+element, or based addresses, use the two function defined below.*)
+and pprint_size_tab (prefix : string) (l : (c_scal option) list) =
+  let pprint_folder strarg elem =
+    match elem with 
+	Some(size)-> strarg^(Format.sprintf "[%s]" (scal_to_string size ))
+      | None -> strarg^"[]"
+  in 
+  List.fold_left pprint_folder  prefix  l
+ 
+and pprint_accessed_elem (prefix : string)(l : c_scal  list ) =
+  let pprint_folder strarg elem =
+    strarg^(Format.sprintf "[%s]" (scal_to_string elem ))
+  in 
+  List.fold_left pprint_folder  prefix  l
+
 and c_tab_to_string tab =
   let pprint_tabname name =
     match name with
 	Some(ptitnom)-> ptitnom
       | None -> "Anonymous"
-  in
-  let pprint_size prefix l =
-    let pprint_folder strarg elem =
-      match elem with 
-	  Some(size)-> strarg^(Format.sprintf "[%s]" size)
-	| None -> strarg^"[]"
-    in
-    List.fold_left pprint_folder sizelem prefix 
+(*  in
+  List.fold_left pprint_folder sizelem prefix *)
   in
   match tab with 
-    LiTab(name,size_list,typ) ->
-      let prefix = pprint_tabname name in
-      List.fold pprint_size prefix size_list 
-    
+      LiTab(name,size_list,typ) ->
+	let prefix = pprint_tabname name in
+	let acced_index =  pprint_size_tab prefix size_list in
+	acced_index
+
+	  
 
   
 (** One need to make sure that the output syntax complies with the NTS-lib
