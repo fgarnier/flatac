@@ -35,8 +35,10 @@ type ref_nts_array = RefBasicTypeArray of nts_base_types
 type nts_array = RefNtsArray of ref_nts_array
 		 | FixedSizeNtsArray of fixed_size_nts_array
 
-and fixed_size_nts_array = FixedSizeBasicTypeNtsArray of int * nts_base_types
-			| FixedSizeNtsArray of int * nts_array 
+and fixed_size_nts_array = FixedSizeBasicTypeNtsArray of 
+    cnt_arithm_expr * nts_base_types
+			   | FixedSizeNtsArray of 
+			       cnt_arithm_expr * nts_array 
 			      
 
 type nts_var = NtsIVar of string (*Integer type variable*)

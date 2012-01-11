@@ -45,6 +45,8 @@ type il_expr = IlScal of c_scal
 	       | IlPtr of c_ptrexp
 *)
 
+
+
 let compile_cil_exp_2_cnt sslv ( e : Cil_types.exp ) =
   let type_of_e = Cil.typeOf e 
   in 
@@ -119,6 +121,49 @@ let compile_param_list_2_cnt_list sslv ( lparam : Cil_types.exp list) =
   let ret_list = List.map (ilexp_2_cnt_iterator ) il_list
   in ret_list
  (*  contains the ret_list *)
+
+
+
+
+let rec compile_cil_array_2_cnt sslv (name : string) (vtype : Cil_types.typ) =
+  let translate_recursor vtype
+      match vtype with
+	  TArray(t,Some(exp),_,_)->
+	    begin
+	      let size = compile_cil_exp_2_cnt sslv exp in
+	      match t with
+		  TArray(_,_) -> 
+		    begin
+		      let inner_tab = translate_recusor t in
+		      FixedSizeNtsArray(FixedSizeNtsArray(size,inner_tab))
+		    end
+		| _ ->
+		  begin
+		    let inner_tab = translate_recusor t in
+		    FixedSizeNtsArray(FixedSizeBasicTypeNtsArray(size,t))
+		  end
+	    end
+
+	| TArray(t,None,_,_)->
+	  begin
+	   
+	    match t with
+		TArray(_,_) ->
+		  begin
+		    let inner_tab = translate_recusor t in
+		    RefNtsArray(RefMulDimArray(FixedSizeNtsArray(inner_tab)))
+		  end
+	      | _ ->
+		begin
+		  let inner_tab = translate_recusor t in
+		  RefNtsArray(RefBasicTypeArray(t))
+		end
+	  end   
+	      
+	| _-> raise Not_Array_type
+      
+
+	
 
 
 let make_offset_locpvar (v : ptvar ) =

@@ -191,28 +191,3 @@ and valid_ptrexp (sslf : ssl_formula ) ( ptrexp :  c_ptrexp ) =
 	List.fold_left valid_criterion TrueValid dim_list
       end
 
-(*
-
- There is no need to be able to negate the validity of an expression.
-
-let rec negate_valid valexp  =
-  match valexp with
-      PtValid(e) -> NotValid(PtValid(e))
-    | IntValid (i) -> NotValid(IntValid(i))
-    | TrueValid -> FalseValid
-    | FalseValid -> TrueValid
-    | OrValid ( fg , fd ) ->
-	begin
-	  let fgr = negate_valid fg in
-	  let fgd = negate_valid fd in
-	    AndValid( fgr  , fgd )
-	end
-      
-     | AndValid ( fg , fd ) ->
-	begin
-	  let fgr = negate_valid fg in
-	  let fgd = negate_valid fd in
-	    OrValid( fgr  , fgd )
-	end
-     | NotValid( p ) -> p
-*)

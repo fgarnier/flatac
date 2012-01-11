@@ -197,6 +197,7 @@ struct
       let in_out_map_folder (nts_var_list) (v : Cil_types.varinfo ) =
 	match v.vtype with
 	    TPtr(_,_) -> NtsIVar("offset__"^v.vname^"_")::nts_var_list
+	  | TArray(_,_,_,_) -> compile_array_to_nts v.vname v.vtype
 	  | _ ->
 	    begin
 	      match (Composite_types.is_integer_type v.vtype) with
