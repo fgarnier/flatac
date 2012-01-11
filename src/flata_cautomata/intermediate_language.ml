@@ -48,6 +48,7 @@ exception Bad_expression_type of string
 exception Array_elements_not_integers
 exception Not_Array_Index
 exception Not_Array_type
+exception UnnammedLocalArray
 
 
 

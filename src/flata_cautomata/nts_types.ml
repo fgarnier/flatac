@@ -73,7 +73,7 @@ type cnt_bool = CntBool of cnt_binop *  cnt_arithm_exp * cnt_arithm_exp
 type cnt_trans_label = CntGuard of cnt_bool
 		   | CntFunCall of string * nts_var option *cnt_arithm_exp list
 		   | CntAffect of nts_var * cnt_arithm_exp
-		   | CntHavoc of nts_val list (* The value of the listed 
+		   | CntHavoc of nts_var list (* The value of the listed 
 						 variables are not copied.
 						 See NTL documentation.
 					       *)
