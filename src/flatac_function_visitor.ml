@@ -51,10 +51,15 @@ open Flatac_extended_cfg
    let gvar_list = get_list_of_int_type_gvars file in
    let size_list = ref (List.length gvar_list) in
    let pprint_list_folder pre_str str =
-     if !size_list == 0 then
+     if !size_list == 1 then
        pre_str^str^" : int;"
+     else if !size_list > 1 then
+       begin
+	 size_list<-(!size_list - 1);
+	 pre_str^str^","
+       end
      else
-       pre_str^str^","
+       ""
    in
      List.fold_left pprint_list_folder "" gvar_list
 
@@ -155,8 +160,9 @@ class flatac_visitor (prj : Project.t )  = object (self)
     else 
       let out_file = open_out file_name in
       let format_out_file = Format.formatter_of_out_channel out_file in
-	Format.fprintf format_out_file "%s \n" (pprint_list_of_gvars local_file_ast);
+
 	Format.fprintf format_out_file "nts %s;\n" nts_name;  
+	Format.fprintf format_out_file "%s \n" (pprint_list_of_gvars local_file_ast);
 	Format.fprintf format_out_file "%s" ((self#pprint_all_ecfgs ()));
 	Format.fprintf format_out_file "%!";
 	close_out out_file;
