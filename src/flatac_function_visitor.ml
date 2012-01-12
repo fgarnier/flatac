@@ -155,9 +155,10 @@ class flatac_visitor (prj : Project.t )  = object (self)
     else 
       let out_file = open_out file_name in
       let format_out_file = Format.formatter_of_out_channel out_file in
-      Format.fprintf format_out_file "nts %s;\n" nts_name;  
-      Format.fprintf format_out_file "%s" ((self#pprint_all_ecfgs ()));
-      Format.fprintf format_out_file "%!";
-      close_out out_file;
+	Format.fprintf format_out_file "%s \n" (pprint_list_of_gvars local_file_ast);
+	Format.fprintf format_out_file "nts %s;\n" nts_name;  
+	Format.fprintf format_out_file "%s" ((self#pprint_all_ecfgs ()));
+	Format.fprintf format_out_file "%!";
+	close_out out_file;
       
 end;;
