@@ -1,0 +1,78 @@
+main {
+in ()
+
+__retres,tmp_0,tmp,i,offset__q_,offset__p_ : int
+initial s0;
+final ;
+ 
+ s0 -> s1 { i'=0 } 
+ 
+ s1 -> s2 {  } 
+ 
+ s2 -> s3 {  } 
+ 
+ s3 -> s4 {  } 
+ 
+ s4 -> s5 { tmp'=i } 
+ 
+ s5 -> s6 { i'=i+1 } 
+ 
+ s6 -> s7 {  } 
+ 
+ s7 -> s8 { p'=alloc(tmp) } 
+ 
+ s8 -> s9 {  } 
+ 
+ s9 -> s10 { tmp_0'=i } 
+ 
+ s10 -> s11 { i'=i+1 } 
+ 
+ s11 -> s12 {  } 
+ 
+ s12 -> s13 { q'=alloc(tmp_0) } 
+ 
+ s13 -> s14 { dispose(offset__p_,offset__q_) } 
+ 
+ s14 -> s2 {  } 
+
+}
+alloc {
+in (size : int)
+
+offset____retres_,offset__p_ : int
+initial s0;
+final s8,s9;
+error: s1
+ 
+ s0 -> s1 { not (size = 1 and true) } 
+ 
+ s0 -> s2 { (size = 1 and true) and size+4 <=  0 } 
+ 
+ s0 -> s3 { validity__p_'=1 and offset__p_'=0 and (size = 1 and true) and size+4 > 0 and mid_1_size'=size+4 and mid_1_base'=1 } 
+ 
+ s2 -> s4 {  } 
+ 
+ s3 -> s5 {  } 
+ 
+ s4 -> s6 { offset____retres_'=offset__p_+1*sizeof_char } 
+ 
+ s5 -> s7 { offset____retres_'=offset__p_+1*sizeof_char } 
+ 
+ s6 -> s8 { ret_val_'=offset____retres_ } 
+ 
+ s7 -> s9 { ret_val_'=offset____retres_ } 
+
+}
+dispose {
+in (offset__y_,offset__x_ : int)
+initial s0;
+final ;
+error: s2,s3
+ 
+ s0 -> s1 {  } 
+ 
+ s1 -> s2 { offset__x_ = offset__y_ } 
+ 
+ s1 -> s3 { offset__x_ != offset__y_ } 
+
+}

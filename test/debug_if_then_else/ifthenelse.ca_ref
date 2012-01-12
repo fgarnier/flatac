@@ -1,0 +1,24 @@
+main {
+in (offset__argv_,argc : int)
+
+__retres,j,i : int
+initial s0;
+final s7;
+ 
+ s0 -> s1 { i'=0 } 
+ 
+ s1 -> s2 { j'=ndet() } 
+ 
+ s2 -> s3 {  } 
+ 
+ s3 -> s4 { j > i and i'=i+1 } 
+ 
+ s3 -> s5 { j <=  i and j'=j+1 } 
+ 
+ s4 -> s6 { __retres'=0 } 
+ 
+ s5 -> s6 { __retres'=0 } 
+ 
+ s6 -> s7 { ret_val_'=__retres } 
+
+}

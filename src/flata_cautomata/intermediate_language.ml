@@ -45,10 +45,21 @@ and integers constants.
 *)
 
 exception Bad_expression_type of string
+exception Array_elements_not_integers
+exception Not_Array_Index
+exception Not_Array_type
+exception UnnammedLocalArray
+
+
 
 let get_name_of_c_ptr p =
   match p with
       LiIntPtr s -> s
+
+
+
+(*type c_tab*)
+	     (*| LiMultDimTab of int list * Cil_types.typ*)
 
 
 (** The type of integers scalar expressions*)
@@ -64,11 +75,14 @@ type c_scal = LiVar of primed * c_int_var
 	      | LiMinusPP of c_ptrexp * c_ptrexp *  Cil_types.typ
 	      | LiScalOfAddr of c_ptrexp * Cil_types.typ 
                                         (* While casting a ptr to an 
-					 integer type*) 
-		  
+					   integer type*) 
+	      | LiElemOfCTab of c_scal list * c_tab 
+
 and c_ptrexp = LiPVar of primed * c_ptr *  Cil_types.typ
 	       | LiBaseAddrOfArray (* Base address of an array*)
-		   of primed * c_ptr * li_array_size * Cil_types.typ
+		   of (c_scal ) list * c_tab (* the index list specifies
+				        which subtab we are refering to.
+				       *)
 	       | LiPlusPI of c_ptrexp * c_scal  * Cil_types.typ
 	       | LiIndexPI of c_ptrexp * c_scal * Cil_types.typ
 	       | LiMinusPI of c_ptrexp * c_scal * Cil_types.typ
@@ -77,6 +91,7 @@ and c_ptrexp = LiPVar of primed * c_ptr *  Cil_types.typ
 and li_array_size = LiArraySize of c_scal
 		     | LiArraySizeUnknown
 
+and c_tab = LiTab of string option * (c_scal option) list * Cil_types.typ
 
 type il_expr = IlScal of c_scal
 	       | IlPtr of c_ptrexp
@@ -135,6 +150,19 @@ let rec negate_bool_bot ( b_exp : c_bool ) =
     | LiBPtrLeq (eg ,ed ) -> LiBPtrGt (eg ,ed)
 
 
+let get_base_type_of_array (t : Cil_types.typ) =
+  let rec base_type vtype =
+    match vtype with
+	TArray(t,_,_,_) ->
+	  base_type t
+      | _ -> vtype
+  in
+  match t with
+      TArray(t,_,_,_) -> base_type t
+    | _ -> raise Not_Array_type
+      
+
+
 
 let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 
@@ -144,7 +172,7 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
       Const(CInt64(i,_,_))-> LiConst( LiIConst(My_bigint.to_int i))
     | Const(CEnum(e)) -> cil_enumitem_2_scalar e
     	  
-    | Lval(Var(f),_)->
+    | Lval(Var(f),offset)->
       begin
 	match f.vtype with
 	    TInt(_,_) -> LiVar(Unprimed,LiIntVar(f.vname))
@@ -161,6 +189,21 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 	  
 	  | TEnum(e,_) -> 
 	    LiVar(Unprimed,LiIntVar(f.vname))
+
+
+	  | TArray(tinfo,Some(size),_,_)->
+	    let index = get_array_index offset [] in
+	    let dim_of_tabs  =  array_dim f.vtype [] in
+	    let c_array = LiTab(Some(f.vname),dim_of_tabs,tinfo) in
+	    LiElemOfCTab(index,c_array)
+
+
+	  | TArray(tinfo,None,_,_)->
+	    let index = get_array_index offset [] in 
+	    let dim_of_tabs = array_dim f.vtype [] in 
+	    let c_array = LiTab(Some(f.vname),dim_of_tabs,tinfo) in
+	    LiElemOfCTab(index,c_array)
+	      
 
 	  | _-> begin 
 	      let alias_tname = Composite_types.is_integer_type f.vtype in
@@ -374,12 +417,18 @@ address type, which type is neither TInt nor TPtr.\n")
       end
       	
 
-    | StartOf((Var(v),NoOffset))-> (* Implicit conversion form 
+    | StartOf((Var(v),offset_access))-> (* Implicit conversion form 
 				  an array to a pointer.*)
       begin
 	match v.vtype with
 	    TArray(t,e,_,_)->
 	      begin
+		let c_array_dim = array_dim v.vtype [] in 
+		let base_type = get_base_type_of_array t  in
+		let c_array= LiTab(Some(v.vname),c_array_dim, base_type) in
+		let index_access =  get_array_index offset_access [] in
+		LiBaseAddrOfArray(index_access,c_array)
+      (*
 		match e with
 		  |  Some(size_exp) ->
 		    let size_c_scal =  cil_expr_2_scalar size_exp in 
@@ -387,13 +436,13 @@ address type, which type is neither TInt nor TPtr.\n")
 				      LiArraySize( size_c_scal), t )
 		      
 		  | None -> 
-		    LiBaseAddrOfArray(Unprimed, LiIntPtr(v.vname),LiArraySizeUnknown, t)
+		    LiBaseAddrOfArray(Unprimed, LiIntPtr(v.vname),LiArraySizeUnknown, t)*)
 	      end
 
       end
 	
 
-    | StartOf((Var(v),Index(index,_)))->
+    (*| StartOf((Var(v),Index(index,offset)))->
       (*Getting the address that corresponds to the Indexed element
       of the array --Type, name contained in Var(v)
 	nota bene : This algorithm doesn't handle multi dimentional
@@ -421,7 +470,7 @@ address type, which type is neither TInt nor TPtr.\n")
 	      end
 
       end
-	
+    *)	
 
 
     (*| AddrOf *)
@@ -429,9 +478,10 @@ address type, which type is neither TInt nor TPtr.\n")
       
     | Const(CStr(s))->
 	begin
-	  let l = String.length s in
+	  let l = LiConst(LiIConst((String.length s))) in
 	  let t = TInt(IChar,[]) in
-	    (LiBaseAddrOfArray(Unprimed,LiIntPtr(""),LiArraySize(LiConst(LiIConst(l))),t))
+	  let str_array = LiTab(None,(Some(l))::[],t) in
+	  LiBaseAddrOfArray([],str_array)   
 	end
 
 	
@@ -452,7 +502,42 @@ parse in the cil_expr_2_ptr function %s" (Ast_goodies.pprint_cil_exp expr)
 and cil_enumitem_2_scalar (enum : Cil_types.enumitem ) =
   let eval = cil_expr_2_scalar enum.eival in
   eval
-      
+
+(*Computes the index at which an array is accessed *) 
+and  get_array_index (offset : Cil_types.offset) 
+    ( i_list : c_scal list ) =
+  match offset with 
+      Index( e , off) -> 
+	let i_list = i_list@((cil_expr_2_scalar e)::[]) in
+	get_array_index off i_list
+    
+    | NoOffset -> i_list
+    | _ -> raise Not_Array_Index 
+
+(* Computes the dimention of an array when this information is
+available at compilation time.*)
+and  array_dim (tinfo : Cil_types.typ)
+    (index_list : (c_scal option) list)=
+  match tinfo with
+      TArray(tinfo,Some(size),_,_)->
+	begin
+	  let size_array = Some((cil_expr_2_scalar size)) in
+	  let index_list = index_list@(size_array::[]) in
+	  array_dim tinfo index_list
+	end
+    |  TArray(tinfo,None,_,_)->
+	begin
+	  let size_array = None in
+	  let index_list = index_list@(size_array::[]) in
+	  array_dim tinfo index_list
+	end
+    | _ -> let type_name_if_int_type = 
+	     Composite_types.is_integer_type tinfo in
+	   match type_name_if_int_type with
+	       Some(_) -> index_list
+	     | _ -> raise Array_elements_not_integers
+	       
+
 
 let rec cil_expr_2_bool (expr : Cil_types.exp) =
   match expr.enode with 
@@ -681,11 +766,16 @@ and ptrexp_to_str ( cptr : c_ptrexp ) =
       LiPVar ( Primed , LiIntPtr ( vname), _ ) ->
 	vname^"'"
 
-    | LiBaseAddrOfArray(_,LiIntPtr(vname),LiArraySize(size),t) ->
-      Format.sprintf "&(%s : %s[%s])" vname (Ast_goodies.pprint_ciltypes t) (scal_to_string size)
+    (*| LiBaseAddrOfArray(_,LiIntPtr(vname),LiArraySize(size),t) ->
+      Format.sprintf "&(%s : %s[%s])" vname (Ast_goodies.pprint_ciltypes t) (scal_to_string size)*)
+	  
+    | LiBaseAddrOfArray	(index_list,cptr)-> 
+      Format.sprintf "Address  of index %s of %s" 
+	(pprint_accessed_elem "" index_list)
+	( c_tab_to_string cptr)
 	
-    | LiBaseAddrOfArray(_,LiIntPtr(vname),LiArraySizeUnknown,t) ->
-      Format.sprintf "&(%s : %s[Array of unknown size]" vname (pprint_ciltypes t) 	
+    (*| LiBaseAddrOfArray(_,LiIntPtr(vname),LiArraySizeUnknown,t) ->
+      Format.sprintf "&(%s : %s[Array of unknown size]" vname (pprint_ciltypes t) *)	
     
     | LiPVar ( Unprimed , LiIntPtr ( vname ), _) ->
       vname
@@ -700,8 +790,38 @@ and ptrexp_to_str ( cptr : c_ptrexp ) =
     
     | LiMinusPI (ptr_in , offset , _ ) ->
       ( ptrexp_to_str  ptr_in )^"["^(scal_to_string offset)^"]"
-    
-   
+  
+(* Used to print the dimention of arrays as well as the accessed
+element, or based addresses, use the two function defined below.*)
+and pprint_size_tab (prefix : string) (l : (c_scal option) list) =
+  let pprint_folder strarg elem =
+    match elem with 
+	Some(size)-> strarg^(Format.sprintf "[%s]" (scal_to_string size ))
+      | None -> strarg^"[]"
+  in 
+  List.fold_left pprint_folder  prefix  l
+ 
+and pprint_accessed_elem (prefix : string)(l : c_scal  list ) =
+  let pprint_folder strarg elem =
+    strarg^(Format.sprintf "[%s]" (scal_to_string elem ))
+  in 
+  List.fold_left pprint_folder  prefix  l
+
+and c_tab_to_string tab =
+  let pprint_tabname name =
+    match name with
+	Some(ptitnom)-> ptitnom
+      | None -> "Anonymous"
+(*  in
+  List.fold_left pprint_folder sizelem prefix *)
+  in
+  match tab with 
+      LiTab(name,size_list,typ) ->
+	let prefix = pprint_tabname name in
+	let acced_index =  pprint_size_tab prefix size_list in
+	acced_index
+
+	  
 
   
 (** One need to make sure that the output syntax complies with the NTS-lib

@@ -1,0 +1,71 @@
+main {
+in ()
+
+__retres,tmp,i : int
+initial s0;
+final s9;
+error: s12
+ 
+ s0 -> s1 { i'=0 } 
+ 
+ s1 -> s2 {  } 
+ 
+ s2 -> s3 {  } 
+ 
+ s3 -> s4 { i < 100 } 
+ 
+ s3 -> s5 { i >= 100 } 
+ 
+ s4 -> s6 { tmp'=fun(i,100-i) } 
+ 
+ s5 -> s7 { __retres'=0 } 
+ 
+ s6 -> s8 {  } 
+ 
+ s7 -> s9 { ret_val_'=__retres } 
+ 
+ s8 -> s10 {  } 
+ 
+ s10 -> s11 { tmp = i and i'=i+1 } 
+ 
+ s10 -> s12 { tmp != i and __assert_fail(0,0,24,0) } 
+ 
+ s11 -> s2 {  } 
+
+}
+fun {
+in (m,x : int)
+
+n,y : int
+initial s0;
+final s8;
+ 
+ s0 -> s1 { y'=x } 
+ 
+ s1 -> s2 { n'=2*m-x } 
+ 
+ s2 -> s3 {  } 
+ 
+ s3 -> s4 {  } 
+ 
+ s4 -> s5 { x < n } 
+ 
+ s4 -> s6 { x >= n } 
+ 
+ s5 -> s7 {  } 
+ 
+ s6 -> s8 { ret_val_'=y } 
+ 
+ s7 -> s9 { x < m and x'=x+1 } 
+ 
+ s7 -> s10 { x >= m and x'=x+1 } 
+ 
+ s9 -> s11 { y'=y+1 } 
+ 
+ s10 -> s12 { y'=y-1 } 
+ 
+ s11 -> s3 {  } 
+ 
+ s12 -> s3 {  } 
+
+}

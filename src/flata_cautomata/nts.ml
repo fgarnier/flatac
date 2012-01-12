@@ -15,9 +15,6 @@ and then send me your message.
 *)
 
 
-
-
-
 (* This part defines the function used to export the nts trees into
 a NTS compliant syntax -- as well as being human readable.*)
 
@@ -63,6 +60,28 @@ let pprint_nts_var_list l =
   (pprint_nts_var_list_fold "" l)
 
 
+(*Pretty prints the list of the names of the integer vars of a Nts variable list.*)
+(*
+let pprint_nts_int_vars_from_ntsvarlist l =
+  let is_int_var e =
+    match e with
+	 NtsIVar( _ ) -> true
+      | _ -> false
+  in
+  let l = List.filter is_int_var l in
+  pprint_nts_var_list l
+
+
+
+let pprint_nts_real_vars_from_ntsvarlist l =
+  let is_real_var e =
+    match e with
+	 NtsRVar( _ ) -> true
+      | _ -> false
+  in
+  let l = List.filter is_real_var l in
+  pprint_nts_var_list l
+*)
 
 let concat_if_first_arg_nonzero s1 s2 =
   if String.length s1 != 0

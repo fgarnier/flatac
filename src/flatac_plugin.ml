@@ -57,22 +57,22 @@ let pretty_print_cautomata_obj out =
   Format.printf "File name provided by the Kernel.Files.get function is %s \n" kernel_file_name;
   
  
-  let ca_out_name = Printf.sprintf "%s.ca" kernel_file_name in
+  let ca_out_name = Printf.sprintf "%sa" kernel_file_name in
   let out_file = open_out ca_out_name in
-  let types_out_name = Printf.sprintf "%s.types" kernel_file_name in
+  let types_out_name = Printf.sprintf "%sa_types" kernel_file_name in
     
   let file_ast = Ast.get() in
   Cfg.clearFileCFG file_ast;
   
   Visitor.visitFramacFile (composite_types :> frama_c_copy) file_ast;
-  let index = composite_types#get_index_of_composite in 
+  let index = composite_types#get_index_of_composite () in 
   Visitor.visitFramacFile (visited_file :> frama_c_copy ) file_ast;
   visited_file#save_in_file ca_out_name;
 
-  let compile_out = visited_file#pprint_all_ecfgs in
+  let compile_out = visited_file#pprint_all_ecfgs () in
   Format.fprintf out "%s%!" compile_out;
   
-  let states_out = visited_file#pprint_all_ecfgs_states in
+  let states_out = visited_file#pprint_all_ecfgs_states () in
   Format.fprintf out "%s%!" states_out;
   (* This part consists in checking the cfg structure given by Cil*)
  

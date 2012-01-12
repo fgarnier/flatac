@@ -26,8 +26,14 @@ open Cil_types
 open Nts_types
 
 exception Unhandled_valuetype_in_interpretciltypesize
+exception CilTypeHasNoEquivalentNtsType of Cil_types.typ
 
 
+let ciltype_2_ntstype (t : Cil_types.typ) =
+  match t with 
+      TInt(_,_) ->  NtsIntType
+    | TFloat(_,_) ->  NtsRealType
+    | _ -> raise (CilTypeHasNoEquivalentNtsType(t))
 
 (** Creates the sizeof variable from the name stored
 in tinfo.tname.*)
@@ -172,8 +178,7 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
 and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
   match ptrexp with 
       LiPVar(_,_,_) ->  offset_cnt_name ptrexp
-      (*LiPVar( _ , LiIntPtr(vname), _) ->  offset_cnt_var ptrexp *)
-	(*CntVar(NtsIVar(vname))*)
+     
     | LiPlusPI ( cptrexp , scalv, optype ) -> 
 	begin
 	  let ll = interpret_c_ptrexp_to_cnt sslf cptrexp in
@@ -205,7 +210,7 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
 	CntProd(ll,sizeof_ptr_type)
       end
 
-    | LiBaseAddrOfArray (_,_,_,_) ->
+    | LiBaseAddrOfArray (_,_) ->
       begin
 	CntCst(0) (* Offset of an array set to zero*)
       end
@@ -220,7 +225,7 @@ it may not be.
 let rec type_of_ptrexp ptrexp =
   match ptrexp with 
       LiPVar( _ , LiIntPtr(vname), vtype) -> vtype
-    | LiBaseAddrOfArray(_,_,_,t)-> t
+    | LiBaseAddrOfArray(_,LiTab(_,_,t))-> t
     
     | LiPlusPI ( cptrexp , _ ,_) -> 
 	type_of_ptrexp cptrexp

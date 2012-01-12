@@ -25,6 +25,11 @@ module Flatac_extended_cfg =
 open Flatac_extended_cfg
 
 
+let get_list_of_int_type_gvars (file : Cil_types.file) =
+  let gvar_list_folder pre_list global_elem =
+    match global_elem with
+	GVar()
+	  GVarDecl of funspec 
 
 
 class flatac_visitor (prj : Project.t )  = object (self)
@@ -39,11 +44,26 @@ class flatac_visitor (prj : Project.t )  = object (self)
     end
 
   val mutable is_computed = false
+  val mutable nts_name = ""
+
   val function_tables = Hashtbl.create 97
   
   val mutable index_of_pointers_of_composite_types =
     Composite_types.create_index_of_composite_types ()
   val mutable index_of_composite_types_set = false
+
+
+   initializer self#get_nts_name()
+
+  method private get_nts_name () =
+    let index = ref 0 in
+    while 
+      ((!index < (String.length source_file_name)) && 
+	 (source_file_name.[!index] != '.')) 
+    do
+      nts_name<-nts_name^(String.make 1 (source_file_name.[!index]));
+      index:=!index+1
+    done 
 
   method private register_ecfg_of_gfun ( funinfos : Cil_types.fundec ) =
     let gtype_info_visitor = new global_composite_types_visitor ( prj ) 
@@ -76,28 +96,29 @@ class flatac_visitor (prj : Project.t )  = object (self)
      the set of all extended control flow graphs, that each desribes 
      one C global function. *)
 	
-  method get_ecfgs_of_file =
+  method get_ecfgs_of_file () =
     function_tables
 
   method set_index_of_composite_type ( i : index_of_composite_types ) =
     index_of_pointers_of_composite_types <- i
 
-  method pprint_all_ecfgs =
+  method pprint_all_ecfgs () =
     let pprint_folder _ registered_ecfg pre_msg =
-    let current_ecfg_output = registered_ecfg#pprint_to_nts in
+    let current_ecfg_output = registered_ecfg#pprint_to_nts () in
       pre_msg^current_ecfg_output^"\n"
     in
       Hashtbl.fold pprint_folder function_tables ""
 
 
-  method pprint_all_ecfgs_states =
+  method pprint_all_ecfgs_states () =
     let pprint_folder _ registered_ecfg pre_msg =
-      let current_ecfg_output = registered_ecfg#pprint_ecfg_vertex in
+      let current_ecfg_output = registered_ecfg#pprint_ecfg_vertex () in
 	pre_msg^current_ecfg_output^"\n"
     in
       Hashtbl.fold  pprint_folder function_tables ("nts "^source_file_name^";")
 
-
+  method pprint_all_global_var () =
+    
 
   method save_in_file ( file_name : string ) =
     if not is_computed then
@@ -105,7 +126,8 @@ class flatac_visitor (prj : Project.t )  = object (self)
     else 
       let out_file = open_out file_name in
       let format_out_file = Format.formatter_of_out_channel out_file in
-      Format.fprintf format_out_file "%s" (self#pprint_all_ecfgs);
+      Format.fprintf format_out_file "nts %s;\n" nts_name;  
+      Format.fprintf format_out_file "%s" ((self#pprint_all_ecfgs ()));
       Format.fprintf format_out_file "%!";
       close_out out_file;
       

@@ -10,7 +10,9 @@
 # the output file file.ca to file.ca_ref. Test succeed iff there is
 # no difference between file.ca and file.ca_ref. 
 
-import re, sys, subprocess, os
+import re, sys, subprocess, os, perso_utils
+
+
 
 
 def individual_test(dir_name,root_filename):
@@ -32,23 +34,29 @@ def individual_test(dir_name,root_filename):
         return []
     
     except subprocess.CalledProcessError as errno:
-        print "[Frama-c/FLATAC failure] Call to {0} returned {1}".format(c_test_file,errno)
+        print "[ FAILED ] Call to {0} returned {1}".format(c_test_file,errno)
         failure_collection.append(c_test_file)
         return failure_collection
     
 
 def check_each_dir(dir_list):
+    print 'dir list : '
+    print dir_list
+    print '\n'
     failed_test=[]
     for dir_entry in dir_list: 
         dir_name_groups=re.search('.*(?=\n)',dir_entry)
-        dir_name=dir_name_groups.group(0)
-        print 'Entering directory {0} \n'.format(dir_name)
-        file_list=os.listdir(dir_name) # List of all files in dirname
-        for file_entry in file_list:
-            root_filename_group=re.search('.*(?=[.]c)',file_entry)
-            root_filename=root_filename_group.group(0)
-            failure_list = individual_test(dir_name,root_filename)
-            failed_test.extend(failure_list)
+        if dir_name_groups != None:
+            dir_name=dir_name_groups.group(0)
+            print '[VALIDITY TESTS :] Entering directory {0} \n'.format(dir_name)
+            file_list=os.listdir(dir_name) # List of all files in dirname
+            print 'file list is {0} \n'.format(file_list)
+            for file_entry in file_list:
+                root_filename_group=re.search('.*(?=[.]c$)',file_entry)
+                if root_filename_group != None:
+                    root_filename=root_filename_group.group(0)
+                    failure_list = individual_test(dir_name,root_filename)
+                    failed_test.extend(failure_list)
             
     return failed_test
 
@@ -57,7 +65,14 @@ def runtests(test_dirs):
         file_obj = open(test_dirs,'r')
         dir_list = file_obj.readlines()
         failed_test=check_each_dir(dir_list)
-        
+        print 'Test summary : \n'
+        if len(failed_test)==0:
+            print 'TEST SEQUENCE SUCCESSFUL \n'
+        else:
+            print 'The test below failed : \n'
+            for test in failed_test:
+                print '[FAILED] {0}'.format(test)
+            
         
     except IOError as (errno, strerror):
         print "I/O error({0}):{1}".format(errno, strerror),

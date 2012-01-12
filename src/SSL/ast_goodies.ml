@@ -439,20 +439,3 @@ des parametres \n" ;
 
 
 
-(*
-let get_cil_type_of_global (g : cil_types.global ) =
-  match g with
-      GType (tinfo , _ ) ->
-	TNamed(tinfo, [])
-    | GCompTag ( cinfo , _ ) ->
-      TComp( cinfo, _ , _ )
-    
-    |  GCompTagDecl ( cinfo , _ ) ->
-      TCompt(cinfo, _ , _ )
-    
-    | GEnumTag ( einfo , _ ) ->
-      TEnum( einfo, _ )
-    
-    | GEnumTagDecl ( einfo , _ ) ->
-      TEnum (einfo , _ )	
-*)

@@ -31,22 +31,31 @@ let and_valid fg fd =
 
 (** base_ptrexp(PTRexp) returns the locvar l such that PTRexp -> l*)
 
+let base_ctab tab =
+  match tab with
+      LiTab ( Some(tab_name),_,_) -> PVar(tab_name)
+    | LiTab(None,_,_) -> raise UnnammedLocalArray
+
 let rec base_var_ptrexp ( ptr_exp : c_ptrexp ) =
    match ptr_exp with 
       LiPVar ( _ , LiIntPtr(vname), _ ) ->
 	PVar(vname) (* That's indeed the name of the pointer
 		    var we are looking for.*)
-     | LiBaseAddrOfArray(_,cptr,_,t) -> base_var_ptrexp  (LiPVar(Unprimed,cptr,t))
+    
+     | LiBaseAddrOfArray(_,cptr) -> base_ctab  cptr
 
-    | LiPlusPI ( cptr , _ , _) -> base_var_ptrexp  cptr
-    | LiIndexPI ( cptr , _ , _) -> base_var_ptrexp  cptr
-    | LiMinusPI ( cptr , _ , _) -> base_var_ptrexp  cptr
-    | LiAddrOfScal(expr , _) ->  base_var_cscal expr(*Nil*) (*
+     | LiPlusPI ( cptr , _ , _) -> base_var_ptrexp  cptr
+     | LiIndexPI ( cptr , _ , _) -> base_var_ptrexp  cptr
+     | LiMinusPI ( cptr , _ , _) -> base_var_ptrexp  cptr
+     | LiAddrOfScal(expr , _) ->  base_var_cscal expr(*Nil*) (*
 						  Ça n'est
 						  pas aussi simple que ça.
 						  le cscal peut égalmenent
 '						  être un cast d'un pointer,
-						  qui lui même a son addresse de base propre/une variable de poiteur de base qui lui est propre.
+						  qui lui même a son addresse 
+						 de base propre/une variable 
+						 de poiteur de base qui lui 
+						 est propre.
 						*)
 and base_var_cscal ( c_exp : c_scal ) =
   match c_exp with
@@ -67,8 +76,9 @@ let rec base_ptrexp (sslf : ssl_formula )( ptr_exp : c_ptrexp ) =
     | LiIndexPI ( cptr , _ , _) -> base_ptrexp sslf cptr
     | LiMinusPI ( cptr , _ , _) -> base_ptrexp sslf cptr
     | LiAddrOfScal( scalar , _ ) -> base_cscalptrexp sslf scalar
-    | LiBaseAddrOfArray (_,cptr,_,t) -> 
-      base_ptrexp sslf (LiPVar(Unprimed,cptr,t))   
+    | LiBaseAddrOfArray (_,LiTab(Some(tab_name),_,tt)) -> 
+      (*let cptr = base_var_ptrexp ptr_exp in*) 
+      base_ptrexp sslf (LiPVar(Unprimed,LiIntPtr(tab_name),tt))   
 and
     base_cscalptrexp (sslf : ssl_formula )( scal : c_scal ) =
   match scal with
@@ -168,41 +178,16 @@ and valid_ptrexp (sslf : ssl_formula ) ( ptrexp :  c_ptrexp ) =
       valid_cscal sslf scal_exp
 
 
-    | LiBaseAddrOfArray(_,ptrexp,size,t) ->
+    | LiBaseAddrOfArray(_,LiTab(Some(tname),dim_list,t)) ->
       begin
 	let val_ptr_exp = 
-	  valid_ptrexp sslf (LiPVar(Unprimed,ptrexp,t)) in
-	let val_size_exp =
+	  valid_ptrexp sslf (LiPVar(Unprimed,LiIntPtr(tname),t)) in
+	let valid_criterion pre size =
 	  match size with
-	    | LiArraySizeUnknown -> TrueValid
-	    | LiArraySize(scal_size) ->
-	      valid_cscal sslf scal_size 
+	    | None -> and_valid pre TrueValid
+	    | Some (scal_size) ->
+	      and_valid pre (valid_cscal sslf scal_size) 
 	in
-      and_valid val_ptr_exp val_size_exp
+	List.fold_left valid_criterion TrueValid dim_list
       end
 
-(*
-
- There is no need to be able to negate the validity of an expression.
-
-let rec negate_valid valexp  =
-  match valexp with
-      PtValid(e) -> NotValid(PtValid(e))
-    | IntValid (i) -> NotValid(IntValid(i))
-    | TrueValid -> FalseValid
-    | FalseValid -> TrueValid
-    | OrValid ( fg , fd ) ->
-	begin
-	  let fgr = negate_valid fg in
-	  let fgd = negate_valid fd in
-	    AndValid( fgr  , fgd )
-	end
-      
-     | AndValid ( fg , fd ) ->
-	begin
-	  let fgr = negate_valid fg in
-	  let fgd = negate_valid fd in
-	    OrValid( fgr  , fgd )
-	end
-     | NotValid( p ) -> p
-*)
