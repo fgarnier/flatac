@@ -125,43 +125,54 @@ let compile_param_list_2_cnt_list sslv ( lparam : Cil_types.exp list) =
 
 
 
-let rec compile_cil_array_2_cnt sslv (name : string) (vtype : Cil_types.typ) =
-  let translate_recursor vtype
+let rec compile_cil_array_2_cnt sslv (name : string) (vtype_arg : Cil_types.typ) =
+  
+  let rec translate_reftab_recursor vtype =
+    match vtype with
+      | TArray(t,None,_,_)->
+	  begin
+	    match t with
+		TArray(_,_,_,_) ->
+		  begin
+		    let inner_tab = translate_reftab_recursor t in
+		    RefMulDimArray(inner_tab)
+		  end
+	      | _ ->
+		begin
+		  let inner_type = Cnt_interpret.ciltype_2_ntstype t in
+		  RefBasicTypeArray(inner_type)
+		end
+	  end   	
+  in
+  let rec translate_recursor vtype =
       match vtype with
 	  TArray(t,Some(exp),_,_)->
 	    begin
 	      let size = compile_cil_exp_2_cnt sslv exp in
 	      match t with
-		  TArray(_,_) -> 
+		  TArray(_,_,_,_) -> 
 		    begin
-		      let inner_tab = translate_recusor t in
-		      FixedSizeNtsArray(FixedSizeNtsArray(size,inner_tab))
+		      let inner_tab = translate_recursor t in
+		      FixedSizeNtsArray(FixedSizeMulDimNtsArray(size,inner_tab))
 		    end
 		| _ ->
 		  begin
-		    let inner_tab = translate_recusor t in
-		    FixedSizeNtsArray(FixedSizeBasicTypeNtsArray(size,t))
+		    let inner_type = ciltype_2_ntstype t in
+		    FixedSizeNtsArray(FixedSizeBasicTypeNtsArray(size,inner_type))
 		  end
 	    end
 
 	| TArray(t,None,_,_)->
 	  begin
-	   
-	    match t with
-		TArray(_,_) ->
-		  begin
-		    let inner_tab = translate_recusor t in
-		    RefNtsArray(RefMulDimArray(FixedSizeNtsArray(inner_tab)))
-		  end
-	      | _ ->
-		begin
-		  let inner_tab = translate_recusor t in
-		  RefNtsArray(RefBasicTypeArray(t))
-		end
+	    let inner_type = translate_reftab_recursor vtype
+	    in
+	    RefNtsArray(inner_type)
 	  end   
 	      
 	| _-> raise Not_Array_type
-      
+  in
+  let array_type = translate_recursor vtype_arg in
+  NtsArrayVar(name,array_type)
 
 	
 

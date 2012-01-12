@@ -29,22 +29,15 @@ each element
 This type definition allows to encode multi dimentional arrays.
 *)   			      
  
-type ref_nts_array = RefBasicTypeArray of nts_base_types
-		     | RefMultDimArray of ref_nts_array
 
-type nts_array = RefNtsArray of ref_nts_array
-		 | FixedSizeNtsArray of fixed_size_nts_array
-
-and fixed_size_nts_array = FixedSizeBasicTypeNtsArray of 
-    cnt_arithm_expr * nts_base_types
-			   | FixedSizeNtsArray of 
-			       cnt_arithm_expr * nts_array 
 			      
 
 type nts_var = NtsIVar of string (*Integer type variable*)
 	       | NtsRVar of string (*Real valued variable*)
 	       (*| NtsBVar of String (*Boolean variable*)*)
 	       | NtsMiscType of string (* Just here for the demo*)
+	       
+
 	       
 
 type cnt_binop = CntEq
@@ -64,6 +57,20 @@ type cnt_arithm_exp = CntCst of int
 		      | CntUnMin of cnt_arithm_exp (* I want to remove that*)
 		      | CntDiv of cnt_arithm_exp * cnt_arithm_exp
 		      | CntInvalidExp
+
+
+type ref_nts_array = RefBasicTypeArray of nts_base_types
+		     | RefMulDimArray of ref_nts_array
+
+type nts_array = RefNtsArray of ref_nts_array
+		 | FixedSizeNtsArray of fixed_size_nts_array
+
+and fixed_size_nts_array = FixedSizeBasicTypeNtsArray of 
+    cnt_arithm_exp * nts_base_types
+			   | FixedSizeMulDimNtsArray of 
+			       cnt_arithm_exp * nts_array 
+
+type nts_array_var = NtsArrayVar of string * nts_array
 
 type cnt_bool = CntBool of cnt_binop *  cnt_arithm_exp * cnt_arithm_exp
 		| CntNot of cnt_bool

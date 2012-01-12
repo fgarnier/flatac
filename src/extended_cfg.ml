@@ -197,7 +197,6 @@ struct
       let in_out_map_folder (nts_var_list) (v : Cil_types.varinfo ) =
 	match v.vtype with
 	    TPtr(_,_) -> NtsIVar("offset__"^v.vname^"_")::nts_var_list
-	  | TArray(_,_,_,_) -> compile_array_to_nts v.vname v.vtype
 	  | _ ->
 	    begin
 	      match (Composite_types.is_integer_type v.vtype) with
@@ -576,7 +575,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	
 
 	
-    method pprint_transitions =
+    method pprint_transitions () =
       let dest_table_print_folder ( origin : ecfg_id ) (dest : ecfg_id ) label 
 	  (prescript : string ) =
 	let post_script = Format.sprintf "%s \n s%d -> s%d { %s } \n" prescript ( get_id_of_ecfg_id origin)  ( get_id_of_ecfg_id dest) 
@@ -591,7 +590,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       Hashtbl.fold origin_table_print_folder edges ""
 
 		
-    method private pprint_inits  =
+    method private pprint_inits () =
       let elem_left = ref 0 in
       let pprint_folder id () prescript =
 	if (!elem_left) <= 1 then
@@ -608,7 +607,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       "initial "^retstring^";"
 	
 
-    method private pprint_finals =
+    method private pprint_finals () =
       let elem_left = ref 0 in
       let pprint_folder id () prescript =
 	if !elem_left <= 1 then
@@ -626,13 +625,13 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	
 
 
-    method private pprint_input_vars =
+    method private pprint_input_vars () =
        Nts.pprint_typeinfo_nts_var_list nts_sformal
 	 
-    method private pprint_local_vars =
+    method private pprint_local_vars () =
        Nts.pprint_typeinfo_nts_var_list nts_slocals
 	
-    method private pprint_error_states  =
+    method private pprint_error_states () =
       let elem_left = ref 0 in
       let pprint_folder id () prescript =
 	if !elem_left <= 1 then
@@ -652,27 +651,27 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 
 	
 	
-    method pprint_to_nts  = 
+    method pprint_to_nts () = 
       (* let current_ecfg_node = Hashtbl.get vertex current_vertex_id in *)
       let res_string = name^" {\n" in
-      let res_string = res_string^"in ("^self#pprint_input_vars^")\n" in
-      let pprint_loc = self#pprint_local_vars in
+      let res_string = res_string^"in ("^(self#pprint_input_vars ())^")\n" in
+      let pprint_loc = self#pprint_local_vars () in
       let res_string = (
 	if String.length pprint_loc > 0 
 	then res_string^"\n"^pprint_loc^"\n"
 	else
 	  res_string ) in
-      let res_string = res_string^(self#pprint_inits)^"\n"  in
-      let res_string = res_string^(self#pprint_finals)^"\n" in
-      let res_string = res_string^(self#pprint_error_states) in
-      let res_string = res_string^(self#pprint_transitions)
+      let res_string = res_string^((self#pprint_inits ()))^"\n"  in
+      let res_string = res_string^((self#pprint_finals ()))^"\n" in
+      let res_string = res_string^((self#pprint_error_states())) in
+      let res_string = res_string^((self#pprint_transitions()))
       in
       let res_string = res_string^"\n}" in
       res_string
 
 
 
-    method pprint_ecfg_vertex  =
+    method pprint_ecfg_vertex () =
       let ecfg_vertex_folder id vertex str =
 	match id  with
 	    Ecfg_id(id_reg) ->

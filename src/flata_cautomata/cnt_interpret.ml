@@ -26,8 +26,14 @@ open Cil_types
 open Nts_types
 
 exception Unhandled_valuetype_in_interpretciltypesize
+exception CilTypeHasNoEquivalentNtsType of Cil_types.typ
 
 
+let ciltype_2_ntstype (t : Cil_types.typ) =
+  match t with 
+      TInt(_,_) ->  NtsIntType
+    | TFloat(_,_) ->  NtsRealType
+    | _ -> raise (CilTypeHasNoEquivalentNtsType(t))
 
 (** Creates the sizeof variable from the name stored
 in tinfo.tname.*)
