@@ -46,6 +46,18 @@ open Flatac_extended_cfg
      List.fold_left gvar_list_folder [] file.globals  
 	  
 
+
+ let pprint_list_of_gvars (file : Cil_types.file) =
+   let gvar_list = get_list_of_int_type_gvars file in
+   let size_list = ref (List.length gvar_list) in
+   let pprint_list_folder pre_str str =
+     if !size_list == 0 then
+       pre_str^str^" : int;"
+     else
+       pre_str^str^","
+   in
+     List.fold_left pprint_list_folder "" gvar_list
+
 (*GVarDecl of funspec*) 
 
 
