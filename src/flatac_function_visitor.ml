@@ -55,7 +55,7 @@ open Flatac_extended_cfg
        pre_str^str^" : int;"
      else if !size_list > 1 then
        begin
-	 size_list<-(!size_list - 1);
+	 size_list:=(!size_list - 1);
 	 pre_str^str^","
        end
      else
