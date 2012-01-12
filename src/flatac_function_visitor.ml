@@ -25,11 +25,28 @@ module Flatac_extended_cfg =
 open Flatac_extended_cfg
 
 
-let get_list_of_int_type_gvars (file : Cil_types.file) =
-  let gvar_list_folder pre_list global_elem =
+
+
+ let get_list_of_int_type_gvars (file : Cil_types.file) =
+   let gvar_list_folder pre_list global_elem =
     match global_elem with
-	GVar()
-	  GVarDecl of funspec 
+	GVar(vinfo,_,_) -> 
+	  begin
+	    match vinfo.vtype with
+		TPtr(_,_) -> vinfo.vname::pre_list
+	      | _ ->
+		  begin
+		    match (Composite_types.is_integer_type vinfo.vtype) with
+			Some(_) -> vinfo.vname::pre_list
+		      | None -> vinfo.vname::pre_list
+		  end
+	  end
+      | _ -> pre_list
+   in
+     List.fold_left gvar_list_folder [] file.globals  
+	  
+
+(*GVarDecl of funspec*) 
 
 
 class flatac_visitor (prj : Project.t )  = object (self)
@@ -117,7 +134,7 @@ class flatac_visitor (prj : Project.t )  = object (self)
     in
       Hashtbl.fold  pprint_folder function_tables ("nts "^source_file_name^";")
 
-  method pprint_all_global_var () =
+  (*method pprint_all_ntsint_global_var () =*)
     
 
   method save_in_file ( file_name : string ) =
