@@ -25,6 +25,11 @@ module Flatac_extended_cfg =
 open Flatac_extended_cfg
 
 
+let get_list_of_int_type_gvars (file : Cil_types.file) =
+  let gvar_list_folder pre_list global_elem =
+    match global_elem with
+	GVar()
+	  GVarDecl of funspec 
 
 
 class flatac_visitor (prj : Project.t )  = object (self)
@@ -112,7 +117,8 @@ class flatac_visitor (prj : Project.t )  = object (self)
     in
       Hashtbl.fold  pprint_folder function_tables ("nts "^source_file_name^";")
 
-
+  method pprint_all_global_var () =
+    
 
   method save_in_file ( file_name : string ) =
     if not is_computed then

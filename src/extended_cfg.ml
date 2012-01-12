@@ -96,9 +96,10 @@ struct
   
   class extended_cfg (name_function : string )(finfo : Cil_types.file) (funinfo : Cil_types.fundec) 
     frontend   = object(self)
-
-     
+	
+    val fun_def= funinfo
     val mutable name = name_function 
+	
     val mutable is_computed = false
     val mutable entry_point_set = false (* Initial control state of the 
 					ecfg set ?*)
@@ -578,7 +579,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
     method pprint_transitions () =
       let dest_table_print_folder ( origin : ecfg_id ) (dest : ecfg_id ) label 
 	  (prescript : string ) =
-	let post_script = Format.sprintf "%s \n s%d -> s%d { %s } \n" prescript ( get_id_of_ecfg_id origin)  ( get_id_of_ecfg_id dest) 
+	let post_script = Format.sprintf "%s \n s%d->s%d { %s }" prescript ( get_id_of_ecfg_id origin)  ( get_id_of_ecfg_id dest) 
 	  (front_end#pretty_label label)
 	in 
 	post_script 
@@ -624,13 +625,25 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       "final "^retstring^";"
 	
 
-
+    method private pprint_out_vars () =
+      match fun_def.svar.vtype with
+	  TFun(TInt(_,_),_,_,_) | TFun(TPtr(_,_),_,_,_) -> " out ret_val_ : int;"
+	|  TFun(t,_,_,_) ->
+	  begin
+	    match (Composite_types.is_integer_type t) 
+	    with 
+		Some(_) -> " out ret_val_ : int;"
+	      |	None -> ""
+	  end
+      
+      
     method private pprint_input_vars () =
        Nts.pprint_typeinfo_nts_var_list nts_sformal
 	 
     method private pprint_local_vars () =
        Nts.pprint_typeinfo_nts_var_list nts_slocals
 	
+      
     method private pprint_error_states () =
       let elem_left = ref 0 in
       let pprint_folder id () prescript =
@@ -646,21 +659,35 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       let retstring = Hashtbl.fold pprint_folder error_state ""
       in
       if String.length retstring > 0 then 
-      "error: "^retstring^"\n"
+      "error "^retstring^";"
       else ""
 
 	
 	
     method pprint_to_nts () = 
       (* let current_ecfg_node = Hashtbl.get vertex current_vertex_id in *)
-      let res_string = name^" {\n" in
-      let res_string = res_string^"in ("^(self#pprint_input_vars ())^")\n" in
+      let res_string = name^"{\n" in
+      let res_string = (
+	if List.length nts_sformal > 0 then
+	res_string^"in "^(self#pprint_input_vars ())^";\n"
+	else res_string
+      )
+      in
       let pprint_loc = self#pprint_local_vars () in
       let res_string = (
 	if String.length pprint_loc > 0 
-	then res_string^"\n"^pprint_loc^"\n"
+	then res_string^"\n"^pprint_loc^";\n"
 	else
 	  res_string ) in
+      let ret_vars = self#pprint_out_vars () in
+      Format.printf "Outvars are : %s \n" ret_vars;
+      let res_string = (
+	if String.length ret_vars > 0 
+	then res_string^"\n"^ret_vars^"\n"
+	else
+	  res_string
+      ) 
+      in
       let res_string = res_string^((self#pprint_inits ()))^"\n"  in
       let res_string = res_string^((self#pprint_finals ()))^"\n" in
       let res_string = res_string^((self#pprint_error_states())) in
