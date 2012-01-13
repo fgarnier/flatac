@@ -150,15 +150,15 @@ let rec negate_bool_bot ( b_exp : c_bool ) =
     | LiBPtrLeq (eg ,ed ) -> LiBPtrGt (eg ,ed)
 
 
-let get_base_type_of_array (t : Cil_types.typ) =
+let get_base_type_of_array (ttab : Cil_types.typ) =
   let rec base_type vtype =
     match vtype with
 	TArray(t,_,_,_) ->
 	  base_type t
       | _ -> vtype
   in
-  match t with
-      TArray(t,_,_,_) -> base_type t
+  match ttab with
+      TArray(subtype,_,_,_) -> base_type subtype
     | _ -> raise Not_Array_type
       
 
@@ -424,7 +424,7 @@ address type, which type is neither TInt nor TPtr.\n")
 	    TArray(t,e,_,_)->
 	      begin
 		let c_array_dim = array_dim v.vtype [] in 
-		let base_type = get_base_type_of_array t  in
+		let base_type = get_base_type_of_array v.vtype  in
 		let c_array= LiTab(Some(v.vname),c_array_dim, base_type) in
 		let index_access =  get_array_index offset_access [] in
 		LiBaseAddrOfArray(index_access,c_array)

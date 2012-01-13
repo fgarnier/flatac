@@ -57,11 +57,14 @@ object
 
   method virtual havocise_label : 'b -> 'b
 
-
-   
-
   method virtual need_split_transition : 'b -> bool
    
   method virtual split_guard_call_transition : 'b -> ('b * 'b)
+
+  method virtual number_of_valid_vars : 'a -> int
+
+  method virtual pprint_list_of_valid_var : 'a -> string 
+
+  method virtual  pprint_list_of_malloc_vars : unit -> string
    
 end

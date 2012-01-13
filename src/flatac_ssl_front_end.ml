@@ -31,6 +31,7 @@ open Composite_type_visitors
 open Visitor (* Frama-c visitors*)
 open Intermediate_language
 open Cnt_interpret
+open Var_validity_types
 
 open Self
 
@@ -46,7 +47,7 @@ let prefix_trans_label_list (prefix : Nts_types.cnt_trans_label list )
   (abs,prefix@labels)
   
 
-class ssl_flatac_front_end = object 
+class ssl_flatac_front_end = object(self) 
   inherit [ssl_validity_absdom , Nts_types.cnt_trans_label list ]  sem_and_logic_front_end
    
 
@@ -209,6 +210,36 @@ being error states.*)
     in
     (*not (Ssl_entailement.does_entail etp )*)
     Ssl_entailement.accept_new_abstraction etp
+
+
+  method  number_of_valid_vars sslv  = 
+    let vmap =(
+      match sslv.validinfos with
+	  Validlocmap(lamap)-> lamap)
+    in
+    Validvarmap.cardinal vmap
+
+  method pprint_list_of_valid_var sslv =
+    let map_len = ref ( self#number_of_valid_vars sslv )
+    in
+    let pprint_valid_cnt_folder  vname _ prestr =
+      if !map_len >= 1 then
+	begin
+	    map_len:=!map_len-1;
+	    prestr^("validity__"^vname^"_,")
+	  end
+      else
+	prestr^("validity__"^vname^"_")
+    in
+    let vmap =(
+      match sslv.validinfos with
+	  Validlocmap(lamap)-> lamap)
+    in
+    Validvarmap.fold pprint_valid_cnt_folder vmap ""
+
+  method pprint_list_of_malloc_vars () =
+    mid#pprint_vars ()
+
 
 end
 

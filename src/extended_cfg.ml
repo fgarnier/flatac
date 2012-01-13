@@ -99,7 +99,9 @@ struct
 	
     val fun_def= funinfo
     val mutable name = name_function 
-	
+
+   
+    
     val mutable is_computed = false
     val mutable entry_point_set = false (* Initial control state of the 
 					ecfg set ?*)
@@ -117,7 +119,8 @@ struct
 				  Extended_cfg_base_types.trans_label_val)
                                  sem_and_logic_front_end ) = frontend 
 
-      
+    (*val mutable absval_of_ep = Ssl_valid_abs_dom.create_validity_abstdomain ()*)
+
     
     val edges : ( ecfg_id , (ecfg_id , trans_label_val ) Hashtbl.t ) Hashtbl.t = 
       Hashtbl.create init_hashtbl_size
@@ -662,7 +665,23 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
        Nts.pprint_typeinfo_nts_var_list nts_sformal
 	 
     method private pprint_local_vars () =
-       Nts.pprint_typeinfo_nts_var_list nts_slocals
+      let absval_of_ep = 
+	front_end#get_entry_point_from_fundec finfo funinfo 
+      in
+      (*let map_len = ref ( front_end#number_of_valid_vars absval_of_ep )
+      in
+      let pprint_valid_cnt_folder  vname _ prestr =
+	if !map_len >= 1 then
+	  begin
+	    map_len:=!map_len-1;
+	    prestr^("valid_"^vname^"_,")
+	  end
+	else
+	  prestr^("valid_"^vname^"_")
+      in*)
+      let validvar_names = front_end#pprint_list_of_valid_var 
+	absval_of_ep in
+      validvar_names^((Nts.pprint_typeinfo_int_nts_var_list nts_slocals))
 	
       
     method private pprint_error_states () =
@@ -695,14 +714,34 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       )
       in
       let pprint_loc = self#pprint_local_vars () in
+      let pprint_loc_pre = front_end#pprint_list_of_malloc_vars () in
+      let pprint_loc=Nts.concat_comma_both_arg_non_empty pprint_loc_pre 
+	pprint_loc in
+      let res_string=res_string^"\n"^Nts.concat_if_first_arg_nonzero pprint_loc " : int \n" in
+     (* let pprint_loc = (
+	if String.length pprint_loc > 0 && 
+	  String.length pprint_loc_pre > 0 
+	then
+	  pprint_loc_pre^","^pprint_loc
+	else
+	  if String.length pprint_loc_pre > 0 
+	  then
+	    pprint_loc_pre^" : int" 
+	  else
+	    pprint_loc
+      ) 
+      in
       let res_string = (
 	if String.length pprint_loc > 0 
-	then res_string^"\n"^pprint_loc^";\n"
+	then 
+       
+	    res_string^"\n"^pprint_loc^";\n" 
 	else
-	  res_string ) in
+	  res_string ) in *)
+      
       let ret_vars = self#pprint_out_vars () in
       Format.printf "Outvars are : %s \n" ret_vars;
-      let res_string = (
+      let res_string =  (
 	if String.length ret_vars > 0 
 	then res_string^"\n"^ret_vars^"\n"
 	else

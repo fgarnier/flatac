@@ -99,7 +99,13 @@ let concat_comma_both_arg_non_empty s1 s2 =
   else
     s2
 
-
+let pprint_typeinfo_int_nts_var_list l =
+  let is_int_var  = function
+  NtsIVar( vname ) -> true
+    | _ ->false
+  in
+  let int_var_list = List.filter ( is_int_var) l in
+  pprint_nts_var_list int_var_list
 
 let pprint_typeinfo_nts_var_list l =
   let is_int_var  = function
