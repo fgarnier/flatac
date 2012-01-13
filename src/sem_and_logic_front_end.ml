@@ -54,4 +54,6 @@ object
 
   (** Label pretty printer *)
   method virtual pretty_label : 'b -> string
+
+  method virtual havocise_label : 'b -> 'b 
 end
