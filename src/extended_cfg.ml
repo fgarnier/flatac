@@ -581,11 +581,26 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
      
       let dest_table_print_folder ( origin : ecfg_id ) (dest : ecfg_id ) label 
 	  (prescript : string ) =
-	let label=front_end#havocise_label label in
-	let post_script = Format.sprintf "%s \n s%d->s%d { %s }" prescript ( get_id_of_ecfg_id origin)  ( get_id_of_ecfg_id dest) 
-	  (front_end#pretty_label label)
-	in 
-	post_script 
+	if not (front_end#need_split_transition label) 
+	then
+	  begin
+	    let label=front_end#havocise_label label in
+	    let post_script = Format.sprintf "%s \n s%d->s%d { %s }" prescript ( get_id_of_ecfg_id origin)  ( get_id_of_ecfg_id dest) 
+	      (front_end#pretty_label label)
+	    in 
+	    post_script
+	  end
+	else
+	  begin
+	    let (pre,post) = front_end#split_guard_call_transition label in
+	    let pre= front_end#havocise_label pre in
+	    let post = front_end#havocise_label post in
+	    let post_script = Format.sprintf "%s \n s%d->sinter%d { %s }" prescript   ( get_id_of_ecfg_id origin) ( !intermediate_sid)
+	      (front_end#pretty_label pre) in
+	    let post_script=Format.sprintf "%s \n sinter%d->s%d { %s }" post_script ( !intermediate_sid)  ( get_id_of_ecfg_id dest) 
+	      (front_end#pretty_label post) in
+	    post_script
+	  end
       in
       let origin_table_print_folder (origin : ecfg_id ) table_dest 
 	  (pre_script :  string ) =

@@ -189,6 +189,13 @@ being error states.*)
   method havocise_label l =
     Nts.havocise l
 
+
+  method need_split_transition l =
+    Nts.need_split_transition l
+
+  method split_guard_call_transition translabel =
+    Nts.split_guard_call_transition translabel
+
   method accepts sslvg sslvd =
 
     (** One checks that the current abstraction entails the next state

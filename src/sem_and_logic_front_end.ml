@@ -55,5 +55,13 @@ object
   (** Label pretty printer *)
   method virtual pretty_label : 'b -> string
 
-  method virtual havocise_label : 'b -> 'b 
+  method virtual havocise_label : 'b -> 'b
+
+
+   
+
+  method virtual need_split_transition : 'b -> bool
+   
+  method virtual split_guard_call_transition : 'b -> ('b * 'b)
+   
 end
