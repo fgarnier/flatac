@@ -620,9 +620,12 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	  end
       in
       elem_left := (Hashtbl.length final_state);
-      let retstring = Hashtbl.fold pprint_folder final_state ""
-      in
-      "final "^retstring^";"
+	if !elem_left >0 then
+	  let retstring = Hashtbl.fold pprint_folder final_state ""
+	  in
+	    "final "^retstring^";"
+	else
+	  ""
 	
 
     method private pprint_out_vars () =
