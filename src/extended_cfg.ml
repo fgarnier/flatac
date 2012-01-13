@@ -577,6 +577,9 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 
 	
     method pprint_transitions () =
+      let intermediate_sid = ref 0 in
+     
+	
       let dest_table_print_folder ( origin : ecfg_id ) (dest : ecfg_id ) label 
 	  (prescript : string ) =
 	let post_script = Format.sprintf "%s \n s%d->s%d { %s }" prescript ( get_id_of_ecfg_id origin)  ( get_id_of_ecfg_id dest) 

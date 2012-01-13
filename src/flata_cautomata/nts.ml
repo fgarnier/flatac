@@ -194,7 +194,7 @@ let rec cnt_pprint_arithm_exp ( exp : cnt_arithm_exp ) =
       begin
 	match e with
 	    CntUnMin( ploc ) -> cnt_pprint_arithm_exp ploc
-	  | _  -> cnt_pprint_arithm_exp e
+	  | _  -> "-"^(cnt_pprint_arithm_exp e)
       end
     
     | CntMinus ( eg , ed )

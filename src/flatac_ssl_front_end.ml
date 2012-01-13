@@ -184,6 +184,38 @@ being error states.*)
      (*(Ssl_entailement.accept_new_abstraction etp )*)
      not (accept_new_abstraction etp)
 
+ 
+  method need_split_transition label_list =
+    let need_split_folder (has_guard,has_call) trans_label =
+	match trans_label with
+	    CntGuard(_) -> (true, has_call)
+	  | CntFunCall(_,_,_) -> (has_guard, true)
+	  | _ ->(has_guard,has_call)
+    in
+    let (a,b) = List.fold_left need_split_folder (false,false) label_list
+    in
+    a && b
+
+ (* this method is used to compute the set of counter variables who are
+ assigned a new value*)
+  method havocise (trans_label_list : cnt_trans_label list) =
+    let not_havoc label =
+      match label with
+	  CntHavoc(_) -> false
+	| _ -> true
+    in
+    let modified_vars (var_list : Nts_types.nts_var list) 
+	(trans_label : cnt_trans_label) =
+      match trans_label with	
+	| CntAffect(nvar,_) -> nvar::var_list
+	| CntFunCall(_,Some(nvar),_) -> nvar::var_list
+	| CntHavoc (nvlist) -> nvlist@var_list
+	| _ -> var_list
+    in
+    let vars_in_havoc = List.fold_left modified_vars [] trans_label_list in
+    let ret_list = List.filter not_havoc trans_label_list in
+    (ret_list@(CntHavoc(vars_in_havoc)::[]))
+    
 
   method accepts sslvg sslvd =
 
