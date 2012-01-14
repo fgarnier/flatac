@@ -86,3 +86,25 @@ type cnt_trans_label = CntGuard of cnt_bool
 						 variables are not copied.
 						 See NTL documentation.
 					       *)
+
+
+(* Types used to deal with function calls and returned values that
+includes information concerning the validity of pointers and integer
+values*)
+
+type il_ptr_fun_arg = 
+    {
+      base_of_exp :  Ssl_types.SSL_lex.locvar ;
+      offset_of_exp : cnt_arithm_exp;
+      validity_of_ptr_exp : Validity_types.valid_counter;
+    }
+
+type il_int_fun_arg =
+    {
+      expr : cnt_arithm_exp;
+      validity_of_exp : Validity_types.valid_counter;
+    }
+    
+
+type il_fun_arguments = IlScalArg of il_int_fun_arg
+			| IlPtrArg of il_ptr_fun_arg

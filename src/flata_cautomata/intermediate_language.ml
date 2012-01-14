@@ -95,6 +95,9 @@ and c_tab = LiTab of string option * (c_scal option) list * Cil_types.typ
 
 type il_expr = IlScal of c_scal
 	       | IlPtr of c_ptrexp
+
+
+
 	       
 type c_bool = LiBNot of c_bool 
  	      | LiBAnd of c_bool * c_bool 

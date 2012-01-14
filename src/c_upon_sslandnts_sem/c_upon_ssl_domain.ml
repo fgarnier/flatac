@@ -87,7 +87,58 @@ let compile_cil_exp_2_cnt sslv ( e : Cil_types.exp ) =
 	IlPtr(ep) -> interpret_c_ptrexp_to_cnt sslv.ssl_part ep
       | IlScal(ep) -> interpret_c_scal_to_cnt sslv.ssl_part ep
 	  
-		      
+
+
+
+let compile_cil_fun_argexpr_2_cnt sslv (e : Cil_types.exp ) =
+  let type_of_e = Cil.typeOf e 
+  in 
+  match type_of_e with
+      TPtr(_,_) | TArray(_,_,_,_) -> 
+	begin
+	  let ptr_exp_t = cil_expr_2_ptr e in
+	  let nts_ptr_exp = interpret_c_ptrexp_to_cnt sslv.ssl_part 
+	    ptr_exp_t in
+	  let ptr_base = Validity.base_ptrexp sslv.ssl_part ptr_exp_t in
+	  let validkind = Validity.valid_ptrexp sslv.ssl_part ptr_exp_t 
+	  in
+	  IlPtrArg({
+	    base_of_exp = ptr_base  ;
+	    offset_of_exp = nts_ptr_exp ;
+	    validity_of_ptr_exp = validkind ;
+	  })
+	end
+    | _ ->
+      begin
+	let alias_tname = 
+	  Composite_types.is_integer_type type_of_e in
+	match alias_tname with 
+	    Some(_) ->
+	      begin
+		let cscal_eval = cil_expr_2_scalar e in
+		let nts_scal_exp = interpret_c_scal_to_cnt sslv.ssl_part 
+		  cscal_eval in
+		let valid = Validity.valid_cscal sslv.ssl_part cscal_eval in
+		IlScalArg(
+		  {
+		    expr = nts_scal_exp ;
+		    validity_of_exp =valid ;  
+		  })
+	      end
+	  | None ->
+	    raise (Debug_info ("compile_cil_fun_argexpr_2_cnt : I have an argume which type is neither an integer value nor a pointer/array"))
+      end
+
+
+
+  
+  
+
+
+
+
+
+
 
 let compile_param_list_2_cnt_list sslv ( lparam : Cil_types.exp list) =
   let cilexp_2_il_iterator e =

@@ -19,6 +19,9 @@ open Validity_types
 exception Cannot_find_pvar
 exception Cannot_find_lvar
 
+
+
+
 (** returns the location variable l which models the base address
 of the pointer expression.
 *)
@@ -35,6 +38,7 @@ let base_ctab tab =
   match tab with
       LiTab ( Some(tab_name),_,_) -> PVar(tab_name)
     | LiTab(None,_,_) -> raise UnnammedLocalArray
+
 
 let rec base_var_ptrexp ( ptr_exp : c_ptrexp ) =
    match ptr_exp with 
@@ -99,9 +103,16 @@ IT shall not be confuse with Var_validity.validity_of and consort.
 
 *)
 
+let validity_name_of_counter (counter_name : string) =
+  "__validity_"^counter_name^"_"
+
+
 let rec valid_cscal (sslf : ssl_formula ) ( scal : c_scal) =
   match scal with
-      LiVar(_ , LiIntVar(vname)) -> IntValid(vname)
+      LiVar(_ , LiIntVar(vname)) -> 
+	let valname = validity_name_of_counter vname in 
+	IntValid(valname)
+
     | LiConst(_) -> TrueValid
     | LiSymConst(_) -> TrueValid
     
@@ -152,7 +163,10 @@ let rec valid_cscal (sslf : ssl_formula ) ( scal : c_scal) =
 	  
 and valid_ptrexp (sslf : ssl_formula ) ( ptrexp :  c_ptrexp ) =
   match ptrexp with 
-      LiPVar ( _ , LiIntPtr(vname), _ ) ->  (PtValid(vname)) 
+      LiPVar ( _ , LiIntPtr(vname), _ ) ->  
+	let valname = validity_name_of_counter vname in 
+	(PtValid(valname))
+ 
     | LiPlusPI ( ptrexpprime , cscal , _) -> 
 	begin
 	  let fg = valid_ptrexp sslf ptrexpprime in

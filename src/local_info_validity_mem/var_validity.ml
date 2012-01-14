@@ -39,11 +39,6 @@ let pprint_validity_loc_map ( m : validity_loc_map) =
 	 Validvarmap.fold print_folder mapping "" 
 
 
-
-
-
-
-
 let compute_var_cathegory ( v : Cil_types.varinfo ) =
   if v.vformal then ParameterVar
   else if v.vglob then GlobalVar
