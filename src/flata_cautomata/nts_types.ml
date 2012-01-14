@@ -80,7 +80,7 @@ type cnt_bool = CntBool of cnt_binop *  cnt_arithm_exp * cnt_arithm_exp
 		| CntBOr of cnt_bool * cnt_bool
 
 type cnt_trans_label = CntGuard of cnt_bool
-		   | CntFunCall of string * nts_var option *cnt_arithm_exp list
+		   | CntFunCall of string * nts_var list option * cnt_arithm_exp list
 		   | CntAffect of nts_var * cnt_arithm_exp
 		   | CntHavoc of nts_var list (* The value of the listed 
 						 variables are not copied.
