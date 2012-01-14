@@ -200,7 +200,10 @@ struct
     method register_in_out_nts_vars () =
       let in_out_map_folder (nts_var_list) (v : Cil_types.varinfo ) =
 	match v.vtype with
-	    TPtr(_,_) -> NtsIVar("offset__"^v.vname^"_")::nts_var_list
+	    TPtr(_,_) ->
+	      begin
+		NtsIVar("offset__"^v.vname^"_")::nts_var_list
+	      end
 	  | _ ->
 	    begin
 	      match (Composite_types.is_integer_type v.vtype) with
@@ -717,7 +720,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       let pprint_loc_pre = front_end#pprint_list_of_malloc_vars () in
       let pprint_loc=Nts.concat_comma_both_arg_non_empty pprint_loc_pre 
 	pprint_loc in
-      let res_string=res_string^"\n"^Nts.concat_if_first_arg_nonzero pprint_loc " : int \n" in
+      let res_string=res_string^"\n"^Nts.concat_if_first_arg_nonzero pprint_loc " : int ;\n" in
      (* let pprint_loc = (
 	if String.length pprint_loc > 0 && 
 	  String.length pprint_loc_pre > 0 

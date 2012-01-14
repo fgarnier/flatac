@@ -223,7 +223,7 @@ being error states.*)
     let map_len = ref ( self#number_of_valid_vars sslv )
     in
     let pprint_valid_cnt_folder  vname _ prestr =
-      if !map_len >= 1 then
+      if !map_len > 1 then
 	begin
 	    map_len:=!map_len-1;
 	    prestr^("validity__"^vname^"_,")
