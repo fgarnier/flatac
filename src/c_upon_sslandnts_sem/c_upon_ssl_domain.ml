@@ -130,8 +130,14 @@ let compile_cil_fun_argexpr_2_cnt sslv (e : Cil_types.exp ) =
       end
 
 
-
-  
+let compile_param_list_2_cnt_list sslv ( lparam : Cil_types.exp list) =
+  let arg_compile_folder out_list argument =
+    let compile_arg =  compile_cil_fun_argexpr_2_cnt sslv argument
+    in 
+    compile_arg::out_list
+  in
+  let inv_order_list = List.fold_left arg_compile_folder [] lparam in
+  List.rev inv_order_list
   
 
 
