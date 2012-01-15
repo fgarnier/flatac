@@ -359,8 +359,12 @@ let rec valid_expr_2_cnt_bool ( vexpr : valid_counter ) =
   match vexpr with 
       TrueValid -> CntBTrue
     | FalseValid -> CntBFalse
-    | PtValid ( s ) -> CntBool(CntEq,CntVar(NtsIVar(("validity__"^s^"_"))),CntCst(1))
+    (*
+      | PtValid ( s ) -> CntBool(CntEq,CntVar(NtsIVar(("validity__"^s^"_"))),CntCst(1))
     | IntValid ( s ) -> CntBool(CntEq,CntVar(NtsIVar(("validity__"^s^"_"))),CntCst(1))
+    *)
+    | PtValid ( s ) -> CntBool(CntEq,CntVar(NtsIVar(s)),CntCst(1))
+    | IntValid ( s ) -> CntBool(CntEq,CntVar(NtsIVar(s)),CntCst(1))
     | AndValid ( l , r ) -> 
 	begin
 	  match l , r with 

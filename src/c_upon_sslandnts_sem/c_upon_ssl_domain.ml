@@ -356,10 +356,16 @@ let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) (s
       let offset_var_of_pvar =  offset_ntsivar_of_pvar pvar_left in
       let affect_off = CntAffect(offset_var_of_pvar,offset_of_pexpr) in
       let affect_validity_of_pvar = valid_sym_ptrexp sslv.validinfos sslv.ssl_part param_cscal in
+	
+     
+      let valid_rhs_var = make_validity_varpvar pvar_right in
+      let valid_lhs_var =  make_validity_varpvar pvar_left in
+      let copy_valaff_tolhs =  CntAffect( valid_lhs_var, CntVar(valid_rhs_var)) in
+	
       let sslv_new = set_var_validity_in_absdomain 
 	sslv v (Some(off)) affect_validity_of_pvar 
       in
-      ((sslv_new,affect_off::[])::[]) 
+      ((sslv_new,copy_valaff_tolhs::(affect_off::[]))::[]) 
   with
       
     | Loc_is_nil -> 
@@ -544,8 +550,11 @@ let r_malloc_neg_or_zero_arg ( lhs : Cil_types.lval option ) sslv  (mid: global_
 	  let aff_to_nil = Pointsnil(pvar) in
 	  and_atomic_ptnil aff_to_nil new_abstract.ssl_part;
 	  let guard_leq_zero =  CntGuard(CntBool(CntLeq,interpret_param,CntCst(0))) 
-	  in 
-	  let ret_list = ((new_abstract, (guard_leq_zero :: []))::[] ) in
+	  in
+	  let pvar_of_lhs = get_pvar_from_exp_node (Lval(lv,off)) in  
+	  let valid_lhs_var = make_validity_varpvar pvar_of_lhs in
+	  let invalid_aff_lhs =  CntAffect( valid_lhs_var, CntCst(0)) in
+	  let ret_list = ((new_abstract, (guard_leq_zero ::( invalid_aff_lhs ::[])))::[] ) in
 	  ret_list
 	end
     | None ->
@@ -579,7 +588,10 @@ let r_malloc_neg_or_zero_arg_withvalidityguard (lhs : Cil_types.lval option ) ss
 	  let interpret_leq_zero = CntBool(CntLeq,interpret_param,CntCst(0)) 
 	  in 
 	  let guard = CntGuard(CntBAnd(validity_guard_cnt,interpret_leq_zero)) in 
-	  let ret_list = ((new_abstract, (guard :: []))::[] ) in
+	   let pvar_of_lhs = get_pvar_from_exp_node (Lval(lv,off)) in  
+	  let valid_lhs_var = make_validity_varpvar pvar_of_lhs in
+	  let invalid_aff_lhs =  CntAffect( valid_lhs_var, CntCst(0)) in 
+	  let ret_list = ((new_abstract, invalid_aff_lhs::(guard :: []))::[] ) in
 	  ret_list
 	end
     | None ->
@@ -596,16 +608,38 @@ let r_malloc_neg_or_zero_arg_withvalidityguard (lhs : Cil_types.lval option ) ss
 	ret_list	
       end
 
-let r_malloc_failed_with_unvalidcntgard _ sslv  (mid: global_mem_manager ) (scal_param : c_scal) =
-   Self.debug ~level:0 " r_malloc_failed_with_unvalidcntgard ";
-  let sslv = copy_validity_absdomain sslv in
-  let abst_domain = create_validity_abstdomain () in
-  set_heap_to_top abst_domain.ssl_part ;
-  let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
-  let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
-  let invalidity_guard = CntGuard(CntNot ( validity_guard_cnt )) in
-  let ret_list = (( abst_domain , (invalidity_guard :: [])) ::[]) in
-  ret_list
+let r_malloc_failed_with_unvalidcntgard lhs sslv  (mid: global_mem_manager ) (scal_param : c_scal) =
+
+  match lhs with 
+      None ->
+	begin
+	  Self.debug ~level:0 " r_malloc_failed_with_unvalidcntgard ";
+	  let sslv = copy_validity_absdomain sslv in
+	  let abst_domain = create_validity_abstdomain () 
+	  in
+	    set_heap_to_top abst_domain.ssl_part ;
+	    let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
+	    let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
+	    let invalidity_guard = CntGuard(CntNot ( validity_guard_cnt )) in
+	    let ret_list = (( abst_domain , (invalidity_guard :: [])) ::[]) in
+	      ret_list
+	end
+    | Some((lv,off)) ->
+	begin
+	   Self.debug ~level:0 " r_malloc_failed_with_unvalidcntgard ";
+	  let sslv = copy_validity_absdomain sslv in
+	  let abst_domain = create_validity_abstdomain () 
+	  in
+	    set_heap_to_top abst_domain.ssl_part ;
+	    let pvar_of_lhs = get_pvar_from_exp_node (Lval(lv,off)) in  
+	    let valid_lhs_var = make_validity_varpvar pvar_of_lhs in
+	    let invalid_aff_lhs =  CntAffect( valid_lhs_var, CntCst(0)) in 
+	    let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
+	    let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
+	    let invalidity_guard = CntGuard(CntNot ( validity_guard_cnt )) in
+	    let ret_list = (( abst_domain , invalid_aff_lhs::(invalidity_guard :: [])) ::[]) in
+	      ret_list
+	end
 
 
   
