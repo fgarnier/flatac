@@ -88,7 +88,11 @@ let compile_cil_exp_2_cnt sslv ( e : Cil_types.exp ) =
       | IlScal(ep) -> interpret_c_scal_to_cnt sslv.ssl_part ep
 	  
 
-
+let compile_sym_validity_to_cnt v =
+  match v with 
+      DKvarValid -> CntCst(-1)
+    |  FalsevarValid -> CntCst(0)
+    |  TruevarValid -> CntCst(1)
 
 let compile_cil_fun_argexpr_2_cnt sslv (e : Cil_types.exp ) =
   let type_of_e = Cil.typeOf e 
@@ -100,12 +104,13 @@ let compile_cil_fun_argexpr_2_cnt sslv (e : Cil_types.exp ) =
 	  let nts_ptr_exp = interpret_c_ptrexp_to_cnt sslv.ssl_part 
 	    ptr_exp_t in
 	  let ptr_base = Validity.base_ptrexp sslv.ssl_part ptr_exp_t in
-	  let validkind = Validity.valid_ptrexp sslv.ssl_part ptr_exp_t 
+	  let validkind = Var_validity.valid_sym_ptrexp sslv.validinfos
+	    sslv.ssl_part ptr_exp_t  
 	  in
 	  IlPtrArg({
 	    base_of_exp = ptr_base  ;
 	    offset_of_exp = nts_ptr_exp ;
-	    validity_of_ptr_exp = validkind ;
+	    validity_of_ptr_exp = compile_sym_validity_to_cnt validkind ;
 	  })
 	end
     | _ ->
@@ -118,16 +123,19 @@ let compile_cil_fun_argexpr_2_cnt sslv (e : Cil_types.exp ) =
 		let cscal_eval = cil_expr_2_scalar e in
 		let nts_scal_exp = interpret_c_scal_to_cnt sslv.ssl_part 
 		  cscal_eval in
-		let valid = Validity.valid_cscal sslv.ssl_part cscal_eval in
+		let valid = Var_validity.valid_sym_cscal sslv.validinfos 
+		  sslv.ssl_part cscal_eval in
 		IlScalArg(
 		  {
 		    expr = nts_scal_exp ;
-		    validity_of_exp =valid ;  
+		    validity_of_exp = compile_sym_validity_to_cnt valid ;  
 		  })
 	      end
 	  | None ->
 	    raise (Debug_info ("compile_cil_fun_argexpr_2_cnt : I have an argume which type is neither an integer value nor a pointer/array"))
       end
+
+
 
 
 let compile_param_list_2_cnt_list sslv ( lparam : Cil_types.exp list) =
@@ -145,12 +153,13 @@ let compile_param_list_2_cnt_list sslv ( lparam : Cil_types.exp list) =
 
 
 
+(* Deprecated
 
 let compile_param_list_2_cnt_list sslv ( lparam : Cil_types.exp list) =
   let cilexp_2_il_iterator e =
-    let type_of_e = Cil.typeOf e in
+     let type_of_e = Cil.typeOf e in
     match type_of_e with
-	TPtr(_,_) | TArray(_,_,_,_) -> 
+ 	TPtr(_,_) | TArray(_,_,_,_) -> 
 	  begin
 	    let ptr_exp = cil_expr_2_ptr e in
 	    IlPtr(ptr_exp)
@@ -177,6 +186,7 @@ let compile_param_list_2_cnt_list sslv ( lparam : Cil_types.exp list) =
   let il_list = List.map ( cilexp_2_il_iterator ) lparam in
   let ret_list = List.map (ilexp_2_cnt_iterator ) il_list
   in ret_list
+ *)
  (*  contains the ret_list *)
 
 
@@ -764,9 +774,9 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 				  let arg_nts_list =
 				     compile_param_list_2_cnt_list sslv lparam in
 				   (* List.map ( fun s-> interpret_c_scal_to_cnt sslv.ssl_part s ) *)
-				  let nts_lval = NtsIVar(v.vname) in
+				  let nts_lvals = Nts.make_ntsvars_of_ptrvar v.vname in
 				  let cnt_trans_label = 
-				    CntFunCall(funname,Some(nts_lval),arg_nts_list) in
+				    CntFunCall(funname,Some(nts_lvals),arg_nts_list) in
 				  let msg= 
 				    Format.sprintf "[next_on_ssl_instr] Pointer type Var : %s = %s : %s \n[next_on_ssl_instr] argument list %s \n "  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype) (Nts.cnt_pprint_translabel cnt_trans_label ) in
 				Format.printf "%s" msg;
@@ -799,9 +809,9 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 				  let arg_nts_list =
 				     compile_param_list_2_cnt_list sslv lparam in
 				   (* List.map ( fun s-> interpret_c_scal_to_cnt sslv.ssl_part s ) *)
-				  let nts_lval = NtsIVar(v.vname) in
+				  let nts_lvals = Nts.make_ntsvars_of_intvars v.vname in
 				  let cnt_trans_label = 
-				    CntFunCall(funname,Some(nts_lval),arg_nts_list) in
+				    CntFunCall(funname,Some(nts_lvals),arg_nts_list) in
 				  let msg= 
 				    Format.sprintf "[next_on_ssl_instr] Integer type Var : %s = %s : %s \n[next_on_ssl_instr] argument list %s \n "  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype) (Nts.cnt_pprint_translabel cnt_trans_label ) in
 				Format.printf "%s" msg;

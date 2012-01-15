@@ -59,6 +59,22 @@ let pprint_nts_var_list l =
   in
   (pprint_nts_var_list_fold "" l)
 
+let pprint_nts_and_prime_var_list l =
+  let rec pprint_nts_var_list_fold str l =
+    match str, l with 
+	(_,[]) -> str
+      | ("",(h::l')) -> pprint_nts_var_list_fold ((nts_pprint_nts_var h)^"'") l'
+      | (_,(h::l')) -> pprint_nts_var_list_fold (str^","^((nts_pprint_nts_var h)^"'")) l' 
+  in
+  (pprint_nts_var_list_fold "" l)
+ 
+
+let make_ntsvars_of_ptrvar (vname : string ) = 
+  (NtsIVar("offset__"^vname^"_"))::(NtsIVar("validity__"^vname^"_")::[])
+
+let make_ntsvars_of_intvars (vname : string) =
+  (NtsIVar(vname))::(NtsIVar("validity__"^vname^"_")::[])
+
 
 (*Pretty prints the list of the names of the integer vars of a Nts variable list.*)
 (*
@@ -364,10 +380,16 @@ let rec cnt_pprint_boolexp (bexp :cnt_bool ) =
 
 
 
-let arg_name_left_folder (str : string ) ( cnt_aexp : cnt_arithm_exp) = 
+let pprint_il_args arg =
+  match arg with 
+      IlPtrArg(s) -> (cnt_pprint_arithm_exp s.offset_of_exp)^","^(cnt_pprint_arithm_exp s.validity_of_ptr_exp)
+    | IlScalArg(s) -> (cnt_pprint_arithm_exp s.expr)^","^(cnt_pprint_arithm_exp s.validity_of_exp)
+
+
+let arg_name_left_folder (str : string ) ( il_arg : il_fun_arguments) = 
   match str with
-      "" -> cnt_pprint_arithm_exp cnt_aexp 
-    | _ -> str^","^( cnt_pprint_arithm_exp cnt_aexp )
+      "" -> pprint_il_args il_arg 
+    | _ -> str^","^( pprint_il_args il_arg )
   
   
 
@@ -379,9 +401,9 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
     | CntFunCall ( funname, retval , largs ) ->
       begin
 	match retval with
-	    Some(NtsIVar(varname)) ->
+	    Some(list_varname) ->
 	      begin
-		varname^"'="^funname^"("^(List.fold_left arg_name_left_folder "" largs )^")"
+		(pprint_nts_and_prime_var_list list_varname)^"="^funname^"("^(List.fold_left arg_name_left_folder "" largs )^")"
 	      end
 	  | None -> funname^"("^(List.fold_left arg_name_left_folder "" largs )^")"
       end
@@ -413,7 +435,7 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
 	(trans_label : cnt_trans_label) =
       match trans_label with	
 	| CntAffect(nvar,_) -> nvar::var_list
-	| CntFunCall(_,Some(nvar),_) -> nvar::var_list
+	| CntFunCall(_,Some(nvar_list),_) -> nvar_list@var_list
 	| CntHavoc (nvlist) -> nvlist@var_list
 	| _ -> var_list
     in

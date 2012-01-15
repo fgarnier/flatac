@@ -79,13 +79,6 @@ type cnt_bool = CntBool of cnt_binop *  cnt_arithm_exp * cnt_arithm_exp
 		| CntBAnd of  cnt_bool * cnt_bool
 		| CntBOr of cnt_bool * cnt_bool
 
-type cnt_trans_label = CntGuard of cnt_bool
-		   | CntFunCall of string * nts_var list option * cnt_arithm_exp list
-		   | CntAffect of nts_var * cnt_arithm_exp
-		   | CntHavoc of nts_var list (* The value of the listed 
-						 variables are not copied.
-						 See NTL documentation.
-					       *)
 
 
 (* Types used to deal with function calls and returned values that
@@ -96,15 +89,24 @@ type il_ptr_fun_arg =
     {
       base_of_exp :  Ssl_types.SSL_lex.locvar ;
       offset_of_exp : cnt_arithm_exp;
-      validity_of_ptr_exp : Validity_types.valid_counter;
+      validity_of_ptr_exp : cnt_arithm_exp ;
     }
 
 type il_int_fun_arg =
     {
       expr : cnt_arithm_exp;
-      validity_of_exp : Validity_types.valid_counter;
+      validity_of_exp : cnt_arithm_exp ;
     }
     
 
 type il_fun_arguments = IlScalArg of il_int_fun_arg
 			| IlPtrArg of il_ptr_fun_arg
+
+
+type cnt_trans_label = CntGuard of cnt_bool
+		   | CntFunCall of string * nts_var list option * il_fun_arguments list
+		   | CntAffect of nts_var * cnt_arithm_exp
+		   | CntHavoc of nts_var list (* The value of the listed 
+						 variables are not copied.
+						 See NTL documentation.
+					       *)

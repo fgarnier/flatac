@@ -213,11 +213,12 @@ being error states.*)
 
 
   method  number_of_valid_vars sslv  = 
-    let vmap =(
+    (*let vmap =(
       match sslv.validinfos with
 	  Validlocmap(lamap)-> lamap)
-    in
-    Validvarmap.cardinal vmap
+    in*)
+   (* Validvarmap.cardinal vmap *)
+      Var_validity.cardinal_of_locmap sslv.validinfos
 
   method pprint_list_of_valid_var sslv =
     let map_len = ref ( self#number_of_valid_vars sslv )

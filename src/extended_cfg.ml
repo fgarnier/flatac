@@ -202,12 +202,12 @@ struct
 	match v.vtype with
 	    TPtr(_,_) ->
 	      begin
-		NtsIVar("offset__"^v.vname^"_")::nts_var_list
+		NtsIVar("offset__"^v.vname^"_")::(NtsIVar("validity__"^v.vname^"_")::nts_var_list)
 	      end
 	  | _ ->
 	    begin
 	      match (Composite_types.is_integer_type v.vtype) with
-		  Some(_) -> NtsIVar(v.vname)::nts_var_list
+		  Some(_) -> NtsIVar(v.vname)::(NtsIVar("validity__"^v.vname^"_")::nts_var_list)
 		| None -> NtsMiscType(v.vname)::nts_var_list
 	    end
       in 
@@ -654,7 +654,8 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 
     method private pprint_out_vars () =
       match fun_def.svar.vtype with
-	  TFun(TInt(_,_),_,_,_) | TFun(TPtr(_,_),_,_,_) -> " out ret_val_ : int;"
+	  TFun(TInt(_,_),_,_,_) -> " out ret_val_ : int;" 
+	| TFun(TPtr(_,_),_,_,_) -> " out offset__ret_val__, validity__retval__ : int;"
 	|  TFun(t,_,_,_) ->
 	  begin
 	    match (Composite_types.is_integer_type t) 
@@ -662,6 +663,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 		Some(_) -> " out ret_val_ : int;"
 	      |	None -> ""
 	  end
+	
       
       
     method private pprint_input_vars () =

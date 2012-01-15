@@ -39,6 +39,15 @@ let pprint_validity_loc_map ( m : validity_loc_map) =
 	 Validvarmap.fold print_folder mapping "" 
 
 
+let cardinal_of_locmap ( m : validity_loc_map) =
+  
+  let count_folder _ _ (cnt : int) =
+   cnt+1
+  in
+  match m with 
+       Validlocmap( mapping) -> 
+	 Validvarmap.fold count_folder mapping 0 
+
 let compute_var_cathegory ( v : Cil_types.varinfo ) =
   if v.vformal then ParameterVar
   else if v.vglob then GlobalVar
