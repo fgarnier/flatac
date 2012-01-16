@@ -66,5 +66,6 @@ object
   method virtual pprint_list_of_valid_var : 'a -> string 
 
   method virtual  pprint_list_of_malloc_vars : unit -> string
+  method virtual pprint_list_of_valid_locals_var : 'a -> Cil_types.fundec -> string (* The ones that are not formals variables.*)
    
 end

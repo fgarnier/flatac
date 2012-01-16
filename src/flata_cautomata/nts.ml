@@ -403,7 +403,7 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
 	match retval with
 	    Some(list_varname) ->
 	      begin
-		(pprint_nts_and_prime_var_list list_varname)^"="^funname^"("^(List.fold_left arg_name_left_folder "" largs )^")"
+		"("^(pprint_nts_and_prime_var_list list_varname)^")="^funname^"("^(List.fold_left arg_name_left_folder "" largs )^")"
 	      end
 	  | None -> funname^"("^(List.fold_left arg_name_left_folder "" largs )^")"
       end

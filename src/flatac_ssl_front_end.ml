@@ -238,6 +238,42 @@ being error states.*)
     in
     Validvarmap.fold pprint_valid_cnt_folder vmap ""
 
+  method pprint_list_of_valid_locals_var sslv fundec=
+
+    let is_slocal_valididty_var vname =
+      List.exists (fun v-> 
+	if (String.compare v.vname vname) == 0 
+	then true 
+	else false
+      ) fundec.slocals 
+    in
+    let map_len = ref ( self#number_of_valid_vars sslv )
+    in
+    let pprint_valid_cnt_folder  vname _ prestr =
+      if !map_len > 1 then
+	begin
+	    map_len:=!map_len-1;
+	  if is_slocal_valididty_var vname then
+	    prestr^("validity__"^vname^"_,")
+	  else
+	    prestr
+	  end
+      else
+	begin
+	  if is_slocal_valididty_var vname then
+	    prestr^("validity__"^vname^"_")
+	  else
+	    prestr
+	end
+    in
+    let vmap =(
+      match sslv.validinfos with
+	  Validlocmap(lamap)-> lamap)
+    in
+    Validvarmap.fold pprint_valid_cnt_folder vmap ""
+
+
+      
   method pprint_list_of_malloc_vars () =
     mid#pprint_vars ()
 
