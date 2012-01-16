@@ -69,11 +69,23 @@ let pprint_nts_and_prime_var_list l =
   (pprint_nts_var_list_fold "" l)
  
 
+
+let valid_name_of_var (vname : string ) =
+  "validity__"^vname^"_"  
+
+let offset_name_of_var (vname : string ) =
+  "offset__"^vname^"_"
+
 let make_ntsvars_of_ptrvar (vname : string ) = 
-  (NtsIVar("offset__"^vname^"_"))::(NtsIVar("validity__"^vname^"_")::[])
+  let val_name = valid_name_of_var vname in
+  let offset_name =  offset_name_of_var vname in
+  (NtsIVar(val_name))::(NtsIVar(offset_name)::[])
 
 let make_ntsvars_of_intvars (vname : string) =
-  (NtsIVar(vname))::(NtsIVar("validity__"^vname^"_")::[])
+  let val_name = valid_name_of_var vname in 
+  (NtsIVar(vname))::(NtsIVar(val_name)::[])
+
+
 
 
 (*Pretty prints the list of the names of the integer vars of a Nts variable list.*)

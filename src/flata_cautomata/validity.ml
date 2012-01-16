@@ -103,14 +103,14 @@ IT shall not be confuse with Var_validity.validity_of and consort.
 
 *)
 
-let validity_name_of_counter (counter_name : string) =
-  "__validity_"^counter_name^"_"
+(*let validity_name_of_counter (counter_name : string) =
+  "__validity_"^counter_name^"_" *)
 
 
 let rec valid_cscal (sslf : ssl_formula ) ( scal : c_scal) =
   match scal with
       LiVar(_ , LiIntVar(vname)) -> 
-	let valname = validity_name_of_counter vname in 
+	let valname = Nts.valid_name_of_var vname in 
 	IntValid(valname)
 
     | LiConst(_) -> TrueValid
@@ -164,7 +164,7 @@ let rec valid_cscal (sslf : ssl_formula ) ( scal : c_scal) =
 and valid_ptrexp (sslf : ssl_formula ) ( ptrexp :  c_ptrexp ) =
   match ptrexp with 
       LiPVar ( _ , LiIntPtr(vname), _ ) ->  
-	let valname = validity_name_of_counter vname in 
+	let valname =  Nts.valid_name_of_var vname in 
 	(PtValid(valname))
  
     | LiPlusPI ( ptrexpprime , cscal , _) -> 

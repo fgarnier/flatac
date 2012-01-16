@@ -221,22 +221,28 @@ being error states.*)
       Var_validity.cardinal_of_locmap sslv.validinfos
 
   method pprint_list_of_valid_var sslv =
-    let map_len = ref ( self#number_of_valid_vars sslv )
+    let index_id = ref 0
     in
     let pprint_valid_cnt_folder  vname _ prestr =
-      if !map_len > 1 then
+      let val_name = Nts.valid_name_of_var vname in 
+      if !index_id != 0 then
 	begin
-	    map_len:=!map_len-1;
-	    prestr^("validity__"^vname^"_,")
-	  end
+	  index_id:=!index_id+1; 
+	  prestr^(","^val_name)
+	end
       else
-	prestr^("validity__"^vname^"_")
+	begin
+	  index_id:=!index_id+1; 
+	  prestr^(val_name)
+	end
+	  
     in
     let vmap =(
       match sslv.validinfos with
 	  Validlocmap(lamap)-> lamap)
     in
     Validvarmap.fold pprint_valid_cnt_folder vmap ""
+
 
   method pprint_list_of_valid_locals_var sslv fundec=
 
@@ -247,21 +253,28 @@ being error states.*)
 	else false
       ) fundec.slocals 
     in
-    let map_len = ref ( self#number_of_valid_vars sslv )
+    let index_id = ref 0
     in
     let pprint_valid_cnt_folder  vname _ prestr =
-      if !map_len > 1 then
+      let val_name = Nts.valid_name_of_var vname in 
+      if !index_id != 0 then
 	begin
-	    map_len:=!map_len-1;
 	  if is_slocal_valididty_var vname then
-	    prestr^("validity__"^vname^"_,")
+	    begin
+	      index_id:=!index_id+1;
+	      
+	      prestr^(","^val_name)
+	    end
 	  else
 	    prestr
 	  end
       else
 	begin
 	  if is_slocal_valididty_var vname then
-	    prestr^("validity__"^vname^"_")
+	    begin
+	      index_id:=!index_id+1;
+	      prestr^(val_name)
+	    end
 	  else
 	    prestr
 	end

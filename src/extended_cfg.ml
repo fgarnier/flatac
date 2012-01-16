@@ -684,9 +684,9 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	else
 	  prestr^("valid_"^vname^"_")
       in*)
-      let validvar_names = front_end#pprint_list_of_valid_var 
-	absval_of_ep in
-      validvar_names^((Nts.pprint_typeinfo_int_nts_var_list nts_slocals))
+      let validvar_names = front_end#pprint_list_of_valid_locals_var 
+	absval_of_ep funinfo in
+      Nts.concat_comma_both_arg_non_empty validvar_names ((Nts.pprint_typeinfo_int_nts_var_list nts_slocals))
 	
       
     method private pprint_error_states () =
