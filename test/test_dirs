@@ -3,3 +3,4 @@ DEMO/assert_check/
 DEMO/integer_scalar/
 bench_bradley/stack/
 ../test_for_filip/pointer_aritmetic/
+../examples/basic_malloc/

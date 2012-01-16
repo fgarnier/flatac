@@ -4,7 +4,7 @@ open Ssl
 open Ssl_types
 open SSL_lex
 open Intermediate_language
-
+(*open Ssl_valid_abs_dom_types*)
 
 (* Ast_infos is here for testing purposes*)
 open Ast_goodies
@@ -281,7 +281,6 @@ and valid_sym_ptrexp  ( loc_map : validity_loc_map ) (sslf : ssl_formula ) ( ptr
 
     | LiAddrOfScal ( scalexp , _ ) ->
        valid_sym_cscal loc_map sslf scalexp
-
 
 
 

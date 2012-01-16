@@ -46,6 +46,12 @@ type il_expr = IlScal of c_scal
 *)
 
 
+let valid_sym_cscal_sslv sslv (exp : c_scal ) =
+  valid_sym_cscal sslv.validinfos sslv.ssl_part exp
+
+let valid_sym_ptrexp_sslv sslv (ptrexp : c_ptrexp ) =
+  valid_sym_ptrexp sslv.validinfos sslv.ssl_part ptrexp
+
 
 let compile_cil_exp_2_cnt sslv ( e : Cil_types.exp ) =
   let type_of_e = Cil.typeOf e 
@@ -940,10 +946,33 @@ let next_on_ssl_nts (mid : global_mem_manager ) (sslv  ) (skind : Cil_types.stmt
 	 next_on_ssl_instr  mid sslv instruction
 
     | Return (Some(expr),_) ->
-      
-      let cnt_exp =  compile_cil_exp_2_cnt sslv expr in
-      let cnt_affect = CntAffect(NtsIVar(("ret_val_")),cnt_exp) in
-      (sslv , (cnt_affect::[])) :: []
+      begin
+	let ret_value_type = Cil.typeOf expr in
+	match ret_value_type with 
+	    TPtr(_,_) ->
+	      begin
+		let ptr_offset =  cil_expr_2_ptr  expr in
+		let cnt_offset = interpret_c_ptrexp_to_cnt sslv.ssl_part ptr_offset in
+		let cnt_affect_offset = CntAffect(NtsIVar(("offset__ret_val__")),cnt_offset) in
+	     
+		let valid_sym_expr = valid_sym_ptrexp_sslv sslv ptr_offset in
+		let valid_of_ret = 
+		  (match valid_sym_expr with
+		      DKvarValid -> CntHavoc(NtsIVar("validity__ret_val__")::[])
+		    | TruevarValid -> CntAffect(NtsIVar("validity__ret_val__"),CntCst(1))
+		    | FalsevarValid -> CntAffect(NtsIVar("validity__ret_val__"),CntCst(0))
+		  )
+		in  
+		(sslv , (valid_of_ret::(cnt_affect_offset::[]))) :: []
+	      end
+	  | _->
+	    begin
+	      let cnt_exp =  compile_cil_exp_2_cnt sslv expr in
+	      let cnt_affect = CntAffect(NtsIVar(("ret_val_")),cnt_exp) in
+	    
+	      (sslv , (cnt_affect::[])) :: []
+	    end
+      end
 
     | Return (None,_) ->
        (sslv , []) :: []

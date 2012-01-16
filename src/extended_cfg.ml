@@ -655,7 +655,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
     method private pprint_out_vars () =
       match fun_def.svar.vtype with
 	  TFun(TInt(_,_),_,_,_) -> " out ret_val_ : int;" 
-	| TFun(TPtr(_,_),_,_,_) -> " out offset__ret_val__, validity__retval__ : int;"
+	| TFun(TPtr(_,_),_,_,_) -> " out offset__ret_val__, validity__ret_val__ : int;"
 	|  TFun(t,_,_,_) ->
 	  begin
 	    match (Composite_types.is_integer_type t) 
