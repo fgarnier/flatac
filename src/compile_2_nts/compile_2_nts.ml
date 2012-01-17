@@ -128,13 +128,6 @@ let compile_param_list_2_cnt_list sslv ( lparam : Cil_types.exp list) =
   
 
 
-
-
-
-
-
-
-
 let rec compile_cil_array_2_cnt sslv (name : string) (vtype_arg : Cil_types.typ) =
   
   let rec translate_reftab_recursor vtype =

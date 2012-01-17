@@ -35,12 +35,16 @@ let make_validity_varpvar ( v : ptvar) =
 	NtsIVar(vdty)
 
 
+(* Not yet recursive. One only need to access to the first layer of
+pointer for multidimentional pointers -- like int **. *)
 
-let rec offset_to_cnt sslv (t : Cil_types.typ ) ( off : Cil_types.offset) =
+let  offset_to_cnt sslv (t : Cil_types.typ ) ( off : Cil_types.offset) =
   match off with
       NoOffset -> CntCst(0)
-    | Index (exp ,  off ) -> 
-      let offset_exp = compile_cil_exp_2_cnt sslv exp   
+    | Index (exp , _ ) -> 
+      let offset_exp = compile_cil_exp_2_cnt sslv exp in
+      offset_exp
+    | 
 
 let rec cnt_guard_of_mem_access sslv (exp_type : Cil_types.typ) =
     ( expn : Cil_types.exp_node ) =
