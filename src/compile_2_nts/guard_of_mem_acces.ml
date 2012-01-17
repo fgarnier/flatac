@@ -8,6 +8,7 @@ open Composite_types
 open Intermediate_language
 open Nts_types
 open Nts
+open Compile_2_nts
 open Cnt_interpret
 
 
@@ -20,12 +21,26 @@ the guards for memory access --both read and write access-- *)
 
  (** The parameter exp_type corresponds to the type of the subexpresion.*)
 
-(*
-let rec offset_to_cnt (t : Cil_types.typ ) ( off : Cil_types.offset) =
+
+let make_offset_locpvar (v : ptvar ) =
+  match  v  with 
+      PVar ( s ) -> let soff =
+	"offset__"^s^"_" in
+	NtsIVar(soff)
+
+let make_validity_varpvar ( v : ptvar) =
+  match  v  with 
+      PVar ( s ) -> let vdty =
+	"validity__"^s^"_" in
+	NtsIVar(vdty)
+
+
+
+let rec offset_to_cnt sslv (t : Cil_types.typ ) ( off : Cil_types.offset) =
   match off with
       NoOffset -> CntCst(0)
-    | 
-  
+    | Index (exp ,  off ) -> 
+      let offset_exp = compile_cil_exp_2_cnt sslv exp   
 
 let rec cnt_guard_of_mem_access sslv (exp_type : Cil_types.typ) =
     ( expn : Cil_types.exp_node ) =

@@ -35,35 +35,8 @@ open Compile_2_nts
 exception No_pvar_in_free_expression
 exception Wrong_parameter_type_in_free
 exception Debug_information of string
-
 exception Debug_info of string 
-
-
 exception Assert_fail_exception 
-
-(*
-type il_expr = IlScal of c_scal
-	       | IlPtr of c_ptrexp
-*)
-
-
-
-
-	
-
-
-let make_offset_locpvar (v : ptvar ) =
-  match  v  with 
-      PVar ( s ) -> let soff =
-	"offset__"^s^"_" in
-	NtsIVar(soff)
-
-let make_validity_varpvar ( v : ptvar) =
-  match  v  with 
-      PVar ( s ) -> let vdty =
-	"validity__"^s^"_" in
-	NtsIVar(vdty)
-
 
 
 (** If used to descibe a malloc creation of a mem segment,
@@ -102,8 +75,6 @@ let affect_int_val_upon_sslv (v : Cil_types.varinfo) (expr : Cil_types.exp)
   let cnt_affect = CntAffect(NtsIVar(v.vname),cnt_expr) in
     (ret_absdomain , (cnt_affect::[])) :: []
     
-
-
 
 (** This function aims at getting the first variable name
 of the list of parameters. Might be useful if some parameter
