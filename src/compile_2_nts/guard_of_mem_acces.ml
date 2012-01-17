@@ -1,6 +1,5 @@
-
 open Ssl_types
-open SSL_lex.ssl_types
+open Ssl_types.SSL_lex
 open Ssl
 open Cil_types
 open Cil
@@ -9,7 +8,7 @@ open Composite_types
 open Intermediate_language
 open Nts_types
 open Nts
-open Cnt_iterpret
+open Cnt_interpret
 
 
 (*********************************************************************)
@@ -21,14 +20,14 @@ the guards for memory access --both read and write access-- *)
 
  (** The parameter exp_type corresponds to the type of the subexpresion.*)
 
-
+(*
 let rec offset_to_cnt (t : Cil_types.typ ) ( off : Cil_types.offset) =
   match off with
       NoOffset -> CntCst(0)
     | 
   
 
-let rec cnt_guard_of_mem_access sslv (exp_type : Cil_types.typ) 
+let rec cnt_guard_of_mem_access sslv (exp_type : Cil_types.typ) =
     ( expn : Cil_types.exp_node ) =
   match  expn with 
       Lval( Var (p) , off )->
@@ -138,3 +137,4 @@ to do with Info"))
           
 and  get_pvar_from_exp (expr : Cil_types.exp ) =
   get_pvar_from_exp_node expr.enode
+*)
