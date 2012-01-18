@@ -324,7 +324,7 @@ let rec get_subfield_name (prefix : string ) (finfo : Cil_types.fieldinfo)
 
 (** This function checks whether the argument is a pointer 
 variable or a casted pointer variable. It returns a Ssl_type.PVar("vname")
-if so, and raise an exception is not.*)
+if so, and raise an exception if the other case.*)
 let rec get_pvar_from_exp_node (expn : Cil_types.exp_node ) =
   match expn with
       Lval ( Var( p ) , off ) ->

@@ -282,6 +282,8 @@ and valid_sym_ptrexp  ( loc_map : validity_loc_map ) (sslf : ssl_formula ) ( ptr
     | LiAddrOfScal ( scalexp , _ ) ->
        valid_sym_cscal loc_map sslf scalexp
 
+    | LiBaseAddrOfArray(_,_) -> TruevarValid
+
 
 
 

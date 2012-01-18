@@ -48,6 +48,7 @@ type cnt_binop = CntEq
 		 | CntGeq
 		 
 type cnt_arithm_exp = CntCst of int
+		      | CntNdetVar of string (* non deterministic value *)
 		      | CntSymCst of string
 		      | CntVar of nts_var 
 		      | CntMinus of cnt_arithm_exp * cnt_arithm_exp
@@ -106,7 +107,9 @@ type il_fun_arguments = IlScalArg of il_int_fun_arg
 type cnt_trans_label = CntGuard of cnt_bool
 		   | CntFunCall of string * nts_var list option * il_fun_arguments list
 		   | CntAffect of nts_var * cnt_arithm_exp
+		   | CntNdetAssign of nts_var 
 		   | CntHavoc of nts_var list (* The value of the listed 
 						 variables are not copied.
 						 See NTL documentation.
 					       *)
+		   

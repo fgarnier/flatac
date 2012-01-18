@@ -29,6 +29,13 @@ exception Unhandled_valuetype_in_interpretciltypesize
 exception CilTypeHasNoEquivalentNtsType of Cil_types.typ
 
 
+
+let dereferenced_name_of_varname (v : string ) =
+  "addr_off_"^v
+
+
+
+
 let ciltype_2_ntstype (t : Cil_types.typ) =
   match t with 
       TInt(_,_) ->  NtsIntType
@@ -170,10 +177,13 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
 
     | LiScalOfAddr( ptrexp , optype ) -> 
       begin
-       	let ll = interpret_c_ptrexp_to_cnt sslf ptrexp in
+       	(*let ll = interpret_c_ptrexp_to_cnt sslf ptrexp in
 	let  sizeof_ptr_type = interpret_ciltypes_size optype in
-	CntProd(ll,sizeof_ptr_type)
+	CntProd(ll,sizeof_ptr_type *)
+	 CntNdet
       end
+
+    
 	    
 and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
   match ptrexp with 
@@ -210,11 +220,16 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
 	CntProd(ll,sizeof_ptr_type)
       end
 
-    | LiBaseAddrOfArray (_,_) ->
+    | LiBaseAddrOfArray (position,LiTab(Some(name),index_list,typeofelem)) ->
       begin
-	CntCst(0) (* Offset of an array set to zero*)
+	CntNDet (* Offset of an array set to zero*)
       end
-      
+
+    | LiDerefCVar(vname, _) ->
+      begin
+	CntNDet
+      end
+	
 (** Returns the type of the pointer expression, that is
 basically the type of the varname. Returns the type of the
 innermost pointer variable the expression tree.

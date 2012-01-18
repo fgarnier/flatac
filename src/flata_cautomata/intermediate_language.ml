@@ -33,6 +33,7 @@ type c_int_sym_const = LiSymIConst of string
 		       | LiCAliasTypeSizeof of Composite_type_types.c_type_name
 
 type c_ptr = LiIntPtr of string (*The represented type is indeed an int*)
+	    
 
 
 
@@ -74,8 +75,10 @@ type c_scal = LiVar of primed * c_int_var
 	      | LiMod of c_scal * c_scal   (*Modulo operator*)
 	      | LiMinusPP of c_ptrexp * c_ptrexp *  Cil_types.typ
 	      | LiScalOfAddr of c_ptrexp * Cil_types.typ 
-                                        (* While casting a ptr to an 
-					   integer type*) 
+                                        (* Type must be TPtr(t,_) 
+					Where t is not TPtr(_,_)
+					   Correponds to *p.
+					*) 
 	      | LiElemOfCTab of c_scal list * c_tab 
 
 and c_ptrexp = LiPVar of primed * c_ptr *  Cil_types.typ
@@ -87,7 +90,17 @@ and c_ptrexp = LiPVar of primed * c_ptr *  Cil_types.typ
 	       | LiIndexPI of c_ptrexp * c_scal * Cil_types.typ
 	       | LiMinusPI of c_ptrexp * c_scal * Cil_types.typ
 	       | LiAddrOfScal of c_scal * Cil_types.typ
-	       
+	       | LiDerefCVar of string  * Cil_types.typ
+		   (*&v where v is of type typ*)
+	       | LiStarOfPtr of c_ptrexp * Cil_types.typ (*
+							 Type must be
+							   TPtr(TPtr(_,_))
+							 *p.
+							 *)
+	       | LiDerefCPtr of c_ptrexp  * Cil_types.typ
+		   (*&v where v is a pointer expression *)
+	       | LiDerefCTab of c_tab
+ 
 and li_array_size = LiArraySize of c_scal
 		     | LiArraySizeUnknown
 
@@ -367,36 +380,37 @@ and cil_expr_2_ptr (expr : Cil_types.exp ) =
       begin
 	Format.printf "[cil_expr_2_ptr] :  Lval (Mem(e), offset ) \n";
 	match type_of_e with
-	    TInt(_,_) -> LiAddrOfScal((cil_expr_2_scalar e), type_of_e)
-	  | TPtr(_,_) ->
+	  (* TInt(_,_) -> (* Addresses of constants such as 0x0, NULL *)
+	     LiAddrOfScal((cil_expr_2_scalar e), type_of_e) *)
+	  | TPtr(TPtr(a,b),_) ->
 	    begin
-	      match offset with
-		| Field (finfo,_) -> 
-		  
-		  Format.printf "[cil_expr_2_ptr] Warning, loosing fieldinfo offset at some point : %s \n" finfo.forig_name;
-		  let pvar =  Ast_goodies.get_pvar_from_exp_node expr.enode
-		  in 
-		  let vname = Ssl.get_name_of_ptvar pvar in
-		  LiPVar(Unprimed,LiIntPtr(vname),type_of_e)
-		
-		| _ ->  cil_expr_2_ptr e
-		 
-	    end
+	      (* match offset with
+		 | Field (finfo,_) -> 
+	      *)  
+	      (*let pvar =  Ast_goodies.get_pvar_from_exp_node expr.enode*)
+	      let inner_cpt = cil_expr_2_ptr e in
+   
+	      LiStarOfPtr(inner_cpt,type_of_e)
+	    end	
+	      
+	  | _ ->  raise (Bad_expression_type ("In cil_expre_2_ptr, trying to accessed the value of a pointer, which value isn't a pointer."))
+      end
+			
 	 
 
-	  | _ -> 
-	    begin
-	      match  (Composite_types.is_integer_type type_of_e) with
-		  Some(_) ->
-		    LiAddrOfScal((cil_expr_2_scalar e), type_of_e)
-		| None ->
-		  raise  ( Bad_expression_type "Lval Mem(e) has neither an interger 
+   (* | _ -> 
+      begin
+	match  (Composite_types.is_integer_type type_of_e) with
+	    Some(_) ->
+	      LiAddrOfScal((cil_expr_2_scalar e), type_of_e)
+	  | None ->
+	    raise  ( Bad_expression_type "Lval Mem(e) has neither an interger 
 type nor pointer type TPtr .\n")
-	    end
       end
+ end*)
 
     | CastE ( t , expression ) -> (* If here, one expects the wildcarded
-				  type to be a pointer type.*) 
+				 type to be a pointer type.*) 
       let exp_type = Cil.typeOf expression in
       begin
 	match exp_type with
@@ -412,7 +426,7 @@ type nor pointer type TPtr .\n")
 	      match (Composite_types.is_integer_type exp_type) with
 		  Some(_) ->
 		    LiAddrOfScal((cil_expr_2_scalar expression), exp_type)
-	
+		      
 		| None ->
 		  raise ( Bad_expression_type "Trying to cast a value to an
 address type, which type is neither TInt nor TPtr.\n")
@@ -421,7 +435,7 @@ address type, which type is neither TInt nor TPtr.\n")
       	
 
     | StartOf((Var(v),offset_access))-> (* Implicit conversion form 
-				  an array to a pointer.*)
+					   an array to a pointer.*)
       begin
 	match v.vtype with
 	    TArray(t,e,_,_)->
@@ -476,8 +490,54 @@ address type, which type is neither TInt nor TPtr.\n")
     *)	
 
 
-    (*| AddrOf *)
+    | AddrOf( Var(v), offset ) ->
+      begin
+	match offset with
+	    Field(finf,off) -> 
+	      begin
+		let sfield_name = Ast_goodies.get_subfield_name 
+		  v.vname finf off in
+		LiDerefCVar(sfield_name,v.vtype)
+	      end
+		
+	  | Index(exp,off) ->
+	    begin
+	      let indexes = get_array_index offset [] in
+	      let dim = array_dim v.vtype [] in
+	      let parsed_tab = LiTab( Some(v.vname) , dim, v.vtype ) in
+	      LiBaseAddrOfArray(indexes,parsed_tab)
+	    end
+	      
+	  | NoOffset ->
+	    begin
+	      match v.vtype with
+		  TArray(_,_,_,_) -> 
+		    begin
+		      let dim = array_dim v.vtype [] in
+		      let parsed_tab = LiTab( Some(v.vname) , dim, v.vtype ) 
+		      in
+		      LiBaseAddrOfArray([],parsed_tab)
+		    end
+		
+		| _->
+		  begin
+		    LiDerefCVar(v.vname,v.vtype)
+		  end
+	    end
+	      
+      end
 
+    | AddrOf( Mem(e), offset ) ->
+      begin
+	match offset with
+	    NoOffset -> cil_expr_2_ptr e
+	  | _ -> 
+	    let format_warning = Format.formatter_of_out_channel stdout in
+	    Format.fprintf format_warning "AddrOf( Mem(e),offset), with offset != NoOffset : Operation not handled: expression is \n";
+	    Cil.d_exp format_warning expr;
+	    raise  ( Bad_expression_type("AddrOf( Mem(e),offset), with offset != NoOffset : Operation not handled") )
+      end
+	
       
     | Const(CStr(s))->
 	begin

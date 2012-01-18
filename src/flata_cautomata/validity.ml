@@ -82,7 +82,9 @@ let rec base_ptrexp (sslf : ssl_formula )( ptr_exp : c_ptrexp ) =
     | LiAddrOfScal( scalar , _ ) -> base_cscalptrexp sslf scalar
     | LiBaseAddrOfArray (_,LiTab(Some(tab_name),_,tt)) -> 
       (*let cptr = base_var_ptrexp ptr_exp in*) 
-      base_ptrexp sslf (LiPVar(Unprimed,LiIntPtr(tab_name),tt))   
+      base_ptrexp sslf (LiPVar(Unprimed,LiIntPtr(tab_name),tt))
+   | LiBaseAddrOfArray (_,LiTab(None,_,tt)) ->  
+     LVar("")
 and
     base_cscalptrexp (sslf : ssl_formula )( scal : c_scal ) =
   match scal with
