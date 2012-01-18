@@ -85,10 +85,18 @@ let rec base_ptrexp (sslf : ssl_formula )( ptr_exp : c_ptrexp ) =
       base_ptrexp sslf (LiPVar(Unprimed,LiIntPtr(tab_name),tt))
    | LiBaseAddrOfArray (_,LiTab(None,_,tt)) ->  
      LVar("")
+   | LiStarOfPtr (cptr,_) ->  base_ptrexp sslf cptr
+   | LiDerefCPtr(cptr,_) -> base_ptrexp sslf cptr
+   | LiDerefCVar(s,_) -> get_ptr_affectation sslf  (PVar(s))
+   | LiDerefCTab(LiTab(Some(tab_name),_,tt)) -> 
+     base_ptrexp sslf (LiPVar(Unprimed,LiIntPtr(tab_name),tt))
+   | LiDerefCTab(LiTab(None,_,tt)) -> 
+     LVar("")  
 and
     base_cscalptrexp (sslf : ssl_formula )( scal : c_scal ) =
   match scal with
       LiScalOfAddr(ptrexp , _ ) -> base_ptrexp sslf ptrexp
+	
     | _ -> LVar("") (*Nil*)
 
 
@@ -161,8 +169,13 @@ let rec valid_cscal (sslf : ssl_formula ) ( scal : c_scal) =
 	end
 
     | LiScalOfAddr( ptrexp , _) -> 
-      valid_ptrexp sslf ptrexp
-	  
+      (*valid_ptrexp sslf ptrexp*)
+	  FalseValid
+
+    | LiElemOfCTab(_,_)
+	-> FalseValid
+
+
 and valid_ptrexp (sslf : ssl_formula ) ( ptrexp :  c_ptrexp ) =
   match ptrexp with 
       LiPVar ( _ , LiIntPtr(vname), _ ) ->  
@@ -207,3 +220,7 @@ and valid_ptrexp (sslf : ssl_formula ) ( ptrexp :  c_ptrexp ) =
 	List.fold_left valid_criterion TrueValid dim_list
       end
 
+
+    | LiDerefCVar( vname, t) -> 
+      let valname =  Nts.valid_name_of_var vname in 
+	(PtValid(valname))

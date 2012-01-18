@@ -178,11 +178,15 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
     | LiScalOfAddr( ptrexp , optype ) -> 
       begin
        	(*let ll = interpret_c_ptrexp_to_cnt sslf ptrexp in
-	let  sizeof_ptr_type = interpret_ciltypes_size optype in
-	CntProd(ll,sizeof_ptr_type *)
-	 CntNdet
+	  let  sizeof_ptr_type = interpret_ciltypes_size optype in
+	  CntProd(ll,sizeof_ptr_type *)
+	CntNdet
       end
 
+    | LiElemOfCTab(_,_) ->
+      CntNdet
+      
+    
     
 	    
 and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
@@ -222,13 +226,30 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
 
     | LiBaseAddrOfArray (position,LiTab(Some(name),index_list,typeofelem)) ->
       begin
-	CntNDet (* Offset of an array set to zero*)
+	CntNdet (* Offset of an array set to zero*)
       end
 
     | LiDerefCVar(vname, _) ->
       begin
-	CntNDet
+	let vname = dereferenced_name_of_varname vname in  
+	CntVar(NtsIVar(vname))
       end
+
+    | LiStarOfPtr(cptr,t) ->
+      begin
+	match cptr with
+	    LiDerefCVar(vname,_) ->
+	      CntVar(NtsIVar(vname))
+	  | LiDerefCPtr(vptr,_) ->
+	    let cnt_vptr = interpret_c_ptrexp_to_cnt sslf vptr in
+	    cnt_vptr
+	      
+	  | _ -> CntNdet
+      end
+
+    |  LiDerefCPtr ( cptr , t ) ->
+      CntNdet
+	
 	
 (** Returns the type of the pointer expression, that is
 basically the type of the varname. Returns the type of the

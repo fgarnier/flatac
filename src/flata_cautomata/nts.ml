@@ -88,28 +88,7 @@ let make_ntsvars_of_intvars (vname : string) =
 
 
 
-(*Pretty prints the list of the names of the integer vars of a Nts variable list.*)
-(*
-let pprint_nts_int_vars_from_ntsvarlist l =
-  let is_int_var e =
-    match e with
-	 NtsIVar( _ ) -> true
-      | _ -> false
-  in
-  let l = List.filter is_int_var l in
-  pprint_nts_var_list l
 
-
-
-let pprint_nts_real_vars_from_ntsvarlist l =
-  let is_real_var e =
-    match e with
-	 NtsRVar( _ ) -> true
-      | _ -> false
-  in
-  let l = List.filter is_real_var l in
-  pprint_nts_var_list l
-*)
 
 let concat_if_first_arg_nonzero s1 s2 =
   if String.length s1 != 0
@@ -157,7 +136,7 @@ let pprint_typeinfo_nts_var_list l =
 let rec size_arithm_exp ( exp : cnt_arithm_exp ) =
   match exp with 
        CntCst(_) -> 1
-    | CntNDet(_) -> 1
+    | CntNdet(_) -> 1
     | CntSymCst ( _ ) -> 1
     | CntVar (_) -> 1
     | CntInvalidExp -> 1
@@ -181,7 +160,8 @@ let rec size_arithmexp_deeper_than  (exp : cnt_arithm_exp ) (deepness : int ) =
   else 
     let deepness' = deepness - 1 in
     match exp with 
-       CntCst(_) 
+       CntCst(_)
+      | CntNdet
     | CntSymCst (_ )
     | CntVar (_) 
     | CntInvalidExp -> false
@@ -212,13 +192,11 @@ let rec size_boolexp_deeper_than  (bexp : cnt_bool ) (deepness : int ) =
 	(size_boolexp_deeper_than eg deep' ) || (size_boolexp_deeper_than ed deep' )
       | CntBool ( _, _ , _ ) -> false
 
-	  
-      
-
 
 let rec cnt_pprint_arithm_exp ( exp : cnt_arithm_exp ) =
   match exp with
       CntCst(i) -> let s = Format.sprintf "%d" i in s
+    | CntNdet -> "NDET"
     | CntSymCst(str) -> str
     | CntVar ( ntsvar ) -> nts_pprint_nts_var ntsvar
 

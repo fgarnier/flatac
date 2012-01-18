@@ -78,6 +78,8 @@ let validity_of_byname ( loc_map : validity_loc_map ) ( varname : string ) =
 		let error_msg =
 		  Format.sprintf "Variable %s does'nt apprear in: Loc map contains : %s \n" varname (pprint_validity_loc_map loc_map) in
 		raise (Unregistered_var(error_msg))
+		 
+	    | e -> raise e  
 	end
 	  
 (**  return a new validity mapping *)
