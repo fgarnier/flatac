@@ -30,7 +30,7 @@ open Var_validity
 
 open Ast_goodies
 open Compile_2_nts
-
+open Guard_of_mem_acces
 
 exception No_pvar_in_free_expression
 exception Wrong_parameter_type_in_free
@@ -39,20 +39,7 @@ exception Debug_info of string
 exception Assert_fail_exception 
 
 
-(** If used to descibe a malloc creation of a mem segment,
-this function must be called AFTER the generation of the
-ssl formula, to get the good gmid identificator.*)
-let make_size_locvar ( l : locvar ) (mid : global_mem_manager ) ( block_size : cnt_arithm_exp) =
-  match l with
-      LVar( vname ) -> 
-	let id_seg = mid#get_last_mid () in
-	let lbase_name = vname^"_base" in
-	let lsize_name = vname^"_size" in
-	let cnt_lbase = NtsIVar(lbase_name) in
-	let cnt_lsize = NtsIVar(lsize_name) in
-	let affect_list = (CntAffect(cnt_lbase,CntCst(id_seg))::[] ) in
-	let affect_list = (CntAffect(cnt_lsize,block_size))::affect_list in
-	affect_list
+
 
 
 

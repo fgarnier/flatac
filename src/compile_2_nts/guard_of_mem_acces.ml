@@ -10,8 +10,10 @@ open Nts_types
 open Nts
 open Compile_2_nts
 open Cnt_interpret
+open Global_mem
+open Ssl_valid_abs_dom_types
 
-
+exception Unhandled_offset_type of string
 (*********************************************************************)
 (* We define in this file the set of functions that allow to compute
 the guards for memory access --both read and write access-- *)
@@ -35,50 +37,113 @@ let make_validity_varpvar ( v : ptvar) =
 	NtsIVar(vdty)
 
 
+
+let get_lsizename_of_locvar ( l : locvar ) =
+  match l with
+      LVar( vname ) -> vname^"_size"
+
+let get_lbasename_of_locvar ( l : locvar ) =
+  match l with 
+      LVar( vname ) ->  vname^"_base"
+
+
+
+(** If used to descibe a malloc creation of a mem segment,
+this function must be called AFTER the generation of the
+ssl formula, to get the good gmid identificator.*)
+let make_size_locvar ( l : locvar ) (mid : global_mem_manager ) ( block_size : cnt_arithm_exp) =
+(*  match l with
+      LVar( vname ) ->*) 
+  let id_seg = mid#get_last_mid () in
+  let lbase_name = get_lbasename_of_locvar l in
+  let lsize_name = get_lsizename_of_locvar l  in
+  let cnt_lbase = NtsIVar(lbase_name) in
+  let cnt_lsize = NtsIVar(lsize_name) in
+  let affect_list = (CntAffect(cnt_lbase,CntCst(id_seg))::[] ) in
+  let affect_list = (CntAffect(cnt_lsize,block_size))::affect_list in
+  affect_list
+
+
+
+
+
+
 (* Not yet recursive. One only need to access to the first layer of
 pointer for multidimentional pointers -- like int **. *)
 
-let  offset_to_cnt sslv (t : Cil_types.typ ) ( off : Cil_types.offset) =
+let  offset_of_mem_access_to_cnt sslv (t : Cil_types.typ ) ( off : Cil_types.offset) =
   match off with
       NoOffset -> CntCst(0)
     | Index (exp , _ ) -> 
       let offset_exp = compile_cil_exp_2_cnt sslv exp in
-      offset_exp
-    | 
+      let sizeof_type = interpret_ciltypes_size t in
+      CntProd(offset_exp,sizeof_type)
+    | Field(_,_) -> raise (Unhandled_offset_type ("Field met in offset_of_mem_access"))
 
-let rec cnt_guard_of_mem_access sslv (exp_type : Cil_types.typ) =
-    ( expn : Cil_types.exp_node ) =
-  match  expn with 
+
+
+let cnt_guard_of_mem_access sslv (exp_type : Cil_types.typ) 
+    ( expr : Cil_types.exp ) =
+  
+  let mem_accs_type = Cil.typeOf expr in
+  
+  match  expr.enode with 
       Lval( Var (p) , off )->
 	begin
 	  match off with
 	      NoOffset ->
 		CntBTrue (* à voir ce qui se passe avec les tableaux *)
-	  
+		  
  	end
+
     | Lval( Mem(e) , off ) -> (*Access at the offset off of base memory e*)
       begin
-	let pvar_access = get_pvar_of_expr e in
+	let pvar_access = Ast_goodies.get_pvar_from_exp e in
 	try
-	  let location_var = Ssl.get_pointer_affectation sslv.ssl_part pvar_access in
-	  if (SSl.is_allocated location_var sslv.ssl_part )
+	  let location_var = Ssl.get_ptr_affectation sslv.ssl_part pvar_access in
+	  if (Ssl.is_allocated location_var sslv.ssl_part )
 	  then 
 	    begin
-	      let offset_name_of_pvar = make_offset_loc_pvar pvar_access in
-	      let offset_of_e = 
+	      (* Computation of the offset of the pointer plus the
+	      offset at which the memory is accessed. *)
+	   
+	      let offset_nts_var = make_offset_locpvar pvar_access in
+	      let offset_of_e = offset_of_mem_access_to_cnt sslv mem_accs_type 
+		off in
+	      let sizeof_exp = Cnt_interpret.interpret_ciltypes_size
+		mem_accs_type in
+	      let total_offset = 
+		CntSum(offset_of_e,CntProd(CntVar(offset_nts_var),sizeof_exp)) 
+	      in
+	      let locvar_size_name = get_lsizename_of_locvar location_var 
+	      in
+	      (* Getting the location variable associated to the pointer 
+	      if any.*)
+	      let locvar_size = CntVar(NtsIVar(locvar_size_name)) 
+	      in
+	      (*Generating the access within bounds conditions guards 
+	      and the alignement guard.*)
+	      let interval_cond = 
+		CntBAnd(CntBool(CntLt,total_offset,locvar_size),CntBool(CntGeq,total_offset,CntCst(0))) 
+	      in
+	      let align_cond = CntBool(CntEq,CntMod(total_offset,locvar_size),CntCst(0)) 
+	      in
+	      CntBAnd(interval_cond,align_cond)
 	    end
 	  else
 	    CntBFalse
-
+	      
 	with
 	    _ -> 
 	      begin
-		Format.printf "The ptrvar %s has not matching affectation in the heap \n" 
-		CntBFalse
+		Format.printf "The ptrvar %s has not matching affectation in the heap \n" ;
+		  CntBFalse
 	      end
       end
 
 
+	
+(*
 let rec get_pvar_from_exp_node (expn : Cil_types.exp_node ) =
   match expn with
       Lval ( Var( p ) , off ) ->
@@ -107,8 +172,7 @@ let rec get_pvar_from_exp_node (expn : Cil_types.exp_node ) =
 
     | Lval(Mem(e), off ) ->
       Format.printf "Guard of mem acces of e";
-      begin
-	let 
+      begin 
         match e.enode , off with
             (Lval(Var(v'),_),NoOffset) ->
               Format.printf "Mem(e) :*%s- \n" v'.vname ;
