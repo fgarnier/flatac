@@ -416,6 +416,8 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
 
 
 
+ 
+
  (* this method is used to compute the set of counter variables who are
  assigned a new value*)
   let havocise (trans_label_list : cnt_trans_label list) =
@@ -456,7 +458,7 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
       
   let name_ndet_arg i =
     let name = Format.sprintf "_ndet_arg_%d" i in
-    CntVar(NtsIVar(name))
+    NtsIVar(name)
 
   let replace_ndet_args_by_ndet_counters ( ilfunlist :  il_fun_arguments list ) =
     let ndet_args = ref 0 in
@@ -470,7 +472,7 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
 		    begin
 		      let ret_val =
 			{
-			  expr = name_ndet_arg !ndet_args;
+			  expr = CntVar((name_ndet_arg !ndet_args));
 			  validity_of_exp = iarg.validity_of_exp;
 			}
 		      in
@@ -489,7 +491,7 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
 		    let ret_val =
 		      {
 			base_of_exp = ptrarg.base_of_exp;
-			offset_of_exp =  name_ndet_arg !ndet_args;  
+			offset_of_exp =  CntVar((name_ndet_arg !ndet_args));  
 			validity_of_ptr_exp = ptrarg.validity_of_ptr_exp;
 		      }
 		    in
@@ -499,5 +501,41 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
 	      | _ -> ilfunarg 	  
 	  end
     in
-    let modif_il_list = List.map replace_ndet_args_mapper in
+    let modif_il_list = List.map replace_ndet_args_mapper  ilfunlist in
     (!ndet_args , modif_il_list)
+
+
+
+
+  let build_argn_det_list (size : int ) =
+    let rec rec_build_it index list =
+      if index > 1 then
+	rec_build_it (index -1) ((name_ndet_arg (index-1))::list) 
+      else
+	list 
+    in
+    rec_build_it size [] 
+	
+ 
+
+  let rewrite_ndet_assignation (l : cnt_trans_label list ) =
+    let ndet_affect_folder ret_list transit =
+      match transit with
+	| CntFunCall(v,retval,arglist) ->
+	  begin
+	    let ( ndet_cnt , new_arg_list )= 
+	      replace_ndet_args_by_ndet_counters  
+		arglist 
+	    in
+	    if ndet_cnt == 0 then
+	      transit::ret_list
+	    else
+	      begin
+		let list_of_ndet_vars = build_argn_det_list ndet_cnt in
+		(CntFunCall(v,retval,new_arg_list))::(CntHavoc(list_of_ndet_vars)::ret_list)
+	      end
+	  end
+
+	| _ -> transit::ret_list
+    in
+    List.fold_left ndet_affect_folder [] l
