@@ -136,14 +136,6 @@ and c_bool = LiBNot of c_bool
 type il_expr = IlScal of c_scal
 	       | IlPtr of c_ptrexp
 
-
-
-	       
-
-
-    
-
-
 (** One need to translate C-boolean evaluation into the language of FLATA
 constrainsts. That's to say : 
 Translating C-booleans expressions in the  "intermediate language " 
@@ -188,14 +180,13 @@ let get_base_type_of_array (ttab : Cil_types.typ) =
     | _ -> raise Not_Array_type
       
 
-
-
 let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 
   Format.printf "In cil_expr_2_scalar %s \n" (Ast_goodies.pprint_cil_exp expr );
   Cil.d_exp Ast_goodies.debug_out expr;
   match expr.enode with 
       Const(CInt64(i,_,_))-> LiConst( LiIConst(My_bigint.to_int i))
+    | Const(CChr(c)) -> LiSymConst(LiSymIConst(String.make 1 c))
     | Const(CEnum(e)) -> cil_enumitem_2_scalar e
     	  
     | Lval(Var(f),offset)->
@@ -252,7 +243,7 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 	      Format.fprintf  debug_out "[cil_expr_2_cscal] : lval is a Mem(e) \n";
 	      Cil.d_lval debug_out  ( Mem(e), offset);
 	      Format.fprintf  debug_out "\n";
-	      let ptr_addr_e = cil_expr_2_ptr expr in
+	      let ptr_addr_e = cil_expr_2_ptr e in
 	      LiScalOfAddr(ptr_addr_e,t)
 
 	  | _ -> 
