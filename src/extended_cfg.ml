@@ -99,7 +99,7 @@ struct
 	
     val fun_def= funinfo
     val mutable name = name_function 
-
+    val max_args_of_all_callee = Ast_goodies.max_args_numbers_of_callees funinfo.sallstmts  
    
     
     val mutable is_computed = false
