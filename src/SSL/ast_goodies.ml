@@ -437,5 +437,19 @@ des parametres \n" ;
 	 end
 
 
+let max_args_numbers_of_callees (stmtkl : Cil_types.stmt list) =
+  let folder max_num stmt =
+    match stmt.skind with 
+	Instr(Call(_,_,l,_)) -> 
+	  begin
+	    let curr_len = List.length l in
+	    if curr_len > max_num then
+	      curr_len
+	    else 
+	      max_num
+	  end
+      |_ -> max_num
+  in
+  List.fold_left folder 0 stmtkl
 
-
+    
