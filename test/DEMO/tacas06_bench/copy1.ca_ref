@@ -1,0 +1,28 @@
+nts DEMO/tacas06_bench/copy1;
+n,j,i,y,x,skip : int; 
+main{
+
+validity____retres_,__retres : int ;
+
+ out ret_val_ : int;
+initial s0;
+
+ 
+ s0->s1 { i'=0 and havoc(i) } 
+ s1->s2 { havoc() } 
+ s2->s3 { havoc() } 
+ s3->s4 { i < n and havoc() } 
+ s3->s5 { i >= n and havoc() } 
+ s4->s6 { havoc() } 
+ s5->s7 { havoc() } 
+ s6->s8 { i'=i+1 and havoc(i) } 
+ s7->s9 { j >= 0 and havoc() } 
+ s7->s10 { j < 0 and havoc() } 
+ s8->s2 { havoc() } 
+ s9->s10 { j >= n and havoc() } 
+ s9->s11 { j < n and havoc() } 
+ s10->s10 { havoc() } 
+ s11->s10 { NDET = NDET and havoc() } 
+ s11->s12 { NDET != NDET and havoc() } 
+ s12->s12 { havoc() }
+}

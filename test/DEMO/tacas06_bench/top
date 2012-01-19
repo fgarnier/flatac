@@ -1,0 +1,4237 @@
+[kernel] preprocessing with "gcc -C -E -I.  string_concat1.c"
+string_concat1.c:30:[kernel] warning: Body of function main falls-through. Adding a return statement
+Current project name is : default 
+File name provided by the Kernel.Files.get function is string_concat1.c 
+SLOCAL [ __retres:int ] = 
+SLOCAL [ j:int ] = 
+SLOCAL [ i:int ] = 
+SLOCAL [ z:[Array : char] ] = 
+SLOCAL [ y:[Array : char] ] = 
+SLOCAL [ x:[Array : char] ] = 
+ 
+flatac_visitor: Index of global types :  
+[get°entry_point_from_fundec ]  New absdom : $\Formula{\texttt{true}}{\Emp}$ 
+[get°entry_point_from_fundec ]  Absdom after registering slocals : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+[get°entry_point_from_fundec ]  Absdom after registering sformals : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+Registering globlal variable __BLAST_NONDET' validity 
+[ Extended cfg Adding : Ecfg node id  : -2, Framac sid 0 ] 
+ [FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+In cil_expr_2_scalar 0 
+[ Extended cfg Adding : Ecfg node id  : 41, Framac sid 1 ] 
+ Scheduling another vertex for execution 
+ Warning : Not a basic instruction : Loop In file : string_concat1.c, from line 9 col 2 to line 12 col 3. /n 
+[ Extended cfg Adding : Ecfg node id  : 42, Framac sid 2 ] 
+ Scheduling another vertex for execution 
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 9 col 8 to line 9 col 17. /n 
+[ Extended cfg Adding : Ecfg node id  : 43, Framac sid 3 ] 
+ Scheduling another vertex for execution 
+In cil_expr_2_scalar 0 
+In cil_expr_2_scalar ( CAST int,Var x : [Array : char]) 
+In cil_expr_2_scalar Var x : [Array : char] 
+In cil_expr_2_scalar Var i : int 
+In cil_expr_2_scalar 101 
+ Warning : Not a basic instruction : Block 
+ 
+ Warning : Not a basic instruction : Break toIn file : string_concat1.c, from line 9 col 2 to line 12 col 3. /n 
+[ Extended cfg Adding : Ecfg node id  : 45, Framac sid 4 ] 
+ Scheduling another vertex for execution 
+[ Extended cfg Adding : Ecfg node id  : 44, Framac sid 5 ] 
+ Scheduling another vertex for execution 
+In cil_expr_2_scalar 0 
+In cil_expr_2_scalar ( CAST int,Var x : [Array : char]) 
+In cil_expr_2_scalar Var x : [Array : char] 
+In cil_expr_2_scalar Var i : int 
+In cil_expr_2_scalar 101 
+ Warning : Not a basic instruction : Block 
+ 
+ Warning : Not a basic instruction : Break toIn file : string_concat1.c, from line 9 col 2 to line 12 col 3. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[ Extended cfg Adding : Ecfg node id  : 46, Framac sid 6 ] 
+ Scheduling another vertex for execution 
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 14 col 5 to line 14 col 13. /n 
+[ Extended cfg Adding : Ecfg node id  : 48, Framac sid 7 ] 
+ Scheduling another vertex for execution 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 14 col 5 to line 14 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar PlusA(Var i : int,1) : int 
+In cil_expr_2_scalar 1 
+In cil_expr_2_scalar Var i : int 
+In cil_expr_2_scalar PlusA(Var i : int,1) : int 
+In cil_expr_2_scalar 1 
+In cil_expr_2_scalar Var i : int 
+[ Extended cfg Adding : Ecfg node id  : 47, Framac sid 8 ] 
+ Scheduling another vertex for execution 
+In cil_expr_2_scalar 100 
+In cil_expr_2_scalar Var i : int 
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+In cil_expr_2_scalar 0 
+[ Extended cfg Adding : Ecfg node id  : 49, Framac sid 9 ] 
+ Scheduling another vertex for execution 
+[ Extended cfg Adding : Ecfg node id  : 50, Framac sid 10 ] 
+ Scheduling another vertex for execution 
+In cil_expr_2_scalar 100 
+In cil_expr_2_scalar Var i : int 
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+In cil_expr_2_scalar 0 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar PlusA(Var i : int,1) : int 
+In cil_expr_2_scalar 1 
+In cil_expr_2_scalar Var i : int 
+In cil_expr_2_scalar PlusA(Var i : int,1) : int 
+In cil_expr_2_scalar 1 
+In cil_expr_2_scalar Var i : int 
+000(int)x[i]x[i]i1010(int)x[i]x[i]i101i + 11ii + 11i100i00100i00i + 11i
+i + 11i[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 100 
+100In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 100 
+100In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : Loop In file : string_concat1.c, from line 9 col 2 to line 12 col 3. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : Loop In file : string_concat1.c, from line 18 col 2 to line 22 col 3. /n 
+[ Extended cfg Adding : Ecfg node id  : 51, Framac sid 11 ] 
+ Scheduling another vertex for execution 
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : Loop In file : string_concat1.c, from line 18 col 2 to line 22 col 3. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : Loop In file : string_concat1.c, from line 9 col 2 to line 12 col 3. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : Loop In file : string_concat1.c, from line 18 col 2 to line 22 col 3. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : Loop In file : string_concat1.c, from line 18 col 2 to line 22 col 3. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 18 col 8 to line 18 col 17. /n 
+[ Extended cfg Adding : Ecfg node id  : 52, Framac sid 12 ] 
+ Scheduling another vertex for execution 
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 18 col 8 to line 18 col 17. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 18 col 8 to line 18 col 17. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 18 col 8 to line 18 col 17. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar ( CAST int,Var y : [Array : char]) 
+(int)y[j]In cil_expr_2_scalar Var y : [Array : char] 
+y[j]In cil_expr_2_scalar Var j : int 
+jIn cil_expr_2_scalar 101 
+101 Warning : Not a basic instruction : Block 
+ 
+ Warning : Not a basic instruction : Break toIn file : string_concat1.c, from line 18 col 2 to line 22 col 3. /n 
+[ Extended cfg Adding : Ecfg node id  : 54, Framac sid 13 ] 
+ Scheduling another vertex for execution 
+[ Extended cfg Adding : Ecfg node id  : 53, Framac sid 14 ] 
+ Scheduling another vertex for execution 
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar ( CAST int,Var y : [Array : char]) 
+(int)y[j]In cil_expr_2_scalar Var y : [Array : char] 
+y[j]In cil_expr_2_scalar Var j : int 
+jIn cil_expr_2_scalar 101 
+101 Warning : Not a basic instruction : Block 
+ 
+ Warning : Not a basic instruction : Break toIn file : string_concat1.c, from line 18 col 2 to line 22 col 3. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar ( CAST int,Var y : [Array : char]) 
+(int)y[j]In cil_expr_2_scalar Var y : [Array : char] 
+y[j]In cil_expr_2_scalar Var j : int 
+jIn cil_expr_2_scalar 101 
+101 Warning : Not a basic instruction : Block 
+ 
+ Warning : Not a basic instruction : Break toIn file : string_concat1.c, from line 18 col 2 to line 22 col 3. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar ( CAST int,Var y : [Array : char]) 
+(int)y[j]In cil_expr_2_scalar Var y : [Array : char] 
+y[j]In cil_expr_2_scalar Var j : int 
+jIn cil_expr_2_scalar 101 
+101 Warning : Not a basic instruction : Block 
+ 
+ Warning : Not a basic instruction : Break toIn file : string_concat1.c, from line 18 col 2 to line 22 col 3. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar ( CAST int,Var y : [Array : char]) 
+(int)y[j]In cil_expr_2_scalar Var y : [Array : char] 
+y[j]In cil_expr_2_scalar Var j : int 
+jIn cil_expr_2_scalar 101 
+101 Warning : Not a basic instruction : Block 
+ 
+ Warning : Not a basic instruction : Break toIn file : string_concat1.c, from line 18 col 2 to line 22 col 3. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar ( CAST int,Var y : [Array : char]) 
+(int)y[j]In cil_expr_2_scalar Var y : [Array : char] 
+y[j]In cil_expr_2_scalar Var j : int 
+jIn cil_expr_2_scalar 101 
+101 Warning : Not a basic instruction : Block 
+ 
+ Warning : Not a basic instruction : Break toIn file : string_concat1.c, from line 18 col 2 to line 22 col 3. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar ( CAST int,Var y : [Array : char]) 
+(int)y[j]In cil_expr_2_scalar Var y : [Array : char] 
+y[j]In cil_expr_2_scalar Var j : int 
+jIn cil_expr_2_scalar 101 
+101 Warning : Not a basic instruction : Block 
+ 
+ Warning : Not a basic instruction : Break toIn file : string_concat1.c, from line 18 col 2 to line 22 col 3. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar ( CAST int,Var y : [Array : char]) 
+(int)y[j]In cil_expr_2_scalar Var y : [Array : char] 
+y[j]In cil_expr_2_scalar Var j : int 
+jIn cil_expr_2_scalar 101 
+101 Warning : Not a basic instruction : Block 
+ 
+ Warning : Not a basic instruction : Break toIn file : string_concat1.c, from line 18 col 2 to line 22 col 3. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[ Extended cfg Adding : Ecfg node id  : 55, Framac sid 15 ] 
+ Scheduling another vertex for execution 
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 24 col 5 to line 24 col 13. /n 
+[ Extended cfg Adding : Ecfg node id  : 58, Framac sid 16 ] 
+ Scheduling another vertex for execution 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 24 col 5 to line 24 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 24 col 5 to line 24 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 24 col 5 to line 24 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 24 col 5 to line 24 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 24 col 5 to line 24 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 24 col 5 to line 24 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 24 col 5 to line 24 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar PlusA(Var i : int,1) : int 
+
+i + 1In cil_expr_2_scalar 1 
+1In cil_expr_2_scalar Var i : int 
+iIn cil_expr_2_scalar PlusA(Var i : int,1) : int 
+In cil_expr_2_scalar 1 
+i + 11In cil_expr_2_scalar Var i : int 
+i[ Extended cfg Adding : Ecfg node id  : 56, Framac sid 17 ] 
+ Scheduling another vertex for execution 
+In cil_expr_2_scalar 100 
+100In cil_expr_2_scalar Var j : int 
+j Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[ Extended cfg Adding : Ecfg node id  : 59, Framac sid 18 ] 
+ Scheduling another vertex for execution 
+[ Extended cfg Adding : Ecfg node id  : 60, Framac sid 19 ] 
+ Scheduling another vertex for execution 
+In cil_expr_2_scalar 100 
+100In cil_expr_2_scalar Var j : int 
+j Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar PlusA(Var i : int,1) : int 
+In cil_expr_2_scalar 1 
+i + 11In cil_expr_2_scalar Var i : int 
+iIn cil_expr_2_scalar PlusA(Var i : int,1) : int 
+In cil_expr_2_scalar 1 
+i + 11In cil_expr_2_scalar Var i : int 
+i[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 100 
+100In cil_expr_2_scalar Var j : int 
+j Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 100 
+100In cil_expr_2_scalar Var j : int 
+j Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar PlusA(Var i : int,1) : int 
+In cil_expr_2_scalar 1 
+i + 11In cil_expr_2_scalar Var i : int 
+iIn cil_expr_2_scalar PlusA(Var i : int,1) : int 
+In cil_expr_2_scalar 1 
+i + 11In cil_expr_2_scalar Var i : int 
+i[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 100 
+100In cil_expr_2_scalar Var j : int 
+j Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 100 
+100In cil_expr_2_scalar Var j : int 
+j Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar PlusA(Var i : int,1) : int 
+In cil_expr_2_scalar 1 
+i + 11In cil_expr_2_scalar Var i : int 
+iIn cil_expr_2_scalar PlusA(Var i : int,1) : int 
+
+i + 1In cil_expr_2_scalar 1 
+1In cil_expr_2_scalar Var i : int 
+i[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 100 
+100In cil_expr_2_scalar Var j : int 
+j Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 100 
+100In cil_expr_2_scalar Var j : int 
+j Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar PlusA(Var i : int,1) : int 
+In cil_expr_2_scalar 1 
+i + 11In cil_expr_2_scalar Var i : int 
+iIn cil_expr_2_scalar PlusA(Var i : int,1) : int 
+In cil_expr_2_scalar 1 
+i + 11In cil_expr_2_scalar Var i : int 
+i[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 100 
+100In cil_expr_2_scalar Var j : int 
+j Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 100 
+100In cil_expr_2_scalar Var j : int 
+j Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar PlusA(Var i : int,1) : int 
+In cil_expr_2_scalar 1 
+i + 11In cil_expr_2_scalar Var i : int 
+iIn cil_expr_2_scalar PlusA(Var i : int,1) : int 
+In cil_expr_2_scalar 1 
+i + 11In cil_expr_2_scalar Var i : int 
+i[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 100 
+100In cil_expr_2_scalar Var j : int 
+j Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 100 
+100In cil_expr_2_scalar Var j : int 
+j Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar PlusA(Var i : int,1) : int 
+In cil_expr_2_scalar 1 
+i + 11In cil_expr_2_scalar Var i : int 
+iIn cil_expr_2_scalar PlusA(Var i : int,1) : int 
+In cil_expr_2_scalar 1 
+i + 11In cil_expr_2_scalar Var i : int 
+i[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 100 
+100In cil_expr_2_scalar Var j : int 
+j Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 100 
+100In cil_expr_2_scalar Var j : int 
+j Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar PlusA(Var i : int,1) : int 
+
+i + 1In cil_expr_2_scalar 1 
+1In cil_expr_2_scalar Var i : int 
+iIn cil_expr_2_scalar PlusA(Var i : int,1) : int 
+In cil_expr_2_scalar 1 
+i + 11In cil_expr_2_scalar Var i : int 
+i[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 100 
+100In cil_expr_2_scalar Var j : int 
+j Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 100 
+100In cil_expr_2_scalar Var j : int 
+j Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Unhandled type of variable affectation, skiping it
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar PlusA(Var j : int,1) : int 
+In cil_expr_2_scalar 1 
+j + 11In cil_expr_2_scalar Var j : int 
+jIn cil_expr_2_scalar PlusA(Var j : int,1) : int 
+In cil_expr_2_scalar 1 
+j + 11In cil_expr_2_scalar Var j : int 
+j[ Extended cfg Adding : Ecfg node id  : 57, Framac sid 20 ] 
+ Scheduling another vertex for execution 
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 29 col 5 to line 29 col 13. /n 
+[ Extended cfg Adding : Ecfg node id  : 61, Framac sid 21 ] 
+ Scheduling another vertex for execution 
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 29 col 5 to line 29 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar PlusA(Var j : int,1) : int 
+In cil_expr_2_scalar 1 
+j + 11In cil_expr_2_scalar Var j : int 
+jIn cil_expr_2_scalar PlusA(Var j : int,1) : int 
+In cil_expr_2_scalar 1 
+j + 11In cil_expr_2_scalar Var j : int 
+j[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 29 col 5 to line 29 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 29 col 5 to line 29 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar PlusA(Var j : int,1) : int 
+In cil_expr_2_scalar 1 
+j + 11In cil_expr_2_scalar Var j : int 
+jIn cil_expr_2_scalar PlusA(Var j : int,1) : int 
+In cil_expr_2_scalar 1 
+j + 11In cil_expr_2_scalar Var j : int 
+j[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 29 col 5 to line 29 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 29 col 5 to line 29 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar PlusA(Var j : int,1) : int 
+In cil_expr_2_scalar 1 
+j + 11In cil_expr_2_scalar Var j : int 
+jIn cil_expr_2_scalar PlusA(Var j : int,1) : int 
+In cil_expr_2_scalar 1 
+
+j + 11In cil_expr_2_scalar Var j : int 
+j[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 29 col 5 to line 29 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 29 col 5 to line 29 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar PlusA(Var j : int,1) : int 
+In cil_expr_2_scalar 1 
+j + 11In cil_expr_2_scalar Var j : int 
+jIn cil_expr_2_scalar PlusA(Var j : int,1) : int 
+In cil_expr_2_scalar 1 
+j + 11In cil_expr_2_scalar Var j : int 
+j[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 29 col 5 to line 29 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 29 col 5 to line 29 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar PlusA(Var j : int,1) : int 
+In cil_expr_2_scalar 1 
+j + 11In cil_expr_2_scalar Var j : int 
+jIn cil_expr_2_scalar PlusA(Var j : int,1) : int 
+In cil_expr_2_scalar 1 
+j + 11In cil_expr_2_scalar Var j : int 
+j[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 29 col 5 to line 29 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 29 col 5 to line 29 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar PlusA(Var j : int,1) : int 
+In cil_expr_2_scalar 1 
+j + 11In cil_expr_2_scalar Var j : int 
+jIn cil_expr_2_scalar PlusA(Var j : int,1) : int 
+In cil_expr_2_scalar 1 
+j + 11In cil_expr_2_scalar Var j : int 
+j[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 29 col 5 to line 29 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 29 col 5 to line 29 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar PlusA(Var j : int,1) : int 
+In cil_expr_2_scalar 1 
+j + 11In cil_expr_2_scalar Var j : int 
+jIn cil_expr_2_scalar PlusA(Var j : int,1) : int 
+In cil_expr_2_scalar 1 
+j + 11In cil_expr_2_scalar Var j : int 
+j[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 29 col 5 to line 29 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : IfIn file : string_concat1.c, from line 29 col 5 to line 29 col 13. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : Loop In file : string_concat1.c, from line 18 col 2 to line 22 col 3. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[ Extended cfg Adding : Ecfg node id  : 62, Framac sid 22 ] 
+ Scheduling another vertex for execution 
+[ Extended cfg Adding : Ecfg node id  : 63, Framac sid 23 ] 
+ Scheduling another vertex for execution 
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : Loop In file : string_concat1.c, from line 18 col 2 to line 22 col 3. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : Loop In file : string_concat1.c, from line 18 col 2 to line 22 col 3. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : Loop In file : string_concat1.c, from line 18 col 2 to line 22 col 3. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : Loop In file : string_concat1.c, from line 18 col 2 to line 22 col 3. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : Loop In file : string_concat1.c, from line 18 col 2 to line 22 col 3. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : Loop In file : string_concat1.c, from line 18 col 2 to line 22 col 3. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : Loop In file : string_concat1.c, from line 18 col 2 to line 22 col 3. /n 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar 200 
+200In cil_expr_2_scalar Var i : int 
+i Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] Dans next_on_ssl_instr
+[FlataC] Trying to handle an affectation
+[FlataC] The left value is a variablex
+[FlataC] Entering affect_int_val_upon_sslv
+In cil_expr_2_scalar 0 
+0In cil_expr_2_scalar 0 
+0[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[ Extended cfg Adding : Ecfg node id  : 64, Framac sid 24 ] 
+ Scheduling another vertex for execution 
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+ Warning : Not a basic instruction : pprint_skind_basic_infos : Don't know 
+ 
+[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+In cil_expr_2_scalar Var __retres : int 
+__retres[FlataC] I reached does_entail
+ 
+ [ accept_new_abstraction ] 
+******************** 
+ Left  formula : 
+ Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+ Right formula  
+Exists [ ]Pure{Eq []Aff [;x->l_1;y->l_2;z->l_3]Ptnil []} || Space{Space [*Alloc(l_1,1)*Alloc(l_2,1)*Alloc(l_3,1)]}
+*********************** 
+ 
+  
+ [ accept_entailenebt ] FALSE, rigth formula is entailed by a more precise one
+[get°entry_point_from_fundec ]  New absdom : $\Formula{\texttt{true}}{\Emp}$ 
+[get°entry_point_from_fundec ]  Absdom after registering slocals : $\Formula{ \wedge (x \mapsto l_4) \wedge (y \mapsto l_5) \wedge (z \mapsto l_6)}{ Alloc(l_4,1) \Unsep Alloc(l_5,1) \Unsep Alloc(l_6,1) }$ 
+[get°entry_point_from_fundec ]  Absdom after registering sformals : $\Formula{ \wedge (x \mapsto l_4) \wedge (y \mapsto l_5) \wedge (z \mapsto l_6)}{ Alloc(l_4,1) \Unsep Alloc(l_5,1) \Unsep Alloc(l_6,1) }$ 
+Registering globlal variable __BLAST_NONDET' validity 
+Outvars are :  out ret_val_ : int; 
+[get°entry_point_from_fundec ]  New absdom : $\Formula{\texttt{true}}{\Emp}$ 
+[get°entry_point_from_fundec ]  Absdom after registering slocals : $\Formula{ \wedge (x \mapsto l_7) \wedge (y \mapsto l_8) \wedge (z \mapsto l_9)}{ Alloc(l_7,1) \Unsep Alloc(l_8,1) \Unsep Alloc(l_9,1) }$ 
+[get°entry_point_from_fundec ]  Absdom after registering sformals : $\Formula{ \wedge (x \mapsto l_7) \wedge (y \mapsto l_8) \wedge (z \mapsto l_9)}{ Alloc(l_7,1) \Unsep Alloc(l_8,1) \Unsep Alloc(l_9,1) }$ 
+Registering globlal variable __BLAST_NONDET' validity 
+Outvars are :  out ret_val_ : int; 
+[FlataC] main{
+         
+         validity____retres_,validity__i_,validity__j_,validity__x_,validity__y_,validity__z_,__retres,j,i : int ;
+         
+          out ret_val_ : int;
+         initial s0;
+         final s24;
+          
+          s0->s1 { i'=0 and havoc(i) } 
+          s1->s2 { havoc() } 
+          s2->s3 { havoc() } 
+          s3->s4 { NDET != 0 and havoc() } 
+          s3->s5 { NDET = 0 and havoc() } 
+          s4->s6 { havoc() } 
+          s5->s7 { havoc() } 
+          s6->s8 { i'=i+1 and havoc(i) } 
+          s7->s9 { i >= 100 and havoc() } 
+          s7->s10 { i < 100 and j'=0 and havoc(j) } 
+          s8->s2 { havoc() } 
+          s9->s9 { havoc() } 
+          s10->s11 { havoc() } 
+          s11->s12 { havoc() } 
+          s12->s13 { NDET != 0 and havoc() } 
+          s12->s14 { NDET = 0 and havoc() } 
+          s13->s15 { havoc() } 
+          s14->s16 { havoc() } 
+          s15->s17 { i'=i+1 and havoc(i) } 
+          s16->s18 { j >= 100 and havoc() } 
+          s16->s19 { j < 100 and havoc() } 
+          s17->s20 { j'=j+1 and havoc(j) } 
+          s18->s18 { havoc() } 
+          s19->s21 { havoc() } 
+          s20->s11 { havoc() } 
+          s21->s22 { i >= 200 and havoc() } 
+          s21->s23 { i < 200 and __retres'=0 and havoc(__retres) } 
+          s22->s22 { havoc() } 
+          s23->s24 { ret_val_'=__retres and havoc(ret_val_) }
+         }
+         nts string_concat1.c; 
+          States of : main 
+         Key_id 0, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 1, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 2, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 3, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 4, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 5, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 6, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 7, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 8, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 9, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 10, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 11, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 12, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 13, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 14, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 15, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 16, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 17, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 18, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 19, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 20, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 21, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 22, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 23, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$ 
+         Key_id 24, absval : $\Formula{ \wedge (x \mapsto l_1) \wedge (y \mapsto l_2) \wedge (z \mapsto l_3)}{ Alloc(l_1,1) \Unsep Alloc(l_2,1) \Unsep Alloc(l_3,1) }$
+Starting
+Visiting main
+ [Debug visitor] !!! Skipping instruction !!!In statement :68, skipping to statement 69,  located at  In file : , from line 0 col -1 to line 0 col -1. /n  
+ [Debug visitor] !!! Skipping instruction !!!In statement :74, skipping to statement 75,  located at  In file : , from line 0 col -1 to line 0 col -1. /n  
+ [Debug visitor] !!! Skipping instruction !!!In statement :79, skipping to statement 80,  located at  In file : , from line 0 col -1 to line 0 col -1. /n  
+ [Debug visitor] !!! Skipping instruction !!!In statement :86, skipping to statement 87,  located at  In file : , from line 0 col -1 to line 0 col -1. /n  
+f2ca printed the cautomaton ton the file 
+ 

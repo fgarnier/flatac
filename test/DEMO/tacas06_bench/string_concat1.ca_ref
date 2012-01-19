@@ -1,0 +1,40 @@
+nts DEMO/tacas06_bench/string_concat1;
+__BLAST_NONDET : int; 
+main{
+
+validity____retres_,validity__i_,validity__j_,validity__x_,validity__y_,validity__z_,__retres,j,i : int ;
+
+ out ret_val_ : int;
+initial s0;
+final s24;
+ 
+ s0->s1 { i'=0 and havoc(i) } 
+ s1->s2 { havoc() } 
+ s2->s3 { havoc() } 
+ s3->s4 { NDET != 0 and havoc() } 
+ s3->s5 { NDET = 0 and havoc() } 
+ s4->s6 { havoc() } 
+ s5->s7 { havoc() } 
+ s6->s8 { i'=i+1 and havoc(i) } 
+ s7->s9 { i >= 100 and havoc() } 
+ s7->s10 { i < 100 and j'=0 and havoc(j) } 
+ s8->s2 { havoc() } 
+ s9->s9 { havoc() } 
+ s10->s11 { havoc() } 
+ s11->s12 { havoc() } 
+ s12->s13 { NDET != 0 and havoc() } 
+ s12->s14 { NDET = 0 and havoc() } 
+ s13->s15 { havoc() } 
+ s14->s16 { havoc() } 
+ s15->s17 { i'=i+1 and havoc(i) } 
+ s16->s18 { j >= 100 and havoc() } 
+ s16->s19 { j < 100 and havoc() } 
+ s17->s20 { j'=j+1 and havoc(j) } 
+ s18->s18 { havoc() } 
+ s19->s21 { havoc() } 
+ s20->s11 { havoc() } 
+ s21->s22 { i >= 200 and havoc() } 
+ s21->s23 { i < 200 and __retres'=0 and havoc(__retres) } 
+ s22->s22 { havoc() } 
+ s23->s24 { ret_val_'=__retres and havoc(ret_val_) }
+}

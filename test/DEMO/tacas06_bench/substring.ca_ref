@@ -1,0 +1,36 @@
+nts DEMO/tacas06_bench/substring;
+__BLAST_NONDET3,__BLAST_NONDET2,__BLAST_NONDET1 : int; 
+main{
+
+validity____retres_,validity__from_,validity__i_,validity__j_,validity__k_,validity__to_,validity__x_,validity__z_,__retres,k,j,i,to,from : int ;
+
+ out ret_val_ : int;
+initial s0;
+final s18;
+ 
+ s0->s1 { from'=__BLAST_NONDET1 and havoc(from) } 
+ s1->s2 { to'=__BLAST_NONDET2 and havoc(to) } 
+ s2->s3 { k'=__BLAST_NONDET3 and havoc(k) } 
+ s3->s4 { i'=from and havoc(i) } 
+ s4->s5 { j'=0 and havoc(j) } 
+ s5->s6 { havoc() } 
+ s6->s7 { havoc() } 
+ s7->s8 { NDET != 0 and havoc() } 
+ s7->s9 { NDET = 0 and havoc() } 
+ s8->s10 { i < to and havoc() } 
+ s8->s11 { i >= to and havoc() } 
+ s9->s12 { havoc() } 
+ s10->s13 { havoc() } 
+ s11->s12 { havoc() } 
+ s12->s14 { k >= 0 and havoc() } 
+ s12->s15 { k < 0 and __retres'=0 and havoc(__retres) } 
+ s13->s16 { i'=i+1 and havoc(i) } 
+ s14->s15 { k >= j and __retres'=0 and havoc(__retres) } 
+ s14->s17 { k < j and havoc() } 
+ s15->s18 { ret_val_'=__retres and havoc(ret_val_) } 
+ s16->s19 { j'=j+1 and havoc(j) } 
+ s17->s15 { NDET != 0 and __retres'=0 and havoc(__retres) } 
+ s17->s20 { NDET = 0 and havoc() } 
+ s19->s6 { havoc() } 
+ s20->s20 { havoc() }
+}

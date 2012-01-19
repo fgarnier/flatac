@@ -1,0 +1,32 @@
+nts DEMO/tacas06_bench/cousot;
+__BLAST_NONDET : int; 
+main{
+
+validity____retres_,validity__x_,validity__y_,__retres,y,x : int ;
+
+ out ret_val_ : int;
+initial s0;
+final s18;
+ 
+ s0->s1 { x'=0 and havoc(x) } 
+ s1->s2 { y'=0 and havoc(y) } 
+ s2->s3 { havoc() } 
+ s3->s4 { havoc() } 
+ s4->s5 { __BLAST_NONDET != 0 and havoc() } 
+ s4->s6 { __BLAST_NONDET = 0 and havoc() } 
+ s5->s7 { x'=x+1 and havoc(x) } 
+ s6->s8 { havoc() } 
+ s7->s9 { y'=y+1 and havoc(y) } 
+ s8->s10 { havoc() } 
+ s9->s3 { havoc() } 
+ s10->s11 { x > 0 and havoc() } 
+ s10->s12 { x <=  0 and havoc() } 
+ s11->s13 { x'=x-1 and havoc(x) } 
+ s12->s14 { havoc() } 
+ s13->s15 { y'=y-1 and havoc(y) } 
+ s14->s16 { y != 0 and havoc() } 
+ s14->s17 { y = 0 and __retres'=1 and havoc(__retres) } 
+ s15->s8 { havoc() } 
+ s16->s16 { havoc() } 
+ s17->s18 { ret_val_'=__retres and havoc(ret_val_) }
+}

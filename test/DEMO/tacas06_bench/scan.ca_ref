@@ -1,0 +1,27 @@
+nts DEMO/tacas06_bench/scan;
+__BLAST_NONDET : int; 
+main{
+
+validity____retres_,validity__i_,validity__j_,validity__x_,__retres,j,i : int ;
+
+ out ret_val_ : int;
+initial s0;
+final s11;
+ 
+ s0->s1 { i'=0 and havoc(i) } 
+ s1->s2 { j'=__BLAST_NONDET and havoc(j) } 
+ s2->s3 { havoc() } 
+ s3->s4 { havoc() } 
+ s4->s5 { NDET != 0 and i'=i+1 and havoc(i) } 
+ s4->s6 { NDET = 0 and havoc() } 
+ s5->s3 { havoc() } 
+ s6->s7 { havoc() } 
+ s7->s8 { j >= 0 and havoc() } 
+ s7->s9 { j < 0 and __retres'=0 and havoc(__retres) } 
+ s8->s9 { j >= i and __retres'=0 and havoc(__retres) } 
+ s8->s10 { j < i and havoc() } 
+ s9->s11 { ret_val_'=__retres and havoc(ret_val_) } 
+ s10->s9 { NDET != 0 and __retres'=0 and havoc(__retres) } 
+ s10->s12 { NDET = 0 and havoc() } 
+ s12->s12 { havoc() }
+}

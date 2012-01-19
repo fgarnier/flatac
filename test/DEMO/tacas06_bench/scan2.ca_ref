@@ -1,0 +1,45 @@
+nts DEMO/tacas06_bench/scan2;
+__BLAST_NONDET : int; 
+main{
+
+mid_1_base,mid_1_size,validity____retres_,validity__i_,validity__j_,validity__x_,__retres,offset__x_,j,i : int ;
+
+ out ret_val_ : int;
+initial s0;
+final s22,s24;
+ 
+ s0->s1 { 100*4 <=  0 and validity__x_'=0 and havoc(validity__x_) } 
+ s0->s2 { validity__x_'=1 and offset__x_'=0 and 100*4 > 0 and mid_1_size'=100*4 and mid_1_base'=1 and havoc(mid_1_base,mid_1_size,offset__x_,validity__x_) } 
+ s1->s3 { i'=0 and havoc(i) } 
+ s2->s4 { i'=0 and havoc(i) } 
+ s3->s5 { j'=__BLAST_NONDET and havoc(j) } 
+ s4->s6 { j'=__BLAST_NONDET and havoc(j) } 
+ s5->s7 { havoc() } 
+ s6->s8 { havoc() } 
+ s7->s9 { havoc() } 
+ s8->s10 { havoc() } 
+ s9->s11 { NDET != 0 and i'=i+1 and havoc(i) } 
+ s9->s12 { NDET = 0 and havoc() } 
+ s10->s13 { NDET != 0 and i'=i+1 and havoc(i) } 
+ s10->s14 { NDET = 0 and havoc() } 
+ s11->s7 { havoc() } 
+ s12->s15 { havoc() } 
+ s13->s8 { havoc() } 
+ s14->s16 { havoc() } 
+ s15->s17 { j >= 0 and havoc() } 
+ s15->s18 { j < 0 and __retres'=0 and havoc(__retres) } 
+ s16->s19 { j >= 0 and havoc() } 
+ s16->s20 { j < 0 and __retres'=0 and havoc(__retres) } 
+ s17->s18 { j >= i and __retres'=0 and havoc(__retres) } 
+ s17->s21 { j < i and havoc() } 
+ s18->s22 { ret_val_'=__retres and havoc(ret_val_) } 
+ s19->s20 { j >= i and __retres'=0 and havoc(__retres) } 
+ s19->s23 { j < i and havoc() } 
+ s20->s24 { ret_val_'=__retres and havoc(ret_val_) } 
+ s21->s18 { NDET != 0 and __retres'=0 and havoc(__retres) } 
+ s21->s25 { NDET = 0 and havoc() } 
+ s23->s20 { NDET != 0 and __retres'=0 and havoc(__retres) } 
+ s23->s26 { NDET = 0 and havoc() } 
+ s25->s25 { havoc() } 
+ s26->s26 { havoc() }
+}

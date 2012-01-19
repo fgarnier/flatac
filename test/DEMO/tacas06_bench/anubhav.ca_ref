@@ -1,0 +1,27 @@
+nts DEMO/tacas06_bench/anubhav;
+ 
+main{
+
+validity____retres_,validity__i_,validity__j_,validity__x_,validity__y_,__retres,y,x,j,i : int ;
+
+ out ret_val_ : int;
+initial s0;
+final s13;
+ 
+ s0->s1 { x'=i and havoc(x) } 
+ s1->s2 { y'=j and havoc(y) } 
+ s2->s3 { havoc() } 
+ s3->s4 { havoc() } 
+ s4->s5 { x != 0 and havoc() } 
+ s4->s6 { x = 0 and havoc() } 
+ s5->s7 { x'=x-1 and havoc(x) } 
+ s6->s8 { havoc() } 
+ s7->s9 { y'=y-1 and havoc(y) } 
+ s8->s10 { i = j and havoc() } 
+ s8->s11 { i != j and __retres'=0 and havoc(__retres) } 
+ s9->s3 { havoc() } 
+ s10->s11 { y = 0 and __retres'=0 and havoc(__retres) } 
+ s10->s12 { y != 0 and havoc() } 
+ s11->s13 { ret_val_'=__retres and havoc(ret_val_) } 
+ s12->s12 { havoc() }
+}
