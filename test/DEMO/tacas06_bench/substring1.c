@@ -15,7 +15,7 @@ main(){
     {stuck1: goto stuck1;}
 
   if(!(from >= 0 && from <= k))            /* assume "from" index is O.K. */
-    {stuck1: goto stuck1;}
+    {stuck2: goto stuck2;}
   
   /* extract substring form index "from" to index "to" */
 
