@@ -414,6 +414,8 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
     in
     a && b
 
+
+
  (* this method is used to compute the set of counter variables who are
  assigned a new value*)
   let havocise (trans_label_list : cnt_trans_label list) =
@@ -445,3 +447,57 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
     let tpost = List.filter is_a_call trans_label_list in
     (tpre,tpost)
 	  
+  (* Replace every  argument of a function that is equal to NDet by
+     an argument variable that is previous havocised.
+  *)
+
+      (*  number of variables added *)
+     (* ( int *  il_fun_argument list ) *)
+      
+  let name_ndet_arg i =
+    let name = Format.sprintf "_ndet_arg_%d" i in
+    CntVar(NtsIVar(name))
+
+  let replace_ndet_args_by_ndet_counters ( ilfunlist :  il_fun_arguments list ) =
+    let ndet_args = ref 0 in
+    let replace_ndet_args_mapper (ilfunarg : il_fun_arguments ) =
+      match ilfunarg with
+	  
+	  IlScalArg(iarg) ->
+	    begin 
+	      match iarg.expr with
+		  CntNdet ->
+		    begin
+		      let ret_val =
+			{
+			  expr = name_ndet_arg !ndet_args;
+			  validity_of_exp = iarg.validity_of_exp;
+			}
+		      in
+		      ndet_args := !ndet_args + 1;
+		      IlScalArg(ret_val)
+		    end
+		      
+		| _-> ilfunarg	  
+	    end
+	      
+	| IlPtrArg(ptrarg) ->
+	  begin 
+	    match ptrarg.offset_of_exp with
+		CntNdet ->
+		  begin
+		    let ret_val =
+		      {
+			base_of_exp = ptrarg.base_of_exp;
+			offset_of_exp =  name_ndet_arg !ndet_args;  
+			validity_of_ptr_exp = ptrarg.validity_of_ptr_exp;
+		      }
+		    in
+		    ndet_args := !ndet_args + 1;
+		   IlPtrArg(ret_val)
+		  end
+	      | _ -> ilfunarg 	  
+	  end
+    in
+    let modif_il_list = List.map replace_ndet_args_mapper in
+    (!ndet_args , modif_il_list)
