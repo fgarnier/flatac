@@ -340,6 +340,12 @@ integer type, which type is neither TInt nor TPtr : %s , type : %s .\n" (pprint_
     | UnOp (Neg, exp , TInt(_,_)) ->
       LiUnMin ( cil_expr_2_scalar exp)
 
+
+    | UnOp(LNot,exp,_) ->
+      Format.fprintf Ast_goodies.debug_out " Unop detected \n";
+      let bool_expr = cil_expr_2_bool exp
+      in LiScalOfLiBool(LiBNot(bool_expr))
+
     | BinOp(op,fg,fd,t) ->
       begin
 	match op with
