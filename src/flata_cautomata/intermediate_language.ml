@@ -63,6 +63,10 @@ let get_name_of_c_ptr p =
 	     (*| LiMultDimTab of int list * Cil_types.typ*)
 
 
+type  c_scal_bit_op = LiBitAnd 
+		      | LiBitOr
+		      | LiBitXor
+
 (** The type of integers scalar expressions*)
 type c_scal = LiVar of primed * c_int_var
 	      | LiConst of c_int_cst
@@ -78,8 +82,12 @@ type c_scal = LiVar of primed * c_int_var
                                         (* Type must be TPtr(t,_) 
 					Where t is not TPtr(_,_)
 					   Correponds to *p.
-					*) 
-	      | LiElemOfCTab of c_scal list * c_tab 
+					*)
+	      | LiElemOfCTab of c_scal list * c_tab
+	      | LiScalOfLiBool of c_bool
+
+	      | LiBitLogicOp of c_scal_bit_op * c_scal * c_scal
+
 
 and c_ptrexp = LiPVar of primed * c_ptr *  Cil_types.typ
 	       | LiBaseAddrOfArray (* Base address of an array*)
@@ -106,13 +114,7 @@ and li_array_size = LiArraySize of c_scal
 
 and c_tab = LiTab of string option * (c_scal option) list * Cil_types.typ
 
-type il_expr = IlScal of c_scal
-	       | IlPtr of c_ptrexp
-
-
-
-	       
-type c_bool = LiBNot of c_bool 
+and c_bool = LiBNot of c_bool 
  	      | LiBAnd of c_bool * c_bool 
 	      | LiBOr of c_bool * c_bool  
 	      | LiBTrue
@@ -130,6 +132,14 @@ type c_bool = LiBNot of c_bool
 	      | LiBPtrLt of c_ptrexp * c_ptrexp
 	      | LiBPtrGeq of c_ptrexp * c_ptrexp
 	      | LiBPtrLeq of c_ptrexp * c_ptrexp
+
+type il_expr = IlScal of c_scal
+	       | IlPtr of c_ptrexp
+
+
+
+	       
+
 
     
 
@@ -338,9 +348,24 @@ integer type, which type is neither TInt nor TPtr : %s , type : %s .\n" (pprint_
     
     | UnOp (Neg, exp , TInt(_,_)) ->
       LiUnMin ( cil_expr_2_scalar exp)
-       
-    | _ -> 
+
+    | BinOp(op,fg,fd,t) ->
+      begin
+	match op with
+	    Lt | Gt | Le | Ge |  Eq | Ne|  LAnd | LOr
+		-> 
+		  let bool_exp  = cil_expr_2_bool expr
+		  in LiScalOfLiBool(bool_exp)
+		   
+	  | BAnd | BXor | BOr 
+	    ->
+	    raise (Bad_expression_type (" Logical operation on bits are not yet implemented"))
+	    
+      end
+    | _ ->
+      Format.fprintf Ast_goodies.debug_out "Cil_expr_2_scal crash \n Can't parse expression : ";
       Cil.d_exp Ast_goodies.debug_out expr;
+      Format.fprintf  Ast_goodies.debug_out " \n ";
       raise( Bad_expression_type ("Can't parse expression in cil_expr_2_scalar : %s \n"^(Ast_goodies.pprint_cil_exp expr)))
 
 and cil_expr_2_ptr (expr : Cil_types.exp ) =
@@ -397,19 +422,7 @@ and cil_expr_2_ptr (expr : Cil_types.exp ) =
       end
 			
 	 
-
-   (* | _ -> 
-      begin
-	match  (Composite_types.is_integer_type type_of_e) with
-	    Some(_) ->
-	      LiAddrOfScal((cil_expr_2_scalar e), type_of_e)
-	  | None ->
-	    raise  ( Bad_expression_type "Lval Mem(e) has neither an interger 
-type nor pointer type TPtr .\n")
-      end
- end*)
-
-    | CastE ( t , expression ) -> (* If here, one expects the wildcarded
+   | CastE ( t , expression ) -> (* If here, one expects the wildcarded
 				 type to be a pointer type.*) 
       let exp_type = Cil.typeOf expression in
       begin
@@ -458,37 +471,6 @@ address type, which type is neither TInt nor TPtr.\n")
 
       end
 	
-
-    (*| StartOf((Var(v),Index(index,offset)))->
-      (*Getting the address that corresponds to the Indexed element
-      of the array --Type, name contained in Var(v)
-	nota bene : This algorithm doesn't handle multi dimentional
-	arrays.
-      *)
-      begin
-	match v.vtype with
-	    TArray(t,e,_,_)->
-	      begin
-		let expr_of_index = cil_expr_2_scalar index in
-		let base_addre =  
-		  begin
-		    match e with
-		      |  Some(size_exp) ->
-			let size_c_scal =  cil_expr_2_scalar size_exp in
-			LiBaseAddrOfArray(Unprimed, LiIntPtr(v.vname),
-					  LiArraySize( size_c_scal), t )
-			  
-		      | None ->
-			LiBaseAddrOfArray(Unprimed, LiIntPtr(v.vname),LiArraySizeUnknown, t)
-		  end
-		in
-		let addr =  LiIndexPI(base_addre,expr_of_index,t)
-		in addr
-	      end
-
-      end
-    *)	
-
 
     | AddrOf( Var(v), offset ) ->
       begin
@@ -562,47 +544,7 @@ parse in the cil_expr_2_ptr function %s" (Ast_goodies.pprint_cil_exp expr)
 	   raise exc
       end
 
-and cil_enumitem_2_scalar (enum : Cil_types.enumitem ) =
-  let eval = cil_expr_2_scalar enum.eival in
-  eval
-
-(*Computes the index at which an array is accessed *) 
-and  get_array_index (offset : Cil_types.offset) 
-    ( i_list : c_scal list ) =
-  match offset with 
-      Index( e , off) -> 
-	let i_list = i_list@((cil_expr_2_scalar e)::[]) in
-	get_array_index off i_list
-    
-    | NoOffset -> i_list
-    | _ -> raise Not_Array_Index 
-
-(* Computes the dimention of an array when this information is
-available at compilation time.*)
-and  array_dim (tinfo : Cil_types.typ)
-    (index_list : (c_scal option) list)=
-  match tinfo with
-      TArray(tinfo,Some(size),_,_)->
-	begin
-	  let size_array = Some((cil_expr_2_scalar size)) in
-	  let index_list = index_list@(size_array::[]) in
-	  array_dim tinfo index_list
-	end
-    |  TArray(tinfo,None,_,_)->
-	begin
-	  let size_array = None in
-	  let index_list = index_list@(size_array::[]) in
-	  array_dim tinfo index_list
-	end
-    | _ -> let type_name_if_int_type = 
-	     Composite_types.is_integer_type tinfo in
-	   match type_name_if_int_type with
-	       Some(_) -> index_list
-	     | _ -> raise Array_elements_not_integers
-	       
-
-
-let rec cil_expr_2_bool (expr : Cil_types.exp) =
+and cil_expr_2_bool (expr : Cil_types.exp) =
   match expr.enode with 
        BinOp(LAnd,expg ,expd , _) ->
 	 LiBAnd( cil_expr_2_bool expg, cil_expr_2_bool expd)
@@ -692,6 +634,48 @@ let rec cil_expr_2_bool (expr : Cil_types.exp) =
 
 	    end  
       end
+
+and cil_enumitem_2_scalar (enum : Cil_types.enumitem ) =
+  let eval = cil_expr_2_scalar enum.eival in
+  eval
+
+(*Computes the index at which an array is accessed *) 
+and  get_array_index (offset : Cil_types.offset) 
+    ( i_list : c_scal list ) =
+  match offset with 
+      Index( e , off) -> 
+	let i_list = i_list@((cil_expr_2_scalar e)::[]) in
+	get_array_index off i_list
+    
+    | NoOffset -> i_list
+    | _ -> raise Not_Array_Index 
+
+(* Computes the dimention of an array when this information is
+available at compilation time.*)
+and  array_dim (tinfo : Cil_types.typ)
+    (index_list : (c_scal option) list)=
+  match tinfo with
+      TArray(tinfo,Some(size),_,_)->
+	begin
+	  let size_array = Some((cil_expr_2_scalar size)) in
+	  let index_list = index_list@(size_array::[]) in
+	  array_dim tinfo index_list
+	end
+    |  TArray(tinfo,None,_,_)->
+	begin
+	  let size_array = None in
+	  let index_list = index_list@(size_array::[]) in
+	  array_dim tinfo index_list
+	end
+    | _ -> let type_name_if_int_type = 
+	     Composite_types.is_integer_type tinfo in
+	   match type_name_if_int_type with
+	       Some(_) -> index_list
+	     | _ -> raise Array_elements_not_integers
+	       
+
+
+
 	
 	
      

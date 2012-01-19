@@ -39,13 +39,16 @@ let base_ctab tab =
       LiTab ( Some(tab_name),_,_) -> PVar(tab_name)
     | LiTab(None,_,_) -> raise UnnammedLocalArray
 
+let locbase_name_of_deref_vname vname =
+  "deref__"^vname
+  
 
 let rec base_var_ptrexp ( ptr_exp : c_ptrexp ) =
    match ptr_exp with 
       LiPVar ( _ , LiIntPtr(vname), _ ) ->
 	PVar(vname) (* That's indeed the name of the pointer
 		    var we are looking for.*)
-    
+   
      | LiBaseAddrOfArray(_,cptr) -> base_ctab  cptr
 
      | LiPlusPI ( cptr , _ , _) -> base_var_ptrexp  cptr
@@ -87,7 +90,7 @@ let rec base_ptrexp (sslf : ssl_formula )( ptr_exp : c_ptrexp ) =
      LVar("")
    | LiStarOfPtr (cptr,_) ->  base_ptrexp sslf cptr
    | LiDerefCPtr(cptr,_) -> base_ptrexp sslf cptr
-   | LiDerefCVar(s,_) -> get_ptr_affectation sslf  (PVar(s))
+   | LiDerefCVar(s,_) -> LVar((locbase_name_of_deref_vname s))
    | LiDerefCTab(LiTab(Some(tab_name),_,tt)) -> 
      base_ptrexp sslf (LiPVar(Unprimed,LiIntPtr(tab_name),tt))
    | LiDerefCTab(LiTab(None,_,tt)) -> 

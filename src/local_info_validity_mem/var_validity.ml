@@ -40,7 +40,6 @@ let pprint_validity_loc_map ( m : validity_loc_map) =
 
 
 let cardinal_of_locmap ( m : validity_loc_map) =
-  
   let count_folder _ _ (cnt : int) =
    cnt+1
   in
@@ -213,7 +212,7 @@ let rec valid_sym_cscal ( loc_map : validity_loc_map ) (sslf : ssl_formula )
 	    
     | LiConst(_) -> TruevarValid
     | LiSymConst(_) -> TruevarValid
-    
+    | LiElemOfCTab(_,_) -> DKvarValid
     | LiProd ( cscalg, cscald ) ->
 	begin
 	  let fg = valid_sym_cscal loc_map sslf cscalg in
@@ -260,6 +259,17 @@ and valid_sym_ptrexp  ( loc_map : validity_loc_map ) (sslf : ssl_formula ) ( ptr
 		let entry = validity_of_byname loc_map vname in
 		  entry.validity
 		    
+    | LiDerefCVar(vname, _ ) -> 
+      let entry = validity_of_byname loc_map vname 
+      in  entry.validity
+	
+    | LiDerefCTab(_) -> TruevarValid
+		    
+
+    | LiStarOfPtr(_) -> DKvarValid 
+
+    | LiDerefCPtr(cptr,_) -> valid_sym_ptrexp loc_map sslf cptr
+
     | LiPlusPI ( ptrexpprime , cscal , _) -> 
 	begin
 	  let fg = valid_sym_ptrexp loc_map sslf ptrexpprime in

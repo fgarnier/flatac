@@ -20,6 +20,6 @@ int divide(int dividend, int divisor,
 int main() {
   int q, r;
   int errorCode = divide(7, 3, &q, &r); 
-  assert (!errorCode);
+  assert (errorCode!=0);
   return 0;
 }
