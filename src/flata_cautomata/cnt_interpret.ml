@@ -186,7 +186,10 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
     | LiElemOfCTab(_,_) ->
       CntNdet
       
-    
+    | LiScalOfLiBool(_)->
+      CntNdet (* !! That can be statically decided in various different
+	      cases, must be refined at some point !!*)
+	
     
 	    
 and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
@@ -229,6 +232,10 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
 	CntNdet (* Offset of an array set to zero*)
       end
 
+    | LiBaseAddrOfArray (position,LiTab(None,index_list,typeofelem)) ->
+      begin
+	CntNdet (* Offset of an array set to zero*)
+      end
     | LiDerefCVar(vname, _) ->
       begin
 	let vname = dereferenced_name_of_varname vname in  
@@ -249,30 +256,15 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
 
     |  LiDerefCPtr ( cptr , t ) ->
       CntNdet
+
+    | LiDerefCTab(LiTab(Some(vname),_,_))-> 
+      let vname = dereferenced_name_of_varname vname in  
+      CntVar(NtsIVar(vname))
 	
-	
-(** Returns the type of the pointer expression, that is
-basically the type of the varname. Returns the type of the
-innermost pointer variable the expression tree.
+    | LiDerefCTab(LiTab(None,_,_))-> 	
+      CntNdet
 
-One need to check that this procedure is sufficient, but
-it may not be.
-*)
-let rec type_of_ptrexp ptrexp =
-  match ptrexp with 
-      LiPVar( _ , LiIntPtr(vname), vtype) -> vtype
-    | LiBaseAddrOfArray(_,LiTab(_,_,t))-> t
-    
-    | LiPlusPI ( cptrexp , _ ,_) -> 
-	type_of_ptrexp cptrexp
-    | LiMinusPI ( cptrexp , scalv,_ ) ->
-	type_of_ptrexp cptrexp
-    | LiIndexPI ( cptrexp , scalv,_ ) ->
-	type_of_ptrexp cptrexp
-    | LiAddrOfScal(_, optype ) -> optype
-
-
-let rec c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool ) = 
+and c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool ) = 
   match cbool with 
       LiBNot (b) -> 
 	let cnt_arg = c_bool_to_cnt_bool sslf b in 
@@ -386,7 +378,30 @@ let rec c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool ) =
 	  let argg =  interpret_c_ptrexp_to_cnt sslf cptrg in
 	  let argd =  interpret_c_ptrexp_to_cnt sslf cptrd in
 	    CntBool (CntLeq , argg , argd )
-	end	  
+	end	  	
+	
+(** Returns the type of the pointer expression, that is
+basically the type of the varname. Returns the type of the
+innermost pointer variable the expression tree.
+
+One need to check that this procedure is sufficient, but
+it may not be.
+*)
+let rec type_of_ptrexp ptrexp =
+  match ptrexp with 
+      LiPVar( _ , LiIntPtr(vname), vtype) -> vtype
+    | LiBaseAddrOfArray(_,LiTab(_,_,t))-> t
+    
+    | LiPlusPI ( cptrexp , _ ,_) -> 
+	type_of_ptrexp cptrexp
+    | LiMinusPI ( cptrexp , scalv,_ ) ->
+	type_of_ptrexp cptrexp
+    | LiIndexPI ( cptrexp , scalv,_ ) ->
+	type_of_ptrexp cptrexp
+    | LiAddrOfScal(_, optype ) -> optype
+
+
+
 	  
 
 (** Translates expressions of the valid_counter type into 
