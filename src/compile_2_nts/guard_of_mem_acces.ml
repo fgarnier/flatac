@@ -82,11 +82,11 @@ let  offset_of_mem_access_to_cnt sslv (t : Cil_types.typ ) ( off : Cil_types.off
 
 
 
-let cnt_guard_of_mem_access sslv (exp_type : Cil_types.typ) 
-    ( expr : Cil_types.exp ) =
+let cnt_guard_of_mem_access sslv ( expr : Cil_types.exp ) =
+ (*(exp_type : Cil_types.typ)*) 
+    
   
-  let mem_accs_type = Cil.typeOf expr in
-  
+  let mem_accs_type = Cil.typeOf expr in  
   match  expr.enode with 
       Lval( Var (p) , off )->
 	begin
@@ -95,7 +95,7 @@ let cnt_guard_of_mem_access sslv (exp_type : Cil_types.typ)
 		CntBTrue (* à voir ce qui se passe avec les tableaux *)
 		  
  	end
-
+	  
     | Lval( Mem(e) , off ) -> (*Access at the offset off of base memory e*)
       begin
 	let pvar_access = Ast_goodies.get_pvar_from_exp e in
@@ -142,6 +142,20 @@ let cnt_guard_of_mem_access sslv (exp_type : Cil_types.typ)
       end
 
 
+
+
+
+
+
+
+let mem_guards_of_funcall_arg_list sslv (l : Cil_types.exp list) =
+  let guard_folder (ret_guard : cnt_bool) (arg : Cil_types.exp  ) =
+    let arg_guard = cnt_guard_of_mem_access sslv arg in
+    match arg_guard with
+	CntBTrue -> ret_guard (* The guard need not to be chaged, And(prev,true) => prev*)
+      | _ -> CntBAnd(ret_guard,arg_guard)
+  in
+  List.fold_left guard_folder CntBTrue l
 	
 (*
 let rec get_pvar_from_exp_node (expn : Cil_types.exp_node ) =

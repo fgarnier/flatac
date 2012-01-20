@@ -577,10 +577,13 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 				  let nts_lvals = Nts.make_ntsvars_of_ptrvar v.vname in
 				  let cnt_trans_label = 
 				    CntFunCall(funname,Some(nts_lvals),arg_nts_list) in
+				  let mem_access_trans_label =
+				    CntGuard((mem_guards_of_funcall_arg_list sslv lparam)) in
+				  
 				  let msg= 
 				    Format.sprintf "[next_on_ssl_instr] Pointer type Var : %s = %s : %s \n[next_on_ssl_instr] argument list %s \n "  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype) (Nts.cnt_pprint_translabel cnt_trans_label ) in
 				Format.printf "%s" msg;
-				 ((sslv,(cnt_trans_label::[]))::[]) 
+				 ((sslv,mem_access_trans_label::(cnt_trans_label::[]))::[]) 
 
 
 
@@ -612,10 +615,12 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 				  let nts_lvals = Nts.make_ntsvars_of_intvars v.vname in
 				  let cnt_trans_label = 
 				    CntFunCall(funname,Some(nts_lvals),arg_nts_list) in
+				  let mem_access_trans_label =
+				    CntGuard((mem_guards_of_funcall_arg_list sslv lparam)) in
 				  let msg= 
 				    Format.sprintf "[next_on_ssl_instr] Integer type Var : %s = %s : %s \n[next_on_ssl_instr] argument list %s \n "  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype) (Nts.cnt_pprint_translabel cnt_trans_label ) in
 				Format.printf "%s" msg;
-				 ((sslv,(cnt_trans_label::[]))::[])
+				 ((sslv,mem_access_trans_label::(cnt_trans_label::[]))::[])
 
 			      | None ->
 				begin
