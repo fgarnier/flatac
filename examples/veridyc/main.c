@@ -15,7 +15,9 @@ int main() {
   init(&b, 24);
 
   while (1) {
-    char line[80];
+    //char line[80];
+    char* line;
+    line = (char *)malloc(80*sizeof(char));
     scanf("%s", line);
     if (strstr(line, "put") == line) {
       // put the string, including the final '\0'

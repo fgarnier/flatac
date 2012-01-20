@@ -103,7 +103,8 @@ let rec cnt_guard_of_mem_access sslv ( expr : Cil_types.exp ) =
     | Const ( _ ) -> 
       CntBTrue
 	
-    (*| BinOp (PlusPI,a,b,_)*) 
+    (*| BinOp (PlusPI,a,b,_) ->*)
+      
     | BinOp (_,a,b,_)
       ->
       let fg= cnt_guard_of_mem_access sslv a in
@@ -135,12 +136,14 @@ to do with Info"))
 	      offset at which the memory is accessed. *)
 	   
 	      let offset_nts_var = make_offset_locpvar pvar_access in
-	      let offset_of_e = offset_of_mem_access_to_cnt sslv mem_accs_type 
-		off in
+	      (*let offset_of_e = offset_of_mem_access_to_cnt sslv mem_accs_type 
+		off in*)
+	      let offset_of_e = Compile_2_nts.compile_cil_exp_2_cnt sslv e 
+	      in
 	      let sizeof_exp = Cnt_interpret.interpret_ciltypes_size
 		mem_accs_type in
-	      let total_offset = 
-		CntSum(offset_of_e,CntProd(CntVar(offset_nts_var),sizeof_exp)) 
+	      let total_offset = CntProd(CntVar(offset_nts_var),sizeof_exp)
+		(*CntSum(offset_of_e,*) 
 	      in
 	      let locvar_size_name = get_lsizename_of_locvar location_var 
 	      in

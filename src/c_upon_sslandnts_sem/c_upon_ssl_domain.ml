@@ -60,8 +60,20 @@ let affect_int_val_upon_sslv (v : Cil_types.varinfo) (expr : Cil_types.exp)
   let c_scal_exp = cil_expr_2_scalar expr in 
   let cnt_expr = interpret_c_scal_to_cnt sslv.ssl_part c_scal_exp in
   let cnt_affect = CntAffect(NtsIVar(v.vname),cnt_expr) in
-    (ret_absdomain , (cnt_affect::[])) :: []
-    
+
+  (***********Transition for valid memory access in expr parameter *******************)
+  let access_cond_of_expr = cnt_guard_of_mem_access sslv expr in
+  let success_guard = CntGuard(access_cond_of_expr) in
+  let success_transition = (ret_absdomain , success_guard::(cnt_affect::[])) in
+    (******** Transition for invalid memory access in expr parameter ****************)
+
+  let failure_absdom = create_validity_abstdomain () in
+  set_heap_to_top failure_absdom.ssl_part;
+  let failure_guard = CntGuard(CntNot(access_cond_of_expr)) in
+  let fail_trans = (failure_absdom,failure_guard ::[] )  in
+  fail_trans::(success_transition::[])
+
+  
 
 (** This function aims at getting the first variable name
 of the list of parameters. Might be useful if some parameter
