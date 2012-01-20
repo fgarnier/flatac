@@ -397,6 +397,12 @@ to do with Info"))
 
     | AddrOf (_) ->  raise (Debug_info("[get_pvar_from_exp :] Don't know what to do with AddrOf"))
 
+    | StartOf(Var(v),_) ->
+      begin
+	match v.vtype with 
+	    TArray(_,_,_,_) -> PVar(v.vname)
+	  | _ ->  raise (Debug_info ("Getting a Starting address of non array type"))
+      end
     | _ ->  raise Contains_no_pvar
 	  
 and  get_pvar_from_exp (expr : Cil_types.exp ) =

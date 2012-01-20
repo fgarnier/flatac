@@ -14,6 +14,7 @@ open Global_mem
 open Ssl_valid_abs_dom_types
 
 exception Unhandled_offset_type of string
+exception Dont_know_how_to_generate_guard
 (*********************************************************************)
 (* We define in this file the set of functions that allow to compute
 the guards for memory access --both read and write access-- *)
@@ -82,7 +83,7 @@ let  offset_of_mem_access_to_cnt sslv (t : Cil_types.typ ) ( off : Cil_types.off
 
 
 
-let cnt_guard_of_mem_access sslv ( expr : Cil_types.exp ) =
+let rec cnt_guard_of_mem_access sslv ( expr : Cil_types.exp ) =
  (*(exp_type : Cil_types.typ)*) 
     
   
@@ -95,6 +96,32 @@ let cnt_guard_of_mem_access sslv ( expr : Cil_types.exp ) =
 		CntBTrue (* à voir ce qui se passe avec les tableaux *)
 		  
  	end
+
+    | CastE (TPtr (_,_), e ) ->
+      cnt_guard_of_mem_access sslv e
+
+    | Const ( _ ) -> 
+      CntBTrue
+	
+    (*| BinOp (PlusPI,a,b,_)*) 
+    | BinOp (_,a,b,_)
+      ->
+      let fg= cnt_guard_of_mem_access sslv a in
+      let fd = cnt_guard_of_mem_access sslv b in
+      CntBAnd(fg,fd)
+	
+    | UnOp(_,e,_) ->
+      cnt_guard_of_mem_access sslv e
+  
+    | Info (_,_) ->raise (Debug_info("[get_pvar_from_exp :] Don't know what
+to do with Info"))
+
+    | AddrOf (e) ->  
+      let dummy_exp = {eid = -1; enode = Lval(e) ; eloc = expr.eloc ;}
+      in
+      cnt_guard_of_mem_access sslv dummy_exp
+
+    | StartOf(_) -> CntBTrue
 	  
     | Lval( Mem(e) , off ) -> (*Access at the offset off of base memory e*)
       begin
@@ -139,9 +166,16 @@ let cnt_guard_of_mem_access sslv ( expr : Cil_types.exp ) =
 		Format.printf "The ptrvar %s has not matching affectation in the heap \n" ;
 		  CntBFalse
 	      end
+	
       end
 
-
+    | _ -> 
+      Format.fprintf Ast_goodies.debug_out "\n I failed to interpret the expression : [ ";
+      Cil.d_exp Ast_goodies.debug_out expr;
+       Format.fprintf Ast_goodies.debug_out " ] \n "; 
+      
+      raise 
+	Dont_know_how_to_generate_guard
 
 
 
