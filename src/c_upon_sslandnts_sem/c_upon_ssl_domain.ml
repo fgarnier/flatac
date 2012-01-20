@@ -730,12 +730,33 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 			compile_param_list_2_cnt_list sslv lparam in
 				   (* List.map ( fun s-> interpret_c_scal_to_cnt sslv.ssl_part s ) *)
 		      
+		      
+		      
+
+
+		      (********************* Code à factoriser proprement ! *************************)
+		      let mem_access_cond = 
+			(mem_guards_of_funcall_arg_list sslv lparam) in
 		      let cnt_trans_label = 
 			CntFunCall(funname,None,arg_nts_list) in
+		      let mem_access_trans_label =
+			CntGuard(mem_access_cond) in
+		      let valid_transit = (sslv,cnt_trans_label::(mem_access_trans_label::[])) in
+		      
+		      let mem_access_failure_trans_label =
+			CntGuard(CntNot(mem_access_cond)) in
+		      let failure_absdom = create_validity_abstdomain () in
+		      set_heap_to_top failure_absdom.ssl_part;
+		      let failtransit = (failure_absdom,mem_access_failure_trans_label::[]) in				 
+		     
+		      
+		      (*********************Fin de bloc à factoriser *****************************)
+
 		      let msg= 
 			Format.sprintf "[next_on_ssl_instr] Call to function: %s : %s \n[next_on_ssl_instr] argument list %s \n "  funname ( pprint_ciltypes f.vtype) (Nts.cnt_pprint_translabel cnt_trans_label ) in
 		      Format.printf "%s" msg;
-		      ((sslv,(cnt_trans_label::[]))::[]) 
+		       failtransit::(valid_transit::[])
+		   
 		       
 		(** All other function name that are dropped leads 
 			       here*)
