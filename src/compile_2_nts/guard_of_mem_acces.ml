@@ -69,6 +69,9 @@ let make_size_locvar ( l : locvar ) (mid : global_mem_manager ) ( block_size : c
 
 
 
+
+
+
 (* Not yet recursive. One only need to access to the first layer of
 pointer for multidimentional pointers -- like int **. *)
 
@@ -78,10 +81,29 @@ let  offset_of_mem_access_to_cnt sslv (t : Cil_types.typ ) ( off : Cil_types.off
     | Index (exp , _ ) -> 
       let offset_exp = compile_cil_exp_2_cnt sslv exp in
       let sizeof_type = interpret_ciltypes_size t in
-      CntProd(offset_exp,sizeof_type)
+      (*CntProd(offset_exp,sizeof_type)*) 
+      sizeof_type
+
     | Field(_,_) -> raise (Unhandled_offset_type ("Field met in offset_of_mem_access"))
 
 
+
+let cnt_guard_of_array_access sslv (access_offset : Cil_types.offset) 
+    ( array_type : Cil_types.typ ) =
+  
+  let rec array_within_bounds_cst sslv (pre : cnt_bool) 
+      (offset_reader : Cil_types.offset) (current_dim_type : Cil_types.typ) =
+    match offset_reader, current_dim_type with 
+	(NoOffset,_) ->
+	  pre
+      | (Index(exp,off),TArray(telem,Some(size_curr_row),_,_)) ->
+	let accs_index = compile_cil_exp_2_cnt sslv exp in
+	let size_curr_dim = compile_cil_exp_2_cnt sslv size_curr_row in
+	let current_cst = 
+	  CntBAnd(CntBool(CntLt,accs_index,size_curr_dim),CntBool(CntGeq,accs_index,CntCst(0))) in
+	array_within_bounds_cst sslv (CntBAnd(pre,current_cst)) off 
+      
+  in
 
 let rec cnt_guard_of_mem_access sslv ( expr : Cil_types.exp ) =
  (*(exp_type : Cil_types.typ)*) 
@@ -94,12 +116,26 @@ let rec cnt_guard_of_mem_access sslv ( expr : Cil_types.exp ) =
 	  match off with
 	      NoOffset ->
 		CntBTrue (* à voir ce qui se passe avec les tableaux *)
+	    | Index(offset_exp) ->
+	      let compiled_array = Compile_2_nts.compile_cil_array_2_cnt sslv
+		v.vname v.vtype in
+	      let index_of_accessed_tab =  
+	      
+	      
 		  
  	end
 
     | CastE (TPtr (_,_), e ) ->
       cnt_guard_of_mem_access sslv e
-
+    
+    | CastE(t , e ) ->
+      let is_t_an_int = Composite_types.is_integer_type t in
+      begin
+	match  is_t_an_int with
+	    Some(_) ->  cnt_guard_of_mem_access sslv e
+	  | None -> raise Dont_know_how_to_generate_guard
+      end
+   
     | Const ( _ ) -> 
       CntBTrue
 	
@@ -136,14 +172,14 @@ to do with Info"))
 	      offset at which the memory is accessed. *)
 	   
 	      let offset_nts_var = make_offset_locpvar pvar_access in
-	      (*let offset_of_e = offset_of_mem_access_to_cnt sslv mem_accs_type 
-		off in*)
+	      let top_most_offset = offset_of_mem_access_to_cnt sslv mem_accs_type 
+		off in
 	      let offset_of_e = Compile_2_nts.compile_cil_exp_2_cnt sslv e 
 	      in
 	      let sizeof_exp = Cnt_interpret.interpret_ciltypes_size
 		mem_accs_type in
-	      let total_offset = CntProd(CntVar(offset_nts_var),sizeof_exp)
-		(*CntSum(offset_of_e,*) 
+	      let total_offset = CntSum(CntProd(CntVar(offset_nts_var),sizeof_exp),top_most_offset)
+		(*CntSum(offset_of_e,CntP*) 
 	      in
 	      let locvar_size_name = get_lsizename_of_locvar location_var 
 	      in
@@ -156,13 +192,13 @@ to do with Info"))
 	      let interval_cond = 
 		CntBAnd(CntBool(CntLt,total_offset,locvar_size),CntBool(CntGeq,total_offset,CntCst(0))) 
 	      in
-	      let align_cond = CntBool(CntEq,CntMod(total_offset,locvar_size),CntCst(0)) 
+	      let align_cond = CntBool(CntEq,CntMod(total_offset,sizeof_exp),CntCst(0)) 
 	      in
 	      CntBAnd(interval_cond,align_cond)
 	    end
 	  else
 	    CntBFalse
-	      
+	
 	with
 	    _ -> 
 	      begin

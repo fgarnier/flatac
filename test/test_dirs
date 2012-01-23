@@ -5,3 +5,4 @@ bench_bradley/stack/
 DEMO/tacas06_bench/
 ../test_for_filip/pointer_aritmetic/
 ../examples/basic_malloc/
+test_guards_mem_access/
