@@ -71,7 +71,7 @@ and fixed_size_nts_array = FixedSizeBasicTypeNtsArray of
     cnt_arithm_exp * nts_base_types
 			   | FixedSizeMulDimNtsArray of 
 			       cnt_arithm_exp * nts_array 
-
+				 
 type nts_array_var = NtsArrayVar of string * nts_array
 
 type cnt_bool = CntBool of cnt_binop *  cnt_arithm_exp * cnt_arithm_exp

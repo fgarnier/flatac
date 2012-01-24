@@ -2,7 +2,7 @@
 # This set of functions are used to perform automatic verification
 # tests on the flatac frama-c plugin
 # Flata-c Framac, Verimag 2012
-#
+# mail : florent dot garnier at imag dot fr
 # 
 # List of directory list shall be containes in the file ./test_dirs
 # Each directory shall contain some pairs of files (file.c,file.ca_ref)

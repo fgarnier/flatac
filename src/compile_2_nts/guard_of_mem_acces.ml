@@ -101,9 +101,12 @@ let cnt_guard_of_array_access sslv (access_offset : Cil_types.offset)
 	let size_curr_dim = compile_cil_exp_2_cnt sslv size_curr_row in
 	let current_cst = 
 	  CntBAnd(CntBool(CntLt,accs_index,size_curr_dim),CntBool(CntGeq,accs_index,CntCst(0))) in
-	array_within_bounds_cst sslv (CntBAnd(pre,current_cst)) off 
-      
+	array_within_bounds_cst sslv (CntBAnd(pre,current_cst)) off telem
+      | (_,_) -> CntBFalse
   in
+  array_within_bounds_cst sslv CntBTrue access_offset array_type
+
+
 
 let rec cnt_guard_of_mem_access sslv ( expr : Cil_types.exp ) =
  (*(exp_type : Cil_types.typ)*) 
@@ -116,10 +119,11 @@ let rec cnt_guard_of_mem_access sslv ( expr : Cil_types.exp ) =
 	  match off with
 	      NoOffset ->
 		CntBTrue (* à voir ce qui se passe avec les tableaux *)
-	    | Index(offset_exp) ->
-	      let compiled_array = Compile_2_nts.compile_cil_array_2_cnt sslv
+	    | Index(_,_) ->
+	      cnt_guard_of_array_access sslv off p.vtype
+	     (* let compiled_array = Compile_2_nts.compile_cil_array_2_cnt sslv
 		v.vname v.vtype in
-	      let index_of_accessed_tab =  
+	      let index_of_accessed_tab = *)  
 	      
 	      
 		  
