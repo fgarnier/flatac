@@ -106,14 +106,15 @@ let cnt_guard_of_array_access sslv (access_offset : Cil_types.offset)
   in
   array_within_bounds_cst sslv CntBTrue access_offset array_type
 
-
-
 let rec cnt_guard_of_mem_access sslv ( expr : Cil_types.exp ) =
+  cnt_guard_of_mem_access_enode sslv expr.enode 
+
+and cnt_guard_of_mem_access_enode sslv ( expr_node : Cil_types.exp_node ) =
  (*(exp_type : Cil_types.typ)*) 
     
   
-  let mem_accs_type = Cil.typeOf expr in  
-  match  expr.enode with 
+ (* let mem_accs_type = Cil.typeOf expr in*)  
+  match  expr_node with
       Lval( Var (p) , off )->
 	begin
 	  match off with
@@ -157,10 +158,11 @@ let rec cnt_guard_of_mem_access sslv ( expr : Cil_types.exp ) =
     | Info (_,_) ->raise (Debug_info("[get_pvar_from_exp :] Don't know what
 to do with Info"))
 
-    | AddrOf (e) ->  
-      let dummy_exp = {eid = -1; enode = Lval(e) ; eloc = expr.eloc ;}
-      in
-      cnt_guard_of_mem_access sslv dummy_exp
+    | AddrOf (e) -> 
+      cnt_guard_of_mem_access_enode sslv (Lval(e))
+    (*let dummy_exp = {eid = -1; enode = Lval(e) ; eloc = expr.eloc ;}
+      in*)
+
 
     | StartOf(_) -> CntBTrue
 	  
@@ -176,6 +178,7 @@ to do with Info"))
 	      offset at which the memory is accessed. *)
 	   
 	      let offset_nts_var = make_offset_locpvar pvar_access in
+	      let mem_accs_type = Cil.typeOfLval ( Mem(e), off) in 
 	      let top_most_offset = offset_of_mem_access_to_cnt sslv mem_accs_type 
 		off in
 	      let offset_of_e = Compile_2_nts.compile_cil_exp_2_cnt sslv e 
@@ -214,7 +217,7 @@ to do with Info"))
 
     | _ -> 
       Format.fprintf Ast_goodies.debug_out "\n I failed to interpret the expression : [ ";
-      Cil.d_exp Ast_goodies.debug_out expr;
+      Cil.d_exp Ast_goodies.debug_out ( Cil.dummy_exp expr_node);
        Format.fprintf Ast_goodies.debug_out " ] \n "; 
       
       raise 
@@ -234,81 +237,3 @@ let mem_guards_of_funcall_arg_list sslv (l : Cil_types.exp list) =
   in
   List.fold_left guard_folder CntBTrue l
 	
-(*
-let rec get_pvar_from_exp_node (expn : Cil_types.exp_node ) =
-  match expn with
-      Lval ( Var( p ) , off ) ->
-        begin
-          Format.fprintf  debug_out "get_pvar_from_exp_node : lval is a Var(p) \n";
-          Cil.d_lval debug_out  ( Var(p), off);
-          Format.fprintf  debug_out "\n";
-          match p.vtype with 
-              TPtr(_,_) -> 
-                begin
-                  match off with (* If lval is a subfield of a structure*)
-                      Field (finfo, suboffset) ->
-                        let pvar_name = get_subfield_name 
-                          (p.vname) finfo suboffset in
-                        Format.printf "Pvar name is : %s \n" pvar_name;
-                          (PVar(pvar_name))
-
-                    | NoOffset -> 
-                      Format.printf "No offset for pvar \n";
-                      (PVar(p.vname))
-                    |  _ -> raise (Debug_info (" In get_pvar_from_exp : I don't know how to deal with array indexes \n"))
-                end
-                
-            | _ -> raise Contains_no_pvar
-        end
-
-    | Lval(Mem(e), off ) ->
-      Format.printf "Guard of mem acces of e";
-      begin 
-        match e.enode , off with
-            (Lval(Var(v'),_),NoOffset) ->
-              Format.printf "Mem(e) :*%s- \n" v'.vname ;
-              PVar(v'.vname)
-
-          | (Lval(Var(v'),_), Field(finfo,offs)) -> 
-            let pointer_name = Format.sprintf "%s->" v'.vname in
-            let pointer_name = get_subfield_name pointer_name finfo offs in
-            Format.printf "%s \n" pointer_name;
-            PVar(pointer_name)
-            
-          
-          | (_,Index(_,_)) -> Format.printf "Some index \n"; 
-            raise (Debug_info ("In get_pvar_from_exp_node : I don't handle
-  array indexes here and there is no reason why I should do it here.\n"))
-          | (_,_) -> raise (Debug_info ("Lost in get_pvar_from_exp_node \n"))
-      end
-         
-
-    | CastE (TPtr (_,_), e ) ->
-        get_pvar_from_exp e
-
-    | Const ( CInt64 (i ,_,_)) -> 
-      if (My_bigint.is_zero i)  then 
-        raise Loc_is_nil
-      else raise (Loc_is_a_constant(My_bigint.to_int64 i))
-    
-    | BinOp (PlusPI,e1,_,_) 
-    | BinOp (MinusPI,e1,_,_)
-        ->
-        get_pvar_from_exp e1
-
-    | BinOp (b,_,_,_) ->
-        let b = pprint_binop_op b in
-        let msg = "[get_pvar_from_exp :] Don't know what
-to do with Binop operator "^b in
-          raise (Debug_info(msg))
-
-    | Info (_,_) ->raise (Debug_info("[get_pvar_from_exp :] Don't know what
-to do with Info"))
-
-    | AddrOf (_) ->  raise (Debug_info("[get_pvar_from_exp :] Don't know what to do with AddrOf"))
-
-    | _ ->  raise Contains_no_pvar
-          
-and  get_pvar_from_exp (expr : Cil_types.exp ) =
-  get_pvar_from_exp_node expr.enode
-*)

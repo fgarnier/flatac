@@ -92,7 +92,25 @@ let fresh_locvar_name_from_etp (etp : entail_problem ) =
 	  match var_max with
 	      LVar ( vname ) -> FLVar( vname, 1)
 	end
-    | (_,_) -> raise Top_heap_exception 
+    |  ( Space(tableg) , _ ) -> 
+      begin
+	let var_max = Hashtbl.fold max_varloc_name_space_fold tableg var_max in
+	match var_max with
+	    LVar ( vname ) -> FLVar( vname, 1)
+      end
+
+    |  ( _ ,  Space(tabled) ) -> 
+      begin
+	let var_max = Hashtbl.fold max_varloc_name_space_fold tabled var_max in
+	match var_max with
+	    LVar ( vname ) -> FLVar( vname, 1)
+      end
+	
+      
+    | (_,_) -> 
+      match var_max with
+	  LVar ( vname ) -> FLVar( vname, 1)
+	    (*raise Top_heap_exception*) 
   
 
 (** Used to compute the biggest location variabl in a (locvar, unit ) t 

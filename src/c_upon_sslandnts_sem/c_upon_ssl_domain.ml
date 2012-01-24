@@ -37,7 +37,7 @@ exception Wrong_parameter_type_in_free
 exception Debug_information of string
 exception Debug_info of string 
 exception Assert_fail_exception 
-
+exception LvalureNotaVariable
 
 
 
@@ -48,31 +48,48 @@ This function progates the validity to an expression to the lvalue
 when the latter is an integer variable
 *)
 
-let affect_int_val_upon_sslv (v : Cil_types.varinfo) (expr : Cil_types.exp) 
+let affect_int_val_upon_sslv ((lv , off) : Cil_types.lval) (expr : Cil_types.exp) 
     (sslv : ssl_validity_absdom ) =
-  Self.debug ~level:0 " Entering affect_int_val_upon_sslv ";
-  let scal_of_exp = cil_expr_2_scalar expr in
-  let validity_of_rval = valid_sym_cscal sslv.validinfos sslv.ssl_part 
-    scal_of_exp in
-  let ret_absdomain = copy_validity_absdomain sslv in
-  let ret_absdomain =
-    set_var_validity_in_absdomain ret_absdomain v None validity_of_rval in
-  let c_scal_exp = cil_expr_2_scalar expr in 
-  let cnt_expr = interpret_c_scal_to_cnt sslv.ssl_part c_scal_exp in
-  let cnt_affect = CntAffect(NtsIVar(v.vname),cnt_expr) in
 
+  
+  
+	Self.debug ~level:0 " Entering affect_int_val_upon_sslv ";
+	let scal_of_exp = cil_expr_2_scalar expr in
+	let validity_of_rval = valid_sym_cscal sslv.validinfos sslv.ssl_part 
+	  scal_of_exp in
+	let ret_absdomain = copy_validity_absdomain sslv in
+	let (cnt_affect_list , ret_absdomain ) =(
+	  match lv with
+	      Var(v) -> 
+		let ret_absdomain =
+		  set_var_validity_in_absdomain ret_absdomain v 
+		    None validity_of_rval in
+		let c_scal_exp = cil_expr_2_scalar expr in 
+		let cnt_expr = interpret_c_scal_to_cnt sslv.ssl_part
+		  c_scal_exp in
+		let cnt_affect = CntAffect(NtsIVar(v.vname),cnt_expr) in
+		(cnt_affect::[],ret_absdomain)
+		  
+	    | _ ->
+	      ([], ret_absdomain)
+	)
+	in
+	
   (***********Transition for valid memory access in expr parameter *******************)
-  let access_cond_of_expr = cnt_guard_of_mem_access sslv expr in
-  let success_guard = CntGuard(access_cond_of_expr) in
-  let success_transition = (ret_absdomain , success_guard::(cnt_affect::[])) in
+	let access_cond_of_expr = cnt_guard_of_mem_access sslv expr in
+	let access_cond_of_lval = cnt_guard_of_mem_access_enode sslv (Lval(lv , off))
+	in
+	let global_succs_guard = CntBAnd(access_cond_of_lval,access_cond_of_expr) in
+	let success_guard = CntGuard(global_succs_guard) in
+	let success_transition = (ret_absdomain , success_guard::(cnt_affect_list)) in
     (******** Transition for invalid memory access in expr parameter ****************)
 
-  let failure_absdom = create_validity_abstdomain () in
-  set_heap_to_top failure_absdom.ssl_part;
-  let failure_guard = CntGuard(CntNot(access_cond_of_expr)) in
-  let fail_trans = (failure_absdom,failure_guard ::[] )  in
-  fail_trans::(success_transition::[])
-
+	let failure_absdom = create_validity_abstdomain () in
+	set_heap_to_top failure_absdom.ssl_part;
+	let failure_guard = CntGuard(CntNot(access_cond_of_expr)) in
+	let fail_trans = (failure_absdom,failure_guard ::[] )  in
+	fail_trans::(success_transition::[])
+	  
   
 
 (** This function aims at getting the first variable name
@@ -495,54 +512,71 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 						 affectations*)
 	begin
 	  Self.debug ~level:0 "Trying to handle an affectation \n"; 
-	  match lv with 
-	      Var(v) ->
-		begin
-		  (Self.debug ~level:0 "The left value is a variablex \n");
-		  match v.vtype with 
-		      TPtr(_,_) -> affect_ptr_upon_sslv (lv , off) expr sslv 
+	  let t = (Cil.typeOfLval (lv , off)) in
+	  match t  with 
+	      (*Var(v) ->
+		begin*)
+	    (*  (Self.debug ~level:0 "The left value is a variablex \n");
+		match v.vtype with *)
+	      TPtr(_,_) -> affect_ptr_upon_sslv (lv , off) expr sslv 
 		    (* affect_int_val_upon_sslv set the valitidity of
 		    v to the validity of expr*)
-		    | TInt(_,_) -> affect_int_val_upon_sslv v expr sslv
+	    | TInt(_,_) -> affect_int_val_upon_sslv (lv , off) expr sslv
 			
 		   
-		    | _ ->
-		      let alias_tname = Composite_types.is_integer_type v.vtype in
-		      begin
-			match alias_tname with
-			  | Some(_) ->
-			    affect_int_val_upon_sslv v expr sslv
+	    | _ ->
+		let alias_tname = Composite_types.is_integer_type t in
+		begin
+		  match alias_tname with
+		    | Some(_) ->
+		      affect_int_val_upon_sslv (lv , off) expr sslv
 			      
-			  | None ->
-			    begin
+		    | None ->
+		      begin
 				  
-			      (Self.debug ~level:0 "Unhandled type of variable affectation, skiping it \n");
-			      (sslv,[])::[]
+			(Self.debug ~level:0 "Unhandled type of variable affectation, skiping it \n");
+			(sslv,[])::[]
 				(*let msg= 
 				  Format.sprintf "[next_on_ssl_instr] Var : %s = %s : %s \n"  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype) in
 				  raise (Debug_info(msg)) *)
 				(* Format.printf "%s" msg;
 				   (sslv,[])::[] *)
-			    end
 		      end
-			
-			
-			
 		end
-	    | Mem(e) ->
-	      begin
+			
+			
+			
+	end
+      (*| Mem(e) ->
+	begin
+	   let access_cond_of_lval = cnt_guard_of_mem_access_enode sslv (Lval(lv , off))
+	   in
+	   let global_succs_guard = CntBAnd(access_cond_of_lval,access_cond_of_expr) 
+	   in
+	   let success_guard = CntGuard(global_succs_guard) 
+	   in
+	   let success_transition = (ret_absdomain , success_guard::(cnt_affect::[])) in
+	   let failure_absdom = create_validity_abstdomain () in
+	   set_heap_to_top failure_absdom.ssl_part;
+	   let failure_guard = CntGuard(CntNot(access_cond_of_expr)) in
+	   let fail_trans = (failure_absdom,failure_guard ::[] )  in
+	   fail_trans::(success_transition::[])
+      *)
+
+  
+	(*
 		(*let v_dest = get_pvar_from_exp e in*)
-		match e.enode with
-		    Lval(Var(v),off) ->
-		      begin
-			match v.vtype with
-			    TPtr(_,_)
-			    -> ((sslv,[])::[])
-			      (*affect_ptr_upon_sslv  (Var(v),off) expr sslv*)
-			 (* | TInt(_,_)
-			    -> affect_int_val_upon_sslv v expr sslv
-			 *) 
-			  | _ ->
+	  match e.enode with
+	      Lval(Var(v),off) ->
+		begin
+		  match v.vtype with
+		      TPtr(_,_)
+		      -> ((sslv,[])::[])
+			  (*affect_ptr_upon_sslv  (Var(v),off) expr sslv*)
+			  (* | TInt(_,_)
+			     -> affect_int_val_upon_sslv v expr sslv
+			  *) 
+		    | _ ->
 			    
 			let msg =
 			  Format.sprintf "Mem(e) with e.node : Lval(Var(v),off), not yet supported, where v = %s and offset = %s \n, %s <- %s. Need to check alignement and bloc size." v.vname (Ast_goodies.pprint_offset off ) v.vname (pprint_cil_exp expr) in
@@ -558,7 +592,9 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 	      end
 	    | _ ->  Self.debug ~level:0 "The left member of this affectation is not a variable, skiping it \n"; 
 	      (sslv,[])::[]
-	end
+
+	      *)
+(*	end *)
      
       |  Call( Some(lvo) , exp1, lparam , _ )->
 	begin
