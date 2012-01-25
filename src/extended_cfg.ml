@@ -590,7 +590,8 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	if not (front_end#need_split_transition label) 
 	then
 	  begin
-	    let label=front_end#havocise_label label in
+	  
+	    let label = front_end#havocise_label label in
 	    let post_script = Format.sprintf "%s \n s%d->s%d { %s }" prescript ( get_id_of_ecfg_id origin)  ( get_id_of_ecfg_id dest) 
 	      (front_end#pretty_label label)
 	    in 

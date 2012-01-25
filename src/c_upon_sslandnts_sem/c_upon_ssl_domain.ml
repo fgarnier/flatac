@@ -437,12 +437,7 @@ let r_malloc_failed_with_unvalidcntgard lhs sslv  (mid: global_mem_manager ) (sc
 	end
 
 
-  
-  
-  
-  
-  
-	  
+
 
 (** The evaluation of the abstract prior the application
 of malloc is needed to compute the guards on the
@@ -534,7 +529,7 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 		    | None ->
 		      begin
 				  
-			(Self.debug ~level:0 "Unhandled type of variable affectation, skiping it \n");
+			(Self.debug ~level:0 " Warning ! Unhandled type of variable affectation, skiping it \n");
 			(sslv,[])::[]
 				(*let msg= 
 				  Format.sprintf "[next_on_ssl_instr] Var : %s = %s : %s \n"  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype) in
@@ -547,54 +542,7 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 			
 			
 	end
-      (*| Mem(e) ->
-	begin
-	   let access_cond_of_lval = cnt_guard_of_mem_access_enode sslv (Lval(lv , off))
-	   in
-	   let global_succs_guard = CntBAnd(access_cond_of_lval,access_cond_of_expr) 
-	   in
-	   let success_guard = CntGuard(global_succs_guard) 
-	   in
-	   let success_transition = (ret_absdomain , success_guard::(cnt_affect::[])) in
-	   let failure_absdom = create_validity_abstdomain () in
-	   set_heap_to_top failure_absdom.ssl_part;
-	   let failure_guard = CntGuard(CntNot(access_cond_of_expr)) in
-	   let fail_trans = (failure_absdom,failure_guard ::[] )  in
-	   fail_trans::(success_transition::[])
-      *)
-
-  
-	(*
-		(*let v_dest = get_pvar_from_exp e in*)
-	  match e.enode with
-	      Lval(Var(v),off) ->
-		begin
-		  match v.vtype with
-		      TPtr(_,_)
-		      -> ((sslv,[])::[])
-			  (*affect_ptr_upon_sslv  (Var(v),off) expr sslv*)
-			  (* | TInt(_,_)
-			     -> affect_int_val_upon_sslv v expr sslv
-			  *) 
-		    | _ ->
-			    
-			let msg =
-			  Format.sprintf "Mem(e) with e.node : Lval(Var(v),off), not yet supported, where v = %s and offset = %s \n, %s <- %s. Need to check alignement and bloc size." v.vname (Ast_goodies.pprint_offset off ) v.vname (pprint_cil_exp expr) in
-			Format.printf "%s" msg;
-			 ((sslv,[])::[])
-			(*raise (Debug_info (msg))*)
-		      end
-			| _ -> 
-			  let msg = Format.sprintf "[next_on_ssl_affect :]Paramater e in Mem(e) is not a Lval(Var(),_), e is : %s. Need to check block size and segmentation here \n" (pprint_cil_exp e) in
-			  Format.printf "%s" msg;
-			  (*raise (Debug_info (msg))*)
-			  ((sslv,[])::[])
-	      end
-	    | _ ->  Self.debug ~level:0 "The left member of this affectation is not a variable, skiping it \n"; 
-	      (sslv,[])::[]
-
-	      *)
-(*	end *)
+   
      
       |  Call( Some(lvo) , exp1, lparam , _ )->
 	begin

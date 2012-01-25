@@ -424,6 +424,7 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
     let not_havoc label =
       match label with
 	  CntHavoc(_) -> false
+	| CntAffect(_,CntNdet)-> false
 	| _ -> true
     in
     let modified_vars (var_list : Nts_types.nts_var list) 

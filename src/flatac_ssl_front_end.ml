@@ -195,6 +195,8 @@ being error states.*)
     Nts.need_split_transition l
 
   method split_guard_call_transition translabel =
+    let translabel = 
+      Nts.rewrite_ndet_assignation translabel in
     Nts.split_guard_call_transition translabel
 
   method accepts sslvg sslvd =
