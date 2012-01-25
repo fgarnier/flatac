@@ -1,6 +1,8 @@
 open Nts_types
 
 
+exception CntInvalidExpression
+
 (*  
 This files contains the functions used to deal with Numerical Transition
 Systems, a.k.a. counter automata.
@@ -17,6 +19,20 @@ and then send me your message.
 
 (* This part defines the function used to export the nts trees into
 a NTS compliant syntax -- as well as being human readable.*)
+
+
+let negate_cntbool_shallow ( b : cnt_bool) =
+  match b with
+      CntBTrue -> CntBFalse
+    | CntBFalse -> CntBTrue
+    | CntNot(a)-> a
+    | _ -> CntNot(b)
+
+
+
+
+
+
 
 let rec nts_pprint_nts_var (x : nts_var ) = 
   match x with 
@@ -90,6 +106,9 @@ let make_ntsvars_of_intvars (vname : string) =
 
 
 
+
+
+
 let concat_if_first_arg_nonzero s1 s2 =
   if String.length s1 != 0
   then s1^s2
@@ -137,6 +156,7 @@ let rec size_arithm_exp ( exp : cnt_arithm_exp ) =
   match exp with 
        CntCst(_) -> 1
     | CntNdet(_) -> 1
+    | CntNdetVar(_) -> 1
     | CntSymCst ( _ ) -> 1
     | CntVar (_) -> 1
     | CntInvalidExp -> 1
@@ -152,6 +172,9 @@ let rec size_arithm_exp ( exp : cnt_arithm_exp ) =
     | CntDiv ( eg ,  ed ) -> 
       1 + max (size_arithm_exp eg ) (size_arithm_exp eg )       
 
+
+
+
 (* This function answers true if there exists a subtree of exp which size
 is greater or equal that deepness. We use this function to decide wheter
 some expression shall be parenthesed or not. *)
@@ -163,7 +186,8 @@ let rec size_arithmexp_deeper_than  (exp : cnt_arithm_exp ) (deepness : int ) =
        CntCst(_)
       | CntNdet
     | CntSymCst (_ )
-    | CntVar (_) 
+    | CntVar (_)
+    | CntNdetVar(_)
     | CntInvalidExp -> false
     | CntUnMin ( exp' ) ->   size_arithmexp_deeper_than exp' deepness'
     | CntMinus ( eg ,  ed ) ->
@@ -199,7 +223,7 @@ let rec cnt_pprint_arithm_exp ( exp : cnt_arithm_exp ) =
     | CntNdet -> "NDET"
     | CntSymCst(str) -> str
     | CntVar ( ntsvar ) -> nts_pprint_nts_var ntsvar
-
+    | CntNdetVar(varname) -> varname
     | CntSum ( eg , ed ) ->
         (cnt_pprint_arithm_exp eg)^"+"^(cnt_pprint_arithm_exp ed)
     
@@ -311,10 +335,10 @@ let rec cnt_pprint_boolexp (bexp :cnt_bool ) =
       	 CntBTrue -> "true"
 	| CntBFalse-> "false"
 	| CntNot ( exp ) ->
-	  if size_boolexp_deeper_than exp 1 then
+	  if size_boolexp_deeper_than exp 0 then
 	    "not ("^(cnt_pprint_boolexp exp)^")"
 	  else 
-	    "not"^cnt_pprint_boolexp exp
+	    "not "^cnt_pprint_boolexp exp
 	
 	|  CntBAnd ( eg , ed )
 	  -> 
@@ -369,8 +393,46 @@ let rec cnt_pprint_boolexp (bexp :cnt_bool ) =
 
 
 
+(* This return true iff there is no constructor CntNDet in a CntBoolExpression*)
+let rec is_cnt_bool_det ( b : cnt_bool ) =
+  match b with
+    | CntBTrue -> false
+    | CntBFalse -> false
+    
+    | CntBAnd (a,b) ->  
+      let ndet_fg = is_cnt_bool_det a in
+      let ndet_fd = is_cnt_bool_det b in
+      ndet_fg && ndet_fd
+	
+    | CntBOr (a,b) -> (* a and b need to be both *) 
+      let ndet_fg = is_cnt_bool_det a in
+      let ndet_fd = is_cnt_bool_det b in
+      ndet_fg && ndet_fd	  
+	
+    | CntNot (a) -> is_cnt_bool_det a
+      
+    | CntBool(_,a,b) -> 
+      let det_fg = is_cnt_arithm_exp_a_function a in
+      let det_fd = is_cnt_arithm_exp_a_function b in
+      det_fg && det_fd
 
+(* Does the arithmetic expression have a deterministic evalution, i.e.
+contains no CntNdet constructor *)	
+and is_cnt_arithm_exp_a_function (e : cnt_arithm_exp ) =
+  match e with
+   | CntNdet -> false
+   | CntNdetVar(_) -> false
+   | CntMinus(a,b) | CntSum (a,b) 
+   | CntProd(a,b) | CntMod (a,b) 
+   | CntDiv (a,b) ->   
+     let det_fg = is_cnt_arithm_exp_a_function a in
+     let det_fd = is_cnt_arithm_exp_a_function b in
+     det_fg && det_fd
+   | CntUnMin (a) ->  	is_cnt_arithm_exp_a_function a
+   | CntInvalidExp -> raise CntInvalidExpression
+   | _-> true
 
+	  
 let pprint_il_args arg =
   match arg with 
       IlPtrArg(s) -> (cnt_pprint_arithm_exp s.offset_of_exp)^","^(cnt_pprint_arithm_exp s.validity_of_ptr_exp)
@@ -507,6 +569,44 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
 
 
 
+  (* When guards deplends on non deteerministic values, transition :
+
+   Guard(nd_cnd)              havoc(cnd_var)      Guard( cnd_var == 0)
+  --------->       becomes  ( ----------------> . ---------------------->) 
+*)
+
+
+  let need_split_guard ( g : cnt_trans_label ) =
+    match g with 
+	CntGuard( condition ) ->
+	  not (is_cnt_bool_det condition)
+
+      | _ -> raise Not_Guard
+
+	    
+ (* let split_ndet_guard_transition (l : cnt_trans_label list) =
+    
+    let 
+    let (pre,post)=([],l) in
+ *) 
+    
+  
+
+(* If c is not a deterministic condition, then it is replaced by a
+   CntBool(CntEq,CntNderVar("__if_ndet_cond__"),CntCst(0)). Use
+   for if then else label generation. The computed label is for
+   the positive test of an if statment. Negate it to get the
+   else test.
+*)
+  let format_cntcond_for_cfg_condition ( condition : cnt_bool ) =
+    if is_cnt_bool_det condition 
+    then condition
+    else
+      CntBool(CntEq,CntNdetVar("__if_ndet_cond__"),CntCst(0))
+    
+
+
+
 
   let build_argn_det_list (size : int ) =
     let rec rec_build_it index list =
@@ -540,3 +640,5 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
 	| _ -> transit::ret_list
     in
     List.fold_left ndet_affect_folder [] l
+
+ 

@@ -737,7 +737,8 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 			CntFunCall(funname,None,arg_nts_list) in
 		      let mem_access_trans_label =
 			CntGuard(mem_access_cond) in
-		      let valid_transit = (sslv,cnt_trans_label::(mem_access_trans_label::[])) in
+		      let valid_transit = 
+			(sslv,cnt_trans_label::(mem_access_trans_label::[])) in
 		      
 		      let mem_access_failure_trans_label =
 			CntGuard(CntNot(mem_access_cond)) in

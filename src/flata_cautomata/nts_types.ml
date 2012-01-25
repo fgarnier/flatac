@@ -11,6 +11,7 @@ y with florent.
 
 exception Not_LiPVar
 exception Not_LiVar
+exception Not_Guard
 exception Invalid_nts_expression
 
 (* That type describes **)

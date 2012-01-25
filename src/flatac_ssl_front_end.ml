@@ -137,12 +137,16 @@ being error states.*)
       let abs_val_true = Ssl_valid_abs_dom.copy_validity_absdomain sslv in
       let abs_val_false = Ssl_valid_abs_dom.copy_validity_absdomain  sslv in
       let cbool_cdition = cil_expr_2_bool cdition in
-      let neg_cbool_cdition =  negate_bool_bot cbool_cdition in 
+      (*let cbool_cdition = Nts.format_cntcond_for_cfg_condition cbool_cdition in
+      let neg_cbool_cdition =  negate_bool_bot cbool_cdition in*) 
       let nts_cdition = c_bool_to_cnt_bool 
 	abs_val_true.ssl_part cbool_cdition 
       in
-      let neg_of_nts_cdition =  c_bool_to_cnt_bool 
-	abs_val_false.ssl_part neg_cbool_cdition in
+      let nts_cdition = Nts.format_cntcond_for_cfg_condition 
+       nts_cdition 
+      in
+      let neg_of_nts_cdition = Nts.negate_cntbool_shallow nts_cdition
+      in
       let nts_trans_yes = (abs_val_true ,(CntGuard(nts_cdition))::[])
       in
       let nts_trans_no = 
@@ -215,11 +219,6 @@ being error states.*)
 
 
   method  number_of_valid_vars sslv  = 
-    (*let vmap =(
-      match sslv.validinfos with
-	  Validlocmap(lamap)-> lamap)
-    in*)
-   (* Validvarmap.cardinal vmap *)
       Var_validity.cardinal_of_locmap sslv.validinfos
 
   method pprint_list_of_valid_var sslv =

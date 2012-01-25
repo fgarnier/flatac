@@ -584,19 +584,21 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	
     method pprint_transitions () =
       let intermediate_sid = ref 0 in
-     
+      
+
       let dest_table_print_folder ( origin : ecfg_id ) (dest : ecfg_id ) label 
 	  (prescript : string ) =
 	if not (front_end#need_split_transition label) 
 	then
 	  begin
-	  
+	    
 	    let label = front_end#havocise_label label in
 	    let post_script = Format.sprintf "%s \n s%d->s%d { %s }" prescript ( get_id_of_ecfg_id origin)  ( get_id_of_ecfg_id dest) 
 	      (front_end#pretty_label label)
 	    in 
 	    post_script
 	  end
+	    
 	else
 	  begin
 	    let (pre,post) = front_end#split_guard_call_transition label in
@@ -674,17 +676,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       let absval_of_ep = 
 	front_end#get_entry_point_from_fundec finfo funinfo 
       in
-      (*let map_len = ref ( front_end#number_of_valid_vars absval_of_ep )
-      in
-      let pprint_valid_cnt_folder  vname _ prestr =
-	if !map_len >= 1 then
-	  begin
-	    map_len:=!map_len-1;
-	    prestr^("valid_"^vname^"_,")
-	  end
-	else
-	  prestr^("valid_"^vname^"_")
-      in*)
+     
       let validvar_names = front_end#pprint_list_of_valid_locals_var 
 	absval_of_ep funinfo in
       Nts.concat_comma_both_arg_non_empty validvar_names ((Nts.pprint_typeinfo_int_nts_var_list nts_slocals))
@@ -724,26 +716,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       let pprint_loc=Nts.concat_comma_both_arg_non_empty pprint_loc_pre 
 	pprint_loc in
       let res_string=res_string^"\n"^Nts.concat_if_first_arg_nonzero pprint_loc " : int ;\n" in
-     (* let pprint_loc = (
-	if String.length pprint_loc > 0 && 
-	  String.length pprint_loc_pre > 0 
-	then
-	  pprint_loc_pre^","^pprint_loc
-	else
-	  if String.length pprint_loc_pre > 0 
-	  then
-	    pprint_loc_pre^" : int" 
-	  else
-	    pprint_loc
-      ) 
-      in
-      let res_string = (
-	if String.length pprint_loc > 0 
-	then 
-       
-	    res_string^"\n"^pprint_loc^";\n" 
-	else
-	  res_string ) in *)
+    
       
       let ret_vars = self#pprint_out_vars () in
       Format.printf "Outvars are : %s \n" ret_vars;
