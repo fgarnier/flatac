@@ -348,6 +348,12 @@ let rec cnt_pprint_arithm_exp ( exp : cnt_arithm_exp ) =
       | CntNot(CntNot(a)) -> a
       | CntBOr(a,CntBTrue) -> CntBTrue
       | CntBOr(CntBTrue,a) -> CntBTrue
+      | CntNot(CntBool(CntEq,a,b)) -> (CntBool(CntNeq,a,b))
+      | CntNot(CntBool(CntNeq,a,b)) -> (CntBool(CntEq,a,b))
+      | CntNot(CntBool(CntLt,a,b)) -> (CntBool(CntGeq,a,b))
+      | CntNot(CntBool(CntGt,a,b)) -> (CntBool(CntLeq,a,b))
+      | CntNot(CntBool(CntLeq,a,b)) -> (CntBool(CntGt,a,b))
+      | CntNot(CntBool(CntGeq,a,b)) -> (CntBool(CntLt,a,b))	
       | _ -> e
 
 	
