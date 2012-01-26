@@ -330,8 +330,61 @@ let rec cnt_pprint_arithm_exp ( exp : cnt_arithm_exp ) =
 
 
 
-let rec cnt_pprint_boolexp (bexp :cnt_bool ) =
-  match bexp with 
+
+
+(*********************************************************************************************) 
+(**** Simplification of CntBool expression : Elimination of tautologies, or false  bool expressions *)
+
+
+
+  let simplify_bottom_top (e : cnt_bool ) = 
+    match e with
+      | CntBAnd(CntBFalse,a) -> CntBFalse
+      | CntBAnd(a,CntBFalse) -> CntBFalse
+      | CntBAnd(CntBTrue,a) ->  a
+      | CntBAnd(a,CntBTrue) ->  a
+      | CntNot(CntBTrue) -> CntBFalse
+      | CntNot(CntBFalse) -> CntBTrue
+      | CntNot(CntNot(a)) -> a
+      | CntBOr(a,CntBTrue) -> CntBTrue
+      | CntBOr(CntBTrue,a) -> CntBTrue
+      | _ -> e
+
+	
+  let rec simplify_cnt_boolexp ( e : cnt_bool ) =
+    match e with
+      | CntBAnd(a,b) -> let fg = simplify_cnt_boolexp a in
+			let fd = simplify_cnt_boolexp b in
+			simplify_bottom_top (CntBAnd(fg,fd))
+			  
+      | CntBOr(a,b) -> let fg = simplify_cnt_boolexp a in
+		       let fd = simplify_cnt_boolexp b in
+		       simplify_bottom_top (CntBOr(fg,fd))
+      | CntNot(a) -> let a = simplify_cnt_boolexp a in
+		     simplify_bottom_top (CntNot(a))
+			 
+      | CntBTrue -> CntBTrue
+      | CntBFalse -> CntBFalse
+	
+      | _ -> e
+     
+
+      (*| CntBAnd(CntBTrue,a) -> simplify_cnt_boolexp a
+      | CntBAnd(a,CntBTrue) -> simplify_cnt_boilexp a
+      | CntBAnd(CntBFalse,a) -> CntBFalse
+      | CntBAnd(a,CntBFalse) -> CntBFalse
+      | CntBOr(a,CntBTrue) -> CntBTrue
+      | CntBOr(CntBTrue,a) -> CntBTrue *)		
+
+
+(**********************)
+
+
+  
+      
+      
+  let rec cnt_pprint_boolexp (bexp :cnt_bool ) =
+    match bexp with 
       	 CntBTrue -> "true"
 	| CntBFalse-> "false"
 	| CntNot ( exp ) ->
@@ -392,6 +445,12 @@ let rec cnt_pprint_boolexp (bexp :cnt_bool ) =
 	  end
 
 
+	    
+  let cnt_simplify_and_pprint_boolexp ( bexp : cnt_bool) =
+    let bsimple = simplify_cnt_boolexp bexp in
+    cnt_pprint_boolexp bsimple
+
+
 
 (* This return true iff there is no constructor CntNDet in a CntBoolExpression*)
 let rec is_cnt_bool_det ( b : cnt_bool ) =
@@ -448,7 +507,7 @@ let arg_name_left_folder (str : string ) ( il_arg : il_fun_arguments) =
 
 let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
   match tlabel with
-      CntGuard ( cbool ) -> cnt_pprint_boolexp cbool
+      CntGuard ( cbool ) -> cnt_simplify_and_pprint_boolexp cbool
     | CntAffect( ntvar ,  expr ) ->
        (nts_pprint_nts_var ntvar)^"'="^(cnt_pprint_arithm_exp expr)
     | CntFunCall ( funname, retval , largs ) ->
@@ -641,4 +700,5 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
     in
     List.fold_left ndet_affect_folder [] l
 
- 
+
+     
