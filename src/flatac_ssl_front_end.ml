@@ -134,11 +134,22 @@ being error states.*)
   method next_on_if_statement (sslv : ssl_validity_absdom ) 
     (cdition : Cil_types.exp) =
     begin
-      let abs_val_true = Ssl_valid_abs_dom.copy_validity_absdomain sslv in
-      let abs_val_false = Ssl_valid_abs_dom.copy_validity_absdomain  sslv in
+      let abs_mem_broken1 = 
+	Ssl_valid_abs_dom.copy_validity_absdomain sslv in
+	Ssl.set_heap_to_top abs_mem_broken1.ssl_part;
+      
+      let abs_val_true = Ssl_valid_abs_dom.copy_validity_absdomain 
+	sslv in
+      let abs_val_false = Ssl_valid_abs_dom.copy_validity_absdomain 
+	sslv in
       let cbool_cdition = cil_expr_2_bool cdition in
       (*let cbool_cdition = Nts.format_cntcond_for_cfg_condition cbool_cdition in
-      let neg_cbool_cdition =  negate_bool_bot cbool_cdition in*) 
+      let neg_cbool_cdition =  negate_bool_bot cbool_cdition in*)
+      let mem_access_cnd = Guard_of_mem_acces.cnt_guard_of_mem_access 
+	sslv cdition in
+      let bad_mem_access_cnd =  Nts.negate_cntbool_shallow 
+	mem_access_cnd in
+	
       let nts_cdition = c_bool_to_cnt_bool 
 	abs_val_true.ssl_part cbool_cdition 
       in
@@ -147,12 +158,16 @@ being error states.*)
       in
       let neg_of_nts_cdition = Nts.negate_cntbool_shallow nts_cdition
       in
-      let nts_trans_yes = (abs_val_true ,(CntGuard(nts_cdition))::[])
+      let valid_mem_nts_no = CntBAnd(neg_of_nts_cdition,mem_access_cnd) in
+      let valid_mem_nts_yes = CntBAnd(nts_cdition,mem_access_cnd) in
+      let nts_trans_yes = (abs_val_true ,(CntGuard(valid_mem_nts_yes))::[])
+      in	
+      let nts_trans_mem_broken = (abs_mem_broken1,(CntGuard(bad_mem_access_cnd))::[])
       in
       let nts_trans_no = 
-	(abs_val_false ,(CntGuard(neg_of_nts_cdition))::[])
+	(abs_val_false ,(CntGuard(valid_mem_nts_no))::[])
       in
-      let ret_true_false = (nts_trans_yes,nts_trans_no) in
+      let ret_true_false = (nts_trans_yes,nts_trans_no,nts_trans_mem_broken) in
       ret_true_false
     end
     

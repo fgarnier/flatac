@@ -507,17 +507,22 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 		and the two next ones.*)
 	    
     method private register_if_statement_successors 
-      current_node ((abs_true,trans_true),(abs_false,trans_false)) 
+      current_node ((abs_true,trans_true),(abs_false,trans_false),(abs_mem_broken,trans_mem_broken)) 
       (true_stmt,false_stmt) =
       (* Calculer le front_end_next pour chaque noeuds ... *)
       let true_case_succs_abs_list = front_end#next abs_true trans_true 
 	true_stmt.skind in
       let false_case_succs_abs_list = front_end#next abs_false trans_false
 	false_stmt.skind in
+      let mem_broken_succs_abs_list =  front_end#next abs_mem_broken 
+	trans_mem_broken
+	true_stmt.skind in
       List.iter (self#add_to_not_visited_iterator current_node true_stmt)
 	true_case_succs_abs_list;
       List.iter (self#add_to_not_visited_iterator current_node false_stmt) 
-	false_case_succs_abs_list
+	false_case_succs_abs_list;
+       List.iter (self#add_to_not_visited_iterator current_node true_stmt) 
+	mem_broken_succs_abs_list;
    
 
 
@@ -534,14 +539,15 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	      begin
 		let sslv = front_end#copy_absdom_label 
 		  current_node.abstract_val in
-		let (trans_true,trans_false) = 
+		let (trans_true,trans_false,trans_mem_broken) = 
 		  front_end#next_on_if_statement sslv cdition in
 		
 		let (true_stmt,false_stmt)  = 
 		  Ast_goodies.get_two_first_elem_of_list
 		  current_node.statement.succs in
-		self#register_if_statement_successors current_node
-		  (trans_true,trans_false)(true_stmt,false_stmt)
+		  self#register_if_statement_successors
+		    current_node
+		  (trans_true,trans_false,trans_mem_broken)(true_stmt,false_stmt)
 	      end
 	  | _ ->
 	      let abs_succ_list =     

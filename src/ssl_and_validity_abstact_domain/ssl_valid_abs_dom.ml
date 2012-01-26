@@ -25,6 +25,11 @@ let create_validity_abstdomain () =
 let add_alloc_cell_to_validity_abstdomain  (lvar : locvar) (domain :ssl_validity_absdom) =
   Ssl.add_alloc_cell lvar domain.ssl_part 
 
+
+let create_errorstate_validity_abstdomain () =
+  let v = create_validity_abstdomain () in
+    set_heap_to_top v.ssl_part; v
+
 let add_atomic_affect_to_validity_abstdomain  (equ : SSL_lex.affect) (domain :ssl_validity_absdom) =
   Ssl.and_atomic_affect equ domain.ssl_part 
 
