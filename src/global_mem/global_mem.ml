@@ -4,6 +4,7 @@ open SSL_lex
 open Printf
 
 
+
 exception No_allocated_vars 
 
 class global_mem_manager = object (self)
@@ -11,7 +12,8 @@ class global_mem_manager = object (self)
   val mutable fresh_lvar_id = 1  
     
   val mutable list_of_glob_vars = []
-
+  val init_seg_size = (Hashtbl.create()  : ( lvar , int ) Hashtbl.t)
+    
   method lvar_from_malloc () =
     let lval_name = sprintf "mid_%d" gmalloc_id in
     list_of_glob_vars <- (Format.sprintf "mid_%d_size" gmalloc_id )::list_of_glob_vars;

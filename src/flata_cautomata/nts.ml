@@ -29,11 +29,6 @@ let negate_cntbool_shallow ( b : cnt_bool) =
     | _ -> CntNot(b)
 
 
-
-
-
-
-
 let rec nts_pprint_nts_var (x : nts_var ) = 
   match x with 
       NtsIVar( vname ) -> vname
