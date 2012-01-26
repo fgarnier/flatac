@@ -13,7 +13,7 @@ types_2_pvars composite_type_visitors \
 typename_of_cil_types new_composite_type_upon_ssl \
 ssl_valid_abs_dom_types ssl_valid_abs_dom \
 compile_2_nts guard_of_mem_acces \
-c_upon_ssl_domain\
+c_upon_ssl_domain var_registration \
 extended_cfg flatac_ssl_front_end \
 flatac_function_visitor flatac_plugin
 

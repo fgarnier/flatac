@@ -21,7 +21,7 @@ class global_mem_manager = object (self)
     gmalloc_id <- (gmalloc_id + 1 );
     LVar(lval_name)
 
-  method lvar_from_array_decl ( array_size : cnt_arithm_exp option   ) = 
+  method lvar_from_array_decl ( array_size : cnt_arithm_exp option ) = 
     let lval_name = sprintf "mid_%d" gmalloc_id in
     list_of_glob_vars <- (Format.sprintf "mid_%d_size" gmalloc_id )::list_of_glob_vars;
     list_of_glob_vars <- (Format.sprintf "mid_%d_base" gmalloc_id )::list_of_glob_vars;

@@ -29,6 +29,8 @@ open Extended_cfg_types
 open Intermediate_language
 open Cnt_interpret
 open Queue
+open Var_registration
+
 
 exception Entry_point_not_registered 
 exception Entry_point_already_registered 
