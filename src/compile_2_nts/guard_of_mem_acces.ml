@@ -144,7 +144,8 @@ and cnt_guard_of_mem_access_enode sslv ( expr_node : Cil_types.exp_node ) =
     | Const ( _ ) -> 
       CntBTrue
 	
-    (*| BinOp (PlusPI,a,b,_) ->*)
+    | BinOp (PlusPI,a,b,_) ->
+      cnt_guard_of_mem_access sslv b
       
     | BinOp (_,a,b,_)
       ->
@@ -174,6 +175,30 @@ to do with Info"))
 	  if (Ssl.is_allocated location_var sslv.ssl_part )
 	  then 
 	    begin
+
+	      let locvar_size_name = get_lsizename_of_locvar location_var 
+	      in
+	      (* Getting the location variable associated to the pointer 
+	      if any.*)
+	      let locvar_size = CntVar(NtsIVar(locvar_size_name)) in
+	      let mem_accs_type = Cil.typeOfLval ( Mem(e), off) in
+	      let sizeof_exp = Cnt_interpret.interpret_ciltypes_size
+		mem_accs_type in
+	      
+	      let ptr_exp_t = cil_expr_2_ptr e in
+	      let nts_ptr_exp = interpret_c_ptrexp_to_cnt sslv.ssl_part 
+		ptr_exp_t in
+	      (*let ptr_base = LiPVar((Validity.base_ptrexp sslv.ssl_part ptr_exp_t)) *)
+	      
+	      
+	      let interval_cond = 
+	      CntBAnd(CntBool(CntLt,nts_ptr_exp,locvar_size),CntBool(CntGeq,nts_ptr_exp,CntCst(0))) 
+	      in
+	      let align_cond = CntBool(CntEq,CntMod(nts_ptr_exp,sizeof_exp),CntCst(0)) 
+	      in
+	      CntBAnd(interval_cond,align_cond)
+
+      (*
 	      (* Computation of the offset of the pointer plus the
 	      offset at which the memory is accessed. *)
 	   
@@ -202,6 +227,7 @@ to do with Info"))
 	      let align_cond = CntBool(CntEq,CntMod(total_offset,sizeof_exp),CntCst(0)) 
 	      in
 	      CntBAnd(interval_cond,align_cond)
+      *)
 	    end
 	  else
 	    CntBFalse
