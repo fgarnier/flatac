@@ -6,8 +6,8 @@ PLUGIN_CMO=self ssl_types ssl ast_goodies \
 sem_and_logic_front_end extended_cfg_types global_mem \
 ssl_pprinters union_find ssl_substitution  ssl_normalization ssl_decision \
 ssl_entailement ssl_biabduction \
-composite_type_types composite_types \
-nts_types nts validity_types intermediate_language validity cnt_interpret \
+composite_type_types composite_types nts_types \
+nts validity_types intermediate_language validity cnt_interpret \
 var_validity_types var_validity \
 types_2_pvars composite_type_visitors \
 typename_of_cil_types new_composite_type_upon_ssl \

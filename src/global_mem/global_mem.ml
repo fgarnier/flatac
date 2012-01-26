@@ -2,7 +2,7 @@ open Ssl_types
 open Ssl
 open SSL_lex
 open Printf
-
+open Nts_types
 
 
 exception No_allocated_vars 
@@ -12,7 +12,7 @@ class global_mem_manager = object (self)
   val mutable fresh_lvar_id = 1  
     
   val mutable list_of_glob_vars = []
-  val init_seg_size = (Hashtbl.create()  : ( lvar , int ) Hashtbl.t)
+  val init_seg_size = ( Hashtbl.create 97  : ( locvar , cnt_arithm_exp option ) Hashtbl.t)
     
   method lvar_from_malloc () =
     let lval_name = sprintf "mid_%d" gmalloc_id in
@@ -21,6 +21,15 @@ class global_mem_manager = object (self)
     gmalloc_id <- (gmalloc_id + 1 );
     LVar(lval_name)
 
+  method lvar_from_array_decl ( array_size : cnt_arithm_exp option   ) = 
+    let lval_name = sprintf "mid_%d" gmalloc_id in
+    list_of_glob_vars <- (Format.sprintf "mid_%d_size" gmalloc_id )::list_of_glob_vars;
+    list_of_glob_vars <- (Format.sprintf "mid_%d_base" gmalloc_id )::list_of_glob_vars;
+    let lval_ret = LVar(lval_name) in
+    Hashtbl.add init_seg_size lval_ret array_size;
+    lval_ret
+    
+    
   method get_last_mid () =
     if gmalloc_id > 1 then
       (gmalloc_id - 1)
