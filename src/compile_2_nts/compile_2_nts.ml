@@ -176,3 +176,35 @@ let rec compile_cil_array_2_cnt sslv (name : string) (vtype_arg : Cil_types.typ)
   in
   let array_type = translate_recursor vtype_arg in
   NtsArrayVar(name,array_type)
+
+
+
+
+
+
+let  compile_sizeof_array_type sslv ( t : Cil_types.typ ) =
+
+  let rec array_size_recursor (siz_upper_dim : cnt_arithm_exp option)
+      (trec : Cil_types.typ ) = 
+    
+    match siz_upper_dim, trec with 
+	(Some(prev_size), TArray(tin, Some(exp) ,_ ,_ )) ->
+	  let size_curr_dim = compile_cil_exp_2_cnt sslv exp in
+	  let size_curr_dim_prev_size = Some(CntProd(prev_size,size_curr_dim)) 
+	  in
+	  array_size_recursor size_curr_dim_prev_size tin 
+	 
+      | (None,TArray (tin, Some(exp),_,_ )) ->
+	let size_curr_dim = Some((compile_cil_exp_2_cnt sslv exp)) 
+	in array_size_recursor size_curr_dim tin 
+
+     
+      | (None,_) -> 
+	Cnt_interpret.interpret_ciltypes_size trec
+
+      | (Some(size),_) ->
+	let size_t = Cnt_interpret.interpret_ciltypes_size trec in
+	CntProd(size, size_t)
+  in
+   array_size_recursor None t
+  

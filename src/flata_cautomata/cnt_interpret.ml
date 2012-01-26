@@ -74,7 +74,8 @@ let rec interpret_ciltypes_size (ciltype : Cil_types.typ ) =
     | TPtr(TVoid([]), _) ->  CntSymCst ("4")
     | TPtr(t,_) -> interpret_ciltypes_size t (* Won't work
 					     for t** ...*)
-
+    | (TArray (tin, None,_,_ )) ->   CntSymCst("sizeof_array_reference")
+      
     | _ -> raise  Unhandled_valuetype_in_interpretciltypesize
 
 let offset_cnt_of_pvar (pvar : ptvar) =
