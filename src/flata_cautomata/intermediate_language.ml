@@ -192,7 +192,11 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
     | Lval(Var(f),offset)->
       begin
 	match f.vtype with
-	    TInt(_,_) -> LiVar(Unprimed,LiIntVar(f.vname))
+	    TInt(_,_) ->
+	      begin 
+		Format.fprintf Ast_goodies.debug_out "INTEGER VAR : %s \b" f.vname;
+	      LiVar(Unprimed,LiIntVar(f.vname))
+	      end
 	  | TPtr(_,_) ->  (* Modified on the 20-10-11, need to check 
 						impact.*)
 

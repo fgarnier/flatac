@@ -61,14 +61,19 @@ let affect_int_val_upon_sslv ((lv , off) : Cil_types.lval) (expr : Cil_types.exp
 	let (cnt_affect_list , ret_absdomain ) =(
 	  match lv with
 	      Var(v) -> 
-		let ret_absdomain =
-		  set_var_validity_in_absdomain ret_absdomain v 
-		    None validity_of_rval in
-		let c_scal_exp = cil_expr_2_scalar expr in 
-		let cnt_expr = interpret_c_scal_to_cnt sslv.ssl_part
-		  c_scal_exp in
-		let cnt_affect = CntAffect(NtsIVar(v.vname),cnt_expr) in
-		(cnt_affect::[],ret_absdomain)
+		begin
+		  match ( Composite_types.is_integer_type v.vtype) with 
+		      Some(_) -> 
+			let ret_absdomain =
+			  set_var_validity_in_absdomain ret_absdomain v 
+			    None validity_of_rval in
+			let c_scal_exp = cil_expr_2_scalar expr in 
+			let cnt_expr = interpret_c_scal_to_cnt sslv.ssl_part
+			  c_scal_exp in
+			let cnt_affect = CntAffect(NtsIVar(v.vname),cnt_expr) in
+			(cnt_affect::[],ret_absdomain)
+		    | None -> ([], ret_absdomain)
+		end
 		  
 	    | _ ->
 	      ([], ret_absdomain)
