@@ -381,6 +381,25 @@ let rec cnt_pprint_arithm_exp ( exp : cnt_arithm_exp ) =
 (**********************)
 
 
+ (* Answers true if the expression can be sytacticaly evalutated to false.
+ An answers to false means that e shall be evaluated at runtime, and might
+be equal CntBFalse.
+*)
+  let static_check_if_false ( e : cnt_bool  ) =
+    let es =  simplify_cnt_boolexp e in
+    match es with
+	CntBFalse -> true
+      | _ -> false
+
+
+
+  let static_check_if_translist_unsat ( l : cnt_trans_label list) =
+    let decide_folder sat_previous current_label =
+      match current_label with 
+	  CntGuard(cond) -> (static_check_if_false cond)&&sat_previous
+	| _ -> sat_previous
+    in
+    List.fold_left decide_folder true l 
   
       
       
