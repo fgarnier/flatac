@@ -1,0 +1,22 @@
+__assert_fail{
+in a,b,c,d,e,f,g,h : int;
+initial sinit ;
+final s0;
+error s0;
+
+s0->s1 { true and havoc() }
+}
+
+
+
+NonDetInt{
+out ndet, validity_ndet_: int;
+initial sinit;
+final s1;
+
+sinit->s0{ havoc(ndet,  validity_ndet_)}
+s0->s1{havoc()}
+
+}
+
+
