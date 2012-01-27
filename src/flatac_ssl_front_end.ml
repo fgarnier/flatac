@@ -39,9 +39,23 @@ open Self
 
 let pprint_trans_list_foldleft (s : string ) ( trans : cnt_trans_label ) =
   match (s,trans) with 
-    | ("",CntGuard(CntBTrue))-> ""
-    | ("",_) -> (cnt_pprint_translabel trans )
-    | (_,CntGuard(CntBTrue)) -> s
+    | ("",CntGuard(guard))-> 
+      let s_guard = simplify_cnt_boolexp guard in
+      begin
+	match s_guard with 
+	    CntBTrue -> ""
+	  | _ -> cnt_pprint_boolexp s_guard 
+      end
+    | ("",_) ->
+      (cnt_pprint_translabel trans )
+    | (_,CntGuard(guard)) -> 
+      let s_guard = simplify_cnt_boolexp guard in
+      begin
+	match s_guard with 
+	    CntBTrue -> s
+	  | _ -> s^ " and "^(cnt_pprint_boolexp s_guard) 
+      end
+	
     | (_,_) -> s^" and "^(cnt_pprint_translabel trans )
   
 
