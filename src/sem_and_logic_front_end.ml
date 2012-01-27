@@ -60,6 +60,7 @@ object
   method virtual havocise_label : 'b -> 'b
 
   method virtual need_split_transition : 'b -> bool
+  method virtual static_unsat_label : 'b -> bool
    
   method virtual split_guard_call_transition : 'b -> ('b * 'b)
 

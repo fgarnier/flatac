@@ -334,15 +334,16 @@ let rec cnt_pprint_arithm_exp ( exp : cnt_arithm_exp ) =
 
   let simplify_bottom_top (e : cnt_bool ) = 
     match e with
-      | CntBAnd(CntBFalse,a) -> CntBFalse
-      | CntBAnd(a,CntBFalse) -> CntBFalse
+      | CntBAnd(CntBFalse,_) -> CntBFalse
+      | CntBAnd(_,CntBFalse) -> CntBFalse
       | CntBAnd(CntBTrue,a) ->  a
       | CntBAnd(a,CntBTrue) ->  a
       | CntNot(CntBTrue) -> CntBFalse
       | CntNot(CntBFalse) -> CntBTrue
       | CntNot(CntNot(a)) -> a
-      | CntBOr(a,CntBTrue) -> CntBTrue
-      | CntBOr(CntBTrue,a) -> CntBTrue
+      | CntBOr(_,CntBTrue) -> CntBTrue
+      | CntBOr(CntBTrue,_) -> CntBTrue
+      | CntBOr(CntBFalse,CntBFalse) -> CntBFalse
       | CntNot(CntBool(CntEq,a,b)) -> (CntBool(CntNeq,a,b))
       | CntNot(CntBool(CntNeq,a,b)) -> (CntBool(CntEq,a,b))
       | CntNot(CntBool(CntLt,a,b)) -> (CntBool(CntGeq,a,b))
@@ -354,15 +355,28 @@ let rec cnt_pprint_arithm_exp ( exp : cnt_arithm_exp ) =
 	
   let rec simplify_cnt_boolexp ( e : cnt_bool ) =
     match e with
-      | CntBAnd(a,b) -> let fg = simplify_cnt_boolexp a in
-			let fd = simplify_cnt_boolexp b in
-			simplify_bottom_top (CntBAnd(fg,fd))
+      | CntBAnd(CntBFalse,_) -> CntBFalse
+      | CntBAnd(_,CntBFalse) -> CntBFalse
+	
+      | CntBOr(CntBTrue,_) -> CntBTrue
+      | CntBOr(_,CntBTrue) -> CntBTrue
+
+      | CntNot(CntNot(a)) -> 
+	simplify_cnt_boolexp a
+
+      | CntBAnd(a,b) -> 
+	let fg = simplify_cnt_boolexp a in
+	let fd = simplify_cnt_boolexp b in
+	simplify_bottom_top (CntBAnd(fg,fd))
 			  
-      | CntBOr(a,b) -> let fg = simplify_cnt_boolexp a in
-		       let fd = simplify_cnt_boolexp b in
-		       simplify_bottom_top (CntBOr(fg,fd))
-      | CntNot(a) -> let a = simplify_cnt_boolexp a in
-		     simplify_bottom_top (CntNot(a))
+      | CntBOr(a,b) ->
+	let fg = simplify_cnt_boolexp a in
+	let fd = simplify_cnt_boolexp b in
+	simplify_bottom_top (CntBOr(fg,fd))
+      
+      | CntNot(a) -> 
+	let a = simplify_cnt_boolexp a in
+	simplify_bottom_top (CntNot(a))
 			 
       | CntBTrue -> CntBTrue
       | CntBFalse -> CntBFalse
@@ -394,12 +408,14 @@ be equal CntBFalse.
 
 
   let static_check_if_translist_unsat ( l : cnt_trans_label list) =
-    let decide_folder sat_previous current_label =
-      match current_label with 
-	  CntGuard(cond) -> (static_check_if_false cond)&&sat_previous
-	| _ -> sat_previous
+    let decide_folder unsat_previous current_label =
+      if unsat_previous then true
+      else
+	match current_label with 
+	    CntGuard(cond) -> (static_check_if_false cond)
+	  | _ -> false
     in
-    List.fold_left decide_folder true l 
+    List.fold_left decide_folder false l 
   
       
       
@@ -555,9 +571,6 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
     in
     a && b
 
-
-
- 
 
  (* this method is used to compute the set of counter variables who are
  assigned a new value*)

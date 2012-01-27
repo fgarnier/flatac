@@ -38,9 +38,11 @@ open Self
 
 
 let pprint_trans_list_foldleft (s : string ) ( trans : cnt_trans_label ) =
-  match s with 
-      "" -> s^(cnt_pprint_translabel trans )
-    | _ -> s^" and "^(cnt_pprint_translabel trans )
+  match (s,trans) with 
+    | ("",CntGuard(CntBTrue))-> ""
+    | ("",_) -> (cnt_pprint_translabel trans )
+    | (_,CntGuard(CntBTrue)) -> s
+    | (_,_) -> s^" and "^(cnt_pprint_translabel trans )
   
 
 let prefix_trans_label_list (prefix : Nts_types.cnt_trans_label list ) 
@@ -134,7 +136,11 @@ being error states.*)
   method pretty (sslv : ssl_validity_absdom ) =
     Ssl_pprinters.pprint_ssl_formula_tex sslv.ssl_part
 
-    
+      
+  method static_unsat_label (label : cnt_trans_label list) =
+    Nts.static_check_if_translist_unsat label
+
+
   method next_on_if_statement (sslv : ssl_validity_absdom ) 
     (cdition : Cil_types.exp) =
     begin
