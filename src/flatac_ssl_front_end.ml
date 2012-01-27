@@ -93,6 +93,8 @@ class ssl_flatac_front_end = object(self)
   method copy_transit_label _ =
     []
 
+  method get_initialize_label () =
+    mid#get_nts_transition_for_init_tab_size ()
   
   method copy_absdom_label (absval : ssl_validity_absdom ) =
      copy_validity_absdomain absval 

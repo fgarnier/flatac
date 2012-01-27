@@ -27,10 +27,22 @@ class global_mem_manager = object (self)
     list_of_glob_vars <- (Format.sprintf "mid_%d_base" gmalloc_id )::list_of_glob_vars;
     gmalloc_id<-(gmalloc_id + 1);
     let lval_ret = LVar(lval_name) in
-    Hashtbl.add init_seg_size lval_ret array_size;
+    Hashtbl.add init_seg_size (LVar((lval_name^"_size"))) array_size;
     lval_ret
     
     
+  method get_nts_transition_for_init_tab_size () =
+    let init_list_folder lvar opt_size list_affect =
+      match lvar,opt_size with
+	  (LVar(vname),Some(size)) -> 
+	    (CntAffect(NtsIVar(vname),size))::list_affect
+	      
+	| (_,None) -> list_affect
+    in
+      Hashtbl.fold init_list_folder init_seg_size []
+
+
+
   method get_last_mid () =
     if gmalloc_id > 1 then
       (gmalloc_id - 1)

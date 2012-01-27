@@ -232,7 +232,8 @@ struct
 	nts_slocals <- (List.fold_left in_out_map_folder [] funinfo.slocals  );
 	for i=0 to max_args_of_all_callee do
 	  nts_slocals <- (Nts.name_ndet_arg i)::nts_slocals
-	done
+	done;
+	nts_slocals <- (NtsIVar("__if_ndet_cond__"))::nts_slocals
  
 
       
@@ -484,9 +485,9 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       match is_entailed_by_existing_vertex_abs with
 	  (true, more_genid ) ->
 	    begin
-	      self#register_edge current_node.id more_genid label;
-	      if not (self#is_visited more_genid) then
-		Queue.push more_genid not_visited_vertices
+	      self#register_edge current_node.id more_genid label
+	     (* if not (self#is_visited more_genid) then
+		Queue.push more_genid not_visited_vertices*)
 	    end
 	| (false , _ ) ->
 	  begin
@@ -628,24 +629,28 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	  (pre_script :  string ) =
 	Hashtbl.fold (dest_table_print_folder origin) table_dest pre_script
       in
-      Hashtbl.fold origin_table_print_folder edges ""
+      let init_values_label = front_end#get_initialize_label() in
+      let prescript =  Format.sprintf " sinit->s0 { %s }" (front_end#pretty_label init_values_label) in
+      Hashtbl.fold origin_table_print_folder edges prescript
 
 		
     method private pprint_inits () =
-      let elem_left = ref 0 in
+      "initial sinit ;"
+
+    (*  let elem_left = ref 0 in
       let pprint_folder id () prescript =
 	if (!elem_left) <= 1 then
-	  (prescript^(Printf.sprintf "s%d" ( get_id_of_ecfg_id  id )))
+ 	  (prescript^(Printf.sprintf "s%d" ( get_id_of_ecfg_id  id )))
 	else
-	  begin
+ 	  begin
 	    elem_left  := (!elem_left) - 1;
-	    prescript^(Printf.sprintf "s%d," ( get_id_of_ecfg_id  id ))
+ 	    prescript^(Printf.sprintf "s%d," ( get_id_of_ecfg_id  id ))
 	  end
       in 
-      elem_left := (Hashtbl.length init_state);
+       elem_left := (Hashtbl.length init_state);
       let retstring = Hashtbl.fold pprint_folder init_state ""
-      in
-      "initial "^retstring^";"
+       in
+      "initial "^retstring^";"*)
 	
 
     method private pprint_finals () =
@@ -670,13 +675,13 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 
     method private pprint_out_vars () =
       match fun_def.svar.vtype with
-	  TFun(TInt(_,_),_,_,_) -> " out ret_val_ : int;" 
+	  TFun(TInt(_,_),_,_,_) -> " out ret_val_, validity__ret_val__  : int;" 
 	| TFun(TPtr(_,_),_,_,_) -> " out offset__ret_val__, validity__ret_val__ : int;"
 	|  TFun(t,_,_,_) ->
 	  begin
 	    match (Composite_types.is_integer_type t) 
 	    with 
-		Some(_) -> " out ret_val_ : int;"
+		Some(_) -> " out ret_val_, validity__ret_val__ : int;"
 	      |	None -> ""
 	  end
 	
