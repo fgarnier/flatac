@@ -383,6 +383,7 @@ let rec get_pvar_from_exp_node (expn : Cil_types.exp_node ) =
     
     | BinOp (PlusPI,e1,_,_) 
     | BinOp (MinusPI,e1,_,_)
+    | BinOp (IndexPI,e1,_,_)
 	->
 	get_pvar_from_exp e1
 

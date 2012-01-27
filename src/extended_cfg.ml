@@ -216,6 +216,8 @@ struct
       nts_sformal <- (List.fold_left in_out_map_folder [] funinfo.sformals  )
       
 
+
+	
     method register_local_vars () =
       let in_out_map_folder (nts_var_list) (v : Cil_types.varinfo ) =
 	match v.vtype with
@@ -227,7 +229,10 @@ struct
 		| None -> NtsMiscType(v.vname)::nts_var_list
 	    end
       in 
-      nts_slocals <- (List.fold_left in_out_map_folder [] funinfo.slocals  )	
+	nts_slocals <- (List.fold_left in_out_map_folder [] funinfo.slocals  );
+	for i=0 to max_args_of_all_callee do
+	  nts_slocals <- (Nts.name_ndet_arg i)::nts_slocals
+	done
  
 
       

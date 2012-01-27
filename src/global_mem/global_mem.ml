@@ -25,6 +25,7 @@ class global_mem_manager = object (self)
     let lval_name = sprintf "mid_%d" gmalloc_id in
     list_of_glob_vars <- (Format.sprintf "mid_%d_size" gmalloc_id )::list_of_glob_vars;
     list_of_glob_vars <- (Format.sprintf "mid_%d_base" gmalloc_id )::list_of_glob_vars;
+    gmalloc_id<-(gmalloc_id + 1);
     let lval_ret = LVar(lval_name) in
     Hashtbl.add init_seg_size lval_ret array_size;
     lval_ret
