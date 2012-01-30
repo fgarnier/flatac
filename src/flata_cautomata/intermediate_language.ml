@@ -27,7 +27,7 @@ to false and any other non-zero address is evaluated as true. *)
 type primed = Primed
 	      | Unprimed
 type c_int_var = LiIntVar of string
-type c_int_cst = LiIConst of int
+type c_int_cst = LiIConst of  Cil_types.constant
 type c_int_sym_const = LiSymIConst of string
 		       | LiTypeSizeof of Cil_types.typ
 		       | LiCAliasTypeSizeof of Composite_type_types.c_type_name
@@ -185,7 +185,7 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
   Format.printf "In cil_expr_2_scalar %s \n" (Ast_goodies.pprint_cil_exp expr );
   Cil.d_exp Ast_goodies.debug_out expr;
   match expr.enode with 
-      Const(CInt64(i,_,_))-> LiConst( LiIConst(My_bigint.to_int i))
+      Const(cil_cst)-> LiConst( LiIConst(cil_cst))
     | Const(CChr(c)) -> LiSymConst(LiSymIConst(String.make 1 c))
     | Const(CEnum(e)) -> cil_enumitem_2_scalar e
     	  

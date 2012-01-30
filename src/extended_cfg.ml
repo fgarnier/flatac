@@ -516,22 +516,48 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	    
     method private register_if_statement_successors 
       current_node ((abs_true,trans_true),(abs_false,trans_false),(abs_mem_broken,trans_mem_broken)) 
-      (true_stmt,false_stmt) =
+      (true_stmt_opt,false_stmt_opt) =
       (* Calculer le front_end_next pour chaque noeuds ... *)
-      let true_case_succs_abs_list = front_end#next abs_true trans_true 
-	true_stmt.skind in
-      let false_case_succs_abs_list = front_end#next abs_false trans_false
-	false_stmt.skind in
-      let mem_broken_succs_abs_list =  front_end#next abs_mem_broken 
-	trans_mem_broken
-	true_stmt.skind in
-      List.iter (self#add_to_not_visited_iterator current_node true_stmt)
-	true_case_succs_abs_list;
-      List.iter (self#add_to_not_visited_iterator current_node false_stmt) 
-	false_case_succs_abs_list;
-       List.iter (self#add_to_not_visited_iterator current_node true_stmt) 
-	mem_broken_succs_abs_list;
-   
+      ( 
+	match true_stmt_opt with 
+	    Some(true_stmt) ->
+	       let true_case_succs_abs_list =
+		 front_end#next abs_true trans_true 
+		   true_stmt.skind in
+	       List.iter 
+		 (self#add_to_not_visited_iterator current_node true_stmt)
+		 true_case_succs_abs_list;
+	| None -> ()
+      ); 
+      
+      (
+	match false_stmt_opt with 
+	    Some(false_stmt) ->
+	      let false_case_succs_abs_list =
+		front_end#next abs_false trans_false 
+		  false_stmt.skind in
+	      List.iter 
+		(self#add_to_not_visited_iterator current_node false_stmt)
+		false_case_succs_abs_list;
+	      
+	  | None -> () 
+      );
+      
+      
+	let next_stmt_for_brokenmemabs = 
+	  Ast_goodies.get_some_from_option_pair
+	    true_stmt_opt false_stmt_opt
+	in
+	let mem_broken_succs_abs_list = 
+	  front_end#next abs_mem_broken 
+	    trans_mem_broken
+	    next_stmt_for_brokenmemabs.skind 
+	in 
+	List.iter 
+	  (self#add_to_not_visited_iterator current_node 
+	     next_stmt_for_brokenmemabs) 
+	  mem_broken_succs_abs_list
+      
 
 
 
@@ -543,7 +569,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       let succs_fc_sid_iterator (current_node : ecfg_vertex) 
 	  (succ_sid : Cil_types.stmt ) =
 	match current_node.statement.skind with
-	    If(cdition,_,_,_) ->
+	    If(cdition,byes,bno,_) ->
 	      begin
 		let sslv = front_end#copy_absdom_label 
 		  current_node.abstract_val in
@@ -551,10 +577,12 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 		  front_end#next_on_if_statement sslv cdition in
 		
 		let (true_stmt,false_stmt)  = 
-		  Ast_goodies.get_two_first_elem_of_list
-		  current_node.statement.succs in
-		  self#register_if_statement_successors
-		    current_node
+		  (*Ast_goodies.get_two_first_elem_of_list
+		    current_node.statement.succs *)
+		  Ast_goodies.get_if_then_first_block_stmts byes bno
+		in
+		self#register_if_statement_successors
+		  current_node
 		  (trans_true,trans_false,trans_mem_broken)(true_stmt,false_stmt)
 	      end
 	  | _ ->

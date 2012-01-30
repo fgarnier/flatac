@@ -31,6 +31,8 @@ exception Not_an_array_offset
 exception  Not_Ablock
 exception No_2_successors_for_if_successor of int
 exception Less_than_two_elem_in_this_list
+exception Bothparameter_are_None_option
+
 
 
 let debug_out =
@@ -52,6 +54,9 @@ let first_stmt_of_block (b : Cil_types.block) =
   List.hd b.bstmts
  
 
+
+
+
 let get_two_first_elem_of_list l =
     match l with
 	e::l' ->
@@ -61,7 +66,29 @@ let get_two_first_elem_of_list l =
 	      | [] -> raise Less_than_two_elem_in_this_list
 	  end
       | [] -> raise Less_than_two_elem_in_this_list
-	
+
+
+let get_if_then_first_block_stmts (b_yes :  Cil_types.block ) 
+    (b_no : Cil_types.block ) =
+  match b_yes.bstmts , b_no.bstmts with
+      ([],[]) -> (None,None)
+    | (a::lg,[]) -> (Some(a),None)
+    | (a::lg,b::ld) -> (Some(a),Some(b))
+    | ([],b::ld) -> (None,Some(b))
+      
+
+(* You need to ensure that at least one of the tow parameter
+  'a option matches with Some('a)
+*)
+let get_some_from_option_pair a b =
+  match a with
+      Some(a') -> a'
+    | None -> 
+      begin
+	match b with 
+	    Some(b') -> b'
+	  | None -> raise Bothparameter_are_None_option
+      end
 
 
 (*
@@ -226,8 +253,8 @@ and  pprint_ciltypes (ciltype : Cil_types.typ ) =
 and pprint_cil_constant (c : Cil_types.constant ) =
   match c with 
       CInt64(i,_,_) -> 
-	let i32 = My_bigint.M.to_int i in 
-	Format.sprintf "%d"  i32
+	let s = My_bigint.M.to_string i in 
+	Format.sprintf "%s" s
 
     | CStr(s) -> s
     | CEnum(e) -> pprint_enum_item e

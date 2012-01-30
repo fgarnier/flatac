@@ -235,7 +235,7 @@ to do with Info"))
 	with
 	    _ -> 
 	      begin
-		Format.printf "The ptrvar %s has not matching affectation in the heap \n" ;
+		Format.printf "The ptrvar ?? has not matching affectation in the heap \n" ; 
 		  CntBFalse
 	      end
 	
