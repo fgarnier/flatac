@@ -103,7 +103,7 @@ struct
     val mutable name = name_function 
     val max_args_of_all_callee = Ast_goodies.max_args_numbers_of_callees funinfo.sallstmts  
    
-    
+    val mutable intermediate_sid = 0 
     val mutable is_computed = false
     val mutable entry_point_set = false (* Initial control state of the 
 					ecfg set ?*)
@@ -597,7 +597,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 
 	
     method pprint_transitions () =
-      let intermediate_sid = ref 0 in
+      
       
 
       let dest_table_print_folder ( origin : ecfg_id ) (dest : ecfg_id ) label 
@@ -620,10 +620,11 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	       let (pre,post) = front_end#split_guard_call_transition label in
 	       let pre= front_end#havocise_label pre in
 	       let post = front_end#havocise_label post in
-	       let post_script = Format.sprintf "%s \n s%d->sinter%d { %s }" prescript   ( get_id_of_ecfg_id origin) ( !intermediate_sid)
+	       let post_script = Format.sprintf "%s \n s%d->sinter%d { %s }" prescript   ( get_id_of_ecfg_id origin) ( intermediate_sid)
 		 (front_end#pretty_label pre) in
-	       let post_script=Format.sprintf "%s \n sinter%d->s%d { %s }" post_script ( !intermediate_sid)  ( get_id_of_ecfg_id dest) 
+	       let post_script=Format.sprintf "%s \n sinter%d->s%d { %s }" post_script ( intermediate_sid)  ( get_id_of_ecfg_id dest) 
 		 (front_end#pretty_label post) in
+	       intermediate_sid<-intermediate_sid + 1;
 	       post_script
 	     end
       in
