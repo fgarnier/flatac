@@ -27,7 +27,7 @@ to false and any other non-zero address is evaluated as true. *)
 type primed = Primed
 	      | Unprimed
 type c_int_var = LiIntVar of string
-type c_int_cst = LiIConst of  Cil_types.constant
+type c_int_cst = LiIConst of  My_bigint.t
 type c_int_sym_const = LiSymIConst of string
 		       | LiTypeSizeof of Cil_types.typ
 		       | LiCAliasTypeSizeof of Composite_type_types.c_type_name
@@ -159,7 +159,7 @@ let rec negate_bool_bot ( b_exp : c_bool ) =
     | LiBGt( expg , expd ) ->  LiBLeq ( expg, expd ) 
     | LiBLeq( expg , expd ) ->  LiBGt ( expg, expd ) 
     | LiBGeq( expg , expd ) ->  LiBLt ( expg, expd )
-    | LiBScal( exp ) -> LiBEq ( exp, LiConst(LiIConst(0) ))
+    | LiBScal( exp ) -> LiBEq ( exp, LiConst())
     | LiBPtrEq ( expg , expd ) -> LiBPtrNeq ( expg , expd )
     | LiBPtrNeq  ( expg , expd ) ->  LiBPtrEq ( expg , expd )
     | LiBPtrGt ( eg ,ed ) -> LiBPtrLeq (eg ,ed )
