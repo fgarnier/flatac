@@ -1,10 +1,8 @@
 __assert_fail{
 in a,b,c,d,e,f,g,h : int;
 initial sinit ;
-final s0;
 error s0;
-
-s0->s1 { true and havoc() }
+sinit->s0 { true and havoc() }
 }
 
 
