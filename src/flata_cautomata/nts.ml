@@ -818,9 +818,72 @@ types. *********)
     eq_validity && eq_offset
 
 
-      (*
+  let rec compare_nts_var_list l1 l2 =
+    match l1 , l2 with
+	(a::_,[]) -> false
+      | ([],a::_) -> false
+      | ([],[]) -> true
+      | (a::lg,b::ld) ->
+	if compare_nts_var a b
+	then compare_nts_var_list lg ld 
+	else false
+	  
+	    
+  let rec compare_il_fun_arguments (ilg : il_fun_arguments  list )
+      (ild :il_fun_arguments list  ) =
+    match  ilg , ild with
+	(a::[],[]) -> false
+      | ([],a::[]) -> false
+      | ([],[]) -> true
+      | (IlScalArg(a)::lg, IlScalArg(b)::ld) ->
+	begin
+	  if compare_il_int_fun_arg a b then
+	    compare_il_fun_arguments lg ld
+	  else false
+	end
+	  
+      | (IlPtrArg(a)::lg, IlPtrArg(b)::ld) ->
+	begin
+	  if compare_il_ptr_fun_arg a b then
+	    compare_il_fun_arguments lg ld
+	  else false
+	end  
+      | (_,_) -> false
+	
+	    
 
 
   let compare_cnt_trans_label_guard 
       (gg : cnt_trans_label)( gd : cnt_trans_label ) =
-    match *)
+    match gg,gd with
+	(CntGuard(a),CntGuard(b)) -> 
+	  compare_cnt_bool a b
+	    
+      | (CntAffect(varg,exprg),CntAffect(vard,exprd))
+	-> 
+	if not (compare_nts_var varg vard) 
+	then false
+	else
+	  compare_cnt_arithm_exp exprg exprd
+	
+	
+      | (CntFunCall(vg,Some(optg),argsg),CntFunCall(vd,Some(optd),argsd))->
+	if ( String.compare vg vd ) != 0 then false
+	else
+	  begin
+	    if not (compare_nts_var_list optg optd )
+	    then
+	      false 
+	    else 
+	      compare_il_fun_arguments argsg argsd
+	  end
+	    
+      | (CntHavoc(vlistg),CntHavoc(vlisd))
+	-> compare_nts_var_list vlistg vlisd
+	
+     
+      | (CntNdetAssign(nvarg),CntNdetAssign(nvard))
+	->
+	compare_nts_var nvarg nvard
+
+      |(_,_) -> false
