@@ -66,6 +66,8 @@ object
 
   method virtual number_of_valid_vars : 'a -> int
 
+  method virtual equals_labels : 'b -> 'b -> bool 
+
   method virtual pprint_list_of_valid_var : 'a -> string 
 
   method virtual  pprint_list_of_malloc_vars : unit -> string

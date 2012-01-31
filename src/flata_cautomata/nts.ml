@@ -887,3 +887,17 @@ types. *********)
 	compare_nts_var nvarg nvard
 
       |(_,_) -> false
+
+
+
+  let rec compare_tranlabel_list l1 l2 =
+     match  l1 , l2 with
+	(a::[],[]) -> false
+      | ([],a::[]) -> false
+      | ([],[]) -> true
+      | (a::lg,b::ld) -> 
+	begin
+	  if not( compare_cnt_trans_label_guard a b )
+	  then false
+	  else compare_tranlabel_list lg ld
+	end

@@ -327,6 +327,10 @@ being error states.*)
 
 
       
+
+  method equals_labels lg ld =
+    Nts.compare_tranlabel_list lg ld
+
   method pprint_list_of_malloc_vars () =
     mid#pprint_vars ()
 

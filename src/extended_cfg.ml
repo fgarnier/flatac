@@ -82,19 +82,7 @@ struct
   
 
 
-  let is_label_registered dest_ref label_ref 
-	  (dest_table : (ecfg_id, trans_label_val) Hashtbl.t ) =
-    let answer_iterator (dest_ref : ecfg_id)
-	(label_ref : trans_label_val) dest label =
-      if label = label_ref && dest = dest_ref then
-	raise Label_already_registered_for_this_edge
-      else ()
-    in
-      try
-	Hashtbl.iter (answer_iterator dest_ref label_ref) dest_table;
-      false
-      with
-	| Label_already_registered_for_this_edge -> true
+  
 
   
   class extended_cfg (name_function : string )(finfo : Cil_types.file) (funinfo : Cil_types.fundec) 
@@ -237,6 +225,23 @@ struct
 	nts_slocals <- (NtsIVar("__if_ndet_cond__"))::nts_slocals
  
 
+
+
+    method is_label_registered dest_ref label_ref 
+      (dest_table : (ecfg_id, trans_label_val) Hashtbl.t ) =
+      let answer_iterator (dest_ref : ecfg_id)
+	(label_ref : trans_label_val) dest label =
+	if label = label_ref && dest = dest_ref then
+	  raise Label_already_registered_for_this_edge
+	else ()
+      in
+      try
+	Hashtbl.iter (answer_iterator dest_ref label_ref) dest_table;
+	false
+      with
+	| Label_already_registered_for_this_edge -> true
+
+
       
     (** Adds a vertex to the ecfg*)
     method private add_abstract_state ( s : Cil_types.stmt ) 
@@ -309,7 +314,7 @@ struct
 	
 	let entry_tab =( Hashtbl.find edges origin) in
 	  begin
-	  if not (is_label_registered  dest label entry_tab) 
+	  if not (self#is_label_registered  dest label entry_tab) 
 	  then
 	    Hashtbl.add entry_tab dest label
 	  else ()
