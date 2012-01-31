@@ -735,3 +735,92 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
 
 
      
+(************** Implementation of the structural equality between nts
+types. *********)
+
+
+  let compare_nts_var (vg : nts_var ) (vd : nts_var ) =
+    match vg,vd with 
+	(NtsIVar(nameg),NtsIVar(named)) -> nameg=named
+      | (NtsRVar(nameg),NtsRVar(named)) -> nameg=named
+      |  _ -> false
+
+	
+
+  let rec compare_cnt_arithm_exp (eg : cnt_arithm_exp)(ed : cnt_arithm_exp) =
+    match eg,ed with 
+	(CntCst(cstg),CntCst(cstd)) -> My_bigint.equal cstg cstd
+      | (CntNdet,CntNdet) -> true
+      | (CntSymCst(sg),CntSymCst(sd)) -> (String.compare sg sd)=0
+      | (CntVar(vg),CntVar(vd)) -> compare_nts_var vg vd
+      | (CntMinus(egfg,egfd),CntMinus(edfg,edfd)) -> 
+	(compare_cnt_arithm_exp egfg edfg)&&(compare_cnt_arithm_exp egfd edfd )
+      | (CntSum(egfg,egfd),CntSum(edfg,edfd)) ->
+	(compare_cnt_arithm_exp egfg edfg)&&(compare_cnt_arithm_exp egfd edfd )
+      | (CntProd(egfg,egfd),CntProd(edfg,edfd)) ->
+	(compare_cnt_arithm_exp egfg edfg)&&(compare_cnt_arithm_exp egfd edfd )
+      | (CntMod(egfg,egfd),CntMod(edfg,edfd)) ->
+	(compare_cnt_arithm_exp egfg edfg)&&(compare_cnt_arithm_exp egfd edfd )  
+      | (CntDiv(egfg,egfd),CntDiv(edfg,edfd)) ->
+	(compare_cnt_arithm_exp egfg edfg)&&(compare_cnt_arithm_exp egfd edfd )
+      | (CntUnMin(fg),CntUnMin(fd)) ->
+	compare_cnt_arithm_exp fg fd
+      | (CntInvalidExp,CntInvalidExp) -> true
+      
+      | (_,_) -> false
+
+
+
+
+  let rec compare_cnt_bool (bg : cnt_bool)(bd : cnt_bool ) =
+    match bg,bd with
+	(CntBTrue,CntBTrue) -> true
+      | (CntBFalse,CntBFalse) -> true
+     
+      | ( CntBAnd(egfg, egfd),CntBAnd(edfg, edfd) )
+	  -> (compare_cnt_bool egfg edfg)&&(compare_cnt_bool egfd edfd)
+      
+      | ( CntBOr(egfg, egfd),CntBOr(edfg, edfd) )
+	-> (compare_cnt_bool egfg edfg)&&(compare_cnt_bool egfd edfd)	
+	
+      | (CntNot(a),CntNot(b)) ->
+	(compare_cnt_bool a b)
+	  
+      | ( CntBool(bg,egfg, egfd),CntBool(fd,edfg, edfd) )
+	-> 
+	begin
+	  if bg != fd then false
+	  else
+	    (compare_cnt_arithm_exp egfg edfg)&&
+	      (compare_cnt_arithm_exp egfd edfd ) 
+	end 
+	  
+      | _-> false
+
+
+
+  let compare_il_int_fun_arg (arg1 : il_int_fun_arg) 
+      (arg2 : il_int_fun_arg) =
+    let eq_exp =  
+      compare_cnt_arithm_exp arg1.expr arg2.expr in 
+    let eq_val = compare_cnt_arithm_exp arg2.validity_of_exp 
+      arg1.validity_of_exp 
+    in
+    eq_exp && eq_val
+
+
+  let compare_il_ptr_fun_arg (arg1 : il_ptr_fun_arg) 
+      (arg2 : il_ptr_fun_arg) =
+    let eq_validity = compare_cnt_arithm_exp arg1.validity_of_ptr_exp 
+      arg2.validity_of_ptr_exp in
+    let eq_offset = compare_cnt_arithm_exp arg1.offset_of_exp
+      arg2.offset_of_exp in
+    eq_validity && eq_offset
+
+
+      (*
+
+
+  let compare_cnt_trans_label_guard 
+      (gg : cnt_trans_label)( gd : cnt_trans_label ) =
+    match *)
