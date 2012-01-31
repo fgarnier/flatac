@@ -55,12 +55,12 @@ ssl formula, to get the good gmid identificator.*)
 let make_size_locvar ( l : locvar ) (mid : global_mem_manager ) ( block_size : cnt_arithm_exp) =
 (*  match l with
       LVar( vname ) ->*) 
-  let id_seg = mid#get_last_mid () in
+  let id_seg = (My_bigint.of_int( mid#get_last_mid ())) in
   let lbase_name = get_lbasename_of_locvar l in
   let lsize_name = get_lsizename_of_locvar l  in
   let cnt_lbase = NtsIVar(lbase_name) in
   let cnt_lsize = NtsIVar(lsize_name) in
-  let affect_list = (CntAffect(cnt_lbase,CntCst(id_seg))::[] ) in
+  let affect_list = (CntAffect(cnt_lbase,CntCst( id_seg))::[] ) in
   let affect_list = (CntAffect(cnt_lsize,block_size))::affect_list in
   affect_list
 
@@ -77,7 +77,7 @@ pointer for multidimentional pointers -- like int **. *)
 
 let  offset_of_mem_access_to_cnt sslv (t : Cil_types.typ ) ( off : Cil_types.offset) =
   match off with
-      NoOffset -> CntCst(0)
+      NoOffset -> CntCst(My_bigint.zero)
     | Index (exp , _ ) -> 
       let offset_exp = compile_cil_exp_2_cnt sslv exp in
       let sizeof_type = interpret_ciltypes_size t in
@@ -100,7 +100,7 @@ let cnt_guard_of_array_access sslv (access_offset : Cil_types.offset)
 	let accs_index = compile_cil_exp_2_cnt sslv exp in
 	let size_curr_dim = compile_cil_exp_2_cnt sslv size_curr_row in
 	let current_cst = 
-	  CntBAnd(CntBool(CntLt,accs_index,size_curr_dim),CntBool(CntGeq,accs_index,CntCst(0))) in
+	  CntBAnd(CntBool(CntLt,accs_index,size_curr_dim),CntBool(CntGeq,accs_index,CntCst(My_bigint.zero))) in
 	array_within_bounds_cst sslv (CntBAnd(pre,current_cst)) off telem
       | (_,_) -> CntBFalse
   in
@@ -192,9 +192,9 @@ to do with Info"))
 	      
 	      
 	      let interval_cond = 
-	      CntBAnd(CntBool(CntLt,nts_ptr_exp,locvar_size),CntBool(CntGeq,nts_ptr_exp,CntCst(0))) 
+	      CntBAnd(CntBool(CntLt,nts_ptr_exp,locvar_size),CntBool(CntGeq,nts_ptr_exp,CntCst(My_bigint.zero))) 
 	      in
-	      let align_cond = CntBool(CntEq,CntMod(nts_ptr_exp,sizeof_exp),CntCst(0)) 
+	      let align_cond = CntBool(CntEq,CntMod(nts_ptr_exp,sizeof_exp),CntCst(My_bigint.zero)) 
 	      in
 	      CntBAnd(interval_cond,align_cond)
 

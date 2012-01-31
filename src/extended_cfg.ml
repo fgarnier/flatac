@@ -84,7 +84,8 @@ struct
 
   let is_label_registered dest_ref label_ref 
 	  (dest_table : (ecfg_id, trans_label_val) Hashtbl.t ) =
-    let answer_iterator dest_ref label_ref dest label =
+    let answer_iterator (dest_ref : ecfg_id)
+	(label_ref : trans_label_val) dest label =
       if label = label_ref && dest = dest_ref then
 	raise Label_already_registered_for_this_edge
       else ()

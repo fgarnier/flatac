@@ -344,7 +344,7 @@ and c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool ) =
     | LiBScal (cscal) ->
        begin
 	 let arg = interpret_c_scal_to_cnt sslf cscal in
-	   CntBool (CntEq , arg , (CntCst(0)))
+	   CntBool (CntEq , arg , (CntCst(My_bigint.zero)))
        end
 
     (* Pointer comparisons match cases start here*)
@@ -427,8 +427,8 @@ let rec valid_expr_2_cnt_bool ( vexpr : valid_counter ) =
       | PtValid ( s ) -> CntBool(CntEq,CntVar(NtsIVar(("validity__"^s^"_"))),CntCst(1))
     | IntValid ( s ) -> CntBool(CntEq,CntVar(NtsIVar(("validity__"^s^"_"))),CntCst(1))
     *)
-    | PtValid ( s ) -> CntBool(CntEq,CntVar(NtsIVar(s)),CntCst(1))
-    | IntValid ( s ) -> CntBool(CntEq,CntVar(NtsIVar(s)),CntCst(1))
+    | PtValid ( s ) -> CntBool(CntEq,CntVar(NtsIVar(s)),CntCst(My_bigint.one))
+    | IntValid ( s ) -> CntBool(CntEq,CntVar(NtsIVar(s)),CntCst(My_bigint.one))
     | AndValid ( l , r ) -> 
 	begin
 	  match l , r with 

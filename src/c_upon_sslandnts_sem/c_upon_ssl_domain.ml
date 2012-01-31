@@ -223,8 +223,8 @@ let free_upon_sslv (pvar : ptvar)(sslv : ssl_validity_absdom ) =
 					       is zero and the error prone 
 						  non-zero case.*)
 	let offset_of_pvar = Cnt_interpret.offset_cnt_of_pvar pvar in
-	let eq_zero_guard = CntBool(CntEq,offset_of_pvar,CntCst(0)) in
-	let non_zero_guard =   CntBool(CntNeq,offset_of_pvar,CntCst(0)) in
+	let eq_zero_guard = CntBool(CntEq,offset_of_pvar,CntCst(My_bigint.zero)) in
+	let non_zero_guard =   CntBool(CntNeq,offset_of_pvar,CntCst(My_bigint.zero)) in
 	let fucked_up_case =  create_validity_abstdomain () in
 	Ssl.set_heap_to_top fucked_up_case.ssl_part;
 	let trans_list= (fucked_up_case, (CntGuard(non_zero_guard))::[])::[] 
@@ -259,11 +259,11 @@ let r_malloc_succ ( lhs : Cil_types.lval option ) sslv (mid: global_mem_manager 
 	  scal_param in
 	let lhs_pvar = get_pvar_from_exp_node (Lval(lv,off)) in
 	let valid_var_cnt_aff =   make_validity_varpvar lhs_pvar in
-	let valid_var_aff = CntAffect( valid_var_cnt_aff , CntCst(1)) in
-	let interpret_gt_zero = CntBool(CntGt,interpret_param,CntCst(0)) in
+	let valid_var_aff = CntAffect( valid_var_cnt_aff , CntCst(My_bigint.one)) in
+	let interpret_gt_zero = CntBool(CntGt,interpret_param,CntCst(My_bigint.zero)) in
 	let list_locvar_cnt_affect = make_size_locvar l mid interpret_param in 
 	let cnt_ptvar_offset =  make_offset_locpvar lhs_pvar in
-	let zero_pvar_offset =  CntAffect( cnt_ptvar_offset, CntCst(0)) in
+	let zero_pvar_offset =  CntAffect( cnt_ptvar_offset, CntCst(My_bigint.zero)) in
 	let transit_list =  (CntGuard(interpret_gt_zero)) :: list_locvar_cnt_affect  in
 	let transit_list = zero_pvar_offset :: transit_list in
 	let transit_list = valid_var_aff :: transit_list in
@@ -277,7 +277,7 @@ let r_malloc_succ ( lhs : Cil_types.lval option ) sslv (mid: global_mem_manager 
 	let l = mid#get_last_lvar () in
 	let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
 	  scal_param in
-	let interpret_gt_zero = CntBool(CntGt,interpret_param,CntCst(0)) in
+	let interpret_gt_zero = CntBool(CntGt,interpret_param,CntCst(My_bigint.zero)) in
 	let list_locvar_cnt_affect = make_size_locvar l mid interpret_param in
 	let transit_list =  (CntGuard(interpret_gt_zero)) :: list_locvar_cnt_affect  in
 	let ret_list = (( new_abstract , transit_list) :: []) in
@@ -299,15 +299,15 @@ let r_malloc_succ_withvalidcntguard ( lhs : Cil_types.lval option) sslv (mid: gl
 	  let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
 	  let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
 	    scal_param in
-	  let interpret_gt_zero = CntBool(CntGt,interpret_param,CntCst(0)) in
+	  let interpret_gt_zero = CntBool(CntGt,interpret_param,CntCst(My_bigint.zero)) in
 	  let good_malloc_guard = CntBAnd(validity_guard_cnt,interpret_gt_zero)
 	  in 
 	  let pvar_of_lhs = get_pvar_from_exp_node (Lval(lv,off)) in
 	  let valid_lhs_var = make_validity_varpvar pvar_of_lhs in
 	  let list_locvar_cnt_affect = make_size_locvar l mid interpret_param in
 	  let cnt_ptvar_offset =  make_offset_locpvar pvar_of_lhs in
-	  let zero_pvar_offset =  CntAffect( cnt_ptvar_offset, CntCst(0)) in
-	  let valid_aff_lhs =  CntAffect( valid_lhs_var, CntCst(1)) in
+	  let zero_pvar_offset =  CntAffect( cnt_ptvar_offset, CntCst(My_bigint.zero)) in
+	  let valid_aff_lhs =  CntAffect( valid_lhs_var, CntCst(My_bigint.one)) in
 	  let transit_list =  (CntGuard(good_malloc_guard)) :: list_locvar_cnt_affect  in
 	  let transit_list = zero_pvar_offset :: transit_list in
 	  let transit_list = valid_aff_lhs :: transit_list in
@@ -323,7 +323,7 @@ let r_malloc_succ_withvalidcntguard ( lhs : Cil_types.lval option) sslv (mid: gl
 	let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
 	let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
 	  scal_param in
-	let interpret_gt_zero = CntBool(CntGt,interpret_param,CntCst(0)) in
+	let interpret_gt_zero = CntBool(CntGt,interpret_param,CntCst(My_bigint.zero)) in
 	let good_malloc_guard = CntBAnd(validity_guard_cnt,interpret_gt_zero)
 	in 
 	let list_locvar_cnt_affect = make_size_locvar l mid interpret_param in
@@ -349,11 +349,11 @@ let r_malloc_neg_or_zero_arg ( lhs : Cil_types.lval option ) sslv  (mid: global_
 	    scal_param in
 	  let aff_to_nil = Pointsnil(pvar) in
 	  and_atomic_ptnil aff_to_nil new_abstract.ssl_part;
-	  let guard_leq_zero =  CntGuard(CntBool(CntLeq,interpret_param,CntCst(0))) 
+	  let guard_leq_zero =  CntGuard(CntBool(CntLeq,interpret_param,CntCst(My_bigint.zero))) 
 	  in
 	  let pvar_of_lhs = get_pvar_from_exp_node (Lval(lv,off)) in  
 	  let valid_lhs_var = make_validity_varpvar pvar_of_lhs in
-	  let invalid_aff_lhs =  CntAffect( valid_lhs_var, CntCst(0)) in
+	  let invalid_aff_lhs =  CntAffect( valid_lhs_var, CntCst(My_bigint.zero)) in
 	  let ret_list = ((new_abstract, (guard_leq_zero ::( invalid_aff_lhs ::[])))::[] ) in
 	  ret_list
 	end
@@ -362,7 +362,7 @@ let r_malloc_neg_or_zero_arg ( lhs : Cil_types.lval option ) sslv  (mid: global_
 	  let new_abstract = copy_validity_absdomain sslv in
 	  let interpret_param = interpret_c_scal_to_cnt new_abstract.ssl_part 
 	    scal_param in
-	  let guard_leq_zero =  CntGuard(CntBool(CntLeq,interpret_param,CntCst(0))) 
+	  let guard_leq_zero =  CntGuard(CntBool(CntLeq,interpret_param,CntCst(My_bigint.zero))) 
 	  in 
 	  let ret_list = ((new_abstract, (guard_leq_zero :: []))::[] ) in
 	  ret_list
@@ -385,12 +385,12 @@ let r_malloc_neg_or_zero_arg_withvalidityguard (lhs : Cil_types.lval option ) ss
 	    scal_param in
 	  let aff_to_nil = Pointsnil(pvar) in
 	  and_atomic_ptnil aff_to_nil new_abstract.ssl_part;
-	  let interpret_leq_zero = CntBool(CntLeq,interpret_param,CntCst(0)) 
+	  let interpret_leq_zero = CntBool(CntLeq,interpret_param,CntCst(My_bigint.zero)) 
 	  in 
 	  let guard = CntGuard(CntBAnd(validity_guard_cnt,interpret_leq_zero)) in 
 	   let pvar_of_lhs = get_pvar_from_exp_node (Lval(lv,off)) in  
 	  let valid_lhs_var = make_validity_varpvar pvar_of_lhs in
-	  let invalid_aff_lhs =  CntAffect( valid_lhs_var, CntCst(0)) in 
+	  let invalid_aff_lhs =  CntAffect( valid_lhs_var, CntCst(My_bigint.zero)) in 
 	  let ret_list = ((new_abstract, invalid_aff_lhs::(guard :: []))::[] ) in
 	  ret_list
 	end
@@ -401,7 +401,7 @@ let r_malloc_neg_or_zero_arg_withvalidityguard (lhs : Cil_types.lval option ) ss
 	let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
 	let interpret_param = interpret_c_scal_to_cnt new_abstract.ssl_part 
 	  scal_param in
-	let interpret_leq_zero = CntBool(CntLeq,interpret_param,CntCst(0)) 
+	let interpret_leq_zero = CntBool(CntLeq,interpret_param,CntCst(My_bigint.zero)) 
 	in 
 	let guard = CntGuard(CntBAnd(validity_guard_cnt,interpret_leq_zero)) in 
 	let ret_list = ((new_abstract, (guard :: []))::[] ) in
@@ -433,7 +433,7 @@ let r_malloc_failed_with_unvalidcntgard lhs sslv  (mid: global_mem_manager ) (sc
 	    set_heap_to_top abst_domain.ssl_part ;
 	    let pvar_of_lhs = get_pvar_from_exp_node (Lval(lv,off)) in  
 	    let valid_lhs_var = make_validity_varpvar pvar_of_lhs in
-	    let invalid_aff_lhs =  CntAffect( valid_lhs_var, CntCst(0)) in 
+	    let invalid_aff_lhs =  CntAffect( valid_lhs_var, CntCst(My_bigint.zero)) in 
 	    let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
 	    let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
 	    let invalidity_guard = CntGuard(CntNot ( validity_guard_cnt )) in
@@ -812,8 +812,8 @@ let next_on_ssl_nts (mid : global_mem_manager ) (sslv  ) (skind : Cil_types.stmt
 		let valid_of_ret = 
 		  (match valid_sym_expr with
 		      DKvarValid -> CntHavoc(NtsIVar("validity__ret_val__")::[])
-		    | TruevarValid -> CntAffect(NtsIVar("validity__ret_val__"),CntCst(1))
-		    | FalsevarValid -> CntAffect(NtsIVar("validity__ret_val__"),CntCst(0))
+		    | TruevarValid -> CntAffect(NtsIVar("validity__ret_val__"),CntCst(My_bigint.one))
+		    | FalsevarValid -> CntAffect(NtsIVar("validity__ret_val__"),CntCst(My_bigint.zero))
 		  )
 		in  
 		(sslv , (valid_of_ret::(cnt_affect_offset::[]))) :: []

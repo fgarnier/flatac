@@ -159,7 +159,7 @@ let rec negate_bool_bot ( b_exp : c_bool ) =
     | LiBGt( expg , expd ) ->  LiBLeq ( expg, expd ) 
     | LiBLeq( expg , expd ) ->  LiBGt ( expg, expd ) 
     | LiBGeq( expg , expd ) ->  LiBLt ( expg, expd )
-    | LiBScal( exp ) -> LiBEq ( exp, LiConst())
+    | LiBScal( exp ) -> LiBEq ( exp, LiConst(LiIConst((My_bigint.of_int(0)))))
     | LiBPtrEq ( expg , expd ) -> LiBPtrNeq ( expg , expd )
     | LiBPtrNeq  ( expg , expd ) ->  LiBPtrEq ( expg , expd )
     | LiBPtrGt ( eg ,ed ) -> LiBPtrLeq (eg ,ed )
@@ -185,7 +185,7 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
   Format.printf "In cil_expr_2_scalar %s \n" (Ast_goodies.pprint_cil_exp expr );
   Cil.d_exp Ast_goodies.debug_out expr;
   match expr.enode with 
-      Const(cil_cst)-> LiConst( LiIConst(cil_cst))
+      Const(CInt64(cil_cst,_,_))-> LiConst( LiIConst(cil_cst))
     | Const(CChr(c)) -> LiSymConst(LiSymIConst(String.make 1 c))
     | Const(CEnum(e)) -> cil_enumitem_2_scalar e
     	  
@@ -524,7 +524,7 @@ address type, which type is neither TInt nor TPtr.\n")
       
     | Const(CStr(s))->
 	begin
-	  let l = LiConst(LiIConst((String.length s))) in
+	  let l = LiConst(LiIConst((My_bigint.of_int (String.length s)))) in
 	  let t = TInt(IChar,[]) in
 	  let str_array = LiTab(None,(Some(l))::[],t) in
 	  LiBaseAddrOfArray([],str_array)   
@@ -606,7 +606,7 @@ and cil_expr_2_bool (expr : Cil_types.exp) =
 
 
     | Const(CInt64(value,_,_)) ->  
-      LiBScal(LiConst( LiIConst (My_bigint.to_int value)))
+      LiBScal(LiConst( LiIConst ( value )))
     
     | _->
 
@@ -616,7 +616,7 @@ and cil_expr_2_bool (expr : Cil_types.exp) =
 	    TInt(_,_) -> 
 	      begin
 		let cscal_exp =cil_expr_2_scalar expr in
-		LiBNeq(cscal_exp,LiConst(LiIConst(0)))
+		LiBNeq(cscal_exp,LiConst(LiIConst(My_bigint.zero)))
 	      end
 		
 	  | _ ->
@@ -625,7 +625,7 @@ and cil_expr_2_bool (expr : Cil_types.exp) =
 	      match alias_tname with
 		| Some(_) -> 
 		  let cscal_exp =cil_expr_2_scalar expr in
-		  LiBNeq(cscal_exp,LiConst(LiIConst(0)))
+		  LiBNeq(cscal_exp,LiConst(LiIConst(My_bigint.zero)))
 		    
 		| None ->
 		  let msg = Format.sprintf "Trying to parse an expression \
@@ -719,7 +719,7 @@ let rec negate_bool_bot ( b_exp : c_bool ) =
     | LiBGt( expg , expd ) ->  LiBLeq ( expg, expd ) 
     | LiBLeq( expg , expd ) ->  LiBGt ( expg, expd ) 
     | LiBGeq( expg , expd ) ->  LiBLt ( expg, expd )
-    | LiBScal( exp ) -> LiBEq ( exp, LiConst(LiIConst(0) ))
+    | LiBScal( exp ) -> LiBEq ( exp, LiConst(LiIConst(My_bigint.zero) ))
     | LiBPtrEq ( expg , expd ) -> LiBPtrNeq ( expg , expd )
     | LiBPtrNeq  ( expg , expd ) ->  LiBPtrEq ( expg , expd )
     | LiBPtrGt ( eg , ed ) -> LiBPtrLeq ( eg , ed)
@@ -772,7 +772,7 @@ let rec scal_to_string ( b_exp : c_scal ) =
   match b_exp with 
       LiVar(Unprimed,LiIntVar(vname)) -> vname (* returns the name of the variable*)
     | LiVar(Primed,LiIntVar(vname)) -> vname^"'" 
-    | LiConst(LiIConst(i)) -> (Printf.sprintf "%d" i )
+    | LiConst(LiIConst(i)) -> (My_bigint.to_string i )
     | LiSymConst(LiSymIConst(const_name)) -> const_name
     | LiSymConst(LiTypeSizeof(t)) -> let s = pprint_ciltypes_size t in s
     | LiScalOfAddr(e , t)->"(TINT of Addr cast)"^(ptrexp_to_str e)

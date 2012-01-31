@@ -69,9 +69,9 @@ let compile_cil_exp_2_cnt sslv ( e : Cil_types.exp ) =
 
 let compile_sym_validity_to_cnt v =
   match v with 
-      DKvarValid -> CntCst(-1)
-    |  FalsevarValid -> CntCst(0)
-    |  TruevarValid -> CntCst(1)
+      DKvarValid -> CntCst(My_bigint.minus_one)
+    |  FalsevarValid -> CntCst(My_bigint.zero)
+    |  TruevarValid -> CntCst(My_bigint.one)
 
 let compile_cil_fun_argexpr_2_cnt sslv (e : Cil_types.exp ) =
   let type_of_e = Cil.typeOf e 

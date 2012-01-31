@@ -214,7 +214,7 @@ let rec size_boolexp_deeper_than  (bexp : cnt_bool ) (deepness : int ) =
 
 let rec cnt_pprint_arithm_exp ( exp : cnt_arithm_exp ) =
   match exp with
-      CntCst(i) -> let s = Format.sprintf "%d" i in s
+      CntCst(i) -> My_bigint.to_string i
     | CntNdet -> "NDET"
     | CntSymCst(str) -> str
     | CntVar ( ntsvar ) -> nts_pprint_nts_var ntsvar
@@ -694,7 +694,7 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
     if is_cnt_bool_det condition 
     then condition
     else
-      CntBool(CntEq,CntNdetVar("__if_ndet_cond__"),CntCst(0))
+      CntBool(CntEq,CntNdetVar("__if_ndet_cond__"),CntCst(My_bigint.zero))
     
 
 
