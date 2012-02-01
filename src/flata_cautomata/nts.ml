@@ -907,6 +907,9 @@ types. *********)
 
 (************** Hashing function for nts_label types and nts types in general **)
 
+(* The rhs integer values are all primes numbers and shall be pairwise
+distinct.*)
+
 
   let hash_nts_var 
       (t : nts_var ) =
@@ -930,6 +933,27 @@ types. *********)
       | CntSymCst(_) -> 613 
       | CntNdetVar(_) -> 21601
 	  
+
+
+  let hash_cnt_bool_constructor ( cb : cnt_bool) =
+    match cb with
+    | CntBTrue -> 5839  
+    | CntBFalse ->  5827
+    | CntBAnd (_,_) -> 90197 
+    | CntBOr (_,_) -> 2293
+    | CntBool ( opr , _ , _ ) ->
+      begin
+	match opr with 
+	    CntEq -> 11833 
+	  | CntNeq -> 10091 
+	  | CntLeq -> 3691 
+	  | CntLt -> 797    
+	  | CntGt -> 73189 
+	  | CntGeq -> 82561 
+      end
+    | CntNot(_) -> 4813	
+    
+
 
   let hash_cnt_arithm_exp (visit_nodes_left : int)
       (t : cnt_arithm_exp ) =
@@ -975,7 +999,7 @@ types. *********)
     
     let genqueue = Queue.create() in
     Queue.add t genqueue;
-    let global_hash = ref 0 in
+    let global_hash = ref (hash_cnt_arithm_constructor  t) in
     let vnodes_left = ref visit_nodes_left in
     while ( !vnodes_left > 0 && not ( Queue.is_empty genqueue)) 
     do
@@ -986,4 +1010,79 @@ types. *********)
       vnodes_left := leftnodes
     done;
     !global_hash
+      
+
+
+
+
+ (* The first parameter represents the maximum number of nodes to traverse
+ in every syntactical arithmetical expression subtree*)
+
+  let hash_cnt_bool_exp (visit_nodes_arithm : int) (visit_nodes_left : int)
+      (t : cnt_bool ) =
+    
+    
+    let breaths_hash_traversal (vnodes_left : int) 
+	(next_generation : cnt_bool Queue.t) 
+	(curr_expr : cnt_bool) =
+      
+      match curr_expr with
+	  CntBTrue | CntBFalse -> 
+	    (vnodes_left - 1, hash_cnt_bool_constructor curr_expr )
+	    
+	| CntNot(a) -> 
+	  let local_hash = hash_cnt_bool_constructor a in
+	  ( vnodes_left - 1 , local_hash)
+    
+    
+	| CntBAnd(fg,fd)  | CntBOr(fg,fd) ->	 
+	  begin
+	    Queue.add fg next_generation;
+	    let local_hash = hash_cnt_bool_constructor fg in
+	    let vnodes_left = (vnodes_left - 2 ) in
+	    if visit_nodes_left > 0 then
+	      begin
+		let local_hash =  (hash_cnt_bool_constructor fd) + local_hash 
+		in
+		let local_hash = Hashtbl.hash local_hash 
+		in 
+		Queue.add fd next_generation;
+		(vnodes_left, local_hash)
+	      end 
+	    else 
+	      (vnodes_left, local_hash)
+	  end 
+	
+	| CntBool(rel,fg,fd) ->
+	  begin
+	    
+	    let local_hash =  hash_cnt_arithm_exp visit_nodes_arithm fg in
+	    let vnodes_left = (vnodes_left - 2 ) in
+	    if visit_nodes_left > 0 then
+	      begin
+		let local_hash =  ( hash_cnt_arithm_exp visit_nodes_arithm fd) 
+		  + local_hash 
+		in
+		let local_hash = Hashtbl.hash local_hash 
+		in 
+		(vnodes_left, local_hash)
+	      end 
+	    else 
+	      (vnodes_left, local_hash)
+	  end
+    in
+    
+	  let genqueue = Queue.create() in
+	  Queue.add t genqueue;
+	  let global_hash = ref (hash_cnt_bool_constructor t) in
+	  let vnodes_left = ref visit_nodes_left in
+	  while ( !vnodes_left > 0 && not ( Queue.is_empty genqueue)) 
+	  do
+	    let cbool_head = Queue.pop genqueue in
+	    let ( leftnodes , loc_hash ) =
+	      breaths_hash_traversal !vnodes_left genqueue cbool_head in
+	    global_hash := Hashtbl.hash ( !global_hash + loc_hash );
+	    vnodes_left := leftnodes
+	  done;
+	  !global_hash
       
