@@ -995,6 +995,13 @@ distinct.*)
 	    else 
 	      (vnodes_left, local_hash)
 	  end
+	| CntUnMin(f) ->
+	    Queue.add f next_generation;
+	    let local_hash = hash_cnt_arithm_constructor f
+	    in
+	      (vnodes_left-1, local_hash)
+	      
+	    
     in
     
     let genqueue = Queue.create() in
@@ -1085,4 +1092,65 @@ distinct.*)
 	    vnodes_left := leftnodes
 	  done;
 	  !global_hash
+
+
+
+  let hash_il_fun_arg  m arg =
+    match arg with
+	IlScalArg(il_int) ->
+	  begin
+	    hash_cnt_arithm_exp m il_int.expr
+	  end
       
+      | IlPtrArg(il_ptr) ->  
+	  begin
+	    hash_cnt_arithm_exp m il_ptr.offset_of_exp
+	  end
+
+
+  let hash_cnt_trans_label (n : int) (m : int)
+      (t : cnt_trans_label ) =
+    match t with
+	CntGuard(cbool) -> hash_cnt_bool_exp n m cbool
+      | CntFunCall(name,Some(list_ret),h::_) ->
+	  begin
+	    let hash_ret=Hashtbl.hash name in
+	    let hash_ret = hash_nts_var (List.hd list_ret) in
+	    let hash_ret=(hash_il_fun_arg m h)+hash_ret in
+	      hash_ret
+	  end
+      | CntFunCall(name,Some(list_ret),[]) ->
+	  begin
+	    let hash_ret=Hashtbl.hash name in
+	    let hash_ret = hash_nts_var (List.hd list_ret) in 
+	      hash_ret
+	  end
+	    
+      | CntFunCall(name,None,_) ->
+	  begin
+	    let hash_ret=Hashtbl.hash name 
+	    in hash_ret
+	  end
+      |  CntAffect(x,e) -> (hash_nts_var x)+(hash_cnt_arithm_exp m e)
+      |  CntNdetAssign(x) -> 31019+(hash_nts_var x )
+      |  CntHavoc(a::_) -> 28109 +(hash_nts_var a )
+      
+      
+
+
+  let hash_cnt_translabel_list (n : int )( m : int) 
+      (tl : cnt_trans_label list) =
+
+    let rec recursor elem_left lleft hash_prev =
+      if elem_left <= 0 then hash_prev
+      else
+	match lleft with 
+	    a::l ->  
+	      let hash_loc = hash_cnt_trans_label n m a in
+	      let hash_loc = Hashtbl.hash (hash_prev+hash_loc) in
+		recursor (elem_left -1) l hash_loc
+		  
+	  | [] -> hash_prev
+    in
+      recursor n tl 0
+    
