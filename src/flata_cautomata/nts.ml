@@ -1,5 +1,5 @@
 open Nts_types
-
+open Queue
 
 exception CntInvalidExpression
 
@@ -892,8 +892,8 @@ types. *********)
 
   let rec compare_tranlabel_list l1 l2 =
      match  l1 , l2 with
-	(a::[],[]) -> false
-      | ([],a::[]) -> false
+	(a::_,[]) -> false
+      | ([],a::_) -> false
       | ([],[]) -> true
       | (a::lg,b::ld) -> 
 	begin
@@ -901,3 +901,89 @@ types. *********)
 	  then false
 	  else compare_tranlabel_list lg ld
 	end
+
+
+
+
+(************** Hashing function for nts_label types and nts types in general **)
+
+
+  let hash_nts_var 
+      (t : nts_var ) =
+    match t with 
+	NtsIVar(s) ->  Hashtbl.hash s 
+      | NtsRVar(s) ->  Hashtbl.hash s 
+      | NtsMiscType(s) ->  Hashtbl.hash s 
+
+  let hash_cnt_arithm_constructor (exp : cnt_arithm_exp ) =
+    match exp with 
+	CntSum (_,_) -> 59183 
+      | CntMinus (_,_) -> 69341 
+      | CntProd(_,_) -> 47797
+      | CntMod (_,_) -> 104623
+      | CntDiv(_,_) -> 503 
+      | CntUnMin(_) -> 101527
+      | CntNdet -> 7039
+      | CntVar(_) -> 87797 
+      | CntCst(_) -> 104659 
+      | CntInvalidExp -> 70607	
+      | CntSymCst(_) -> 613 
+      | CntNdetVar(_) -> 21601
+	  
+
+  let hash_cnt_arithm_exp (visit_nodes_left : int)
+      (t : cnt_arithm_exp ) =
+    
+    
+    let breaths_hash_traversal (vnodes_left : int) 
+	(next_generation : cnt_arithm_exp Queue.t) 
+	(curr_expr : cnt_arithm_exp) =
+     
+      match curr_expr with
+	  CntCst( cst ) -> (vnodes_left - 1, My_bigint.hash cst)
+
+	| CntVar(v) ->  ( vnodes_left - 1 , hash_nts_var v)
+	| CntNdet -> (vnodes_left , 7039)
+	| CntInvalidExp -> ( vnodes_left , 78203) 
+	| CntNdetVar(s) 
+	
+	| CntSymCst(s)
+	  -> 
+	  (vnodes_left - 1, Hashtbl.hash s)
+	| CntMinus(fg,fd)  
+	| CntProd(fg,fd)
+	| CntSum(fg,fd) 
+	| CntMod(fg,fd) 
+	| CntDiv(fg,fd) ->	 
+	  begin
+	    Queue.add fg next_generation;
+	    let local_hash = hash_cnt_arithm_constructor fg in
+	    let vnodes_left = (vnodes_left - 2 ) in
+	    if visit_nodes_left > 0 then
+	      begin
+		let local_hash =  (hash_cnt_arithm_constructor fd) + local_hash 
+		in
+		let local_hash = Hashtbl.hash local_hash 
+		in 
+		Queue.add fd next_generation;
+		(vnodes_left, local_hash)
+	      end 
+	    else 
+	      (vnodes_left, local_hash)
+	  end
+    in
+    
+    let genqueue = Queue.create() in
+    Queue.add t genqueue;
+    let global_hash = ref 0 in
+    let vnodes_left = ref visit_nodes_left in
+    while ( !vnodes_left > 0 && not ( Queue.is_empty genqueue)) 
+    do
+      let exp_head = Queue.pop genqueue in
+      let ( leftnodes , loc_hash ) =
+	breaths_hash_traversal !vnodes_left genqueue exp_head in
+      global_hash := Hashtbl.hash ( !global_hash + loc_hash );
+      vnodes_left := leftnodes
+    done;
+    !global_hash
+      
