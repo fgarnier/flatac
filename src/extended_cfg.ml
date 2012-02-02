@@ -231,7 +231,9 @@ struct
       (dest_table : (ecfg_id, trans_label_val) Hashtbl.t ) =
       let answer_iterator (dest_ref : ecfg_id)
 	(label_ref : trans_label_val) dest label =
-	if label = label_ref && dest = dest_ref then
+	if (front_end#equals_labels label  label_ref) && 
+	  ( dest = dest_ref) 
+	then
 	  raise Label_already_registered_for_this_edge
 	else ()
       in
