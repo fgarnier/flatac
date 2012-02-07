@@ -554,8 +554,9 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       
       try
 	let next_stmt_for_brokenmemabs = 
-	  Ast_goodies.get_some_from_option_pair
-	    true_stmt_opt false_stmt_opt
+	  List.hd (current_node.statement.succs) 
+	  (*Ast_goodies.get_some_from_option_pair
+	    true_stmt_opt false_stmt_opt*)
 	in
 	let mem_broken_succs_abs_list = 
 	  front_end#next abs_mem_broken 
