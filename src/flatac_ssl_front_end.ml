@@ -40,16 +40,18 @@ open Self
 let pprint_trans_list_foldleft (s : string ) ( trans : cnt_trans_label ) =
   match (s,trans) with 
     | ("",CntGuard(guard))-> 
-      let s_guard = simplify_cnt_boolexp guard in
+      (*let s_guard = simplify_cnt_boolexp guard in*)
+      let s_guard = guard in
       begin
 	match s_guard with 
 	    CntBTrue -> ""
-	  | _ -> cnt_pprint_boolexp s_guard 
+	  | _ -> cnt_pprint_boolexp s_guard
       end
     | ("",_) ->
       (cnt_pprint_translabel trans )
     | (_,CntGuard(guard)) -> 
-      let s_guard = simplify_cnt_boolexp guard in
+      (*let s_guard = simplify_cnt_boolexp guard in*)
+      let s_guard=guard in
       begin
 	match s_guard with 
 	    CntBTrue -> s
@@ -152,7 +154,7 @@ being error states.*)
 
       
   method static_unsat_label (label : cnt_trans_label list) =
-    Nts.static_check_if_translist_unsat label
+    (*Nts.static_check_if_translist_unsat label*) false
 
   method make_absdom_errorval (sslv : ssl_validity_absdom) =
     Ssl.set_heap_to_top sslv.ssl_part

@@ -695,7 +695,8 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 		 (front_end#pretty_label post) in
 	       intermediate_sid<-intermediate_sid + 1;
 	       post_script
-	     end
+	     end 
+
       in
       let origin_table_print_folder (origin : ecfg_id ) table_dest 
 	  (pre_script :  string ) =
