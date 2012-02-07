@@ -43,6 +43,9 @@ object
  
   method virtual is_control_state_erroneous : Cil_types.stmtkind -> bool
 
+  method virtual  make_absdom_errorval : 'a -> unit
+    
+
   (** Returns a list of abstract interpretation and counter automata label
   * couple based on the current abstraction, the current counter, and the 
   * statement kind. *)

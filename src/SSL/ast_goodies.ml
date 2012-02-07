@@ -35,6 +35,9 @@ exception Bothparameter_are_None_option
 
 
 
+let name_of_non_assigned_ret_val () =
+  "__nts__naffected_ret_val_"
+
 let debug_out =
   Format.formatter_of_out_channel stdout
     

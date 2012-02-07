@@ -552,6 +552,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       );
       
       
+      try
 	let next_stmt_for_brokenmemabs = 
 	  Ast_goodies.get_some_from_option_pair
 	    true_stmt_opt false_stmt_opt
@@ -565,8 +566,11 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	  (self#add_to_not_visited_iterator current_node 
 	     next_stmt_for_brokenmemabs) 
 	  mem_broken_succs_abs_list
-      
-
+      with
+	  Ast_goodies.Bothparameter_are_None_option ->
+	    raise Ast_goodies.Bothparameter_are_None_option
+	    
+	    (* Both if and else block are empty*)
 
 
     method private build_ecfg () =
@@ -578,21 +582,49 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	  (succ_sid : Cil_types.stmt ) =
 	match current_node.statement.skind with
 	    If(cdition,byes,bno,_) ->
-	      begin
-		let sslv = front_end#copy_absdom_label 
-		  current_node.abstract_val in
-		let (trans_true,trans_false,trans_mem_broken) = 
+		begin
+		  let sslv = front_end#copy_absdom_label 
+		    current_node.abstract_val in
+		  let (trans_true,trans_false,trans_mem_broken) = 
 		  front_end#next_on_if_statement sslv cdition in
-		
-		let (true_stmt,false_stmt)  = 
-		  (*Ast_goodies.get_two_first_elem_of_list
-		    current_node.statement.succs *)
-		  Ast_goodies.get_if_then_first_block_stmts byes bno
-		in
-		self#register_if_statement_successors
-		  current_node
-		  (trans_true,trans_false,trans_mem_broken)(true_stmt,false_stmt)
-	      end
+		  try
+		    let (true_stmt,false_stmt)  = 
+		    (*Ast_goodies.get_two_first_elem_of_list
+		      current_node.statement.succs *)
+		      Ast_goodies.get_if_then_first_block_stmts byes bno
+		    in
+		    self#register_if_statement_successors
+		      current_node
+		      (trans_true,trans_false,trans_mem_broken)(true_stmt,false_stmt)
+		  with
+		      Ast_goodies.Bothparameter_are_None_option ->
+			begin
+			  (* case where byes and bno are empty blocks*)
+			  self#add_transition_from_to current_node 
+			    (List.hd current_node.statement.succs)
+			    sslv (front_end#get_empty_transition_label ())
+			end
+
+		    
+		end
+	 
+	  | Goto(stmt_ref,_) ->
+	    begin
+	      let stmt = !stmt_ref in
+	      let sslv = front_end#copy_absdom_label 
+		current_node.abstract_val in
+	      
+	      (match stmt.labels with
+		  Label("Error",_,true)::_ ->
+		    front_end#make_absdom_errorval sslv; 
+		   
+			       
+		| _-> ());
+	      self#add_transition_from_to current_node 
+		stmt
+		sslv (front_end#get_empty_transition_label ())
+	    end
+    
 	  | _ ->
 	      let abs_succ_list =     
 		self#get_abstract_succs_of_ecfg_node current_node  succ_sid
@@ -734,9 +766,14 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	front_end#get_entry_point_from_fundec finfo funinfo 
       in
      
+      let unaffected_ret_vals = Nts.pprint_nts_var_list (Nts.make_ntsvars_of_intvars( Ast_goodies.name_of_non_assigned_ret_val  ( ) )) in
       let validvar_names = front_end#pprint_list_of_valid_locals_var 
 	absval_of_ep funinfo in
-      Nts.concat_comma_both_arg_non_empty validvar_names ((Nts.pprint_typeinfo_int_nts_var_list nts_slocals))
+      let validvar_names = 
+	Nts.concat_comma_both_arg_non_empty unaffected_ret_vals
+	validvar_names in
+      Nts.concat_comma_both_arg_non_empty validvar_names 
+	((Nts.pprint_typeinfo_int_nts_var_list nts_slocals))
 	
       
     method private pprint_error_states () =

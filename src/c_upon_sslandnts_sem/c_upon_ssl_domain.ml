@@ -736,10 +736,20 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 
 
 		      (********************* Code à factoriser proprement ! *************************)
+		      let ret_nts_var_opt =
+			(
+			  match f.vtype with
+			    TFun(TVoid(_),_,_,_) -> None
+			    | _ -> let vname = 
+				     Ast_goodies.name_of_non_assigned_ret_val () in
+				   let nts_lvals = Nts.make_ntsvars_of_intvars vname in
+				   Some(nts_lvals)
+			);
+		      in
 		      let mem_access_cond = 
 			(mem_guards_of_funcall_arg_list sslv lparam) in
 		      let cnt_trans_label = 
-			CntFunCall(funname,None,arg_nts_list) in
+			CntFunCall(funname,ret_nts_var_opt,arg_nts_list) in
 		      let mem_access_trans_label =
 			CntGuard(mem_access_cond) in
 		      let valid_transit = 
