@@ -1,12 +1,12 @@
 #include <stdlib.h>
 
-int ndet();
+int NonDetInt();
 
 
 int main(int argc, char ** argv){
 
  int i=0;
- int j=ndet();
+ int j=NonDetInt();
 
  if (j>i)
 	i++;
