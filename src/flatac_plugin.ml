@@ -57,7 +57,7 @@ let pretty_print_cautomata_obj out =
   Format.printf "File name provided by the Kernel.Files.get function is %s \n" kernel_file_name;
   
  
-  let ca_out_name = Printf.sprintf "%sa" kernel_file_name in
+  let ca_out_name = Printf.sprintf "%s.nts" kernel_file_name in
   let out_file = open_out ca_out_name in
   let types_out_name = Printf.sprintf "%sa_types" kernel_file_name in
     
