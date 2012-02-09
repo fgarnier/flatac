@@ -100,6 +100,7 @@ class flatac_visitor (prj : Project.t )  = object (self)
     done 
 
   method private register_ecfg_of_gfun ( funinfos : Cil_types.fundec ) =
+    Cfg.prepareCFG funinfos; Cfg.computeCFGInfo funinfos true;
     let gtype_info_visitor = new global_composite_types_visitor ( prj ) 
     in 
     Visitor.visitFramacFile ( gtype_info_visitor :> frama_c_copy) local_file_ast;

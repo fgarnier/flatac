@@ -63,6 +63,7 @@ let pretty_print_cautomata_obj out =
     
   let file_ast = Ast.get() in
   Cfg.clearFileCFG file_ast;
+ 
   
   Visitor.visitFramacFile (composite_types :> frama_c_copy) file_ast;
   let index = composite_types#get_index_of_composite () in 

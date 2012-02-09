@@ -164,7 +164,7 @@ struct
 				  to be created node, if any.
 			     *)
       
-    initializer Cfg.cfgFun funinfo; self#register_in_out_nts_vars ();
+    initializer (*Cfg.cfgFun funinfo;*) self#register_in_out_nts_vars ();
       self#register_local_vars(); self#register_ecfg_entry_point funinfo;
       self#build_ecfg ()
 
