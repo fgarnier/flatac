@@ -552,7 +552,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       );
       
       
-      try
+     
 	let next_stmt_for_brokenmemabs = 
 	  List.hd (current_node.statement.succs) 
 	  (*Ast_goodies.get_some_from_option_pair
@@ -567,10 +567,11 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	  (self#add_to_not_visited_iterator current_node 
 	     next_stmt_for_brokenmemabs) 
 	  mem_broken_succs_abs_list
-      with
+     
+    (* with
 	  Ast_goodies.Bothparameter_are_None_option ->
 	    raise Ast_goodies.Bothparameter_are_None_option
-	    
+     *)   
 	    (* Both if and else block are empty*)
 
 
@@ -582,7 +583,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       let succs_fc_sid_iterator (current_node : ecfg_vertex) 
 	  (succ_sid : Cil_types.stmt ) =
 	match current_node.statement.skind with
-	    If(cdition,byes,bno,_) ->
+	   If(cdition,byes,bno,_) ->
 		begin
 		  let sslv = front_end#copy_absdom_label 
 		    current_node.abstract_val in
@@ -590,8 +591,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 		  front_end#next_on_if_statement sslv cdition in
 		  try
 		    let (true_stmt,false_stmt)  = 
-		    (*Ast_goodies.get_two_first_elem_of_list
-		      current_node.statement.succs *)
+		   
 		      Ast_goodies.get_if_then_first_block_stmts byes bno
 		    in
 		    self#register_if_statement_successors
@@ -608,8 +608,9 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 
 		    
 		end
+	   
 	 
-	  | Goto(stmt_ref,_) ->
+	  (*| Goto(stmt_ref,_) ->
 	    begin
 	      let stmt = !stmt_ref in
 	      let sslv = front_end#copy_absdom_label 
@@ -624,8 +625,8 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	      self#add_transition_from_to current_node 
 		stmt
 		sslv (front_end#get_empty_transition_label ())
-	    end
-    
+	    end *)
+	     
 	  | _ ->
 	      let abs_succ_list =     
 		self#get_abstract_succs_of_ecfg_node current_node  succ_sid

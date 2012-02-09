@@ -75,9 +75,9 @@ let get_if_then_first_block_stmts (b_yes :  Cil_types.block )
     (b_no : Cil_types.block ) =
   match b_yes.bstmts , b_no.bstmts with
       ([],[]) -> (None,None)
-    | (a::lg,[]) -> (Some(a),None)
-    | (a::lg,b::ld) -> (Some(a),Some(b))
-    | ([],b::ld) -> (None,Some(b))
+    | (a::_,[]) -> (Some(a),None)
+    | (a::_,b::_) -> (Some(a),Some(b))
+    | ([],b::_) -> (None,Some(b))
       
 
 (* You need to ensure that at least one of the tow parameter

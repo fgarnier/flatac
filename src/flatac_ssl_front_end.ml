@@ -146,6 +146,21 @@ being error states.*)
 		   end
 	       | _ -> false
 	   end
+
+      |  Goto(stmt_ref,_) ->
+	begin
+	  let stmt = !stmt_ref in 
+	  begin
+	    match stmt.labels with
+		Label("Error",_,true)::_ ->
+		  true
+		    
+		    
+		    
+	      | _-> false
+	  end
+	end
+
       | _ -> false
 
 
