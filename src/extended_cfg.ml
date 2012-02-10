@@ -535,7 +535,9 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	       List.iter 
 		 (self#add_to_not_visited_iterator current_node true_stmt)
 		 true_case_succs_abs_list;
-	| None -> ()
+	|  None -> 
+	    Format.fprintf Ast_goodies.debug_out "No true statment in if \n"
+	   
       ); 
       
       (
@@ -548,7 +550,9 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 		(self#add_to_not_visited_iterator current_node false_stmt)
 		false_case_succs_abs_list;
 	      
-	  | None -> () 
+	  | None ->
+	      Format.fprintf Ast_goodies.debug_out "No false statment in if \n"
+	       
       );
       
       
@@ -566,7 +570,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	List.iter 
 	  (self#add_to_not_visited_iterator current_node 
 	     next_stmt_for_brokenmemabs) 
-	  mem_broken_succs_abs_list
+	  mem_broken_succs_abs_list 
      
     (* with
 	  Ast_goodies.Bothparameter_are_None_option ->
@@ -584,33 +588,36 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	  (succ_sid : Cil_types.stmt ) =
 	match current_node.statement.skind with
 	   If(cdition,byes,bno,_) ->
+
+	     Format.fprintf Ast_goodies.debug_out 
+	       "[ECFG : In if/then/else ] Number of successor is :%d \n" (List.length current_node.statement.succs);
 		begin
 		  let sslv = front_end#copy_absdom_label 
 		    current_node.abstract_val in
 		  let (trans_true,trans_false,trans_mem_broken) = 
 		  front_end#next_on_if_statement sslv cdition in
-		  try
+		 (* try *)
 		    let (true_stmt,false_stmt)  = 
 		   
-		      Ast_goodies.get_if_then_first_block_stmts byes bno
+		      Ast_goodies.get_if_then_first_block_stmts current_node.statement byes bno
 		    in
 		    self#register_if_statement_successors
 		      current_node
 		      (trans_true,trans_false,trans_mem_broken)(true_stmt,false_stmt)
-		  with
+		 (* with
 		      Ast_goodies.Bothparameter_are_None_option ->
 			begin
 			  (* case where byes and bno are empty blocks*)
 			  self#add_transition_from_to current_node 
 			    (List.hd current_node.statement.succs)
 			    sslv (front_end#get_empty_transition_label ())
-			end
+			end *)
 
 		    
 		end
 	   
 	 
-	  (*| Goto(stmt_ref,_) ->
+	  | Goto(stmt_ref,_) ->
 	    begin
 	      let stmt = !stmt_ref in
 	      let sslv = front_end#copy_absdom_label 
@@ -622,10 +629,23 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 		   
 			       
 		| _-> ());
-	      self#add_transition_from_to current_node 
+	      self#add_to_not_visited_iterator
+		current_node
 		stmt
-		sslv (front_end#get_empty_transition_label ())
-	    end *)
+		(sslv ,(front_end#get_empty_transition_label ()))
+	    end 
+
+	  | Loop(_,b,_,_,_) -> 
+
+	    Format.fprintf Ast_goodies.debug_out "[ECFG : ] Loop met \n";
+	    let sslv = front_end#copy_absdom_label 
+	      current_node.abstract_val in
+	    let stmt = List.hd b.bstmts in
+	     self#add_to_not_visited_iterator
+	       current_node
+		stmt
+		(sslv,(front_end#get_empty_transition_label ()))
+	    
 	     
 	  | _ ->
 	      let abs_succ_list =     

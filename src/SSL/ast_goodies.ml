@@ -71,13 +71,25 @@ let get_two_first_elem_of_list l =
       | [] -> raise Less_than_two_elem_in_this_list
 
 
-let get_if_then_first_block_stmts (b_yes :  Cil_types.block ) 
+let get_if_then_first_block_stmts (if_stmt : Cil_types.stmt)
+    (b_yes :  Cil_types.block ) 
     (b_no : Cil_types.block ) =
   match b_yes.bstmts , b_no.bstmts with
       ([],[]) -> (None,None)
-    | (a::_,[]) -> (Some(a),None)
-    | (a::_,b::_) -> (Some(a),Some(b))
-    | ([],b::_) -> (None,Some(b))
+    | (_::_,[]) -> 
+      begin
+	let a = List.hd if_stmt.succs in
+	(Some(a),None)
+      end
+    | (_::_,_::_) ->
+      begin
+	let a=List.hd if_stmt.succs in
+	let b =List.nth  if_stmt.succs 1 in
+      (Some(a),Some(b))
+      end
+    | ([],_::_) ->
+      let b = List.nth if_stmt.succs 1 in
+      (None,Some(b))
       
 
 (* You need to ensure that at least one of the tow parameter
