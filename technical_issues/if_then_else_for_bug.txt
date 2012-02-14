@@ -1,0 +1,40 @@
+Hi, 
+
+ I have noted something which is a cause of concern when  it
+comes to analyze some loops using CIL --The version provided by
+the Frama-c distribution. I think it might be due to 
+
+
+When I do analyze a statement which kind is If(exp,block,block,_), everything 
+seems fine. I can analyze the expression exp, interpret it into
+some boolean expression that is peculiar to our tool, and then 
+I can analyze both blocks as well, and I get some analysis which is coherent
+with the input code. The first block corresponding to the set of 
+statements that should be executed when the test returns true, the second one 
+corresponding to the case when the test return false.
+
+
+However, when I have a loop --eg while( condition), or for(i=0;condition(i),i++),
+then something pretty strange happen :
+
+
+Even if I do traverse some If(exp,block,block,_) statement, as expected, 
+then I get an empty block for the first block condition, even if 
+in my source code there is some instruction to execute within the loop.
+However, when I pick the successors from the statement list 
+ -- In Cil_types.stmt, the field succs, typed as stmt list,
+ my analysis performs well, at least on some small examples.
+
+
+Is that normal, that under certain circumstances, I don't get a stmtkind
+description that matches to the control flow graph description ? 
+
+If you think this is not normal, I can send you some instances of code that
+show the difference. However, if you think this behavior is normal, can you, please, just tell me a word about it, and perhaps add a short explanation in a 
+footnote of the future realease API.
+
+
+I am using the Nitrogen 20111001 realease.
+
+Best regards and thanks in advance,
+ Florent.
