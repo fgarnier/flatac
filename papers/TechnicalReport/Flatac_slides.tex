@@ -259,11 +259,8 @@
 \item Memory access outside and allocated memory zone of the heap 
 \item Access to an array outside of its bounds
 \item Memory access using a non aligned address
-\item Double free using the same pointer
-\item Freeing on a pointer which offset is non-zero
-\end{itemize}
-Unwanted operations :
-\begin{itemize}
+\item Double free
+\item Freeing an allocated segment using an pointer that does not points at the begining of the segment.
 \item Memory leaks
 \end{itemize}
 }
@@ -273,11 +270,10 @@ Unwanted operations :
 \begin{itemize}
 \item Properties concerning the memory shape (Simple Separation Logic):
 	\begin{itemize}
-	\item $\Pointsto{x}{l}$ $($Stack$\times$Heap$)$
-	\item $\Alloc{l}$ : Segments allocations (Heap)
-	\item $\Sep{\sigma_1}{\sigma_2}$ : Segment separation (Heap)
-	\item Memory allocation
-	\item Memory leaks
+	\item Relation between pointer variables (Stack) and location variables (heaps).
+	\item Memory allocation.
+	\item Allocated Segment separation.
+
 	\end{itemize}
 \item Arithmetic properties :
 	\begin{itemize}
@@ -292,7 +288,8 @@ Unwanted operations :
 \tgreen{This front end aims at proving that C programs :}
 \begin{itemize}
 \item Have no execution run that lead to memory fault.
-\item Have no execution run that lead to a memory leak.
+\item Have no exectution that violates some assertion expressed
+using arithmetic constraints.
 \end{itemize}
 \tgreen{Flatac plugin: Front end of NTS error state reachability analysis }
 \begin{itemize}
@@ -327,7 +324,7 @@ some error state is reachable from the entry point (main function).
 \frame{
 \frametitle{Flatac in the tool-chain:}
 \begin{center}
-\resizebox{5cm}{!}{\input{toolchain.pstex_t}}
+\resizebox{9.5cm}{7cm}{\input{toolchain.pstex_t}}
 \end{center}
 
 
@@ -392,96 +389,96 @@ $(S_i,S_f,S_{err},S,\to \in (S\times R \times S)) $
 
 
 
-
-\frame{
-\frametitle{Rules for malloc}
-{\tiny
-$$
-\begin{array}{|l|}
-\hline
-\transmodel{\phi}{\mbox{\lstinline!x=malloc(!} I \mbox{\lstinline!)!}}{\isvalid{\phi}{I} \wedge \interpa{\phi}{I} > 0 \wedge \locvar{l^{\prime}}{\gmallocid}{\interpa{\phi}{I}} \ \wedge \ptroffset{x^{\prime}}=0 \wedge \gmallocid^{\prime}=\gmallocid + 1}{\Sep{\exists l. \Addrep{\phi}{\Pointsto{x}{l}}}{\Alloc{l}}} \\
-\hline
-\end{array}
-$$ 
-}
-
-If the expression $I$ evaluates to some negative value then malloc will return a null pointer :
-
-{\tiny
-$$
-\begin{array}{|l|}
-\hline
-\transmodel{\phi}{\mbox{\lstinline!x=malloc(!} I \mbox{\lstinline!)!}}{\isvalid{\phi}{I} \wedge \interpa{\phi}{I} \leq 0 }{\Addrep{\phi}{\Pointsto{x}{\nil}}} \\
-\hline
-\end{array}
-$$ 
-}
-
-Allocating a memory segment using some integer value that is the result of some
-invalid operation is considered as an error :
-
-$$
-\begin{array}{|l|}
-\hline
-\transmodel{\phi}{\mbox{\lstinline!x=malloc(!} I \mbox{\lstinline!)!}}{\neg \isvalid{\phi}{I}}{\bot} \\
-\hline
-\end{array}
-$$ 
-
-
-
-
-}
-
-
-\frame{
-\frametitle{Memory access rules}
-Correct access:
-{\tiny
-$$
-\begin{array}{|l|}
-\hline
-\transmodel{\phi}{\accs{P}}{
-\begin{array}{l}
-0 \leq \interpa{\phi}{x}+\sizeof{\tau}\leq \lsize{l} \\
- \wedge \congmod{(\interpa{\phi}{P}+\base{\phi}{P})
-}{0}{\sizeof{\tau}}
-\end{array}
-}{\phi} \gspace \Alloc{l}\in \Sp{\phi} \gspace \mbox{where } \left \lbrace \begin{array}{l} P:\tau *, \\l\seq \base{\phi}{P}.\\ \end{array} \right.\\
-\hline
-\end{array}
-$$
-}
-
-Access to an unallocated address :
-{\tiny
-$$
-\begin{array}{|l|}
-\hline
-\transmodel{\exists l. \phi}{\accs{P}}{}{\bot} \gspace  \Alloc{l}\not \in \Sp{\phi}, l \in \FVars{\phi}, \mbox{ where } l \seq \base{\phi}{P} \\
-\hline
-\end{array}
-$$
-}
-Access outside of an allocated zone, or with an unaligned address :
-{\tiny
-$$
-\begin{array}{|l|}
-\hline
-\transmodel{\phi}{\accs{P}}{
-\begin{array}{l}
-\phantom{\vee}  \interpa{\phi}{P}+\sizeof{x} > \lsize{l} \\
-\vee \notcongmod{\interpa{\phi}{P}}{0}{\sizeof{\tau}}
-\end{array}
-}{\bot} \gspace \Alloc{l}\in \Sp{\phi} \left \lbrace  \begin{array}{l} \mbox{where } P:\tau *,\\ l\seq\base{\phi}{P},\\ \end{array} \right . \\
-\hline
-\end{array}
-$$
-}
-
-
-}
-
+%
+%\frame{
+%\frametitle{Rules for malloc}
+%{\tiny
+%$$
+%\begin{array}{|l|}
+%\hline
+%\transmodel{\phi}{\mbox{\lstinline!x=malloc(!} I \mbox{\lstinline!)!}}{\isvalid{\phi}{I} \wedge \interpa{\phi}{I} > 0 \wedge \locvar{l^{\prime}}{\gmallocid}{\interpa{\phi}{I}} \ \wedge \ptroffset{x^{\prime}}=0 \wedge \gmallocid^{\prime}=\gmallocid + 1}{\Sep{\exists l. \Addrep{\phi}{\Pointsto{x}{l}}}{\Alloc{l}}} \\
+%\hline
+%\end{array}
+%$$ 
+%}
+%
+%If the expression $I$ evaluates to some negative value then malloc will return a null pointer :
+%
+%{\tiny
+%$$
+%\begin{array}{|l|}
+%\hline
+%\transmodel{\phi}{\mbox{\lstinline!x=malloc(!} I \mbox{\lstinline!)!}}{\isvalid{\phi}{I} \wedge \interpa{\phi}{I} \leq 0 }{\Addrep{\phi}{\Pointsto{x}{\nil}}} \\
+%\hline
+%\end{array}
+%$$ 
+%}
+%
+%Allocating a memory segment using some integer value that is the result of some
+%invalid operation is considered as an error :
+%
+%$$
+%\begin{array}{|l|}
+%\hline
+%\transmodel{\phi}{\mbox{\lstinline!x=malloc(!} I \mbox{\lstinline!)!}}{\neg \isvalid{\phi}{I}}{\bot} \\
+%\hline
+%\end{array}
+%$$ 
+%
+%
+%
+%
+%}
+%
+%
+%\frame{
+%\frametitle{Memory access rules}
+%Correct access:
+%{\tiny
+%$$
+%\begin{array}{|l|}
+%\hline
+%\transmodel{\phi}{\accs{P}}{
+%\begin{array}{l}
+%0 \leq \interpa{\phi}{x}+\sizeof{\tau}\leq \lsize{l} \\
+% \wedge \congmod{(\interpa{\phi}{P}+\base{\phi}{P})
+%}{0}{\sizeof{\tau}}
+%\end{array}
+%}{\phi} \gspace \Alloc{l}\in \Sp{\phi} \gspace \mbox{where } \left \lbrace \begin{array}{l} P:\tau *, \\l\seq \base{\phi}{P}.\\ \end{array} \right.\\
+%\hline
+%\end{array}
+%$$
+%}
+%
+%Access to an unallocated address :
+%{\tiny
+%$$
+%\begin{array}{|l|}
+%\hline
+%\transmodel{\exists l. \phi}{\accs{P}}{}{\bot} \gspace  \Alloc{l}\not \in \Sp{\phi}, l \in \FVars{\phi}, \mbox{ where } l \seq \base{\phi}{P} \\
+%\hline
+%\end{array}
+%$$
+%}
+%Access outside of an allocated zone, or with an unaligned address :
+%{\tiny
+%$$
+%\begin{array}{|l|}
+%\hline
+%\transmodel{\phi}{\accs{P}}{
+%\begin{array}{l}
+%\phantom{\vee}  \interpa{\phi}{P}+\sizeof{x} > \lsize{l} \\
+%\vee \notcongmod{\interpa{\phi}{P}}{0}{\sizeof{\tau}}
+%\end{array}
+%}{\bot} \gspace \Alloc{l}\in \Sp{\phi} \left \lbrace  \begin{array}{l} \mbox{where } P:\tau *,\\ l\seq\base{\phi}{P},\\ \end{array} \right . \\
+%\hline
+%\end{array}
+%$$
+%}
+%
+%
+%}
+%
 \frame{
 \frametitle{Among other things}
 \begin{itemize}

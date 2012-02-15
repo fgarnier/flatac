@@ -1,8 +1,8 @@
 %!PS-Adobe-2.0 EPSF-2.0
 %%Title: toolchain.fig
 %%Creator: fig2dev Version 3.2 Patchlevel 5c
-%%CreationDate: Wed Feb 15 20:41:36 2012
-%%BoundingBox: 0 0 544 717
+%%CreationDate: Wed Feb 15 22:36:53 2012
+%%BoundingBox: 0 0 602 750
 %Magnification: 1.0000
 %%EndComments
 %%BeginProlog
@@ -119,8 +119,8 @@ newfontname newfont definefont pop end } def
 
 /pageheader {
 save
-newpath 0 717 moveto 0 0 lineto 544 0 lineto 544 717 lineto closepath clip newpath
--18.3 769.1 translate
+newpath 0 750 moveto 0 0 lineto 602 0 lineto 602 750 lineto closepath clip newpath
+-4.7 760.6 translate
 1 -1 scale
 $F2psBegin
 10 setmiterlimit
@@ -142,121 +142,11 @@ pageheader
 0 slj
 0 slc
 7.500 slw
-n 2662 5199 m 4497 5199 l 4497 6772 l 2662 6772 l
- cp gs col0 s gr 
-% Polyline
-n 2625 1866 m 4459 1866 l 4459 3252 l 2625 3252 l
- cp gs col0 s gr 
-% Polyline
-gs  clippath
-3460 4805 m 3460 5064 l 3509 5064 l 3509 4805 l 3509 4805 l 3485 4930 l 3460 4805 l cp
-eoclip
-n 3485 4563 m
- 3485 5049 l gs col0 s gr gr
-
-% arrowhead
-45.000 slw
-n 3460 4805 m 3485 4930 l 3509 4805 l 3485 4830 l 3460 4805 l 
- cp gs 0.00 setgray ef gr  col0 s
-% Polyline
-7.500 slw
-n 3089 3926 m 2999 3926 2999 4435 90 arcto 4 {pop} repeat
-  2999 4525 3957 4525 90 arcto 4 {pop} repeat
-  4047 4525 4047 4016 90 arcto 4 {pop} repeat
-  4047 3926 3089 3926 90 arcto 4 {pop} repeat
- cp gs col0 s gr 
-% Polyline
-gs  clippath
-3460 3570 m 3460 3829 l 3509 3829 l 3509 3570 l 3509 3570 l 3485 3695 l 3460 3570 l cp
-eoclip
-n 3485 3327 m
- 3485 3814 l gs col0 s gr gr
-
-% arrowhead
-45.000 slw
-n 3460 3570 m 3485 3695 l 3509 3570 l 3485 3595 l 3460 3570 l 
- cp gs 0.00 setgray ef gr  col0 s
-% Polyline
-7.500 slw
-n 3201 855 m 3111 855 3111 1214 90 arcto 4 {pop} repeat
-  3111 1304 3845 1304 90 arcto 4 {pop} repeat
-  3935 1304 3935 945 90 arcto 4 {pop} repeat
-  3935 855 3201 855 90 arcto 4 {pop} repeat
- cp gs col0 s gr 
-% Polyline
-gs  clippath
-3499 1585 m 3499 1844 l 3548 1844 l 3548 1585 l 3548 1585 l 3524 1710 l 3499 1585 l cp
-eoclip
-n 3524 1342 m
- 3524 1829 l gs col0 s gr gr
-
-% arrowhead
-45.000 slw
-n 3499 1585 m 3524 1710 l 3548 1585 l 3524 1610 l 3499 1585 l 
- cp gs 0.00 setgray ef gr  col0 s
-% Polyline
-7.500 slw
- [60] 0 sd
-n 2378 1566 m 2288 1566 2288 7019 90 arcto 4 {pop} repeat
-  2288 7109 4856 7109 90 arcto 4 {pop} repeat
-  4946 7109 4946 1656 90 arcto 4 {pop} repeat
-  4946 1566 2378 1566 90 arcto 4 {pop} repeat
- cp gs col0 s gr  [] 0 sd
-% Polyline
-gs  clippath
-3499 7165 m 3499 7424 l 3548 7424 l 3548 7165 l 3548 7165 l 3524 7290 l 3499 7165 l cp
-eoclip
-n 3524 6847 m
- 3524 7409 l gs col0 s gr gr
-
-% arrowhead
-45.000 slw
-n 3499 7165 m 3524 7290 l 3548 7165 l 3524 7190 l 3499 7165 l 
- cp gs 0.00 setgray ef gr  col0 s
-% Polyline
-7.500 slw
-n 3350 7559 m 3260 7559 3260 7918 90 arcto 4 {pop} repeat
-  3260 8008 3770 8008 90 arcto 4 {pop} repeat
-  3860 8008 3860 7649 90 arcto 4 {pop} repeat
-  3860 7559 3350 7559 90 arcto 4 {pop} repeat
- cp gs col0 s gr 
-% Polyline
-gs  clippath
-2883 8257 m 2672 8407 l 2701 8448 l 2912 8297 l 2912 8297 l 2796 8350 l 2883 8257 l cp
-eoclip
-n 3224 8045 m
- 2699 8419 l gs col0 s gr gr
-
-% arrowhead
-45.000 slw
-n 2883 8257 m 2796 8350 l 2912 8297 l 2877 8292 l 2883 8257 l 
- cp gs 0.00 setgray ef gr  col0 s
-% Polyline
-7.500 slw
-gs  clippath
-4068 8282 m 4267 8447 l 4299 8409 l 4099 8244 l 4099 8244 l 4180 8343 l 4068 8282 l cp
-eoclip
-n 3822 8045 m
- 4272 8419 l gs col0 s gr gr
-
-% arrowhead
-45.000 slw
-n 4068 8282 m 4180 8343 l 4099 8244 l 4103 8279 l 4068 8282 l 
- cp gs 0.00 setgray ef gr  col0 s
-% Polyline
-7.500 slw
 n 1089 8570 m 2923 8570 l 2923 9955 l 1089 9955 l
  cp gs col0 s gr 
 % Polyline
 n 4384 8532 m 6219 8532 l 6219 9918 l 4384 9918 l
  cp gs col0 s gr 
-% Polyline
- [60] 0 sd
-n 393 8345 m 303 8345 303 10090 90 arcto 4 {pop} repeat
-  303 10180 8825 10180 90 arcto 4 {pop} repeat
-  8915 10180 8915 8435 90 arcto 4 {pop} repeat
-  8915 8345 393 8345 90 arcto 4 {pop} repeat
- cp gs col0 s gr  [] 0 sd
 % Polyline
 60.000 slw
 n 1165 11229 m 1351 11490 l
@@ -315,60 +205,169 @@ n 4834 9955 m
 45.000 slw
 n 4752 10721 m 4768 10848 l 4802 10725 l 4775 10748 l 4752 10721 l 
  cp gs 0.00 setgray ef gr  col0 s
-/Times-Roman-iso ff 158.75 scf sf
-3336 6093 m
-gs 1 -1 sc (Flatac) col0 sh gr
-/Times-Roman-iso ff 158.75 scf sf
-2774 6304 m
-gs 1 -1 sc (Abstract interpretation) col0 sh gr
-/Times-Roman-iso ff 158.75 scf sf
-2774 6518 m
-gs 1 -1 sc (+ NTS model generation) col0 sh gr
-/Times-Roman-iso ff 158.75 scf sf
-3187 2578 m
-gs 1 -1 sc (Frama-c) col0 sh gr
-/Times-Roman-iso ff 158.75 scf sf
-3149 4263 m
+% Polyline
+7.500 slw
+n 2662 5199 m 8325 5199 l 8325 7020 l 2662 7020 l
+ cp gs col0 s gr 
+% Polyline
+ [60] 0 sd
+n 838 8425 m 748 8425 748 10170 90 arcto 4 {pop} repeat
+  748 10260 9270 10260 90 arcto 4 {pop} repeat
+  9360 10260 9360 8515 90 arcto 4 {pop} repeat
+  9360 8425 838 8425 90 arcto 4 {pop} repeat
+ cp gs col0 s gr  [] 0 sd
+% Polyline
+gs  clippath
+5404 8308 m 5624 8444 l 5650 8401 l 5430 8266 l 5430 8266 l 5524 8353 l 5404 8308 l cp
+eoclip
+n 5040 8055 m
+ 5625 8415 l gs col0 s gr gr
+
+% arrowhead
+45.000 slw
+n 5404 8308 m 5524 8353 l 5430 8266 l 5438 8300 l 5404 8308 l 
+ cp gs 0.00 setgray ef gr  col0 s
+% Polyline
+7.500 slw
+gs  clippath
+3132 8418 m 2900 8534 l 2922 8579 l 3154 8463 l 3154 8463 l 3032 8497 l 3132 8418 l cp
+eoclip
+n 3825 8100 m
+ 2925 8550 l gs col0 s gr gr
+
+% arrowhead
+45.000 slw
+n 3132 8418 m 3032 8497 l 3154 8463 l 3121 8452 l 3132 8418 l 
+ cp gs 0.00 setgray ef gr  col0 s
+% Polyline
+7.500 slw
+gs  clippath
+4790 3525 m 4790 3784 l 4839 3784 l 4839 3525 l 4839 3525 l 4815 3650 l 4790 3525 l cp
+eoclip
+n 4815 3282 m
+ 4815 3769 l gs col0 s gr gr
+
+% arrowhead
+45.000 slw
+n 4790 3525 m 4815 3650 l 4839 3525 l 4815 3550 l 4790 3525 l 
+ cp gs 0.00 setgray ef gr  col0 s
+% Polyline
+7.500 slw
+n 2954 3780 m 2864 3780 2864 4534 90 arcto 4 {pop} repeat
+  2864 4624 5805 4624 90 arcto 4 {pop} repeat
+  5895 4624 5895 3870 90 arcto 4 {pop} repeat
+  5895 3780 2954 3780 90 arcto 4 {pop} repeat
+ cp gs col0 s gr 
+% Polyline
+n 2805 1776 m 6885 1776 l 6885 3240 l 2805 3240 l
+ cp gs col0 s gr 
+% Polyline
+gs  clippath
+4790 4850 m 4790 5109 l 4839 5109 l 4839 4850 l 4839 4850 l 4815 4975 l 4790 4850 l cp
+eoclip
+n 4815 4608 m
+ 4815 5094 l gs col0 s gr gr
+
+% arrowhead
+45.000 slw
+n 4790 4850 m 4815 4975 l 4839 4850 l 4815 4875 l 4790 4850 l 
+ cp gs 0.00 setgray ef gr  col0 s
+% Polyline
+7.500 slw
+gs  clippath
+4790 1548 m 4790 1807 l 4839 1807 l 4839 1548 l 4839 1548 l 4815 1673 l 4790 1548 l cp
+eoclip
+n 4815 1305 m
+ 4815 1792 l gs col0 s gr gr
+
+% arrowhead
+45.000 slw
+n 4790 1548 m 4815 1673 l 4839 1548 l 4815 1573 l 4790 1548 l 
+ cp gs 0.00 setgray ef gr  col0 s
+% Polyline
+7.500 slw
+n 3291 181 m 3201 181 3201 1170 90 arcto 4 {pop} repeat
+  3201 1260 6615 1260 90 arcto 4 {pop} repeat
+  6705 1260 6705 271 90 arcto 4 {pop} repeat
+  6705 181 3291 181 90 arcto 4 {pop} repeat
+ cp gs col0 s gr 
+% Polyline
+ [60] 0 sd
+n 1170 1521 m 1080 1521 1080 7290 90 arcto 4 {pop} repeat
+  1080 7380 9180 7380 90 arcto 4 {pop} repeat
+  9270 7380 9270 1611 90 arcto 4 {pop} repeat
+  9270 1521 1170 1521 90 arcto 4 {pop} repeat
+ cp gs col0 s gr  [] 0 sd
+% Polyline
+gs  clippath
+4700 7345 m 4700 7604 l 4749 7604 l 4749 7345 l 4749 7345 l 4725 7470 l 4700 7345 l cp
+eoclip
+n 4725 7027 m
+ 4725 7589 l gs col0 s gr gr
+
+% arrowhead
+45.000 slw
+n 4700 7345 m 4725 7470 l 4749 7345 l 4725 7370 l 4700 7345 l 
+ cp gs 0.00 setgray ef gr  col0 s
+% Polyline
+7.500 slw
+n 3410 7514 m 3260 7514 3260 7860 150 arcto 4 {pop} repeat
+  3260 8010 5745 8010 150 arcto 4 {pop} repeat
+  5895 8010 5895 7664 150 arcto 4 {pop} repeat
+  5895 7514 3410 7514 150 arcto 4 {pop} repeat
+ cp gs col0 s gr 
+/Times-Roman-iso ff 285.75 scf sf
+3690 4275 m
 gs 1 -1 sc (AST + CFG) col0 sh gr
-/Times-Roman-iso ff 158.75 scf sf
-3260 1192 m
-gs 1 -1 sc (.c file) col0 sh gr
-/Times-Roman-iso ff 158.75 scf sf
-3411 7821 m
-gs 1 -1 sc (.nts) col0 sh gr
-/Times-Roman-iso ff 158.75 scf sf
-3411 8008 m
-gs 1 -1 sc (file) col0 sh gr
-/Times-Roman-iso ff 158.75 scf sf
-1539 9281 m
-gs 1 -1 sc (Flata) col0 sh gr
-/Times-Roman-iso ff 158.75 scf sf
-4834 9244 m
-gs 1 -1 sc (Eldarica) col0 sh gr
-/Times-Roman-iso ff 158.75 scf sf
-6256 4188 m
-gs 1 -1 sc (Extended CFG, Compiled as an NTS) col0 sh gr
-/Times-Roman-iso ff 158.75 scf sf
-6481 8719 m
-gs 1 -1 sc (Verification Phase :) col0 sh gr
-/Times-Roman-iso ff 158.75 scf sf
-6481 9094 m
-gs 1 -1 sc (states.) col0 sh gr
-/Times-Roman-iso ff 158.75 scf sf
-752 12015 m
-gs 1 -1 sc ("No error state is reachable") col0 sh gr
-/Times-Roman-iso ff 158.75 scf sf
-6481 8907 m
-gs 1 -1 sc (Reachability of the set of error) col0 sh gr
-/Times-Roman-iso ff 158.75 scf sf
-6256 4000 m
+/Times-Roman-iso ff 269.88 scf sf
+6390 3780 m
 gs 1 -1 sc (Model extraction Phase :) col0 sh gr
-/Times-Roman-iso ff 158.75 scf sf
-4310 11978 m
+/Times-Roman-iso ff 238.13 scf sf
+2925 11700 m
 gs 1 -1 sc ("Provides a trace that leads to an error state from the initial state.") col0 sh gr
-/Times-Roman-iso ff 190.50 scf sf
-4500 12195 m
+%  5 
+/Times-Roman-iso ff 238.13 scf sf
+90 12015 m
+gs 1 -1 sc ("No error state is reachable") col0 sh gr
+/Times-Roman-iso ff 238.13 scf sf
+4410 12060 m
 gs 1 -1 sc (An allarm shall be considered.) col0 sh gr
+/Times-Roman-iso ff 285.75 scf sf
+5985 4230 m
+gs 1 -1 sc (ECFG Compiled as an NTS) col0 sh gr
+/Times-Roman-iso ff 492.13 scf sf
+4275 5805 m
+gs 1 -1 sc (Flatac) col0 sh gr
+/Times-Roman-iso ff 285.75 scf sf
+3780 6165 m
+gs 1 -1 sc (Abstract interpretation) col0 sh gr
+/Times-Roman-iso ff 285.75 scf sf
+3690 6525 m
+gs 1 -1 sc (+ NTS model generation) col0 sh gr
+/Times-Roman-iso ff 285.75 scf sf
+4770 720 m
+gs 1 -1 sc (.c file) col0 sh gr
+/Times-Roman-iso ff 476.25 scf sf
+4005 2745 m
+gs 1 -1 sc (Frama-c) col0 sh gr
+/Times-Roman-iso ff 285.75 scf sf
+3411 7821 m
+gs 1 -1 sc (NTS in NTL format) col0 sh gr
+/Times-Roman-iso ff 285.75 scf sf
+7200 9810 m
+gs 1 -1 sc (states.) col0 sh gr
+/Times-Roman-iso ff 285.75 scf sf
+6345 9450 m
+gs 1 -1 sc (Reachability of the error) col0 sh gr
+/Times-Roman-iso ff 285.75 scf sf
+6615 9135 m
+gs 1 -1 sc (Verification Phase :) col0 sh gr
+/Times-Roman-iso ff 317.50 scf sf
+4860 9315 m
+gs 1 -1 sc (Eldarica) col0 sh gr
+/Times-Roman-iso ff 317.50 scf sf
+1710 9360 m
+gs 1 -1 sc (Flata) col0 sh gr
 % here ends figure;
 pagefooter
 showpage

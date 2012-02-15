@@ -9,5 +9,5 @@
   \fontfamily{#3}\fontseries{#4}\fontshape{#5}%
   \selectfont}%
 \fi\endgroup%
-\begin{picture}(8636,11367)(292,-11371)
+\begin{picture}(9541,11906)(76,-11236)
 \end{picture}%
