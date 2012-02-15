@@ -40,8 +40,8 @@ open Self
 let pprint_trans_list_foldleft (s : string ) ( trans : cnt_trans_label ) =
   match (s,trans) with 
     | ("",CntGuard(guard))-> 
-      (*let s_guard = simplify_cnt_boolexp guard in*)
-      let s_guard = guard in
+      let s_guard = simplify_cnt_boolexp guard in
+      (*let s_guard = guard in*)
       begin
 	match s_guard with 
 	    CntBTrue -> ""
@@ -50,8 +50,8 @@ let pprint_trans_list_foldleft (s : string ) ( trans : cnt_trans_label ) =
     | ("",_) ->
       (cnt_pprint_translabel trans )
     | (_,CntGuard(guard)) -> 
-      (*let s_guard = simplify_cnt_boolexp guard in*)
-      let s_guard=guard in
+      let s_guard = simplify_cnt_boolexp guard in
+      (*let s_guard=guard in *)
       begin
 	match s_guard with 
 	    CntBTrue -> s

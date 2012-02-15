@@ -553,14 +553,11 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	  | None ->
 	      Format.fprintf Ast_goodies.debug_out "No false statment in if \n"
 	       
-      );
-      
-      
+      );  
      
 	let next_stmt_for_brokenmemabs = 
 	  List.hd (current_node.statement.succs) 
-	  (*Ast_goodies.get_some_from_option_pair
-	    true_stmt_opt false_stmt_opt*)
+	  
 	in
 	let mem_broken_succs_abs_list = 
 	  front_end#next abs_mem_broken 
@@ -572,12 +569,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	     next_stmt_for_brokenmemabs) 
 	  mem_broken_succs_abs_list 
      
-    (* with
-	  Ast_goodies.Bothparameter_are_None_option ->
-	    raise Ast_goodies.Bothparameter_are_None_option
-     *)   
-	    (* Both if and else block are empty*)
-
+    
 
     method private build_ecfg () =
       if (not entry_point_set ) then raise Entry_point_not_registered

@@ -76,7 +76,7 @@ let get_if_then_first_block_stmts (if_stmt : Cil_types.stmt)
     (b_no : Cil_types.block ) =
   match b_yes.bstmts , b_no.bstmts with
       ([],[]) -> (None,None)
-    | (_::_,[]) -> 
+    | (a::_,[]) -> 
       begin
 	let a = List.hd if_stmt.succs in
 	(Some(a),None)
