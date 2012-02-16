@@ -362,13 +362,13 @@ Those problems are solved using rewriting techniques.
 \frame{
 \frametitle{Example of SSL formulae}
 \begin{itemize}
-\item $\Formula{\exists.l_1 \ \Andpure{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l}}}{\Pointstonil{z}}}{\Emp}$
-\item $\Formula{\exists.l_1 \ \Andpure{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l}}}{\Pointstonil{z}}}{\Alloc{l_1}}$
+\item $\Formula{ \Andpure{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l}}}{\Pointstonil{z}}}{\Emp}$
+\item $\Formula{\Andpure{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l}}}{\Pointstonil{z}}}{\Alloc{l_1}}$
 \item $\Formula{ \Andpure{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l}}}{\Pointstonil{z}}}{\Sep{\Alloc{l_1}}{\Alloc{l}}}$
 \item $\Formula{ \Andpure{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l}}}{\Pointstonil{z}}}{\Sep{\Alloc{l_1}}{\Alloc{l}}}$
 \item $\Formula{ \Andpure{x=y}{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l}}}}{\Sep{\Alloc{l_1}}{\Alloc{l}}}$ (Unsat)
 \item $\Formula{ \Andpure{x=y}{\Andpure{\Pointsto{x}{l_1}}{\Pointstonil{y}}}}{\Alloc{l_1}}$ (Unsat)
-\item $\Formula{ \exists l }{\Alloc{l}}$ (Leak)
+\item $\Formula{ true }{\Alloc{l}}$ (Leak)
 \end{itemize}
 }
 
@@ -377,12 +377,15 @@ Those problems are solved using rewriting techniques.
 \frametitle{Model extraction :}
 
 Input : Cil AST and Control flow graph
-Extended CFG :  
+
+Generated Model : Extended CFG,
+  
 $(S_i,S_f,S_{err},S,\to \in (S\times R \times S)) $
- where
+
+where :
 \begin{itemize}
 \item $S \in  ($Cil\_types.stmt$\times \ Abs)$,
-\item $Abs =$ Set of SSL formula $\bigcup \lbrace \bot \rbrace$, 
+\item $Abs =$ Set of SSL formula $\bigcup \bot$, 
 \item $R$ is a set of possibly guarded NTS transitions. 
 \end{itemize}
 }
@@ -492,15 +495,14 @@ proved false.
 
 
 \frame{
-\frametitle{Conclusion}
+\frametitle{Verification Phase : Reachability Analysis}
 
-The computed Extended Control Flow Graph is pretty printed
-as a Hierarchical Numerical Transition System, using the
-Numerical Transition Language Format. Verifications tools
-such that FLATA and ELDARICA can check whether the error
-states are reachable as well as the set of terminal state.
-
-
+\begin{itemize}
+\item Exporting the Ecfg Hierarchical Numerical Transition System.
+\item Reachability analisys of the error states by FLATA and/or ELDARICA
+\item If some error state is reachable : An alarm is raised.
+\item If no error states is reachable : The program is free of the memory fault we consider. 
+\end{itemize}
 }
 
 %\fram

@@ -13,7 +13,7 @@ int main(int argc, char **argv){
  tab0[j]=i;
  }
 
- for(i=0;i<10;i++){
+ for(i=0;i<=10;i++){
  // printf("tab0[%d]=%d \n",i,tab0[i]);
 
  tab0[i]=9-i; 
