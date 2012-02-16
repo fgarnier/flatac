@@ -579,7 +579,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       let succs_fc_sid_iterator (current_node : ecfg_vertex) 
 	  (succ_sid : Cil_types.stmt ) =
 	match current_node.statement.skind with
-	   If(cdition,byes,bno,_) ->
+	  (* If(cdition,byes,bno,_) ->
 
 	     Format.fprintf Ast_goodies.debug_out 
 	       "[ECFG : In if/then/else ] Number of successor is :%d \n" (List.length current_node.statement.succs);
@@ -606,7 +606,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 			end *)
 
 		    
-		end
+		end*)
 	   
 	 
 	 (* | Goto(stmt_ref,_) ->
