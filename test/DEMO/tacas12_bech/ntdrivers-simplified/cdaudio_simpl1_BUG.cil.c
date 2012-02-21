@@ -2466,7 +2466,7 @@ int main(void)
         } else {
           goto switch_5_default;
 #line 1520
-          if (0) {
+          if (1) {
             switch_5_2: 
             {
 #line 1523

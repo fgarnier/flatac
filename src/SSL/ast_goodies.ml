@@ -77,19 +77,16 @@ let get_if_then_first_block_stmts (if_stmt : Cil_types.stmt)
   match b_yes.bstmts , b_no.bstmts with
       ([],[]) -> (None,None)
     | (a::_,[]) -> 
+	begin
+	  (Some(a),None)
+	end
+    | (a::_,b::_) ->
       begin
-	let a = List.hd if_stmt.succs in
-	(Some(a),None)
+	(Some(a),Some(b))
       end
-    | (_::_,_::_) ->
-      begin
-	let a=List.hd if_stmt.succs in
-	let b =List.nth  if_stmt.succs 1 in
-      (Some(a),Some(b))
-      end
-    | ([],_::_) ->
-      let b = List.nth if_stmt.succs 1 in
-      (None,Some(b))
+    | ([],b::_) ->
+	(*let b = List.hd if_stmt.succs in*)
+	(None,Some(b))
       
 
 (* You need to ensure that at least one of the tow parameter

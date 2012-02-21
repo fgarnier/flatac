@@ -494,7 +494,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	  (true, more_genid ) ->
 	    begin
 	      self#register_edge current_node.id more_genid label
-	     (* if not (self#is_visited more_genid) then
+	      (*if not (self#is_visited more_genid) then
 		Queue.push more_genid not_visited_vertices*)
 	    end
 	| (false , _ ) ->
@@ -535,8 +535,20 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	       List.iter 
 		 (self#add_to_not_visited_iterator current_node true_stmt)
 		 true_case_succs_abs_list;
-	|  None -> 
-	    Format.fprintf Ast_goodies.debug_out "No true statment in if \n"
+	|  None ->
+	     begin
+	       Format.fprintf Ast_goodies.debug_out "No true statment in if \n";
+	       let succs_if_stmt = 
+		 (match false_stmt_opt with 
+		      Some(false_stmt) ->
+			List.nth  current_node.statement.succs 1
+		    | None -> 
+			List.hd current_node.statement.succs 
+		 ) in
+	       let trans_default = front_end#get_empty_transition_label() in
+		 self#add_to_not_visited_iterator current_node succs_if_stmt 
+		   (abs_true,trans_default)
+	     end
 	   
       ); 
       
@@ -555,7 +567,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	       
       );  
      
-	let next_stmt_for_brokenmemabs = 
+	(*let next_stmt_for_brokenmemabs = 
 	  List.hd (current_node.statement.succs) 
 	  
 	in
@@ -568,7 +580,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	  (self#add_to_not_visited_iterator current_node 
 	     next_stmt_for_brokenmemabs) 
 	  mem_broken_succs_abs_list 
-     
+	*)
     
 
     method private build_ecfg () =
@@ -579,8 +591,8 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       let succs_fc_sid_iterator (current_node : ecfg_vertex) 
 	  (succ_sid : Cil_types.stmt ) =
 	match current_node.statement.skind with
-	  (* If(cdition,byes,bno,_) ->
-
+	   If(cdition,byes,bno,_) ->
+ 
 	     Format.fprintf Ast_goodies.debug_out 
 	       "[ECFG : In if/then/else ] Number of successor is :%d \n" (List.length current_node.statement.succs);
 		begin
@@ -588,37 +600,28 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 		    current_node.abstract_val in
 		  let (trans_true,trans_false,trans_mem_broken) = 
 		  front_end#next_on_if_statement sslv cdition in
-		 (* try *)
-		    let (true_stmt,false_stmt)  = 
-		   
-		      Ast_goodies.get_if_then_first_block_stmts current_node.statement byes bno
+		    let (true_stmt,false_stmt)  =
+		      Ast_goodies.get_if_then_first_block_stmts 
+			current_node.statement byes bno
 		    in
-		    self#register_if_statement_successors
-		      current_node
-		      (trans_true,trans_false,trans_mem_broken)(true_stmt,false_stmt)
-		 (* with
-		      Ast_goodies.Bothparameter_are_None_option ->
-			begin
-			  (* case where byes and bno are empty blocks*)
-			  self#add_transition_from_to current_node 
-			    (List.hd current_node.statement.succs)
-			    sslv (front_end#get_empty_transition_label ())
-			end *)
+		      self#register_if_statement_successors
+			current_node
+			(trans_true,trans_false,trans_mem_broken)
+			(true_stmt,false_stmt) 
 
 		    
-		end*)
+		end
 	   
-	 
-	 (* | Goto(stmt_ref,_) ->
-	    begin
-	      
+	 (*
+	  | Goto(stmt_ref,_) ->
+	    begin  
 	      let stmt = !stmt_ref in
 	      let sslv = front_end#copy_absdom_label 
 		current_node.abstract_val in
-	      
+	       
 	      (match stmt.labels with
-		  Label("Error",_,true)::_ ->
-		    front_end#make_absdom_errorval sslv; 
+ 		   Label("Error",_,true)::_ ->
+		     front_end#make_absdom_errorval sslv; 
 		   
 			       
 		| _-> ());
@@ -626,7 +629,13 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 		current_node
 		stmt
 		(sslv ,(front_end#get_empty_transition_label ()))
-	    end *)
+	    end *) 
+
+	  (*| Break(_) ->
+	       Format.fprintf Ast_goodies.debug_out "Break statement detected \n";
+	      let stmt_succs = 
+		List.hd current_node.statement.succs in
+	  *)	
 
 	  (*| Loop(_,b,_,_,_) -> 
 

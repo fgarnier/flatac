@@ -169,7 +169,7 @@ being error states.*)
 
       
   method static_unsat_label (label : cnt_trans_label list) =
-    (*Nts.static_check_if_translist_unsat label*) false
+    Nts.static_check_if_translist_unsat label (* false *)
 
   method make_absdom_errorval (sslv : ssl_validity_absdom) =
     Ssl.set_heap_to_top sslv.ssl_part

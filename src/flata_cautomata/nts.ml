@@ -368,7 +368,17 @@ let rec cnt_pprint_arithm_exp ( exp : cnt_arithm_exp ) =
 	let fg = simplify_cnt_boolexp a in
 	let fd = simplify_cnt_boolexp b in
 	simplify_bottom_top (CntBAnd(fg,fd))
-			  
+	
+      | CntNot(CntBAnd(fg,fd)) ->
+	  let fg = simplify_cnt_boolexp (CntNot(fg)) in
+	  let fd = simplify_cnt_boolexp (CntNot(fd)) in
+	  simplify_bottom_top (CntBOr(fg,fd))
+
+      | CntNot(CntBOr(fg,fd)) ->
+	  let fg = simplify_cnt_boolexp (CntNot(fg)) in
+	  let fd = simplify_cnt_boolexp (CntNot(fd)) in
+	    simplify_bottom_top (CntBAnd(fg,fd))
+      
       | CntBOr(a,b) ->
 	let fg = simplify_cnt_boolexp a in
 	let fd = simplify_cnt_boolexp b in
