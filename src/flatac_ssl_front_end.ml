@@ -6,6 +6,7 @@ of the SSL logic.
 (*open Intermediate_language*)
 
 exception IndexOfCompositeTypesNotSet
+exception Not_a_mem_violation_guard
 
 open Cil_types
 open Sem_and_logic_front_end 
@@ -261,6 +262,8 @@ being error states.*)
       Nts.rewrite_ndet_assignation translabel in
     Nts.split_guard_call_transition translabel
 
+
+     
   method accepts sslvg sslvd =
 
     (** One checks that the current abstraction entails the next state
@@ -276,7 +279,18 @@ being error states.*)
     Ssl_entailement.accept_new_abstraction etp
 
 
-  method  number_of_valid_vars sslv  = 
+
+  method positive_guard_from_error_guard 
+    (tlabel : cnt_trans_label list) =
+    match tlabel with
+	(CntGuard(g)::[]) ->
+	  let ng = Nts.negate_cntbool_shallow g in
+	  (CntGuard(ng)::[])
+      | _ -> raise Not_a_mem_violation_guard
+
+
+
+  method  number_of_valid_vars sslv = 
       Var_validity.cardinal_of_locmap sslv.validinfos
 
   method pprint_list_of_valid_var sslv =
@@ -345,7 +359,6 @@ being error states.*)
     Validvarmap.fold pprint_valid_cnt_folder vmap ""
 
 
-      
 
   method equals_labels lg ld =
     Nts.compare_tranlabel_list lg ld

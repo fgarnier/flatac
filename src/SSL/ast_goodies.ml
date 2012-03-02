@@ -78,17 +78,17 @@ let get_if_then_first_block_stmts (if_stmt : Cil_types.stmt)
       ([],[]) -> (None,None)
     | (a::_,[]) -> 
       begin
-	let a = List.hd if_stmt.succs in
+	(*let a = List.hd if_stmt.succs in*)
 	(Some(a),None)
       end
-    | (_::_,_::_) ->
+    | (a::_,b::_) ->
       begin
-	let a=List.hd if_stmt.succs in
-	let b =List.nth  if_stmt.succs 1 in
+	(*let a=List.hd if_stmt.succs in
+	let b =List.nth  if_stmt.succs 1 in*)
       (Some(a),Some(b))
       end
-    | ([],_::_) ->
-      let b = List.nth if_stmt.succs 1 in
+    | ([],b::_) ->
+      (*let b = List.nth if_stmt.succs 1 in*)
       (None,Some(b))
       
 

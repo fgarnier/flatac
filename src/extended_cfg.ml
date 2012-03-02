@@ -525,8 +525,59 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
     method private register_if_statement_successors 
       current_node ((abs_true,trans_true),(abs_false,trans_false),(abs_mem_broken,trans_mem_broken)) 
       (true_stmt_opt,false_stmt_opt) =
+
+      match true_stmt_opt,false_stmt_opt with
+	  (None,None) ->
+	    begin
+	      (*Degenerated case, both then and else blocks are
+	      empty. In this case one need to consider two transitions :
+	      The first one reach the successor of the test, without
+	      changing the abstract value if the test doesn't generate
+	      any memory fault.
+		Second case : transits to the successor state in the case
+		when the test performs a memory fault for evaluation the 
+		if conditions.
+	      *)
+	      
+	      let succ_mem_valid_stmt =  List.hd current_node.succs in
+	      let succ_mem_broken_stmt = List.hd current_node.succs in
+	      let succs_abs_mem = 
+		front_end#copy_abs_domain current_node.abstract_val
+	      in
+	      let failed_abs_mem = 
+		front_end#copy_abs_domain current_node.abstract_val 
+	      in
+	      let valid_access_test_mem_guard = 
+		front_end#positive_guard_from_error_guard trans_mem_broken
+	      in
+	      self#add_to_not_visited_iterator current_node 
+		succs_mem_valid_stmt (succs_abs_mem,valid_access_guard);
+	      self#add_to_not_visited_iterator current_node
+		succs_mem_broken_stmt (succs_mem_broken_stmt,trans_mem_broken)
+	    end
+
+	| (Some(true_stmt),None) ->
+	  begin
+	  (*four successors : test_true and valid_mem_op to true_stmt
+	      test_true and not valid_mem_op to (true_stmt , bot)
+	      test_false and valid_mem_op to (if_stmt.succs.nth 1, abs)
+	      test_false and not valid_mem_op to (if_stmt.succs nth 1, bot)
+	    *)
+	    
+	    
+	  end
+	    
+	| (None,Some(false_stmt)) ->
+	  begin
+	    
+	  end
+
+	| (Some(true_stmt),Some(false_stmt)) ->
+	  begin
+	    
+	  end
       (* Calculer le front_end_next pour chaque noeuds ... *)
-      ( 
+      (*( 
 	match true_stmt_opt with 
 	    Some(true_stmt) ->
 	       let true_case_succs_abs_list =
@@ -554,7 +605,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	      Format.fprintf Ast_goodies.debug_out "No false statment in if \n"
 	       
       );  
-     
+      
 	let next_stmt_for_brokenmemabs = 
 	  List.hd (current_node.statement.succs) 
 	  
@@ -568,7 +619,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	  (self#add_to_not_visited_iterator current_node 
 	     next_stmt_for_brokenmemabs) 
 	  mem_broken_succs_abs_list 
-     
+      *)
     
 
     method private build_ecfg () =
