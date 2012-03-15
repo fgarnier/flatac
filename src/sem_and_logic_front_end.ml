@@ -29,7 +29,7 @@ object
 
   method virtual copy_absdom_label : 'a -> 'a
   method virtual copy_transit_label : 'b -> 'b
-
+  method virtual positive_guard_from_error_guard : 'b -> 'b
 
   (* Returns true if, knowing the first abstraction, the second one is
   * accepted *)
@@ -49,8 +49,7 @@ object
   (** Returns a list of abstract interpretation and counter automata label
   * couple based on the current abstraction, the current counter, and the 
   * statement kind. *)
-  method virtual next : 'a -> 'b -> stmtkind -> ('a * 'b) list
-  
+  method virtual next : 'a -> 'b -> stmtkind -> ('a * 'b) list  
   method virtual next_on_if_statement : 'a ->  Cil_types.exp -> (('a * 'b) *('a * 'b) * ('a * 'b))
   (** Abstraction pretty printer *)
   method virtual pretty : 'a -> string
@@ -66,13 +65,16 @@ object
   method virtual static_unsat_label : 'b -> bool
    
   method virtual split_guard_call_transition : 'b -> ('b * 'b)
+    
+
 
   method virtual number_of_valid_vars : 'a -> int
 
   method virtual equals_labels : 'b -> 'b -> bool 
-
   method virtual pprint_list_of_valid_var : 'a -> string 
-
+  
+  (*method virtual*)  
+  
   method virtual  pprint_list_of_malloc_vars : unit -> string
   method virtual pprint_list_of_valid_locals_var : 'a -> Cil_types.fundec -> string (* The ones that are not formals variables.*)
    

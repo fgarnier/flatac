@@ -494,8 +494,12 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	  (true, more_genid ) ->
 	    begin
 	      self#register_edge current_node.id more_genid label
-	     (* if not (self#is_visited more_genid) then
-		Queue.push more_genid not_visited_vertices*)
+		(*
+		if (not (self#is_visited more_genid)) then 
+		  (Queue.push more_genid not_visited_vertices)*) 
+		  (* Shall I remove
+		  that ?  Queue.push at some point ? It's not obvious
+		  that it shall be there.*)
 	    end
 	| (false , _ ) ->
 	  begin
@@ -528,7 +532,9 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 
       match true_stmt_opt,false_stmt_opt with
 	  (None,None) ->
+	    
 	    begin
+	       Format.fprintf Ast_goodies.debug_out "[If test, successors (None,None) ] \n %!";
 	      (*Degenerated case, both then and else blocks are
 	      empty. In this case one need to consider two transitions :
 	      The first one reach the successor of the test, without
@@ -539,42 +545,128 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 		if conditions.
 	      *)
 	      
-	      let succ_mem_valid_stmt =  List.hd current_node.succs in
-	      let succ_mem_broken_stmt = List.hd current_node.succs in
+	      let succs_mem_valid_stmt =  List.hd current_node.statement.succs in
+	      let succs_mem_broken_stmt = List.hd current_node.statement.succs in
 	      let succs_abs_mem = 
-		front_end#copy_abs_domain current_node.abstract_val
+		front_end#copy_absdom_label current_node.abstract_val
 	      in
 	      let failed_abs_mem = 
-		front_end#copy_abs_domain current_node.abstract_val 
+		front_end#copy_absdom_label current_node.abstract_val 
 	      in
 	      let valid_access_test_mem_guard = 
 		front_end#positive_guard_from_error_guard trans_mem_broken
 	      in
 	      self#add_to_not_visited_iterator current_node 
-		succs_mem_valid_stmt (succs_abs_mem,valid_access_guard);
+		succs_mem_valid_stmt (succs_abs_mem,valid_access_test_mem_guard);
 	      self#add_to_not_visited_iterator current_node
-		succs_mem_broken_stmt (succs_mem_broken_stmt,trans_mem_broken)
+		succs_mem_broken_stmt (abs_mem_broken,trans_mem_broken)
 	    end
 
 	| (Some(true_stmt),None) ->
 	  begin
+
+	     Format.fprintf Ast_goodies.debug_out "[If test, successors (Some(true_stmt),None) ] \n %!";
 	  (*four successors : test_true and valid_mem_op to true_stmt
 	      test_true and not valid_mem_op to (true_stmt , bot)
 	      test_false and valid_mem_op to (if_stmt.succs.nth 1, abs)
 	      test_false and not valid_mem_op to (if_stmt.succs nth 1, bot)
 	    *)
-	    
-	    
+	    let succs_mem_valid_stmt = true_stmt in
+	    let succs_mem_valid_abs_mem = 
+	      front_end#copy_absdom_label current_node.abstract_val
+	    in
+	    let succs_mem_invalid_stmt = true_stmt in
+	    let succs_mem_invalid_abs =  
+	      front_end#copy_absdom_label current_node.abstract_val in
+	    front_end#make_absdom_errorval succs_mem_invalid_abs;
+	    let fail_mem_valid_stmt = List.nth current_node.statement.succs 
+	      1 in
+	    let fail_mem_valid_abs_mem = 
+	      front_end#copy_absdom_label current_node.abstract_val
+	    in
+	    let fail_mem_invalid_stmt = List.nth current_node.statement.succs 
+	      1 in
+	    let fail_mem_invalid_abs_mem = 
+	      front_end#copy_absdom_label current_node.abstract_val
+	    in
+	    front_end#make_absdom_errorval succs_mem_invalid_abs;
+	    self#add_to_not_visited_iterator current_node 
+	      succs_mem_valid_stmt (abs_true,trans_true);
+	    self#add_to_not_visited_iterator current_node
+	      succs_mem_invalid_stmt (succs_mem_invalid_abs,trans_mem_broken);
+	    self#add_to_not_visited_iterator current_node 
+	      fail_mem_valid_stmt (fail_mem_valid_abs_mem, trans_false);
+	    self#add_to_not_visited_iterator current_node
+	      fail_mem_invalid_stmt (fail_mem_invalid_abs_mem, trans_mem_broken)
 	  end
 	    
 	| (None,Some(false_stmt)) ->
 	  begin
-	    
+	    Format.fprintf Ast_goodies.debug_out "[If test, successors (None,Some(false_stmt)) ]  \n %!";
+	      
+	    let succs_mem_valid_stmt = List.nth current_node.statement.succs
+	      1
+	    in
+	    let succs_mem_valid_abs_mem = 
+	      front_end#copy_absdom_label current_node.abstract_val
+	    in
+	    let succs_mem_invalid_stmt = List.nth 
+	      current_node.statement.succs 1
+	    in
+	    let succs_mem_invalid_abs =  
+	      front_end#copy_absdom_label current_node.abstract_val in
+	    front_end#make_absdom_errorval succs_mem_invalid_abs;
+	    let fail_mem_valid_stmt = false_stmt 
+	    in
+	    let fail_mem_valid_abs_mem = 
+	      front_end#copy_absdom_label 
+		current_node.abstract_val
+	    in
+	    let fail_mem_invalid_stmt = false_stmt in
+	    let fail_mem_invalid_abs_mem = 
+	      front_end#copy_absdom_label 
+		current_node.abstract_val
+	    in
+	    front_end#make_absdom_errorval fail_mem_invalid_abs_mem;
+	    self#add_to_not_visited_iterator current_node 
+	      succs_mem_valid_stmt (succs_mem_valid_abs_mem,trans_true);
+	    self#add_to_not_visited_iterator current_node
+	      succs_mem_invalid_stmt (succs_mem_invalid_abs,trans_mem_broken);
+	    self#add_to_not_visited_iterator current_node 
+	      fail_mem_valid_stmt (fail_mem_valid_abs_mem, trans_false);
+	    self#add_to_not_visited_iterator current_node
+	      fail_mem_invalid_stmt (fail_mem_invalid_abs_mem, trans_mem_broken )
 	  end
 
 	| (Some(true_stmt),Some(false_stmt)) ->
 	  begin
-	    
+	     Format.fprintf Ast_goodies.debug_out "[If test, successors (Some(true_stmt),Some(false_stmt)) ]  \n %!";
+	    let succs_mem_valid_stmt = true_stmt in
+	    let succs_mem_valid_abs_mem = 
+	      front_end#copy_absdom_label current_node.abstract_val
+	    in
+	    let succs_mem_invalid_stmt = true_stmt in
+	    let succs_mem_invalid_abs =  
+	      front_end#copy_absdom_label current_node.abstract_val in
+	    front_end#make_absdom_errorval succs_mem_invalid_abs;
+	    let fail_mem_valid_stmt = false_stmt in
+	    let fail_mem_valid_abs_mem = 
+	      front_end#copy_absdom_label current_node.abstract_val
+	    in
+	    let fail_mem_invalid_stmt = false_stmt in
+	    let fail_mem_invalid_abs_mem = 
+	      front_end#copy_absdom_label current_node.abstract_val
+	    in
+	    front_end#make_absdom_errorval succs_mem_invalid_abs;
+	    self#add_to_not_visited_iterator current_node 
+	      succs_mem_valid_stmt (abs_true,trans_true);
+	    self#add_to_not_visited_iterator current_node
+	      succs_mem_invalid_stmt (succs_mem_invalid_abs,trans_mem_broken);
+	    self#add_to_not_visited_iterator current_node 
+	      fail_mem_valid_stmt (fail_mem_valid_abs_mem, trans_false);
+	    self#add_to_not_visited_iterator current_node
+	      fail_mem_invalid_stmt (fail_mem_invalid_abs_mem, trans_mem_broken)
+	  
 	  end
       (* Calculer le front_end_next pour chaque noeuds ... *)
       (*( 
@@ -639,24 +731,16 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 		    current_node.abstract_val in
 		  let (trans_true,trans_false,trans_mem_broken) = 
 		  front_end#next_on_if_statement sslv cdition in
-		 (* try *)
-		    let (true_stmt,false_stmt)  = 
-		   
-		      Ast_goodies.get_if_then_first_block_stmts current_node.statement byes bno
-		    in
-		    self#register_if_statement_successors
-		      current_node
-		      (trans_true,trans_false,trans_mem_broken)(true_stmt,false_stmt)
-		 (* with
-		      Ast_goodies.Bothparameter_are_None_option ->
-			begin
-			  (* case where byes and bno are empty blocks*)
-			  self#add_transition_from_to current_node 
-			    (List.hd current_node.statement.succs)
-			    sslv (front_end#get_empty_transition_label ())
-			end *)
-
+		  
+		  let (true_stmt,false_stmt)  = 
 		    
+		    Ast_goodies.get_if_then_first_block_stmts 
+		      current_node.statement byes bno
+		  in
+		  self#register_if_statement_successors
+		    current_node
+		    (trans_true,trans_false,trans_mem_broken)
+		    (true_stmt,false_stmt)
 		end
 	   
 	 
