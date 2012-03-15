@@ -547,19 +547,38 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	      
 	      let succs_mem_valid_stmt =  List.hd current_node.statement.succs in
 	      let succs_mem_broken_stmt = List.hd current_node.statement.succs in
-	      let succs_abs_mem = 
+	      let succs_abs_mem_valid = 
 		front_end#copy_absdom_label current_node.abstract_val
 	      in
-	      let failed_abs_mem = 
-		front_end#copy_absdom_label current_node.abstract_val 
-	      in
+	      let succs_abs_mem_invalid =
+		front_end#copy_absdom_label current_node.abstract_val in
+	      front_end#make_absdom_errorval succs_abs_mem_invalid;
+	     
 	      let valid_access_test_mem_guard = 
 		front_end#positive_guard_from_error_guard trans_mem_broken
 	      in
-	      self#add_to_not_visited_iterator current_node 
-		succs_mem_valid_stmt (succs_abs_mem,valid_access_test_mem_guard);
+	      let nexts_of_succs_mem_valid_stmt = 
+		front_end#next succs_abs_mem_valid valid_access_test_mem_guard 
+		  succs_mem_valid_stmt.skind
+	      in
+	      let nexts_of_succs_mem_broken_stmt =
+		front_end#next succs_abs_mem_invalid  
+		  trans_mem_broken succs_mem_broken_stmt.skind
+	      in
+ 
+	      List.iter (self#add_to_not_visited_iterator current_node 
+			   succs_mem_valid_stmt)  
+		nexts_of_succs_mem_valid_stmt ;
+	      
+	      
+	       (*(succs_abs_mem,valid_access_test_mem_guard);*)
+	      
+	      List.iter (self#add_to_not_visited_iterator current_node 
+			   succs_mem_valid_stmt) 
+		nexts_of_succs_mem_broken_stmt
+		(*
 	      self#add_to_not_visited_iterator current_node
-		succs_mem_broken_stmt (abs_mem_broken,trans_mem_broken)
+		succs_mem_broken_stmt (abs_mem_broken,trans_mem_broken) *)
 	    end
 
 	| (Some(true_stmt),None) ->
@@ -572,7 +591,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	      test_false and not valid_mem_op to (if_stmt.succs nth 1, bot)
 	    *)
 	    let succs_mem_valid_stmt = true_stmt in
-	    let succs_mem_valid_abs_mem = 
+	    let succs_mem_valid_abs = 
 	      front_end#copy_absdom_label current_node.abstract_val
 	    in
 	    let succs_mem_invalid_stmt = true_stmt in
@@ -581,14 +600,43 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	    front_end#make_absdom_errorval succs_mem_invalid_abs;
 	    let fail_mem_valid_stmt = List.nth current_node.statement.succs 
 	      1 in
-	    let fail_mem_valid_abs_mem = 
+	    let fail_mem_valid_abs = 
 	      front_end#copy_absdom_label current_node.abstract_val
 	    in
 	    let fail_mem_invalid_stmt = List.nth current_node.statement.succs 
 	      1 in
-	    let fail_mem_invalid_abs_mem = 
+	    let fail_mem_invalid_abs = 
 	      front_end#copy_absdom_label current_node.abstract_val
 	    in
+
+	    let nexts_of_succs_mem_valid_stmt = 
+		front_end#next succs_mem_valid_abs trans_true 
+		  succs_mem_valid_stmt.skind
+	    in
+	    let nexts_of_succs_mem_broken_stmt =
+	      front_end#next succs_mem_invalid_abs  
+		trans_mem_broken succs_mem_invalid_stmt.skind
+	    in
+
+	    let nexts_of_fail_mem_valid_stmt =
+	      front_end#next fail_mem_valid_abs trans_false 
+		fail_mem_valid_stmt.skind
+	    in
+	    let nexts_of_fail_mem_invalid_stmt =
+	      front_end#next fail_mem_invalid_abs trans_mem_broken
+		fail_mem_invalid_stmt.skind
+	    in
+	  
+	    List.iter (self#add_to_not_visited_iterator current_node 
+	      succs_mem_valid_stmt)  nexts_of_succs_mem_valid_stmt;
+	    List.iter (self#add_to_not_visited_iterator current_node
+	      succs_mem_invalid_stmt)  nexts_of_succs_mem_broken_stmt;
+	    List.iter (self#add_to_not_visited_iterator current_node 
+	      fail_mem_valid_stmt) nexts_of_fail_mem_valid_stmt;
+	    List.iter (self#add_to_not_visited_iterator current_node
+	      fail_mem_invalid_stmt) nexts_of_fail_mem_invalid_stmt 
+
+	    (*
 	    front_end#make_absdom_errorval succs_mem_invalid_abs;
 	    self#add_to_not_visited_iterator current_node 
 	      succs_mem_valid_stmt (abs_true,trans_true);
@@ -598,6 +646,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	      fail_mem_valid_stmt (fail_mem_valid_abs_mem, trans_false);
 	    self#add_to_not_visited_iterator current_node
 	      fail_mem_invalid_stmt (fail_mem_invalid_abs_mem, trans_mem_broken)
+	    *)
 	  end
 	    
 	| (None,Some(false_stmt)) ->
@@ -607,12 +656,57 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	    let succs_mem_valid_stmt = List.nth current_node.statement.succs
 	      1
 	    in
-	    let succs_mem_valid_abs_mem = 
+	    let succs_mem_valid_abs = 
 	      front_end#copy_absdom_label current_node.abstract_val
 	    in
 	    let succs_mem_invalid_stmt = List.nth 
 	      current_node.statement.succs 1
 	    in
+	    let succs_mem_invalid_abs =  
+	      front_end#copy_absdom_label current_node.abstract_val in
+	    front_end#make_absdom_errorval succs_mem_invalid_abs;
+	    let fail_mem_valid_stmt = false_stmt 
+	    in
+	    let fail_mem_valid_abs = 
+	      front_end#copy_absdom_label 
+		current_node.abstract_val
+	    in
+	    let fail_mem_invalid_stmt = false_stmt in
+	    let fail_mem_invalid_abs = 
+	      front_end#copy_absdom_label 
+		current_node.abstract_val
+	    in
+
+	    let nexts_of_succs_mem_valid_stmt = 
+		front_end#next succs_mem_valid_abs trans_true 
+		  succs_mem_valid_stmt.skind
+	    in
+	    let nexts_of_succs_mem_broken_stmt =
+	      front_end#next succs_mem_invalid_abs  
+		trans_mem_broken succs_mem_invalid_stmt.skind
+	    in
+
+	    let nexts_of_fail_mem_valid_stmt =
+	      front_end#next fail_mem_valid_abs trans_false 
+		fail_mem_valid_stmt.skind
+	    in
+	    let nexts_of_fail_mem_invalid_stmt =
+	      front_end#next fail_mem_invalid_abs trans_mem_broken
+		fail_mem_invalid_stmt.skind
+	    in
+	  
+	    List.iter (self#add_to_not_visited_iterator current_node 
+	      succs_mem_valid_stmt)  nexts_of_succs_mem_valid_stmt;
+	    List.iter (self#add_to_not_visited_iterator current_node
+	      succs_mem_invalid_stmt)  nexts_of_succs_mem_broken_stmt;
+	    List.iter (self#add_to_not_visited_iterator current_node 
+	      fail_mem_valid_stmt) nexts_of_fail_mem_valid_stmt;
+	    List.iter (self#add_to_not_visited_iterator current_node
+	      fail_mem_invalid_stmt) nexts_of_fail_mem_invalid_stmt 
+
+	  end
+
+	    (*
 	    let succs_mem_invalid_abs =  
 	      front_end#copy_absdom_label current_node.abstract_val in
 	    front_end#make_absdom_errorval succs_mem_invalid_abs;
@@ -638,11 +732,13 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	      fail_mem_invalid_stmt (fail_mem_invalid_abs_mem, trans_mem_broken )
 	  end
 
+	    *)
+
 	| (Some(true_stmt),Some(false_stmt)) ->
 	  begin
 	     Format.fprintf Ast_goodies.debug_out "[If test, successors (Some(true_stmt),Some(false_stmt)) ]  \n %!";
 	    let succs_mem_valid_stmt = true_stmt in
-	    let succs_mem_valid_abs_mem = 
+	    let succs_mem_valid_abs = 
 	      front_end#copy_absdom_label current_node.abstract_val
 	    in
 	    let succs_mem_invalid_stmt = true_stmt in
@@ -650,15 +746,44 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	      front_end#copy_absdom_label current_node.abstract_val in
 	    front_end#make_absdom_errorval succs_mem_invalid_abs;
 	    let fail_mem_valid_stmt = false_stmt in
-	    let fail_mem_valid_abs_mem = 
+	    let fail_mem_valid_abs = 
 	      front_end#copy_absdom_label current_node.abstract_val
 	    in
 	    let fail_mem_invalid_stmt = false_stmt in
-	    let fail_mem_invalid_abs_mem = 
+	    let fail_mem_invalid_abs = 
 	      front_end#copy_absdom_label current_node.abstract_val
 	    in
 	    front_end#make_absdom_errorval succs_mem_invalid_abs;
-	    self#add_to_not_visited_iterator current_node 
+	  
+	    let nexts_of_succs_mem_valid_stmt = 
+		front_end#next succs_mem_valid_abs trans_true 
+		  succs_mem_valid_stmt.skind
+	    in
+	    let nexts_of_succs_mem_broken_stmt =
+	      front_end#next succs_mem_invalid_abs  
+		trans_mem_broken succs_mem_invalid_stmt.skind
+	    in
+	    let nexts_of_fail_mem_valid_stmt =
+	      front_end#next fail_mem_valid_abs trans_false 
+		fail_mem_valid_stmt.skind
+	    in
+	    let nexts_of_fail_mem_invalid_stmt =
+	      front_end#next fail_mem_invalid_abs trans_mem_broken
+		fail_mem_invalid_stmt.skind
+	    in
+	  
+	    List.iter (self#add_to_not_visited_iterator current_node 
+	      succs_mem_valid_stmt)  nexts_of_succs_mem_valid_stmt;
+	    List.iter (self#add_to_not_visited_iterator current_node
+	      succs_mem_invalid_stmt)  nexts_of_succs_mem_broken_stmt;
+	    List.iter (self#add_to_not_visited_iterator current_node 
+	      fail_mem_valid_stmt) nexts_of_fail_mem_valid_stmt;
+	    List.iter (self#add_to_not_visited_iterator current_node
+	      fail_mem_invalid_stmt) nexts_of_fail_mem_invalid_stmt 
+
+
+
+	  (* self#add_to_not_visited_iterator current_node 
 	      succs_mem_valid_stmt (abs_true,trans_true);
 	    self#add_to_not_visited_iterator current_node
 	      succs_mem_invalid_stmt (succs_mem_invalid_abs,trans_mem_broken);
@@ -666,7 +791,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	      fail_mem_valid_stmt (fail_mem_valid_abs_mem, trans_false);
 	    self#add_to_not_visited_iterator current_node
 	      fail_mem_invalid_stmt (fail_mem_invalid_abs_mem, trans_mem_broken)
-	  
+	   *)
 	  end
       (* Calculer le front_end_next pour chaque noeuds ... *)
       (*( 
