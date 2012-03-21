@@ -753,7 +753,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	    let fail_mem_invalid_abs = 
 	      front_end#copy_absdom_label current_node.abstract_val
 	    in
-	    front_end#make_absdom_errorval succs_mem_invalid_abs;
+	    front_end#make_absdom_errorval fail_mem_invalid_abs;
 	  
 	    let nexts_of_succs_mem_valid_stmt = 
 		front_end#next succs_mem_valid_abs trans_true 

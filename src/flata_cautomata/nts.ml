@@ -579,11 +579,26 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
       match label with
 	  CntHavoc(_) -> false
 	| CntAffect(_,CntNdet)-> false
+	| CntGuard( CntBool(_,CntNdetVar("__if_ndet_cond__"),_)) -> false
 	| _ -> true
     in
     let modified_vars (var_list : Nts_types.nts_var list) 
 	(trans_label : cnt_trans_label) =
-      match trans_label with	
+      match trans_label with
+
+
+	(* Elimination
+	   de toutes les variables
+	   de test à valeurs non déterministes.
+	   Cas le plus général,
+	   ?? plus grand point fixe ??
+	   Pourrait certainement se
+	   raffiner.
+	*)
+
+	| CntGuard( CntBool(_,CntNdetVar("__if_ndet_cond__"),_))
+	  -> (NtsIVar("__if_ndet_cond__"))::var_list
+
 	| CntAffect(nvar,_) -> nvar::var_list
 	| CntFunCall(_,Some(nvar_list),_) -> nvar_list@var_list
 	| CntHavoc (nvlist) -> nvlist@var_list
@@ -728,7 +743,22 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
 		(CntFunCall(v,retval,new_arg_list))::(CntHavoc(list_of_ndet_vars)::ret_list)
 	      end
 	  end
-
+	| CntAffect(lhsvar, expr_val) ->
+	  begin
+	    
+	    if (not  (is_cnt_arithm_exp_a_function expr_val) )
+	    then
+	      (* In this case, the lhs is assigne a value
+	      that is abstracted as non deterministic. We shall
+	      then not copy the lhs current value so that it is
+	      considered as unknown in the sequel of this transition.*)
+	      begin
+		(CntHavoc((lhsvar::[]))::ret_list)
+	      end
+	    else 
+	      transit::ret_list
+	  end
+	    
 	| _ -> transit::ret_list
     in
     List.fold_left ndet_affect_folder [] l

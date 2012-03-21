@@ -21,7 +21,6 @@ type nts_base_types = NtsIntType
 		      | NtsBool
 		      
 
-
 (*type nts_array =  NtsArray of string * int * nts_base_types
 		  |  NtsMDimArray of string * int * nts_array  
 *)
@@ -30,15 +29,10 @@ each element
 This type definition allows to encode multi dimentional arrays.
 *)   			      
  
-
-			      
-
 type nts_var = NtsIVar of string (*Integer type variable*)
 	       | NtsRVar of string (*Real valued variable*)
 	       (*| NtsBVar of String (*Boolean variable*)*)
 	       | NtsMiscType of string (* Just here for the demo*)
-	       
-
 	       
 
 type cnt_binop = CntEq
