@@ -579,7 +579,7 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
       match label with
 	  CntHavoc(_) -> false
 	| CntAffect(_,CntNdet)-> false
-	| CntGuard( CntBool(_,CntNdetVar("__if_ndet_cond__"),_)) -> false
+	(*| CntGuard( CntBool(_,CntNdetVar("__if_ndet_cond__"),_)) -> false*)
 	| _ -> true
     in
     let modified_vars (var_list : Nts_types.nts_var list) 
@@ -596,8 +596,8 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
 	   raffiner.
 	*)
 
-	| CntGuard( CntBool(_,CntNdetVar("__if_ndet_cond__"),_))
-	  -> (NtsIVar("__if_ndet_cond__"))::var_list
+	(*| CntGuard( CntBool(_,CntNdetVar("__if_ndet_cond__"),_))
+	  -> (NtsIVar("__if_ndet_cond__"))::var_list*)
 
 	| CntAffect(nvar,_) -> nvar::var_list
 	| CntFunCall(_,Some(nvar_list),_) -> nvar_list@var_list
@@ -713,8 +713,6 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
     
 
 
-
-
   let build_argn_det_list (size : int ) =
     let rec rec_build_it index list =
       if index > 1 then
@@ -758,7 +756,19 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
 	    else 
 	      transit::ret_list
 	  end
-	    
+
+	| CntGuard( condition) 
+	  ->
+	  begin
+	    if is_cnt_bool_det condition
+	    then
+	      transit::ret_list
+	    else
+	      let condition = 
+		format_cntcond_for_cfg_condition condition 
+	      in 
+	     (CntGuard(condition)::((CntHavoc(NtsIVar("__if_ndet_cond__")::[]))::ret_list))
+	  end
 	| _ -> transit::ret_list
     in
     List.fold_left ndet_affect_folder [] l
