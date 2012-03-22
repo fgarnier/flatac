@@ -578,7 +578,7 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
     let not_havoc label =
       match label with
 	  CntHavoc(_) -> false
-	| CntAffect(_,CntNdet)-> false
+	(*| CntAffect(_,CntNdet)-> false*)
 	(*| CntGuard( CntBool(_,CntNdetVar("__if_ndet_cond__"),_)) -> false*)
 	| _ -> true
     in
@@ -708,10 +708,15 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
   let format_cntcond_for_cfg_condition ( condition : cnt_bool ) =
     if is_cnt_bool_det condition 
     then condition
-    else
-      CntBool(CntEq,CntNdetVar("__if_ndet_cond__"),CntCst(My_bigint.zero))
-    
-
+    else (*condition*)
+      begin
+	match condition with
+	    CntNot(c) ->
+	      CntNot(CntBool(CntEq,CntNdetVar("__if_ndet_cond__"),CntCst(My_bigint.zero)))
+	  | _ ->
+	    CntBool(CntEq,CntNdetVar("__if_ndet_cond__"),CntCst(My_bigint.zero))
+      end
+     
 
   let build_argn_det_list (size : int ) =
     let rec rec_build_it index list =
