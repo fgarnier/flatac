@@ -8,8 +8,9 @@ main(){
 
   x=(int *)malloc(100*sizeof(int));
   i = 0;
-  j = NonDetInt(); 
+ /* j = NonDetInt(); */ 
 
+ j=3;
   while(*(x+i) != 0)
     i++;
 

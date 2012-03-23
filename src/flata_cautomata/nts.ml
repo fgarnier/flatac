@@ -602,6 +602,22 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
 	| CntAffect(nvar,_) -> nvar::var_list
 	| CntFunCall(_,Some(nvar_list),_) -> nvar_list@var_list
 	| CntHavoc (nvlist) -> nvlist@var_list
+	| CntGuard(CntBool(_,CntNdetVar("__if_ndet_cond__"),_))
+	|  CntGuard(CntNot(CntBool(_,CntNdetVar("__if_ndet_cond__"),_)))
+	    ->
+	  begin
+	    if (not (List.exists 
+		  (fun s-> 
+		    match s with
+		      | NtsIVar("__if_ndet_cond__") -> true
+		      | _ -> false
+		  )
+		  var_list) ) 
+	    then  
+	      NtsIVar("__if_ndet_cond__")::var_list
+	    else
+	      var_list
+	  end
 	| _ -> var_list
     in
     let vars_in_havoc = List.fold_left modified_vars [] trans_label_list in
@@ -772,8 +788,13 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
 	      let condition = 
 		format_cntcond_for_cfg_condition condition 
 	      in 
-	     (CntGuard(condition)::((CntHavoc(NtsIVar("__if_ndet_cond__")::[]))::ret_list))
+	      (CntGuard(condition)::ret_list)
+	    (* (CntGuard(condition)::((CntHavoc(NtsIVar("__if_ndet_cond__")::[]))::ret_list)) *)
+	      
 	  end
+	(*    transit::ret_list
+	      end *)
+	      
 	| _ -> transit::ret_list
     in
     List.fold_left ndet_affect_folder [] l
