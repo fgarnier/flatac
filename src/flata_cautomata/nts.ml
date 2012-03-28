@@ -604,22 +604,41 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
 	| CntAffect(nvar,_) -> nvar::var_list
 	| CntFunCall(_,Some(nvar_list),_) -> nvar_list@var_list
 	| CntHavoc (nvlist) -> nvlist@var_list
-	| CntGuard(CntBool(_,CntNdetVar("__if_ndet_cond__"),_))
-	|  CntGuard(CntNot(CntBool(_,CntNdetVar("__if_ndet_cond__"),_)))
+	| CntGuard(CntBool(_,CntNdetVar("_ndet_cond__"),_))
+	|  CntGuard(CntNot(CntBool(_,CntNdetVar("_ndet_cond__"),_)))
 	    ->
 	  begin
 	    if (not (List.exists 
 		  (fun s-> 
 		    match s with
-		      | NtsIVar("__if_ndet_cond__") -> true
+		      | NtsIVar("_ndet_cond__") -> true
 		      | _ -> false
 		  )
 		  var_list) ) 
 	    then  
-	      NtsIVar("__if_ndet_cond__")::var_list
+	      NtsIVar("_ndet_cond__")::var_list
 	    else
 	      var_list
 	  end
+	| CntGuardIf(CntBool(_,CntNdetVar("_if_ndet_cond__"),_))
+	| CntGuardElse((CntBool(_,CntNdetVar("_if_ndet_cond__"),_)))
+	| CntGuardElse(CntNot((CntBool(_,CntNdetVar("_if_ndet_cond__"),_))))
+	    ->  
+	  begin
+	    if (not (List.exists 
+		       (fun s-> 
+			 match s with
+			   | NtsIVar("_if_ndet_cond__") -> true
+			   | _ -> false
+		       )
+		       var_list) ) 
+	    then  
+	      NtsIVar("_if_ndet_cond__")::var_list
+	    else
+	      var_list
+	  end
+	    
+	
 	| _ -> var_list
     in
     let vars_in_havoc = List.fold_left modified_vars [] trans_label_list in
