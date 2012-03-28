@@ -204,12 +204,12 @@ being error states.*)
       in
       let valid_mem_nts_no = CntBAnd(neg_of_nts_cdition,mem_access_cnd) in
       let valid_mem_nts_yes = CntBAnd(nts_cdition,mem_access_cnd) in
-      let nts_trans_yes = (abs_val_true ,(CntGuard(valid_mem_nts_yes))::[])
+      let nts_trans_yes = (abs_val_true ,(CntGuardIf(valid_mem_nts_yes))::[])
       in	
       let nts_trans_mem_broken = (abs_mem_broken1,(CntGuard(bad_mem_access_cnd))::[])
       in
       let nts_trans_no = 
-	(abs_val_false ,(CntGuard(valid_mem_nts_no))::[])
+	(abs_val_false ,(CntGuardElse(valid_mem_nts_no))::[])
       in
       let ret_true_false = (nts_trans_yes,nts_trans_no,nts_trans_mem_broken) in
       ret_true_false

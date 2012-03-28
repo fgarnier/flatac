@@ -781,8 +781,6 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	    List.iter (self#add_to_not_visited_iterator current_node
 	      fail_mem_invalid_stmt) nexts_of_fail_mem_invalid_stmt 
 
-
-
 	  (* self#add_to_not_visited_iterator current_node 
 	      succs_mem_valid_stmt (abs_true,trans_true);
 	    self#add_to_not_visited_iterator current_node

@@ -9,12 +9,9 @@ __nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity__i_,__if
 initial sinit ;
 final s7;
 error s1,s3,s5; sinit->s0 {  } 
- s0->s1 { false and havoc() } 
- s0->s2 { i'=0 and havoc(i) } 
- s2->s3 { false and havoc() } 
- s2->s4 { i'=i+2 and havoc(i) } 
- s4->s5 { false and havoc() } 
- s4->s6 { i'=i+1 and havoc(i) } 
+ s0->s2 { i'=0 and __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__,i) } 
+ s2->s4 { i'=i+2 and __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__,i) } 
+ s4->s6 { i'=i+1 and __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__,i) } 
  s6->s7 { ret_val_'=i and havoc(ret_val_) }
 }
 __assert_fail{

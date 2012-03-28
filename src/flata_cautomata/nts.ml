@@ -92,14 +92,11 @@ let make_ntsvars_of_ptrvar (vname : string ) =
   let offset_name =  offset_name_of_var vname in
   (NtsIVar(val_name))::(NtsIVar(offset_name)::[])
 
+
+
 let make_ntsvars_of_intvars (vname : string) =
   let val_name = valid_name_of_var vname in 
   (NtsIVar(vname))::(NtsIVar(val_name)::[])
-
-
-
-
-
 
 
 
@@ -543,7 +540,12 @@ let arg_name_left_folder (str : string ) ( il_arg : il_fun_arguments) =
 
 let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
   match tlabel with
-      CntGuard ( cbool ) -> cnt_simplify_and_pprint_boolexp cbool
+      CntGuardIf(cbool) |
+	 CntGuard ( cbool ) -> cnt_simplify_and_pprint_boolexp cbool
+
+    | CntGuardElse(cbool) -> cnt_simplify_and_pprint_boolexp cbool
+      
+	
     | CntAffect( ntvar ,  expr ) ->
        (nts_pprint_nts_var ntvar)^"'="^(cnt_pprint_arithm_exp expr)
     | CntFunCall ( funname, retval , largs ) ->
@@ -728,11 +730,29 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
       begin
 	match condition with
 	    CntNot(c) ->
-	      CntNot(CntBool(CntEq,CntNdetVar("__if_ndet_cond__"),CntCst(My_bigint.zero)))
+	      CntNot(CntBool(CntEq,CntNdetVar("_ndet_cond__"),CntCst(My_bigint.zero)))
 	  | _ ->
-	    CntBool(CntEq,CntNdetVar("__if_ndet_cond__"),CntCst(My_bigint.zero))
+	    CntBool(CntEq,CntNdetVar("_ndet_cond__"),CntCst(My_bigint.zero))
       end
      
+
+  let format_ifthen_cntcond_for_cfg ( guard : cnt_trans_label ) =
+    match guard with
+	CntGuardIf(cnd) ->
+	  begin
+	    if (is_cnt_bool_det cnd) 
+	    then cnd
+	    else
+	      CntBool(CntEq,CntNdetVar("_if_ndet_cond__"),CntCst(My_bigint.zero))
+	  end
+      | CntGuardElse(cnd) ->
+	begin
+	  if is_cnt_bool_det cnd 
+	  then cnd
+	  else
+	    CntNot(CntBool(CntEq,CntNdetVar("_if_ndet_cond__"),CntCst(My_bigint.zero)))
+	end
+      | _ -> raise Not_an_if_then_else_condition_guard 
 
   let build_argn_det_list (size : int ) =
     let rec rec_build_it index list =
@@ -791,6 +811,14 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
 	      (CntGuard(condition)::ret_list)
 	    (* (CntGuard(condition)::((CntHavoc(NtsIVar("__if_ndet_cond__")::[]))::ret_list)) *)
 	      
+	  end
+
+	| CntGuardIf(_) ->
+	  CntGuardIf((format_ifthen_cntcond_for_cfg transit))::ret_list
+	
+	| CntGuardElse(_) ->
+	  begin
+	  CntGuardElse((format_ifthen_cntcond_for_cfg transit))::ret_list
 	  end
 	(*    transit::ret_list
 	      end *)
@@ -922,8 +950,10 @@ types. *********)
   let compare_cnt_trans_label_guard 
       (gg : cnt_trans_label)( gd : cnt_trans_label ) =
     match gg,gd with
-	(CntGuard(a),CntGuard(b)) -> 
-	  compare_cnt_bool a b
+	(CntGuardIf(a),CntGuardIf(b)) 
+      |   (CntGuardElse(a),CntGuardElse(b)) 
+      |	(CntGuard(a),CntGuard(b)) -> 
+		  compare_cnt_bool a b
 	    
       | (CntAffect(varg,exprg),CntAffect(vard,exprd))
 	-> 
@@ -932,6 +962,8 @@ types. *********)
 	else
 	  compare_cnt_arithm_exp exprg exprd
 	
+
+      
 	
       | (CntFunCall(vg,Some(optg),argsg),CntFunCall(vd,Some(optd),argsd))->
 	if ( String.compare vg vd ) != 0 then false
@@ -1177,7 +1209,9 @@ distinct.*)
   let hash_cnt_trans_label (n : int) (m : int)
       (t : cnt_trans_label ) =
     match t with
+	CntGuardIf(cbool) | CntGuardElse(cbool) |
 	CntGuard(cbool) -> hash_cnt_bool_exp n m cbool
+	 
       | CntFunCall(name,Some(list_ret),h::_) ->
 	  begin
 	    let hash_ret=Hashtbl.hash name in
