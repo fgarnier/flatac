@@ -749,7 +749,7 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
       begin
 	match condition with
 	    CntNot(c) ->
-	      CntNot(CntBool(CntEq,CntNdetVar("_ndet_cond__"),CntCst(My_bigint.zero)))
+	      CntBool(CntEq,CntNdetVar("_ndet_cond__"),CntCst(My_bigint.zero))
 	  | _ ->
 	    CntBool(CntEq,CntNdetVar("_ndet_cond__"),CntCst(My_bigint.zero))
       end
