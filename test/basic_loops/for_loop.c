@@ -7,7 +7,8 @@ int zero()
 int main( int argc, char ** argv){
  
 
- int i = argc;
+/* int i = argc; */
+ int  i= 5;
  int j = 10;
 
  for (i=10; i>0 ; i--) {

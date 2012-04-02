@@ -253,21 +253,59 @@ let rec valid_sym_cscal ( loc_map : validity_loc_map ) (sslf : ssl_formula )
     | LiScalOfAddr ( ptrexp , _ ) -> 
       valid_sym_ptrexp loc_map sslf ptrexp
 	  
-and valid_sym_ptrexp  ( loc_map : validity_loc_map ) (sslf : ssl_formula ) ( ptrexp :  c_ptrexp ) =
+    | LiScalOfLiBool (ccondition) ->
+      valid_sym_boolexp loc_map sslf ccondition
+
+and valid_sym_boolexp (loc_map : validity_loc_map ) (sslf : ssl_formula ) ( bool_expr :  c_bool ) =
+  match bool_expr with
+    | LiBEq( expg, expd) | LiBNeq( expg,expd) | LiBLt(expg,expd)
+    | LiBGt( expg,expd) | LiBLeq(expg,expd) | LiBGeq(expg,expd) 
+      ->
+      begin
+	let valid_eg = valid_sym_cscal loc_map sslf expg in
+	let valid_ed = valid_sym_cscal loc_map sslf expd in
+	and_sym_validity valid_eg valid_ed 
+      end
+	
+    | LiBPtrEq (expg , expd)  | LiBPtrNeq (expg , expd) 
+    | LiBPtrGt (expg , expd)  | LiBPtrLt (expg , expd)
+    | LiBPtrGeq (expg , expd) | LiBPtrLeq ( expg , expd)	
+      ->
+      begin
+	let valid_eg = valid_sym_ptrexp loc_map sslf expg in
+	let valid_ed = valid_sym_ptrexp loc_map sslf expd in
+	and_sym_validity valid_eg valid_ed
+      end
+	
+    | LiBTrue -> TruevarValid
+    | LiBFalse -> TruevarValid
+      
+    | LiBAnd( expg, expd ) 
+    | LiBOr ( expg, expd )  ->
+      begin
+	let valid_eg = valid_sym_boolexp loc_map sslf expg in
+	let valid_ed = valid_sym_boolexp loc_map sslf expd in
+	and_sym_validity valid_eg valid_ed 
+      end
+
+
+and valid_sym_ptrexp  ( loc_map : validity_loc_map ) (sslf : ssl_formula ) 
+    ( ptrexp :  c_ptrexp ) =
+  
   match ptrexp with 
       LiPVar ( _ , LiIntPtr(vname), _ ) ->  
-		let entry = validity_of_byname loc_map vname in
-		  entry.validity
+	let entry = validity_of_byname loc_map vname in
+	entry.validity
 		    
     | LiDerefCVar(vname, _ ) -> 
       let entry = validity_of_byname loc_map vname 
       in  entry.validity
-	
+      
     | LiDerefCTab(_) -> TruevarValid
 		    
-
+      
     | LiStarOfPtr(_) -> DKvarValid 
-
+      
     | LiDerefCPtr(cptr,_) -> valid_sym_ptrexp loc_map sslf cptr
 
     | LiPlusPI ( ptrexpprime , cscal , _) -> 

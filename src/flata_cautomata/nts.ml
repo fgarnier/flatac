@@ -488,8 +488,8 @@ be equal CntBFalse.
 (* This return true iff there is no constructor CntNDet in a CntBoolExpression*)
 let rec is_cnt_bool_det ( b : cnt_bool ) =
   match b with
-    | CntBTrue -> false
-    | CntBFalse -> false
+    | CntBTrue -> true
+    | CntBFalse -> true
     
     | CntBAnd (a,b) ->  
       let ndet_fg = is_cnt_bool_det a in
@@ -604,36 +604,36 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
 	| CntAffect(nvar,_) -> nvar::var_list
 	| CntFunCall(_,Some(nvar_list),_) -> nvar_list@var_list
 	| CntHavoc (nvlist) -> nvlist@var_list
-	| CntGuard(CntBool(_,CntNdetVar("_ndet_cond__"),_))
-	|  CntGuard(CntNot(CntBool(_,CntNdetVar("_ndet_cond__"),_)))
+	| CntGuard(CntBool(_,CntNdetVar("__ndet_cond__"),_))
+	|  CntGuard(CntNot(CntBool(_,CntNdetVar("__ndet_cond__"),_)))
 	    ->
 	  begin
 	    if (not (List.exists 
 		  (fun s-> 
 		    match s with
-		      | NtsIVar("_ndet_cond__") -> true
+		      | NtsIVar("__ndet_cond__") -> true
 		      | _ -> false
 		  )
 		  var_list) ) 
 	    then  
-	      NtsIVar("_ndet_cond__")::var_list
+	      NtsIVar("__ndet_cond__")::var_list
 	    else
 	      var_list
 	  end
-	| CntGuardIf(CntBool(_,CntNdetVar("_if_ndet_cond__"),_))
-	| CntGuardElse((CntBool(_,CntNdetVar("_if_ndet_cond__"),_)))
-	| CntGuardElse(CntNot((CntBool(_,CntNdetVar("_if_ndet_cond__"),_))))
+	| CntGuardIf(CntBool(_,CntNdetVar("__if_ndet_cond__"),_))
+	| CntGuardElse((CntBool(_,CntNdetVar("__if_ndet_cond__"),_)))
+	| CntGuardElse(CntNot((CntBool(_,CntNdetVar("__if_ndet_cond__"),_))))
 	    ->  
 	  begin
 	    if (not (List.exists 
 		       (fun s-> 
 			 match s with
-			   | NtsIVar("_if_ndet_cond__") -> true
+			   | NtsIVar("__if_ndet_cond__") -> true
 			   | _ -> false
 		       )
 		       var_list) ) 
 	    then  
-	      NtsIVar("_if_ndet_cond__")::var_list
+	      NtsIVar("__if_ndet_cond__")::var_list
 	    else
 	      var_list
 	  end
@@ -749,9 +749,9 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
       begin
 	match condition with
 	    CntNot(c) ->
-	      CntBool(CntEq,CntNdetVar("_ndet_cond__"),CntCst(My_bigint.zero))
+	      CntBool(CntEq,CntNdetVar("__ndet_cond__"),CntCst(My_bigint.zero))
 	  | _ ->
-	    CntBool(CntEq,CntNdetVar("_ndet_cond__"),CntCst(My_bigint.zero))
+	    CntBool(CntEq,CntNdetVar("__ndet_cond__"),CntCst(My_bigint.zero))
       end
      
 
@@ -762,14 +762,14 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
 	    if (is_cnt_bool_det cnd) 
 	    then cnd
 	    else
-	      CntBool(CntEq,CntNdetVar("_if_ndet_cond__"),CntCst(My_bigint.zero))
+	      CntBool(CntEq,CntNdetVar("__if_ndet_cond__"),CntCst(My_bigint.zero))
 	  end
       | CntGuardElse(cnd) ->
 	begin
 	  if is_cnt_bool_det cnd 
 	  then cnd
 	  else
-	    CntNot(CntBool(CntEq,CntNdetVar("_if_ndet_cond__"),CntCst(My_bigint.zero)))
+	    CntNot(CntBool(CntEq,CntNdetVar("__if_ndet_cond__"),CntCst(My_bigint.zero)))
 	end
       | _ -> raise Not_an_if_then_else_condition_guard 
 
@@ -844,8 +844,10 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
 	      
 	| _ -> transit::ret_list
     in
-    List.fold_left ndet_affect_folder [] l
-
+    List.fold_left ndet_affect_folder [] l 
+  (* Replace non deterministic
+    guards by simpler non deterministic test, when possible.*)
+    (*l*) (*Retuns the labels untouched*) 
 
      
 (************** Implementation of the structural equality between nts

@@ -222,7 +222,7 @@ struct
 	for i=0 to max_args_of_all_callee do
 	  nts_slocals <- (Nts.name_ndet_arg i)::nts_slocals
 	done;
-	nts_slocals <- (NtsIVar("__if_ndet_cond__"))::nts_slocals
+	nts_slocals <- ((NtsIVar("__ndet_cond__"))::(NtsIVar("__if_ndet_cond__"))::nts_slocals)
  
 
 
