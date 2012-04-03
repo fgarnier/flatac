@@ -5,8 +5,6 @@ error s0;
 sinit->s0 { true and havoc() }
 }
 
-
-
 NonDetInt{
 out ndet, validity_ndet_: int;
 initial sinit;
@@ -24,5 +22,15 @@ final s1;
 
 sinit->s0{ havoc(ndet,  validity_ndet_)}
 s0->s1{havoc()}
+
+}
+
+__NdetValInRange {
+ out ndval, ndvalid : int;
+ in lowerb, lbval, upperb, upbval : int;
+ initial sinit;
+ final s1;
+
+ sinit->s1 { ndval' <= upperb and ndval' >= lowerb and ndvalid'=1 and havoc(ndval, ndvalid) }
 
 }
