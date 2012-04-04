@@ -23,15 +23,15 @@ error s1,s6,s9,s12,s14,s18,s19,s20,s21; sinit->s0 {  }
  s11->s15 { x_old'=x and x >= x_old-10 and havoc(x_old) } 
  s13->s15 { x_old'=x and havoc(x_old) } 
  s15->s16 { havoc() } 
- s16->s17 { x <=  99 and havoc() } 
- s16->sinter1 { x > 99 and havoc(_ndet_arg_1,_ndet_arg_2) } 
+ s16->s17 { x <=  100 and havoc() } 
+ s16->sinter1 { x > 100 and havoc(_ndet_arg_1,_ndet_arg_2) } 
  sinter1->s19 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,13,1,_ndet_arg_2,1) and havoc() } 
- s16->sinter2 { x > 99 and havoc(_ndet_arg_1,_ndet_arg_2) } 
+ s16->sinter2 { x > 100 and havoc(_ndet_arg_1,_ndet_arg_2) } 
  sinter2->s19 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,13,1,_ndet_arg_2,1) and havoc() } 
- s17->s4 { x >= -99 and havoc() } 
- s17->sinter3 { x < -99 and havoc(_ndet_arg_1,_ndet_arg_2) } 
+ s17->s4 { x >= -100 and havoc() } 
+ s17->sinter3 { x < -100 and havoc(_ndet_arg_1,_ndet_arg_2) } 
  sinter3->s21 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,13,1,_ndet_arg_2,1) and havoc() } 
- s17->sinter4 { x < -99 and havoc(_ndet_arg_1,_ndet_arg_2) } 
+ s17->sinter4 { x < -100 and havoc(_ndet_arg_1,_ndet_arg_2) } 
  sinter4->s21 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,13,1,_ndet_arg_2,1) and havoc() }
 }
 __assert_fail{

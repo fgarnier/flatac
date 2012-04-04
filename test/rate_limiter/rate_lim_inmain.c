@@ -10,7 +10,7 @@ int main (int argc, char ** argv) {
     if (x > x_old+10) x = x_old+10;
     if (x < x_old-10) x = x_old-10;
     x_old = x;
-    assert(x <= 99 && x>= -99);
+    assert(x <= 100 && x>= -100);
  } 
 
 }

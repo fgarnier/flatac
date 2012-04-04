@@ -777,37 +777,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 		    (true_stmt,false_stmt)
 		end
 	   
-	 
-	 (* | Goto(stmt_ref,_) ->
-	    begin
-	      
-	      let stmt = !stmt_ref in
-	      let sslv = front_end#copy_absdom_label 
-		current_node.abstract_val in
-	      
-	      (match stmt.labels with
-		  Label("Error",_,true)::_ ->
-		    front_end#make_absdom_errorval sslv; 
-		   
-			       
-		| _-> ());
-	      self#add_to_not_visited_iterator
-		current_node
-		stmt
-		(sslv ,(front_end#get_empty_transition_label ()))
-	    end *)
-
-	  (*| Loop(_,b,_,_,_) -> 
-
-	    Format.fprintf Ast_goodies.debug_out "[ECFG : ] Loop met \n";
-	    let sslv = front_end#copy_absdom_label 
-	      current_node.abstract_val in
-	    let stmt = List.hd b.bstmts in
-	     self#add_to_not_visited_iterator
-	       current_node
-		stmt
-		(sslv,(front_end#get_empty_transition_label ()))
-	  *)
+	(* Gotos ought be dealt with here, if necessary.*)
 	     
 	  | _ ->
 	      let abs_succ_list =     

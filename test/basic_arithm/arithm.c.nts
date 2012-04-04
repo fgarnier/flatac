@@ -3,15 +3,15 @@ nts arithm;
 main{
 in offset__argv_,validity__argv_,argc,validity__argc_ : int;
 
-__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity__i_,__if_ndet_cond__,_ndet_arg_0,i : int ;
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity__i_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_0,i : int ;
 
  out ret_val_, validity__ret_val__  : int;
 initial sinit ;
 final s7;
 error s1,s3,s5; sinit->s0 {  } 
- s0->s2 { i'=0 and __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__,i) } 
- s2->s4 { i'=i+2 and __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__,i) } 
- s4->s6 { i'=i+1 and __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__,i) } 
+ s0->s2 { i'=0 and havoc(i) } 
+ s2->s4 { i'=i+2 and havoc(i) } 
+ s4->s6 { i'=i+1 and havoc(i) } 
  s6->s7 { ret_val_'=i and havoc(ret_val_) }
 }
 __assert_fail{
@@ -20,8 +20,6 @@ initial sinit ;
 error s0;
 sinit->s0 { true and havoc() }
 }
-
-
 
 NonDetInt{
 out ndet, validity_ndet_: int;
@@ -40,5 +38,15 @@ final s1;
 
 sinit->s0{ havoc(ndet,  validity_ndet_)}
 s0->s1{havoc()}
+
+}
+
+__NdetValInRange {
+ out ndval, ndvalid : int;
+ in lowerb, lbval, upperb, upbval : int;
+ initial sinit;
+ final s1;
+
+ sinit->s1 { ndval' <= upperb and ndval' >= lowerb and ndvalid'=1 and havoc(ndval, ndvalid) }
 
 }
