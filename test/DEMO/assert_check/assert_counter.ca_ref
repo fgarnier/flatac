@@ -1,71 +1,56 @@
-main {
-in ()
+nts DEMO/assert_check/assert_counter;
+ 
+main{
 
-__retres,tmp,i : int
-initial s0;
-final s9;
-error: s12
- 
- s0 -> s1 { i'=0 } 
- 
- s1 -> s2 {  } 
- 
- s2 -> s3 {  } 
- 
- s3 -> s4 { i < 100 } 
- 
- s3 -> s5 { i >= 100 } 
- 
- s4 -> s6 { tmp'=fun(i,100-i) } 
- 
- s5 -> s7 { __retres'=0 } 
- 
- s6 -> s8 {  } 
- 
- s7 -> s9 { ret_val_'=__retres } 
- 
- s8 -> s10 {  } 
- 
- s10 -> s11 { tmp = i and i'=i+1 } 
- 
- s10 -> s12 { tmp != i and __assert_fail(0,0,24,0) } 
- 
- s11 -> s2 {  } 
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retres_,validity__i_,validity__tmp_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_4,_ndet_arg_3,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,__retres,tmp,i : int ;
 
+ out ret_val_, validity__ret_val__  : int;
+initial sinit ;
+final s15;
+error s1,s8,s12,s16,s18,s19; sinit->s0 {  } 
+ s0->s2 { i'=0 and havoc(i) } 
+ s2->s3 { havoc() } 
+ s3->s4 { havoc() } 
+ s4->s5 { havoc() } 
+ s5->s6 { i < 100 and havoc() } 
+ s5->s7 { i >= 100 and havoc() } 
+ s6->sinter0 { havoc() } 
+ sinter0->s9 { (tmp',validity__tmp_')=fun(i,1,100-i,1) and havoc(tmp,validity__tmp_) } 
+ s7->s10 { havoc() } 
+ s9->s11 { havoc() } 
+ s10->s13 { __retres'=0 and havoc(__retres) } 
+ s11->s14 { havoc() } 
+ s13->s15 { ret_val_'=__retres and havoc(ret_val_) } 
+ s14->s17 { i'=i+1 and tmp = i and havoc(i) } 
+ s14->sinter1 { tmp != i and havoc(_ndet_arg_1,_ndet_arg_2) } 
+ sinter1->s19 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,24,1,_ndet_arg_2,1) and havoc() } 
+ s14->sinter2 { tmp != i and havoc(_ndet_arg_1,_ndet_arg_2) } 
+ sinter2->s19 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,24,1,_ndet_arg_2,1) and havoc() } 
+ s17->s4 { havoc() }
 }
-fun {
-in (m,x : int)
+fun{
+in m,validity__m_,x,validity__x_ : int;
 
-n,y : int
-initial s0;
-final s8;
- 
- s0 -> s1 { y'=x } 
- 
- s1 -> s2 { n'=2*m-x } 
- 
- s2 -> s3 {  } 
- 
- s3 -> s4 {  } 
- 
- s4 -> s5 { x < n } 
- 
- s4 -> s6 { x >= n } 
- 
- s5 -> s7 {  } 
- 
- s6 -> s8 { ret_val_'=y } 
- 
- s7 -> s9 { x < m and x'=x+1 } 
- 
- s7 -> s10 { x >= m and x'=x+1 } 
- 
- s9 -> s11 { y'=y+1 } 
- 
- s10 -> s12 { y'=y-1 } 
- 
- s11 -> s3 {  } 
- 
- s12 -> s3 {  } 
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity__n_,validity__y_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_0,n,y : int ;
 
+ out ret_val_, validity__ret_val__  : int;
+initial sinit ;
+final s16;
+error s1,s3,s12,s14,s17,s19; sinit->s0 {  } 
+ s0->s2 { y'=x and havoc(y) } 
+ s2->s4 { n'=2*m-x and havoc(n) } 
+ s4->s5 { havoc() } 
+ s5->s6 { havoc() } 
+ s6->s7 { havoc() } 
+ s7->s8 { x < n and havoc() } 
+ s7->s9 { x >= n and havoc() } 
+ s8->s10 { havoc() } 
+ s9->s11 { havoc() } 
+ s10->s13 { x'=x+1 and x < m and havoc(x) } 
+ s10->s15 { x'=x+1 and x >= m and havoc(x) } 
+ s11->s16 { ret_val_'=y and havoc(ret_val_) } 
+ s13->s18 { y'=y+1 and havoc(y) } 
+ s15->s20 { y'=y-1 and havoc(y) } 
+ s18->s6 { havoc() } 
+ s20->s6 { havoc() }
 }

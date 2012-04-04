@@ -1,60 +1,66 @@
-nts main;
+nts DEMO/integer_scalar/main;
  
 main{
 
-validity____retres_,validity__i_,validity__tmp_,validity__tmp_0_,validity__x_,__retres,tmp_0,tmp,i,x : int ;
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retres_,validity__i_,validity__tmp_,validity__tmp_0_,validity__x_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_3,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,__retres,tmp_0,tmp,i,x : int ;
 
- out ret_val_ : int;
-initial s0;
-final s9;
- 
- s0->s1 { i'=0 and havoc(i) } 
- s1->s2 { havoc() } 
+ out ret_val_, validity__ret_val__  : int;
+initial sinit ;
+final s17;
+error s1,s8,s11,s13,s15,s18; sinit->s0 {  } 
+ s0->s2 { i'=0 and havoc(i) } 
  s2->s3 { havoc() } 
- s3->s4 { i < 100 and havoc() } 
- s3->s5 { i >= 100 and havoc() } 
- s4->s6 { (tmp',validity__tmp_')=foo(i,1,2*i+1,1,3*i+5,1) and havoc(tmp,validity__tmp_) } 
- s5->s7 { __retres'=0 and havoc(__retres) } 
- s6->s8 { (tmp_0',validity__tmp_0_')=bar(5*i+1,1,7*i+2,1,9*i+3,1) and havoc(tmp_0,validity__tmp_0_) } 
- s7->s9 { ret_val_'=__retres and havoc(ret_val_) } 
- s8->s10 { x'=tmp+tmp_0 and havoc(x) } 
- s10->s11 { i'=i+1 and havoc(i) } 
- s11->s2 { havoc() }
+ s3->s4 { havoc() } 
+ s4->s5 { havoc() } 
+ s5->s6 { i < 100 and havoc() } 
+ s5->s7 { i >= 100 and havoc() } 
+ s6->sinter0 { havoc() } 
+ sinter0->s9 { (tmp',validity__tmp_')=foo(i,1,2*i+1,1,3*i+5,1) and havoc(tmp,validity__tmp_) } 
+ s7->s10 { havoc() } 
+ s9->sinter1 { havoc() } 
+ sinter1->s12 { (tmp_0',validity__tmp_0_')=bar(5*i+1,1,7*i+2,1,9*i+3,1) and havoc(tmp_0,validity__tmp_0_) } 
+ s10->s14 { __retres'=0 and havoc(__retres) } 
+ s12->s16 { x'=tmp+tmp_0 and havoc(x) } 
+ s14->s17 { ret_val_'=__retres and havoc(ret_val_) } 
+ s16->s19 { i'=i+1 and havoc(i) } 
+ s19->s4 { havoc() }
 }
 foo{
 in z,validity__z_,y,validity__y_,x,validity__x_ : int;
 
-validity____retres_,__retres : int ;
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retres_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_0,__retres : int ;
 
- out ret_val_ : int;
-initial s0;
-final s2;
- 
- s0->s1 { __retres'=5*((x+12)*(3*y+7*z+1)) and havoc(__retres) } 
- s1->s2 { ret_val_'=__retres and havoc(ret_val_) }
+ out ret_val_, validity__ret_val__  : int;
+initial sinit ;
+final s3;
+error s1; sinit->s0 {  } 
+ s0->s2 { __retres'=5*((x+12)*(3*y+7*z+1)) and havoc(__retres) } 
+ s2->s3 { ret_val_'=__retres and havoc(ret_val_) }
 }
 bar{
 in z,validity__z_,y,validity__y_,x,validity__x_ : int;
 
-validity____retres_,validity__m_,validity__n_,validity__p_,__retres,p,n,m : int ;
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retres_,validity__m_,validity__n_,validity__p_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_0,__retres,p,n,m : int ;
 
- out ret_val_ : int;
-initial s0;
-final s10;
- 
- s0->s1 { p'=0 and havoc(p) } 
- s1->s2 { havoc() } 
+ out ret_val_, validity__ret_val__  : int;
+initial sinit ;
+final s18;
+error s1,s12,s14,s16; sinit->s0 {  } 
+ s0->s2 { p'=0 and havoc(p) } 
  s2->s3 { havoc() } 
- s3->s4 { x > 0 and havoc() } 
- s3->s5 { x <=  0 and havoc() } 
- s4->s6 { havoc() } 
- s5->s7 { __retres'=3*m+5*(n-1)+7*(p-2)+11 and havoc(__retres) } 
- s6->s8 { x < y+z and havoc() } 
- s6->s9 { x >= y+z and havoc() } 
- s7->s10 { ret_val_'=__retres and havoc(ret_val_) } 
- s8->s11 { 2*y > 3*y+z and m'=m+9*(x+y)+12 and havoc(m) } 
- s8->s12 { 2*y <=  3*y+z and n'=n-(m+5*x+11*y) and havoc(n) } 
- s9->s7 { __retres'=3*m+5*(n-1)+7*(p-2)+11 and havoc(__retres) } 
- s11->s2 { havoc() } 
- s12->s2 { havoc() }
+ s3->s4 { havoc() } 
+ s4->s5 { havoc() } 
+ s5->s6 { x > 0 and havoc() } 
+ s5->s7 { x <=  0 and havoc() } 
+ s6->s8 { havoc() } 
+ s7->s9 { havoc() } 
+ s8->s10 { x < y+z and havoc() } 
+ s8->s11 { x >= y+z and havoc() } 
+ s9->s13 { __retres'=3*m+5*(n-1)+7*(p-2)+11 and havoc(__retres) } 
+ s10->s15 { m'=m+9*(x+y)+12 and 2*y > 3*y+z and havoc(m) } 
+ s10->s17 { n'=n-(m+5*x+11*y) and 2*y <=  3*y+z and havoc(n) } 
+ s11->s9 { havoc() } 
+ s13->s18 { ret_val_'=__retres and havoc(ret_val_) } 
+ s15->s4 { havoc() } 
+ s17->s4 { havoc() }
 }

@@ -1,78 +1,59 @@
-main {
-in ()
+nts ;
+ 
+main{
 
-__retres,tmp_0,tmp,i,offset__q_,offset__p_ : int
-initial s0;
-final ;
- 
- s0 -> s1 { i'=0 } 
- 
- s1 -> s2 {  } 
- 
- s2 -> s3 {  } 
- 
- s3 -> s4 {  } 
- 
- s4 -> s5 { tmp'=i } 
- 
- s5 -> s6 { i'=i+1 } 
- 
- s6 -> s7 {  } 
- 
- s7 -> s8 { p'=alloc(tmp) } 
- 
- s8 -> s9 {  } 
- 
- s9 -> s10 { tmp_0'=i } 
- 
- s10 -> s11 { i'=i+1 } 
- 
- s11 -> s12 {  } 
- 
- s12 -> s13 { q'=alloc(tmp_0) } 
- 
- s13 -> s14 { dispose(offset__p_,offset__q_) } 
- 
- s14 -> s2 {  } 
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retres_,validity__i_,validity__p_,validity__q_,validity__tmp_,validity__tmp_0_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,__retres,tmp_0,tmp,i,offset__q_,offset__p_ : int ;
 
+ out ret_val_, validity__ret_val__  : int;
+initial sinit ;
+
+error s1,s7,s9,s12,s15,s17,s20,s22; sinit->s0 {  } 
+ s0->s2 { i'=0 and havoc(i) } 
+ s2->s3 { havoc() } 
+ s3->s4 { havoc() } 
+ s4->s5 { havoc() } 
+ s5->s6 { havoc() } 
+ s6->s8 { tmp'=i and havoc(tmp) } 
+ s8->s10 { i'=i+1 and havoc(i) } 
+ s10->s11 { havoc() } 
+ s11->sinter0 { havoc() } 
+ sinter0->s13 { (validity__p_',offset__p_')=alloc(tmp,1) and havoc(validity__p_,offset__p_) } 
+ s13->s14 { havoc() } 
+ s14->s16 { tmp_0'=i and havoc(tmp_0) } 
+ s16->s18 { i'=i+1 and havoc(i) } 
+ s18->s19 { havoc() } 
+ s19->sinter1 { havoc() } 
+ sinter1->s21 { (validity__q_',offset__q_')=alloc(tmp_0,1) and havoc(validity__q_,offset__q_) } 
+ s21->sinter2 { havoc() } 
+ sinter2->s23 { dispose(offset__p_,0,offset__q_,0) and havoc() } 
+ s23->s4 { havoc() }
 }
-alloc {
-in (size : int)
+alloc{
+in size,validity__size_ : int;
 
-offset____retres_,offset__p_ : int
-initial s0;
-final s8,s9;
-error: s1
- 
- s0 -> s1 { not (size = 1 and true) } 
- 
- s0 -> s2 { (size = 1 and true) and size+4 <=  0 } 
- 
- s0 -> s3 { validity__p_'=1 and offset__p_'=0 and (size = 1 and true) and size+4 > 0 and mid_1_size'=size+4 and mid_1_base'=1 } 
- 
- s2 -> s4 {  } 
- 
- s3 -> s5 {  } 
- 
- s4 -> s6 { offset____retres_'=offset__p_+1*sizeof_char } 
- 
- s5 -> s7 { offset____retres_'=offset__p_+1*sizeof_char } 
- 
- s6 -> s8 { ret_val_'=offset____retres_ } 
- 
- s7 -> s9 { ret_val_'=offset____retres_ } 
+mid_1_base,mid_1_size,__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retres_,validity__p_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_1,_ndet_arg_0,offset____retres_,offset__p_ : int ;
 
+ out offset__ret_val__, validity__ret_val__ : int;
+initial sinit ;
+final s9,s10;
+error s1,s4; sinit->s0 {  } 
+ s0->s1 { validity__size_ != 1 and validity__p_'=0 and havoc(validity__p_) } 
+ s0->s2 { validity__size_ = 1 and size+4 <=  0 and validity__p_'=0 and havoc(validity__p_) } 
+ s0->s3 { mid_1_base'=1 and mid_1_size'=size+4 and validity__size_ = 1 and size+4 > 0 and offset__p_'=0 and validity__p_'=1 and havoc(validity__p_,offset__p_,mid_1_size,mid_1_base) } 
+ s3->s6 { (offset__p_ < mid_1_size and offset__p_ >= 0) and offset__p_%4 = 0 and havoc() } 
+ s5->s7 { offset____retres_'=offset__p_+1*1 and validity____retres_'=validity__p_ and havoc(validity____retres_,offset____retres_) } 
+ s6->s8 { offset____retres_'=offset__p_+1*1 and validity____retres_'=validity__p_ and havoc(validity____retres_,offset____retres_) } 
+ s7->s9 { offset__ret_val__'=offset____retres_ and validity__ret_val__'=0 and havoc(validity__ret_val__,offset__ret_val__) } 
+ s8->s10 { offset__ret_val__'=offset____retres_ and validity__ret_val__'=0 and havoc(validity__ret_val__,offset__ret_val__) }
 }
-dispose {
-in (offset__y_,offset__x_ : int)
-initial s0;
-final ;
-error: s2,s3
- 
- s0 -> s1 {  } 
- 
- s1 -> s2 { offset__x_ = offset__y_ } 
- 
- s1 -> s3 { offset__x_ != offset__y_ } 
+dispose{
+in offset__y_,validity__y_,offset__x_,validity__x_ : int;
 
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,__ndet_cond__,__if_ndet_cond__,_ndet_arg_1,_ndet_arg_0 : int ;
+initial sinit ;
+
+error s2,s3; sinit->s0 {  } 
+ s0->s1 { havoc() } 
+ s1->s2 { offset__x_ = offset__y_ and havoc() } 
+ s1->s3 { offset__x_ != offset__y_ and havoc() }
 }

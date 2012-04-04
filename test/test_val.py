@@ -21,7 +21,7 @@ import re, sys, subprocess, os, perso_utils
 def individual_test(dir_name,root_filename):
     failure_collection = []
     ca_ref_file=dir_name+root_filename+".ca_ref"
-    ca_gen_file=dir_name+root_filename+".ca"
+    ca_gen_file=dir_name+root_filename+".c.nts"
     c_test_file=dir_name+root_filename+".c"
     try:
         print 'calling frama-c -flatac on file {0}{1}.c\n'.format(dir_name,root_filename) 
@@ -45,11 +45,11 @@ def individual_test(dir_name,root_filename):
 
 def build_individual_reference(dir_name,root_filename):
     c_test_file=dir_name+root_filename+".c"
-    ca_gen_file=dir_name+root_filename+".ca"
-    ca_test_file_reference=dir_name+root_filename+"ca_ref"
+    ca_gen_file=dir_name+root_filename+".c.nts"
+    ca_gen_file_reference=dir_name+root_filename+".ca_ref"
     failure_collection = []
     try:
-        print 'Building the reference file from file {0} \n'.format(c_test_filename)
+        print 'Building the reference file from file {0} \n'.format(c_test_file)
         subprocess.check_call(['frama-c','-flatac',c_test_file])
 
     except subprocess.CalledProcessError as errcode:    
@@ -58,7 +58,7 @@ def build_individual_reference(dir_name,root_filename):
         return failure_collection 
 
     try:
-        subprocess.check_call(['mv',c_test_file,ca_test_file_reference])
+        subprocess.check_call(['cp',ca_gen_file,ca_gen_file_reference])
         print "[Reference output sucessfully generated] : {0} \n".format(c_test_file)
         return []
     
@@ -92,10 +92,10 @@ def check_each_dir(dir_list):
 
 
 
-def build_test_suite(test_dirs):
+def build_test_suite(dir_list):
     failed_builds=[]
-    file_obj = open(test_dirs,'r')
-    dir_list = file_obj.readlines()
+    #file_obj = open(test_dirs,'r')
+    #dir_list = file_obj.readlines()
     for dir_entry in dir_list: 
         dir_name_groups=re.search('.*(?=\n)',dir_entry)
         if dir_name_groups != None:
@@ -129,7 +129,7 @@ def runtests(test_dirs):
             print 'Building test reference base \n'
             failed_test=build_test_suite(dir_list)
                 
-            if list.len(failed_test)==0:
+            if len(failed_test) ==0:
                 print 'Test build has been completed successfuly \n'
             else:
                 print 'The following test were not successfuly genretated \n'
