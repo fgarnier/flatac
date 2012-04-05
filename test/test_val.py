@@ -132,11 +132,11 @@ def runtests(test_dirs):
             if len(failed_test) ==0:
                 print 'Test build has been completed successfuly \n'
             else:
-                print 'The following test were not successfuly genretated \n'
+                print 'The following test were not successfuly generated \n'
                 for test in failed_test :
                     print '[Failed to build] {0} \n'.format(test)
         else:
-            print 'Unknown option {0}\n'.format(sys.argv[1])
+            print 'Unknown option {0}\n The only valid option is --build_test \n Test dirs are listed inside the file test_dirs \n'.format(sys.argv[1])
 
     #The numbre of option is not equals to one    
     else:
