@@ -175,6 +175,24 @@ being error states.*)
   method make_absdom_errorval (sslv : ssl_validity_absdom) =
     Ssl.set_heap_to_top sslv.ssl_part
 
+
+  method next_on_switch_statement (sslv : ssl_validity_absdom )
+    ( switch_stmt : Cil_types.stmt ) =
+    match switch_stmt.skind with
+	Switch(expr_test, block_sw , stmt_succs, _) ->
+	  begin
+	    let broken_mem_abs = 
+	      front_end#copy_absdom_label current_node.abstract_val in
+	    font_end#make_absdom_errorval broken_mem_abs;
+	    let mem_access_cnd = Guard_of_mem_acces.cnt_guard_of_mem_access 
+	      sslv expr_test in
+	    let bad_mem_access_cnd = Nts.negate_cntbool_shallow 
+	      mem_access_cnd in
+	    let broken_mem_test = 
+	      
+	  end
+
+
   method next_on_if_statement (sslv : ssl_validity_absdom ) 
     (cdition : Cil_types.exp) =
     begin

@@ -40,6 +40,7 @@ exception No_outgoing_edges_from_state of ecfg_id
 exception No_such_state_id
 exception Building_an_edge_between_inexisting_node_ids of ecfg_id
 exception Label_already_registered_for_this_edge
+exception Not_a_switch_stmt
 
 exception Debug_exception of string
 
@@ -521,6 +522,25 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	      end
 	  end
 	    
+
+    method private register_swich_statement_successors
+      current_node ( switch_stmt : Cil_types.stmt) =
+      match swith_stmt.skind with
+	  Switch(exp_test, block_sw , stmt_succs, _) ->
+	    begin
+	      let broken_mem_abs = 
+		front_end#copy_absdom_label current_node.abstract_val in
+	      font_end#make_absdom_errorval broken_mem_abs;
+	      
+	      
+	      let broken_mem_test = 
+	      
+	    end
+	  
+	| _ -> 
+	  raise Not_a_switch_stmt
+
+	  
 
 	    (*  Create ecfg nodes for If stmt successors if necessary
 	    and then adds the labelled edges between the current state

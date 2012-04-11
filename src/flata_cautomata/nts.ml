@@ -868,6 +868,8 @@ types. *********)
       | (CntNdet,CntNdet) -> true
       | (CntSymCst(sg),CntSymCst(sd)) -> (String.compare sg sd)=0
       | (CntVar(vg),CntVar(vd)) -> compare_nts_var vg vd
+      | (CntNdetVar(sg),CntNdetVar(sd))-> (String.compare sg sd)=0
+
       | (CntMinus(egfg,egfd),CntMinus(edfg,edfd)) -> 
 	(compare_cnt_arithm_exp egfg edfg)&&(compare_cnt_arithm_exp egfd edfd )
       | (CntSum(egfg,egfd),CntSum(edfg,edfd)) ->
