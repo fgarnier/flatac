@@ -524,7 +524,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	    
 
     method private register_swich_statement_successors
-      current_node ( switch_stmt : Cil_types.stmt) =
+      current_node swith_stmt_succs_list =
       match swith_stmt.skind with
 	  Switch(exp_test, block_sw , stmt_succs, _) ->
 	    begin
@@ -798,6 +798,15 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 		end
 	   
 	(* Gotos ought be dealt with here, if necessary.*)
+	  
+
+	  (*Switch statments also need to be dealt with at this
+	  level.*)
+
+	  | Switch(_,_,_,_) ->
+	    let stmt_times_succs = 
+	      self#next_on_switch_statement sslv current_node.statement in
+	    self#register_switch_stmt_succs stmt_times_succs
 	     
 	  | _ ->
 	      let abs_succ_list =     

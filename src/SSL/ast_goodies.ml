@@ -501,4 +501,31 @@ let max_args_numbers_of_callees (stmtkl : Cil_types.stmt list) =
   in
   List.fold_left folder 0 stmtkl
 
-    
+
+
+(* Does a stmt has a Default constructors inside its list of
+associated labels ? *)
+
+ let stmt_has_default_label ( s : Cil_types.stmt ) =
+   let is_default_label ( l : Cil_types.label ) =
+     match l with
+	 Default(_) -> true
+       | _ -> false
+   in
+   List.exists is_default_label s.labels 
+
+(* This function returns true iff one statment
+of the list contains a Default type label.
+
+*)  
+
+
+
+let has_default_label (stmt_succs : Cil_types.stmt list ) =
+ 
+  let stmt_has_default_label ( s : Cil_types.stmt ) =
+    List.exists is_default_label s.labels
+  in
+  List.exists stmt_has_default_label stmt_succs
+  
+
