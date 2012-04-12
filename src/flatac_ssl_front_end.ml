@@ -176,11 +176,30 @@ being error states.*)
     Ssl.set_heap_to_top sslv.ssl_part
 
 
+ (* This method returns a value which type is :
+ ( Cil_types.stmt, (ssl_validity_absdomain, cnt_trans_label_list )) list.
+ This value encodes the transition relation form the switch statement.
+ 
+ Invalid memory access are checked once to deal with the expt_test field
+ of the Switch term, i.e. one transition to bot is generated and guarded
+ thanks to the bad_mem_access_test Nts guard.
+
+ Labels used in the case constructors are constant integers or 
+ constant char, according to the ANSI-C specification, hence
+ no guarded transition to an error state is generated for the
+ "Case(expr)."
+
+ The default "case" is guarded by the conjuction of the
+ negation of all other cases guards -- Because there is no way
+ to express execution order in the NTL.
+ *)
+
   method next_on_switch_statement (sslv : ssl_validity_absdom )
     ( switch_stmt : Cil_types.stmt ) =
     match switch_stmt.skind with
 	Switch(expr_test, block_sw , stmt_succs, _) ->
 	  begin
+	    let first_statement_succs = List.hd switch_stmt.skind.succs in
 	    let broken_mem_abs = 
 	      front_end#copy_absdom_label current_node.abstract_val in
 	    font_end#make_absdom_errorval broken_mem_abs;
