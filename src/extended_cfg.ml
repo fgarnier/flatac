@@ -523,23 +523,32 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	  end
 	    
 
-    method private register_swich_statement_successors
-      current_node swith_stmt_succs_list =
-      match swith_stmt.skind with
+    method private register_switch_statement_successors
+      current_node switch_stmt_succs_list =
+      (*Iterator on the argument list. 
+	Argument list has type (stmt, ('a,'b) list)) list
+      *)
+      let stmt_abs_next_list_iterator (next_stmt, transition) =
+	List.iter (self#add_to_not_visited_iterator current_node next_stmt)
+	  transition
+      in
+      List.iter stmt_abs_next_list_iterator switch_stmt_succs_list
+
+    (*match swith_stmt.skind with
 	  Switch(exp_test, block_sw , stmt_succs, _) ->
 	    begin
-	      let broken_mem_abs = 
+	      (*let broken_mem_abs = 
 		front_end#copy_absdom_label current_node.abstract_val in
 	      font_end#make_absdom_errorval broken_mem_abs;
-	      
-	      
-	      let broken_mem_test = 
+	      let broken_mem_test = *)
+	      let next_stmt_abs_list = front_end#next_on_switch_statemebt
+		current_node. 
 	      
 	    end
 	  
 	| _ -> 
 	  raise Not_a_switch_stmt
-
+      *)
 	  
 
 	    (*  Create ecfg nodes for If stmt successors if necessary
@@ -804,9 +813,13 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	  level.*)
 
 	  | Switch(_,_,_,_) ->
+	    let sslv = front_end#copy_absdom_label 
+	      current_node.abstract_val in
 	    let stmt_times_succs = 
-	      self#next_on_switch_statement sslv current_node.statement in
-	    self#register_switch_stmt_succs stmt_times_succs
+	      front_end#next_on_switch_statement 
+		sslv current_node.statement in
+	    self#register_switch_statement_successors current_node 
+	      stmt_times_succs
 	     
 	  | _ ->
 	      let abs_succ_list =     

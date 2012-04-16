@@ -7,6 +7,7 @@ of the SSL logic.
 
 exception IndexOfCompositeTypesNotSet
 exception Not_a_mem_violation_guard
+exception Not_a_switch_construct
 
 open Cil_types
 open Sem_and_logic_front_end 
@@ -35,8 +36,9 @@ open Cnt_interpret
 open Var_validity_types
 open Var_registration
 open Self
-
-
+open Ast_goodies
+open Compile_2_nts
+(*open Guard_of_mem_access*)
 
 (* This function is used to compute the guard of the default
 case of a switch-case-brake control flow construction.
@@ -45,6 +47,8 @@ Basically, if the default case is indeed present, then
 the guard corresponds to the negation of all the other
 cases guards.
 *)
+
+
 let compute_default_case_guard sslv
     (expr_switch_param : Cil_types.exp ) (stmt_succs : Cil_types.stmt list ) =
  
@@ -62,35 +66,36 @@ let compute_default_case_guard sslv
   *)
   
   (* On compiles the switch parameter expression once for all*)
-  let guard_lhs = compile_cil_exp_2_cnt sslv expr_switch_param in
-
-
+  let guard_lhs = compile_cil_exp_2_cnt sslv expr_switch_param 
+  in
   let rhs_case_condition_folder (local_guard : cnt_bool ) 
       (rhs : Cil_types.label)
       =
     match rhs with 
-	Case(rhs_exp) ->
+	Case(rhs_exp,_) ->
 	  let rhs_compiled = 
-	    Compile_cil_exp_2_cnt sslv rhs_exp
+	    compile_cil_exp_2_cnt sslv rhs_exp
 	  in
 	  let local_guard = 
-	    CntBAnd(local_guard,CntBool(CntNEq,guards_lhs,rhs_compiled))
+	    CntBAnd(local_guard,CntBool(CntNeq,guard_lhs,rhs_compiled))
 	  in local_guard
 	  
       | _ -> local_guard
   in
   let guard_folder ( guard : cnt_bool) (stmt : Cil_types.stmt) =
-    if has_default_label stmt.labels 
+    if (stmt_has_default_label stmt) 
     then
-      guard (* Don't change the guard if the label is default*)
+      begin
+	guard (* Don't change the guard if the label is default*)
+      end
     else
       begin
 	  (*The local guards do corresponds to conjonction
 	  of the rhs != lhs, for all lhs that appear as a 
-	  parametter of a case(lhs) :*)
+	    parametter of a case(lhs) :*)
 
 	let local_guard =
-	  List.fold_left rhs_case_condition_folder CntBTrue 
+	  List.fold_left rhs_case_condition_folder guard 
 	    stmt.labels
 	in
 	local_guard   
@@ -98,78 +103,31 @@ let compute_default_case_guard sslv
   in
   let default_case_guard = 
     List.fold_left guard_folder CntBTrue stmt_succs 
+  in 
+  default_case_guard (* This value should be the expression
+		     of the default guard.*)
       
-  
+    
 
 (* Returns  Some(stmt) that corresponds to the default case
 if any, otherwise None is returned *)
 let get_default_stmt (stmt_succs : Cil_types.stmt list ) =
   let get_folder ( def_statement : Cil_types.stmt option) 
       (curr_stmt : Cil_types.stmt ) =
-    match curr_stmt with
+    match def_statement with
 	None ->
 	  begin
-	    if has_default_label curr_stmt 
+	    if stmt_has_default_label curr_stmt 
 	    then Some(curr_stmt)
 	    else None
 	  end
       | Some(_) ->
-	curr_stmt
+	def_statement
   in
-  List.fold_left None stmt_succs
+  List.fold_left get_folder None stmt_succs
 
     
-(* Builds the (stmt * (`a,`b) list) for all non default cases *)
 
-let get_switch_case_succs sslv 
-    (expr_switch_param : Cil_types.exp ) (stmt_succs : Cil_types.stmt list ) 
-    =
-  let rhs_case_condition_folder (local_guard : cnt_bool ) 
-      (rhs : Cil_types.label)
-      =
-    match rhs with 
-	Case(rhs_exp) ->
-	  let rhs_compiled = 
-	    Compile_cil_exp_2_cnt sslv rhs_exp
-	  in
-	  let local_guard = 
-	    CntBOr(local_guard,CntBool(CntEq,guards_lhs,rhs_compiled))
-	  in local_guard
-	  
-      | _ -> local_guard
-  in
-  let guard_folder ( guard : cnt_bool) (stmt : Cil_types.stmt) =
-    if (has_default_label stmt.labels) 
-    then
-      guard (* Don't change the guard if the label is default*)
-    else
-      begin
-	  (*The local guards do corresponds to conjonction
-	  of the rhs != lhs, for all lhs that appear as a 
-	  parametter of a case(lhs) :*)
-
-	let local_guard =
-	  List.fold_left rhs_case_condition_folder CntBTrue 
-	    stmt.labels
-	in
-	local_guard   
-      end
-  in
-  let build_list_folder ret_list (case_stmt : Cil_types.stmt ) =
-    if not (stmt_has_default_label stmt_succs) then
-      begin
-	let local_guard = List.fold_left CntBTrue guard_folder in
-	let local_absmem = copy_validity_absdomain sslv in
-	(case_stmt , (local_absmem, local_guard))::ret_list
-      end
-    else
-      begin
-	let local_guard = compute_default_case_guard 
-	  sslv expr_switch_param stmt_succs in
-	let local_absmem = copy_validity_absdomain sslv in
-	(case_stmt , (local_absmem, local_guard))::ret_list
-      end
-  in List.fold_left build_list_folder [] stmt_succs
 	
 
 
@@ -330,29 +288,106 @@ being error states.*)
  to express execution order in the NTL.
  *)
 
+
+
+
+(* Builds the (stmt * (`a,`b)) for all  default and general cases *)
+
+  method private get_switch_case_succs sslv 
+    (expr_switch_param : Cil_types.exp ) (stmt_succs : Cil_types.stmt list ) 
+    =
+  let guard_lhs = compile_cil_exp_2_cnt sslv expr_switch_param 
+  in
+
+  let rhs_case_condition_folder (local_guard : cnt_bool ) 
+      (rhs : Cil_types.label)
+      =
+    match rhs with 
+	Case(rhs_exp,_) ->
+	  let rhs_compiled = 
+	    compile_cil_exp_2_cnt sslv rhs_exp
+	  in
+	  let local_guard = 
+	    CntBOr(local_guard,CntBool(CntEq,guard_lhs,rhs_compiled))
+	  in local_guard
+	  
+      | _ -> local_guard
+  in
+  let compute_guard  (stmt : Cil_types.stmt) =
+    if (stmt_has_default_label stmt) 
+    then
+    (* In this case one need to compute the guard for the
+    default case. This case is redundant with the else
+    case of the build_list_folder function defined below,
+    this branch should never be executed in this algorithm.
+       Raising an exception would be more suited b.t.w.
+    *)
+      compute_default_case_guard sslv expr_switch_param stmt_succs
+    
+    else
+      begin
+	  (*The local guards do corresponds to disjunction
+	  of the rhs = lhs, for all lhs that appear as a 
+	  parametter of a case(lhs) :*)
+
+	let local_guard =
+	  List.fold_left rhs_case_condition_folder CntBFalse 
+	    stmt.labels
+	in
+	local_guard   
+      end
+  in
+  let build_list_folder ret_list (case_stmt : Cil_types.stmt ) =
+    if not (has_default_label stmt_succs) then
+      begin
+	let local_guard_test =  compute_guard case_stmt in
+	let local_guard = CntGuard(local_guard_test)::[] in
+	let local_absmem = copy_validity_absdomain sslv in
+	let nexts_of_case = self#next local_absmem local_guard
+	  case_stmt.skind in
+	(case_stmt , nexts_of_case )::ret_list
+      end
+    else
+      begin
+	let local_guard_test = compute_default_case_guard 
+	  sslv expr_switch_param stmt_succs in
+	let local_guard = CntGuard(local_guard_test)::[] in
+	let local_absmem = copy_validity_absdomain sslv in
+	let nexts_of_default = self#next local_absmem local_guard
+	  case_stmt.skind in
+	(case_stmt , nexts_of_default )::ret_list
+      end
+  in List.fold_left build_list_folder [] stmt_succs
+
+
+
+
   method next_on_switch_statement (sslv : ssl_validity_absdom )
     ( switch_stmt : Cil_types.stmt ) =
     match switch_stmt.skind with
 	Switch(expr_test, block_sw , stmt_succs, _) ->
 	  begin
-	    let first_statement_succs = List.hd switch_stmt.skind.succs in
+	    let first_statement_succs = List.hd switch_stmt.succs in
 	    let broken_mem_abs = 
-	      front_end#copy_absdom_label current_node.abstract_val in
-	    font_end#make_absdom_errorval broken_mem_abs;
+	      self#copy_absdom_label sslv in
+	    self#make_absdom_errorval broken_mem_abs;
 	    let mem_access_cnd = Guard_of_mem_acces.cnt_guard_of_mem_access 
 	      sslv expr_test in
 	    let bad_mem_access_cnd = Nts.negate_cntbool_shallow 
 	      mem_access_cnd in
-	    let mem_violated_case = (first_statement_succs,(broken_mem_abs,bad_mem_access_cnd::[]))  in
+	    let bad_mem_access_guard = CntGuard( bad_mem_access_cnd )::[] in
+	    let mem_violated_case = (first_statement_succs,((broken_mem_abs,bad_mem_access_guard)::[]))  in
 	   
 	    (* Here we shall compute the transition for the general
 	    case
 	    *)
 	    let switch_succs_cases = 
-	      get_switch_case_succs sslv expr_test stmt_succs in
-	    mem_violated_case::switch_succs_cases
-	    
+	      self#get_switch_case_succs sslv expr_test stmt_succs in
+	    (mem_violated_case::switch_succs_cases)  
 	  end
+
+      | _-> raise  Not_a_switch_construct
+
 
 
   method next_on_if_statement (sslv : ssl_validity_absdom ) 

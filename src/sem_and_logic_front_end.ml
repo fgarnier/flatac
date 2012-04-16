@@ -51,13 +51,21 @@ object
   * statement kind. *)
   method virtual next : 'a -> 'b -> stmtkind -> ('a * 'b) list  
   method virtual next_on_if_statement : 'a ->  Cil_types.exp -> (('a * 'b) *('a * 'b) * ('a * 'b))
+
+  method virtual  get_switch_case_succs : 'a -> Cil_types.exp -> Cil_types.stmt list->  (Cil_types.stmt * (('a * 'b) list)  ) list
+
+  method virtual next_on_switch_statement : 'a -> Cil_types.stmt-> 
+    (Cil_types.stmt * (('a * 'b) list)  ) list
+
+  
+
   (** Abstraction pretty printer *)
   method virtual pretty : 'a -> string
 
   (** Label pretty printer *)
   method virtual pretty_label : 'b -> string
 
-  method virtual  get_initialize_label : unit -> 'b
+  method virtual get_initialize_label : unit -> 'b
 
   method virtual havocise_label : 'b -> 'b
 

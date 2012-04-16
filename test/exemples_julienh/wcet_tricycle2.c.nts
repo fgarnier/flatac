@@ -22,8 +22,6 @@ error s1,s3,s6,s20,s21,s22,s27,s28,s29,s31,s35,s40,s42,s44; sinit->s0 {  }
  s13->s15 { havoc() } 
  s14->s16 { havoc() } 
  s15->s17 { __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__) } 
- s15->s17 { __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__) } 
- s15->s18 { __if_ndet_cond__ != 0 and havoc(__if_ndet_cond__) } 
  s15->s18 { __if_ndet_cond__ != 0 and havoc(__if_ndet_cond__) } 
  s16->s19 { 0 <=  count and havoc() } 
  s16->sinter0 { 0 > count and havoc(_ndet_arg_1,_ndet_arg_2) } 
