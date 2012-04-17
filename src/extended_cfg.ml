@@ -681,13 +681,13 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	    Format.fprintf Ast_goodies.debug_out "[If test, successors (None,Some(false_stmt)) ]  \n %!";
 	      
 	    let succs_mem_valid_stmt = List.nth current_node.statement.succs
-	      1
+	      0
 	    in
 	    let succs_mem_valid_abs = 
 	      front_end#copy_absdom_label current_node.abstract_val
 	    in
 	    let succs_mem_invalid_stmt = List.nth 
-	      current_node.statement.succs 1
+	      current_node.statement.succs 0
 	    in
 	    let succs_mem_invalid_abs =  
 	      front_end#copy_absdom_label current_node.abstract_val in
