@@ -340,7 +340,7 @@ being error states.*)
       end
   in
   let build_list_folder ret_list (case_stmt : Cil_types.stmt ) =
-    if not (has_default_label stmt_succs) then
+    if not (has_default_label case_stmt.succs) then
       begin
 	let local_guard_test =  compute_guard case_stmt in
 	let local_guard = CntGuard(local_guard_test)::[] in
@@ -390,7 +390,8 @@ being error states.*)
 	    *)
 	    let switch_succs_cases = 
 	      self#get_switch_case_succs sslv expr_test stmt_succs in
-	    (mem_violated_case::switch_succs_cases)  
+	 (*   (mem_violated_case::switch_succs_cases)*)
+	    switch_succs_cases
 	  end
 
       | _-> raise  Not_a_switch_construct

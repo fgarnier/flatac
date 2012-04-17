@@ -14,6 +14,7 @@ int times(int a, int b){
 int main(int argc, char** argv){
  
  int op_res = 0;
+ int argc = 5;
 
  switch ( argc%2 ){
 
