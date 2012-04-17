@@ -390,8 +390,8 @@ being error states.*)
 	    *)
 	    let switch_succs_cases = 
 	      self#get_switch_case_succs sslv expr_test stmt_succs in
-	 (*   (mem_violated_case::switch_succs_cases)*)
-	    switch_succs_cases
+	    (mem_violated_case::switch_succs_cases)
+	    (*switch_succs_cases*)
 	  end
 
       | _-> raise  Not_a_switch_construct
