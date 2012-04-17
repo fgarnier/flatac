@@ -529,8 +529,18 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	Argument list has type (stmt, ('a,'b) list)) list
       *)
       let stmt_abs_next_list_iterator (next_stmt, transition) =
-	List.iter (self#add_to_not_visited_iterator current_node next_stmt)
+	List.iter (
+	(*  begin
+	    match transition with
+		(_ , labelt) -> 
+		  begin
+		    Format.fprintf Ast_goodies.debug_out "[In register switch statement ]: Transition label is %s \n " (front_end#pretty_label labelt)
+		  end
+	  end;*)
+	  self#add_to_not_visited_iterator current_node next_stmt
+	)
 	  transition
+   
       in
       List.iter stmt_abs_next_list_iterator switch_stmt_succs_list
 
@@ -785,7 +795,25 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       let succs_fc_sid_iterator (current_node : ecfg_vertex) 
 	  (succ_sid : Cil_types.stmt ) =
 	match current_node.statement.skind with
-	   If(cdition,byes,bno,_) ->
+
+	     (*Switch statments  need to be dealt with at this
+	  level.*)
+
+	  | Switch(_,_,_,_) ->
+	    begin
+	      Format.fprintf Ast_goodies.debug_out "[ECFG ]I have a switch construct \n";
+	      let sslv = front_end#copy_absdom_label 
+	      current_node.abstract_val in
+	      let stmt_times_succs = 
+		front_end#next_on_switch_statement 
+		  sslv current_node.statement in
+	      self#register_switch_statement_successors current_node 
+		stmt_times_succs
+	    end
+
+
+
+	  | If(cdition,byes,bno,_) ->
 
 	     Format.fprintf Ast_goodies.debug_out 
 	       "[ECFG : In if/then/else ] Number of successor is :%d \n" (List.length current_node.statement.succs);
@@ -809,18 +837,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	(* Gotos ought be dealt with here, if necessary.*)
 	  
 
-	  (*Switch statments also need to be dealt with at this
-	  level.*)
-
-	  | Switch(_,_,_,_) ->
-	    let sslv = front_end#copy_absdom_label 
-	      current_node.abstract_val in
-	    let stmt_times_succs = 
-	      front_end#next_on_switch_statement 
-		sslv current_node.statement in
-	    self#register_switch_statement_successors current_node 
-	      stmt_times_succs
-	     
+	 
 	  | _ ->
 	      let abs_succ_list =     
 		self#get_abstract_succs_of_ecfg_node current_node  succ_sid

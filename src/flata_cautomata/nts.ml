@@ -409,7 +409,10 @@ be equal CntBFalse.
       if unsat_previous then true
       else
 	match current_label with 
-	    CntGuard(cond) -> (static_check_if_false cond)
+	    CntGuard(cond) 
+	  | CntGuardIf(cond)
+	  | CntGuardElse(cond) ->
+	    (static_check_if_false cond)
 	  | _ -> false
     in
     List.fold_left decide_folder false l 
@@ -480,8 +483,8 @@ be equal CntBFalse.
 
 	    
   let cnt_simplify_and_pprint_boolexp ( bexp : cnt_bool) =
-    let bsimple = simplify_cnt_boolexp bexp in
-    cnt_pprint_boolexp bsimple
+    let bexp = simplify_cnt_boolexp bexp in
+    cnt_pprint_boolexp bexp
 
 
 

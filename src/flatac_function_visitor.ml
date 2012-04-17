@@ -99,8 +99,11 @@ class flatac_visitor (prj : Project.t )  = object (self)
       index:=!index+1
     done 
 
+   (* It is required that Cfg.computeFileCFG has been called upon the
+   Ast file before calling this method.*)
   method private register_ecfg_of_gfun ( funinfos : Cil_types.fundec ) =
-    Cfg.prepareCFG funinfos; Cfg.computeCFGInfo funinfos true;
+    (*Cfg.prepareCFG funinfos; Cfg.computeCFGInfo funinfos true;*)
+    (*Cfg.cfgfun funinfos;*)
     let gtype_info_visitor = new global_composite_types_visitor ( prj ) 
     in 
     Visitor.visitFramacFile ( gtype_info_visitor :> frama_c_copy) local_file_ast;

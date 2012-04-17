@@ -296,6 +296,7 @@ being error states.*)
   method private get_switch_case_succs sslv 
     (expr_switch_param : Cil_types.exp ) (stmt_succs : Cil_types.stmt list ) 
     =
+    Format.fprintf Ast_goodies.debug_out "[In get_swithc_case_succs \n] %!";
   let guard_lhs = compile_cil_exp_2_cnt sslv expr_switch_param 
   in
 
@@ -314,6 +315,7 @@ being error states.*)
       | _ -> local_guard
   in
   let compute_guard  (stmt : Cil_types.stmt) =
+    Format.fprintf Ast_goodies.debug_out " [Entering compute guard \n] %!";
     if (stmt_has_default_label stmt) 
     then
     (* In this case one need to compute the guard for the
@@ -342,6 +344,8 @@ being error states.*)
       begin
 	let local_guard_test =  compute_guard case_stmt in
 	let local_guard = CntGuard(local_guard_test)::[] in
+	(* Debug infos*)
+	Format.fprintf Ast_goodies.debug_out "[Swich Guard ]: Case guard  is %s \n " (self#pretty_label local_guard);
 	let local_absmem = copy_validity_absdomain sslv in
 	let nexts_of_case = self#next local_absmem local_guard
 	  case_stmt.skind in
@@ -352,6 +356,8 @@ being error states.*)
 	let local_guard_test = compute_default_case_guard 
 	  sslv expr_switch_param stmt_succs in
 	let local_guard = CntGuard(local_guard_test)::[] in
+	(* Debug infos*)
+	Format.fprintf Ast_goodies.debug_out "[Swich Guard ]: Default guard  is %s \n " (self#pretty_label local_guard);
 	let local_absmem = copy_validity_absdomain sslv in
 	let nexts_of_default = self#next local_absmem local_guard
 	  case_stmt.skind in
@@ -364,6 +370,7 @@ being error states.*)
 
   method next_on_switch_statement (sslv : ssl_validity_absdom )
     ( switch_stmt : Cil_types.stmt ) =
+    Format.printf  "I'm entering next_on_switch_statment \n";
     match switch_stmt.skind with
 	Switch(expr_test, block_sw , stmt_succs, _) ->
 	  begin
