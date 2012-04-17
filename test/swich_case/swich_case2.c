@@ -30,7 +30,7 @@ int main(int argc, char** argv){
 	op_res++;
  	break;
 
-	default: /* The default case is not reachable*/
+	default:
 	 assert(1==2);
 	
  }

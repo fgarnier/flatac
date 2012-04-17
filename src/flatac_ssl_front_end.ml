@@ -246,16 +246,15 @@ being error states.*)
 	begin
 	  let stmt = !stmt_ref in 
 	  begin
-	    match stmt.labels with
-		Label("Error",_,true)::_ ->
-		  true
-		    
-		    
-		    
-	      | _-> false
+	    let erroneous_label l =
+	      match l with
+		  Label("Error",_,true) ->
+		    true    
+		| _-> false
+	    in
+	    List.exists erroneous_label stmt.labels
 	  end
 	end
-
       | _ -> false
 
 
@@ -324,8 +323,10 @@ being error states.*)
     this branch should never be executed in this algorithm.
        Raising an exception would be more suited b.t.w.
     *)
-      compute_default_case_guard sslv expr_switch_param stmt_succs
-    
+      begin
+	Format.fprintf Ast_goodies.debug_out "[I am computing a default Guard] \n";
+	compute_default_case_guard sslv expr_switch_param stmt_succs
+      end
     else
       begin
 	  (*The local guards do corresponds to disjunction
