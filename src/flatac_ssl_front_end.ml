@@ -403,13 +403,11 @@ being error states.*)
     (cdition : Cil_types.exp) =
     begin
       let abs_mem_broken1 = 
-	Ssl_valid_abs_dom.copy_validity_absdomain sslv in
-	Ssl.set_heap_to_top abs_mem_broken1.ssl_part;
+	self#copy_absdom_label sslv in
+	self#make_absdom_errorval abs_mem_broken1;
       
-      let abs_val_true = Ssl_valid_abs_dom.copy_validity_absdomain 
-	sslv in
-      let abs_val_false = Ssl_valid_abs_dom.copy_validity_absdomain 
-	sslv in
+      let abs_val_true = self#copy_absdom_label sslv in
+      let abs_val_false = self#copy_absdom_label sslv in
       let cbool_cdition = cil_expr_2_bool cdition in
       (*let cbool_cdition = Nts.format_cntcond_for_cfg_condition cbool_cdition in
       let neg_cbool_cdition =  negate_bool_bot cbool_cdition in*)
@@ -421,19 +419,21 @@ being error states.*)
       let nts_cdition = c_bool_to_cnt_bool 
 	abs_val_true.ssl_part cbool_cdition 
       in
-      let nts_cdition = Nts.format_cntcond_for_cfg_condition 
+      (*let nts_cdition = Nts.format_cntcond_for_cfg_condition 
        nts_cdition 
-      in
+      in*)
+
       let neg_of_nts_cdition = Nts.negate_cntbool_shallow nts_cdition
       in
       let valid_mem_nts_no = CntBAnd(neg_of_nts_cdition,mem_access_cnd) in
       let valid_mem_nts_yes = CntBAnd(nts_cdition,mem_access_cnd) in
-      let nts_trans_yes = (abs_val_true ,(CntGuardIf(valid_mem_nts_yes))::[])
+      let nts_trans_yes = (abs_val_true ,(CntGuard(mem_access_cnd))::
+	(CntGuardIf(nts_cdition)::[]))
       in	
       let nts_trans_mem_broken = (abs_mem_broken1,(CntGuard(bad_mem_access_cnd))::[])
       in
       let nts_trans_no = 
-	(abs_val_false ,(CntGuardElse(valid_mem_nts_no))::[])
+	(abs_val_false ,(CntGuard(mem_access_cnd))::(CntGuardElse(neg_of_nts_cdition)::[]))
       in
       let ret_true_false = (nts_trans_yes,nts_trans_no,nts_trans_mem_broken) in
       ret_true_false
@@ -490,6 +490,18 @@ being error states.*)
 
 
      
+  method accepts_adder sslvg sslvd = 
+     let etp = {
+      left = Ssl.copy sslvd.ssl_part ;
+      right = Ssl.copy sslvg.ssl_part;
+    }
+    in
+    (*not (Ssl_entailement.does_entail etp )*)
+    Ssl_entailement.entails_abstraction_adder etp
+
+
+
+
   method accepts sslvg sslvd =
 
     (** One checks that the current abstraction entails the next state

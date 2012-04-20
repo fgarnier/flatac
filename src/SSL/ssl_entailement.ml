@@ -545,4 +545,73 @@ whilst Lhs don't, accepting it";
 whilst Lhs has, accepting it";
        false
 
+
+
+(* This function decides whether an abstract states needs to be added
+*)
+let entails_abstraction_adder (etp : entail_problem ) =
+  let etp_prime = { 
+    left = (Ssl.copy etp.left) ;
+    right = (Ssl.copy etp.right) ;
+  } 
+  in
+  Self.feedback ~level:0 "I reached does_entail \n";
+  Format.printf " \n [ accept_new_abstraction ] %s \n " (pprint_entailement_problem etp);  
+  begin
+(*    try *)
+      ssl_entailement etp_prime
+   (* with *
+	Top_heap_exception -> raise Top_heap_exception *)        
+	  (** We shall not deal with exception
+					at this point. This treatment is here
+					for testing purpose, until a proper
+					exception treatment is added in the
+					Ecfg computation function/method. *)
+	  
+  end;
+  match etp_prime.left.space , etp_prime.right.space with 
+      ( Space ( space_table_l) , Space(space_table_r)) ->
+	begin
+	  if ( Hashtbl.length space_table_l > 0 ) ||
+	    (Hashtbl.length space_table_r > 0 ) then
+	      begin
+		Printf.printf " \n [ entails_abstraction_ecfg ] False, heap of different size \n";
+		false
+	      end
+	  else
+		begin
+		  if (Hashtbl.length etp_prime.right.pure.affectations == 0 )
+		    && (Hashtbl.length etp_prime.right.pure.ptnil == 0)
+		  then
+		    begin
+		      Printf.printf " \n [entails_abstraction_ecfg ] True, rigth formula is entailed by a more precise one\n";
+		      true
+		    end
+		  else
+		    begin
+		      Printf.printf " \n [entails_abstraction_ecfg] False, non empty right formula, meaning it is not comparable with the left hand side \n";
+		      Format.printf " \n [ False : Post computations : ] %s \n " (pprint_entailement_problem etp_prime);
+		      
+		      
+		      false
+		    end
+		end
+	end
+    | (Top_heap,Top_heap) ->
+	Printf.printf " \n [ does_entail ] FALSE, False formula aren't
+added, as all are equivalent ";
+	true (** One of the heap is broken, shall raise an
+		 exception.*)
+    |(_,Top_heap)->
+       Printf.printf "\n  [ does_entail ] FALSE, Rhs has Top_heap
+whilst Lhs don't, accepting it";
+       false  (* One heap is broken whilst the other on isn't, hence
+		no entailement relation between those two incomparable
+		formulae.*)
+ 
+    |(Top_heap,_) ->
+       Printf.printf "\n  [ does_entail ] TRUE, Rhs has not Top_heap
+whilst Lhs has, accepting it";
+       false
+
     

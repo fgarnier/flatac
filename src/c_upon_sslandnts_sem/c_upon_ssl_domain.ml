@@ -91,7 +91,7 @@ let affect_int_val_upon_sslv ((lv , off) : Cil_types.lval) (expr : Cil_types.exp
 
 	let failure_absdom = create_validity_abstdomain () in
 	set_heap_to_top failure_absdom.ssl_part;
-	let failure_guard = CntGuard(CntNot(access_cond_of_expr)) in
+	let failure_guard = CntGuard(CntNot(global_succs_guard)) in
 	let fail_trans = (failure_absdom,failure_guard ::[] )  in
 	fail_trans::(success_transition::[])
 	  

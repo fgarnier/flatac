@@ -483,6 +483,7 @@ be equal CntBFalse.
 
 	    
   let cnt_simplify_and_pprint_boolexp ( bexp : cnt_bool) =
+    (* Uncomment this to simplify *) 
     let bexp = simplify_cnt_boolexp bexp in
     cnt_pprint_boolexp bexp
 
@@ -544,9 +545,10 @@ let arg_name_left_folder (str : string ) ( il_arg : il_fun_arguments) =
 let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
   match tlabel with
       CntGuardIf(cbool) |
-	 CntGuard ( cbool ) -> cnt_simplify_and_pprint_boolexp cbool
+	  CntGuard ( cbool )| CntGuardElse(cbool)
+	    -> cnt_simplify_and_pprint_boolexp cbool
 
-    | CntGuardElse(cbool) -> cnt_simplify_and_pprint_boolexp cbool
+   (* | CntGuardElse(cbool) -> cnt_simplify_and_pprint_boolexp cbool *)
       
 	
     | CntAffect( ntvar ,  expr ) ->
@@ -750,11 +752,12 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
     then condition
     else (*condition*)
       begin
-	match condition with
-	    CntNot(c) ->
-	      CntBool(CntEq,CntNdetVar("__ndet_cond__"),CntCst(My_bigint.zero))
-	  | _ ->
+	(*match condition with
+	    CntNot(c) |  ->*)
+	CntBool(CntEq,CntNdetVar("__ndet_cond__"),CntCst(My_bigint.zero))
+	 (* | _ ->
 	    CntBool(CntEq,CntNdetVar("__ndet_cond__"),CntCst(My_bigint.zero))
+	 *)
       end
      
 

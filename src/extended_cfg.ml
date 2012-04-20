@@ -376,7 +376,10 @@ struct
 	  | ( false , _ ) ->
 	    let brother_ecfg_node = Hashtbl.find vertices id_abs_brothers in
 	    let brother_abs = brother_ecfg_node.abstract_val in
-	    if ( front_end#entails  brother_abs absval) 
+	    (*accept adders checks wheter absval is entailed by brother_abs
+	    and if it's not the case whether absval need to be added as
+	    tha abstract state of a new node of the ecfg*)
+	    if ( front_end#accepts_adder  brother_abs absval) 
 	    then
 	      (true , id_abs_brothers)
 	    else 
@@ -568,6 +571,10 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
     method private register_if_statement_successors 
       current_node ((abs_true,trans_true),(abs_false,trans_false),(abs_mem_broken,trans_mem_broken)) 
       (true_stmt_opt,false_stmt_opt) =
+      
+    Format.fprintf Ast_goodies.debug_out "\n \n [Register if statement] abs_true %s \n transtrue : %s \n" (front_end#pretty abs_true) (front_end#pretty_label trans_true);
+    Format.fprintf Ast_goodies.debug_out "[Register if statement] abs_false %s \n transfalse : %s \n"  (front_end#pretty abs_false) (front_end#pretty_label trans_false) ; 
+    Format.fprintf Ast_goodies.debug_out "[Register if statement] abs_mem_broken %s \n trans_mem_broken %s \n \n"  (front_end#pretty abs_mem_broken) (front_end#pretty_label trans_mem_broken); 
 
       match true_stmt_opt,false_stmt_opt with
 	  (None,None) ->
@@ -680,29 +687,27 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	  begin
 	    Format.fprintf Ast_goodies.debug_out "[If test, successors (None,Some(false_stmt)) ]  \n %!";
 	      
+
 	    let succs_mem_valid_stmt = List.nth current_node.statement.succs
 	      0
 	    in
 	    let succs_mem_valid_abs = 
-	      front_end#copy_absdom_label current_node.abstract_val
+	      front_end#copy_absdom_label abs_true
 	    in
 	    let succs_mem_invalid_stmt = List.nth 
 	      current_node.statement.succs 0
 	    in
 	    let succs_mem_invalid_abs =  
-	      front_end#copy_absdom_label current_node.abstract_val in
-	    front_end#make_absdom_errorval succs_mem_invalid_abs;
+	      front_end#copy_absdom_label abs_mem_broken in
 	    let fail_mem_valid_stmt = false_stmt 
 	    in
 	    let fail_mem_valid_abs = 
 	      front_end#copy_absdom_label 
-		current_node.abstract_val
+		abs_false 
 	    in
 	    let fail_mem_invalid_stmt = false_stmt in
 	    let fail_mem_invalid_abs = 
-	      front_end#copy_absdom_label 
-		current_node.abstract_val
-	    in
+	      front_end#copy_absdom_label abs_mem_broken in
 
 	    let nexts_of_succs_mem_valid_stmt = 
 		front_end#next succs_mem_valid_abs trans_true 
@@ -722,6 +727,10 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 		fail_mem_invalid_stmt.skind
 	    in
 	  
+	    Format.fprintf Ast_goodies.debug_out "\n \n [Register if statement : In If(None, Some(elseblock))] abs_true %s \n transtrue : %s \n" (front_end#pretty abs_true) (front_end#pretty_label trans_true);
+	    Format.fprintf Ast_goodies.debug_out "[Register if statement : In If(None, Some(elseblock))] abs_false %s \n transfalse : %s \n"  (front_end#pretty abs_false) (front_end#pretty_label trans_false) ; 
+	    Format.fprintf Ast_goodies.debug_out "[Register if statement : In If(None, Some(elseblock))] fail_mem_abs_broken %s \n trans_mem_broken %s \n \n"  (front_end#pretty fail_mem_invalid_abs) (front_end#pretty_label trans_mem_broken); 
+
 	    List.iter (self#add_to_not_visited_iterator current_node 
 	      succs_mem_valid_stmt)  nexts_of_succs_mem_valid_stmt;
 	    List.iter (self#add_to_not_visited_iterator current_node

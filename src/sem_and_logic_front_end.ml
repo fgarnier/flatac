@@ -34,6 +34,8 @@ object
   (* Returns true if, knowing the first abstraction, the second one is
   * accepted *)
   method virtual accepts: 'a -> 'a -> bool
+  method virtual accepts_adder: 'a -> 'a -> bool
+
 
   method virtual entails: 'a -> 'a -> bool
 
