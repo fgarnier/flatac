@@ -354,10 +354,10 @@ let pprint_slocal_vars ( slocals :  Cil_types.varinfo list ) =
 let rec get_subfield_name (prefix : string ) (finfo : Cil_types.fieldinfo)
     (off : Cil_types.offset) =
   match off with
-      NoOffset -> prefix^(finfo.forig_name)
+      NoOffset -> prefix^"."^(finfo.forig_name)
     | Field (subfieldinfo , suboffset ) ->
 	begin
-	  let current_path_name = prefix^(finfo.forig_name) in
+	  let current_path_name = prefix^"."^(finfo.forig_name) in
 	    get_subfield_name current_path_name subfieldinfo suboffset
 	end
     
@@ -374,13 +374,18 @@ let rec get_pvar_from_exp_node (expn : Cil_types.exp_node ) =
 	  Format.fprintf  debug_out "get_pvar_from_exp_node : lval is a Var(p) \n";
 	  Cil.d_lval debug_out  ( Var(p), off);
 	  Format.fprintf  debug_out "\n";
-	  match p.vtype with 
+	  let type_of_lval = Cil.typeOfLval ( Var( p ) , off ) in
+	   Format.fprintf  debug_out "get_pvar_from_exp_node : lval has type : \n";
+	  Cil.d_type debug_out type_of_lval;
+	   
+	  match type_of_lval with 
 	      TPtr(_,_) -> 
 		begin
 		  match off with (* If lval is a subfield of a structure*)
 		      Field (finfo, suboffset) ->
 			let pvar_name = get_subfield_name 
 			  (p.vname) finfo suboffset in
+			
 			Format.printf "Pvar name is : %s \n" pvar_name;
 			  (PVar(pvar_name))
 
@@ -390,7 +395,8 @@ let rec get_pvar_from_exp_node (expn : Cil_types.exp_node ) =
 		    |  _ -> raise (Debug_info (" In get_pvar_from_exp : I don't know how to deal with array indexes \n"))
 		end
 		
-	    | _ -> raise Contains_no_pvar
+	    | _ -> 
+	      raise Contains_no_pvar
 	end
 
     | Lval(Mem(e), off ) ->

@@ -125,8 +125,10 @@ and cnt_guard_of_mem_access_enode sslv ( expr_node : Cil_types.exp_node ) =
 	     (* let compiled_array = Compile_2_nts.compile_cil_array_2_cnt sslv
 		v.vname v.vtype in
 	      let index_of_accessed_tab = *)  
-	      
-	      
+	    | Field( ffinfo, off) ->
+	      CntBTrue (* Access to a field of a structure, a new
+		       value address is copied, no memory access id
+		       performed, hence CntBTrue*)
 		  
  	end
 

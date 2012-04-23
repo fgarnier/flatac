@@ -40,6 +40,75 @@ exception Assert_fail_exception
 exception LvalureNotaVariable
 
 
+(* This function is called by decl_and_affect_cst_char_star *)
+let set_valid_of_lhs_for_cstcharaffect (lv,off) sslv =
+  match lv with
+      Var(v) ->
+	(Ssl_valid_abs_dom.set_var_validity_in_absdomain 
+	   sslv v (Some(off)) TruevarValid)
+	  
+    | _ -> raise (Debug_info("[In decl_and_affect_cst_char_star ] I expect a var of type char* as lhs"))
+      
+let rec is_expr_cst_char (cst_char_star : Cil_types.exp) =
+ (* Format.fprintf Ast_goodies.debug_out "[is_expr_cst_char :] ";
+  Cil.d_exp  Ast_goodies.debug_out cst_char_star;
+  let etype = Cil.typeOf cst_char_star in
+   Cil.d_type Ast_goodies.debug_out etype ;
+ *)
+  match cst_char_star.enode with 
+      Const(CStr(s)) -> true
+    | CastE(_,e) -> is_expr_cst_char e 
+    | _ -> false
+
+
+let rec get_cst_char_root_exp (cst_char_star : Cil_types.exp) =
+  match cst_char_star.enode with 
+      Const(CStr(s)) -> cst_char_star
+    |  CastE(_,e) -> get_cst_char_root_exp e
+    | _ -> raise (Debug_info("This term contains no leaf that has
+const char type."))
+    
+
+
+let decl_and_affect_cst_char_star 
+    ((lv, off ) : Cil_types.lval)
+    (cst_char_star : Cil_types.exp) 
+    (mid : global_mem_manager)
+    (sslv : ssl_validity_absdom) =
+  
+  (*If the const char has been caseted, we try to get the basic
+  definition of the constant char.*)
+  let cst_char_root = get_cst_char_root_exp cst_char_star in
+  match cst_char_root.enode with 
+      Const(CStr(s)) -> 
+	begin
+	  let sslv = copy_validity_absdomain sslv in
+	  let sizeof_string = String.length s in
+	  let sizeof_string = My_bigint.of_int sizeof_string in 
+	  let mem_size = 
+	    CntProd(CntCst(sizeof_string),CntCst(My_bigint.one)) in 
+	        (*unit_big_int ecodes one, i.e. the size of a char.*)
+	  let lvar = mid#lvar_from_constant_char (Some(mem_size)) in
+	  let pvar = Ast_goodies.get_pvar_from_exp_node  (Lval(lv,off)) in
+	  (* One set pvar to Valid in sslv*)
+	  let sslv = set_valid_of_lhs_for_cstcharaffect (lv,off) sslv in
+	  (* One adds the relation between pvar and lvar in sslv*)
+	  let affect = Pointsto(pvar,lvar) in
+	  Ssl.change_affect_var affect sslv.ssl_part;
+	  Ssl.add_alloc_cell lvar sslv.ssl_part;
+	  (*Ssl_valid_abs_dom.add_atomic_affect_to_validity_abstdomain affect
+	    sslv;*)
+	  let update_var_list = Guard_of_mem_acces.make_size_locvar lvar
+	    mid  mem_size in
+	  ((sslv,update_var_list)::[])
+	 
+	end
+    | _ -> raise (Debug_info("In decl_and_affect_cst_char_star, the expression has not a const char type "))
+  
+  
+
+
+
 
 
 
@@ -107,29 +176,40 @@ pecuiliar to the C-language.
 else raise an exception
 *)
 
+
+(*  This function is deprecated and must be removed. f.g. Apr 23rd 2012*)
 let get_pvarinfo_of_left_value lv =
   match lv with
       Var(v) -> 
 	begin
 	  match v.vtype with
 	      TPtr(_,_) -> v
-	    | _ -> raise (Debug_info("I have a variable, but it's not a pointer var, as I expected \n"))
+	    (*| CString(s)->
+	      raise (Debug_info ("[get_pvarinfo_of_left_value ] I have a constant string : "^s))*)
+	    | _ ->
+	      begin
+		Format.fprintf Ast_goodies.debug_out "[get_pvarinfo_of_left_value ] Type of v.vtype is :";
+		Cil.d_type Ast_goodies.debug_out v.vtype;
+		Format.fprintf Ast_goodies.debug_out "[get_pvarinfo_of_left_value ] Warning, the called parameter is a subfield of the current term !!! \n";
+		v
+		(*raise (Debug_info("I have a variable, but it's not a pointer var, as I expected \n"))*)
+	      end
 	end
     | _ -> raise (Debug_info ("This left value is not a variable \n"))
 
-(* If the left value lv is a Ptr variable, then return its name*)
+(* Deprecated, need to get it out of that code !*)
 let get_pvarname_of_left_value lv =
   match lv with
       Var(v) -> 
 	begin
 	  match v.vtype with
 	      TPtr(_,_) -> v.vname
-	    | _ -> raise (Debug_info("I have a variable, but it's not a pointer var, as I expected \n"))
+	    | _ -> Format.fprintf Ast_goodies.debug_out "[get_pvarname_of_left_value (Deprecated) ] I have a variable, but it's not a pointer var, as I expected \n"; v.vname
 	end
     | _ -> raise (Debug_info ("This left value is not a variable \n"))
 
 
-let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) (sslv : ssl_validity_absdom ) =
+let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) mid (sslv : ssl_validity_absdom ) =
   Self.debug ~level:0 "Im am in affect_ptr_upon_sslv \n";
   let sslv =  copy_validity_absdomain sslv in
   let v = get_pvarinfo_of_left_value lv in
@@ -138,18 +218,25 @@ let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) (s
   try
     
     Format.printf "[affect_ptr_upon_sslv: expression : %s=%s \n]" varname (pprint_cil_exp expr);
-    let pvar_left = Ast_goodies.get_pvar_from_exp_node  (Lval(lv,off)) in
-    let pvar_right = get_pvar_from_exp expr in
-    Format.printf "I have a pvar \n %!";
-    let sslv = copy_validity_absdomain sslv in
-    let lvar_right = get_ptr_affectation sslv.ssl_part pvar_right 
-    in
-    begin
-      match lvar_right with
-	  LVar("") ->  Ssl.and_atomic_ptnil (Pointsnil(pvar_right)) sslv.ssl_part
-	| LVar(_) -> Ssl.change_affect_var (Pointsto(pvar_left,lvar_right)) sslv.ssl_part
-    end;
-    Format.printf "On the way to compute cil_expre_2_per of expr %s \n %!" (pprint_cil_exp expr);
+    if (is_expr_cst_char expr ) 
+    then
+      (* In the case if expr is a cst char, one need to represent the
+      string in the memory model, and we branch here*)
+       decl_and_affect_cst_char_star (lv,off) expr mid sslv
+    else
+      (*Here is the general case*)
+      let pvar_left = Ast_goodies.get_pvar_from_exp_node  (Lval(lv,off)) in
+      let pvar_right = get_pvar_from_exp expr in
+      Format.printf "I have a pvar \n %!";
+      let sslv = copy_validity_absdomain sslv in
+      let lvar_right = get_ptr_affectation sslv.ssl_part pvar_right 
+      in
+      begin
+	match lvar_right with
+	    LVar("") ->  Ssl.and_atomic_ptnil (Pointsnil(pvar_right)) sslv.ssl_part
+	  | LVar(_) -> Ssl.change_affect_var (Pointsto(pvar_left,lvar_right)) sslv.ssl_part
+      end;
+      Format.printf "On the way to compute cil_expre_2_per of expr %s \n %!" (pprint_cil_exp expr);
       let param_cscal = Intermediate_language.cil_expr_2_ptr expr in
       Format.printf "Operation done \n about to compute interpret_c_ptr_exp_to_cnt \n %!";
       let offset_of_pexpr = interpret_c_ptrexp_to_cnt sslv.ssl_part param_cscal in
@@ -157,11 +244,11 @@ let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) (s
       let affect_off = CntAffect(offset_var_of_pvar,offset_of_pexpr) in
       let affect_validity_of_pvar = valid_sym_ptrexp sslv.validinfos sslv.ssl_part param_cscal in
 	
-     
+      
       let valid_rhs_var = make_validity_varpvar pvar_right in
       let valid_lhs_var =  make_validity_varpvar pvar_left in
       let copy_valaff_tolhs =  CntAffect( valid_lhs_var, CntVar(valid_rhs_var)) in
-	
+      
       let sslv_new = set_var_validity_in_absdomain 
 	sslv v (Some(off)) affect_validity_of_pvar 
       in
@@ -174,8 +261,8 @@ let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) (s
 	let new_sslv = set_var_validity_in_absdomain sslv v (Some(off)) FalsevarValid in
 	(new_sslv , [])::[]
       end
-    
-    (*| Contains_no_pvar ->
+	
+(*| Contains_no_pvar ->
       let exprpvarless = pprint_cil_exp expr in
       Format.printf "No pvar found in %s \n" exprpvarless;
       raise Contains_no_pvar
@@ -518,7 +605,7 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 		begin*)
 	    (*  (Self.debug ~level:0 "The left value is a variablex \n");
 		match v.vtype with *)
-	      TPtr(_,_) -> affect_ptr_upon_sslv (lv , off) expr sslv 
+	      TPtr(_,_) -> affect_ptr_upon_sslv (lv , off) expr mid sslv 
 		    (* affect_int_val_upon_sslv set the valitidity of
 		    v to the validity of expr*)
 	    | TInt(_,_) -> affect_int_val_upon_sslv (lv , off) expr sslv
@@ -717,23 +804,14 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 			end
 		    | "malloc" | "calloc" -> (malloc_ssl_nts_transition  None sslv lparam mid)
 		    
-		    (*| "__assert_fail" ->
-			raise Assert_fail_exception*) (* Used to notify that
-						    the current control state
-						    do correspond to an 
-						    assertion failure. Heap
-						    and stack aren't 
-						       necessarily flawed.*)
+		   
 		    | _ -> 
 		      let funname = f.vname in
 		      
 		      let arg_nts_list =
 			compile_param_list_2_cnt_list sslv lparam in
-				   (* List.map ( fun s-> interpret_c_scal_to_cnt sslv.ssl_part s ) *)
+				  
 		      
-		      
-		      
-
 
 		      (********************* Code à factoriser proprement ! *************************)
 		      let ret_nts_var_opt =

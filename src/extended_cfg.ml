@@ -205,8 +205,6 @@ struct
       in 
       nts_sformal <- (List.fold_left in_out_map_folder [] funinfo.sformals  )
       
-
-
 	
     method register_local_vars () =
       let in_out_map_folder (nts_var_list) (v : Cil_types.varinfo ) =
@@ -533,13 +531,6 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       *)
       let stmt_abs_next_list_iterator (next_stmt, transition) =
 	List.iter (
-	(*  begin
-	    match transition with
-		(_ , labelt) -> 
-		  begin
-		    Format.fprintf Ast_goodies.debug_out "[In register switch statement ]: Transition label is %s \n " (front_end#pretty_label labelt)
-		  end
-	  end;*)
 	  self#add_to_not_visited_iterator current_node next_stmt
 	)
 	  transition
@@ -547,22 +538,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       in
       List.iter stmt_abs_next_list_iterator switch_stmt_succs_list
 
-    (*match swith_stmt.skind with
-	  Switch(exp_test, block_sw , stmt_succs, _) ->
-	    begin
-	      (*let broken_mem_abs = 
-		front_end#copy_absdom_label current_node.abstract_val in
-	      font_end#make_absdom_errorval broken_mem_abs;
-	      let broken_mem_test = *)
-	      let next_stmt_abs_list = front_end#next_on_switch_statemebt
-		current_node. 
-	      
-	    end
-	  
-	| _ -> 
-	  raise Not_a_switch_stmt
-      *)
-	  
+   
 
 	    (*  Create ecfg nodes for If stmt successors if necessary
 	    and then adds the labelled edges between the current state
