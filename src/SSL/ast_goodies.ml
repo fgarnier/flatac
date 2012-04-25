@@ -371,11 +371,16 @@ let pprint_slocal_vars ( slocals :  Cil_types.varinfo list ) =
 
 let rec get_subfield_name (prefix : string ) (finfo : Cil_types.fieldinfo)
     (off : Cil_types.offset) =
+  let prefix =
+    match prefix with
+	"" -> ""
+      | _ -> prefix^"."
+  in
   match off with
-      NoOffset -> prefix^"."^(finfo.forig_name)
+      NoOffset -> prefix^(finfo.forig_name)
     | Field (subfieldinfo , suboffset ) ->
 	begin
-	  let current_path_name = prefix^"."^(finfo.forig_name) in
+	  let current_path_name = prefix^(finfo.forig_name) in
 	    get_subfield_name current_path_name subfieldinfo suboffset
 	end
     
@@ -404,7 +409,7 @@ let rec get_pvar_from_exp_node (expn : Cil_types.exp_node ) =
 			let pvar_name = get_subfield_name 
 			  (p.vname) finfo suboffset in
 			
-			Format.printf "Pvar name is : %s \n" pvar_name;
+			Format.printf "[get_pvar_from_exp_node]Pvar name is : %s \n" pvar_name;
 			  (PVar(pvar_name))
 
 		    | NoOffset -> 
@@ -426,8 +431,10 @@ let rec get_pvar_from_exp_node (expn : Cil_types.exp_node ) =
 	      PVar(v'.vname)
 
 	  | (Lval(Var(v'),_), Field(finfo,offs)) -> 
-	    let pointer_name = Format.sprintf "%s->" v'.vname in
-	    let pointer_name = get_subfield_name pointer_name finfo offs in
+	    
+	    let pointer_name = get_subfield_name "" finfo offs in
+	    let pointer_name = Format.sprintf "%s->%s" v'.vname pointer_name
+	    in
 	    Format.printf "%s \n" pointer_name;
 	    PVar(pointer_name)
 	    
