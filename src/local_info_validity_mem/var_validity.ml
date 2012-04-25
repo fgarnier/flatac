@@ -14,6 +14,20 @@ exception Unregistered_var of string
 exception Relation_between_vars_out_of_ssl_context
 
 
+(* Returns the infos from the top most variable descriptor
+of a lvalue, concerning its locality information, 
+if any, raise an exception in all
+other cases *)
+
+let loc_info_of_lval (lv,off) =
+  match lv with
+      Var(v) -> 
+	begin
+	  if v.vglob then GlobalVar
+	  else if v.vformal then ParameterVar
+	  else LocalVar
+	end
+
 
 let pprint_var_cath ( v : var_cathegory) =
     match v with

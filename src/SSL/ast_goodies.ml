@@ -35,6 +35,24 @@ exception Bothparameter_are_None_option
 
 
 
+
+
+
+
+(*Does the lvalue given as paramater points to the value of
+a structure field or a structure given at some address ? *)
+
+let is_lval_of_mem_access ((lv,off) : Cil_types.lval) =
+  match (lv,off) with
+      (Mem(e),_) ->
+	true
+    | _ -> false
+
+(*Returns the name of a SSL pointer variable*)
+let string_of_ptvar (pvar : ptvar) =
+  match pvar with
+      PVar(vname) -> vname
+
 let name_of_non_assigned_ret_val () =
   "__nts__naffected_ret_val_"
 

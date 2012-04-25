@@ -376,7 +376,7 @@ struct
 	    let brother_abs = brother_ecfg_node.abstract_val in
 	    (*accept adders checks wheter absval is entailed by brother_abs
 	    and if it's not the case whether absval need to be added as
-	    tha abstract state of a new node of the ecfg*)
+	    that abstract state of a new node of the ecfg*)
 	    if ( front_end#accepts_adder  brother_abs absval) 
 	    then
 	      (true , id_abs_brothers)

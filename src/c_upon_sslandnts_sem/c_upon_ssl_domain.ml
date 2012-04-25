@@ -107,11 +107,6 @@ let decl_and_affect_cst_char_star
   
   
 
-
-
-
-
-
 (**
 This function progates the validity to an expression to the lvalue
 when the latter is an integer variable
@@ -178,7 +173,8 @@ else raise an exception
 
 
 (*  This function is deprecated and must be removed. f.g. Apr 23rd 2012*)
-let get_pvarinfo_of_left_value lv =
+(*
+let get_pvarinfo_of_left_value (lv,off) =
   match lv with
       Var(v) -> 
 	begin
@@ -195,7 +191,12 @@ let get_pvarinfo_of_left_value lv =
 		(*raise (Debug_info("I have a variable, but it's not a pointer var, as I expected \n"))*)
 	      end
 	end
-    | _ -> raise (Debug_info ("This left value is not a variable \n"))
+    | Mem(e)-> 
+      begin
+	Format.fprintf  Ast_goodies.debug_out "[get_pvar_of_left value] Get a Mem(e),off \n";
+	Cil.d_lval Ast_goodies.debug_out (Mem(e),off);
+	raise (Debug_info ("This left value is not a variable \n"))
+      end
 
 (* Deprecated, need to get it out of that code !*)
 let get_pvarname_of_left_value lv =
@@ -206,28 +207,49 @@ let get_pvarname_of_left_value lv =
 	      TPtr(_,_) -> v.vname
 	    | _ -> Format.fprintf Ast_goodies.debug_out "[get_pvarname_of_left_value (Deprecated) ] I have a variable, but it's not a pointer var, as I expected \n"; v.vname
 	end
-    | _ -> raise (Debug_info ("This left value is not a variable \n"))
-
+    | Mem(e) -> 
+      begin
+	Format.fprintf  Ast_goodies.debug_out "[get_pvar_of_left value] Get a Mem(e) \n";
+	Cil.d_exp Ast_goodies.debug_out e ;
+	raise (Debug_info ("This left value is not a variable \n"))
+      end
+*)
 
 let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) mid (sslv : ssl_validity_absdom ) =
   Self.debug ~level:0 "Im am in affect_ptr_upon_sslv \n";
   let sslv =  copy_validity_absdomain sslv in
-  let v = get_pvarinfo_of_left_value lv in
-  let varname =  get_pvarname_of_left_value lv in
+  (*let v = get_pvarinfo_of_left_value (lv,off) in*)
+  (*let varname =  get_pvarname_of_left_value lv in*)
     (** One need to check that lv is a Var which type is TPtr(_,_)*)
   try
     
-    Format.printf "[affect_ptr_upon_sslv: expression : %s=%s \n]" varname (pprint_cil_exp expr);
+    Format.printf "[affect_ptr_upon_sslv: expression :  ?=%s \n]"  (pprint_cil_exp expr);
     if (is_expr_cst_char expr ) 
     then
       (* In the case if expr is a cst char, one need to represent the
       string in the memory model, and we branch here*)
        decl_and_affect_cst_char_star (lv,off) expr mid sslv
+    else if (is_lval_of_mem_access (lv,off)) 
+    then
+      begin
+	(*In this case, a memory access is performed on the lhs by a memory
+	access. The modification of the content of the references address
+	does not impact the abstract value domain *)
+	let cnd_of_rhs_access = Guard_of_mem_acces.cnt_guard_of_mem_access
+	  sslv expr in
+	let guard_of_rhs_mem_access = CntGuard(cnd_of_rhs_access) in
+	let negate_of_cnd_of_rhs_access = Nts.negate_cntbool_shallow cnd_of_rhs_access in
+	let guard_of_broken_mem_access = CntGuard(negate_of_cnd_of_rhs_access) in
+	let broken_mem = Ssl_valid_abs_dom.create_errorstate_validity_abstdomain () in
+	let transit_list = (sslv,guard_of_rhs_mem_access::[])::[] in
+	let transit_list = (broken_mem,guard_of_broken_mem_access::[])::transit_list
+	in
+	transit_list
+      end
     else
       (*Here is the general case*)
       let pvar_left = Ast_goodies.get_pvar_from_exp_node  (Lval(lv,off)) in
       let pvar_right = get_pvar_from_exp expr in
-      Format.printf "I have a pvar \n %!";
       let sslv = copy_validity_absdomain sslv in
       let lvar_right = get_ptr_affectation sslv.ssl_part pvar_right 
       in
@@ -236,29 +258,42 @@ let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) mi
 	    LVar("") ->  Ssl.and_atomic_ptnil (Pointsnil(pvar_right)) sslv.ssl_part
 	  | LVar(_) -> Ssl.change_affect_var (Pointsto(pvar_left,lvar_right)) sslv.ssl_part
       end;
-      Format.printf "On the way to compute cil_expre_2_per of expr %s \n %!" (pprint_cil_exp expr);
       let param_cscal = Intermediate_language.cil_expr_2_ptr expr in
-      Format.printf "Operation done \n about to compute interpret_c_ptr_exp_to_cnt \n %!";
       let offset_of_pexpr = interpret_c_ptrexp_to_cnt sslv.ssl_part param_cscal in
-      let offset_var_of_pvar =  offset_ntsivar_of_pvar pvar_left in
+      let offset_var_of_pvar = offset_ntsivar_of_pvar pvar_left in
       let affect_off = CntAffect(offset_var_of_pvar,offset_of_pexpr) in
-      let affect_validity_of_pvar = valid_sym_ptrexp sslv.validinfos sslv.ssl_part param_cscal in
-	
-      
+      let affect_validity_of_pvar = valid_sym_ptrexp sslv.validinfos 
+	sslv.ssl_part param_cscal in
       let valid_rhs_var = make_validity_varpvar pvar_right in
       let valid_lhs_var =  make_validity_varpvar pvar_left in
-      let copy_valaff_tolhs =  CntAffect( valid_lhs_var, CntVar(valid_rhs_var)) in
-      
-      let sslv_new = set_var_validity_in_absdomain 
-	sslv v (Some(off)) affect_validity_of_pvar 
+      let cnd_of_lhs_access = Guard_of_mem_acces.cnt_guard_of_mem_access_enode 
+	sslv (Lval(lv,off)) in
+      let cnd_of_rhs_access = Guard_of_mem_acces.cnt_guard_of_mem_access 
+	sslv expr in
+      let guard_of_good_mem_access = CntGuard(CntBAnd(cnd_of_rhs_access,cnd_of_lhs_access)) in
+      let copy_valaff_tolhs = CntAffect( valid_lhs_var, CntVar(valid_rhs_var)) in
+      let pvar_loc_info = Var_validity.loc_info_of_lval (lv, off) in
+      let sslv_new = set_pvar_validity_in_absdomain 
+	sslv pvar_left affect_validity_of_pvar pvar_loc_info
       in
-      ((sslv_new,copy_valaff_tolhs::(affect_off::[]))::[]) 
+      let sslv_mem_broken = create_errorstate_validity_abstdomain () in
+      let cnd_of_mem_broken = 
+	Nts.negate_cntbool_shallow (CntBAnd(cnd_of_rhs_access,cnd_of_lhs_access)) in
+      let guard_of_mem_broken =
+	CntGuard( cnd_of_mem_broken)
+      in
+      let trans_mem_broken = (sslv_mem_broken, guard_of_mem_broken::[]) in
+      let ret_trans = ((sslv_new,copy_valaff_tolhs::(affect_off::(guard_of_good_mem_access::[])))::[]) in
+      trans_mem_broken::ret_trans
+      
   with
       
     | Loc_is_nil -> 
       begin 
-	and_atomic_ptnil (Pointsnil((PVar(v.vname)))) sslv.ssl_part;
-	let new_sslv = set_var_validity_in_absdomain sslv v (Some(off)) FalsevarValid in
+	let pvar_left =  Ast_goodies.get_pvar_from_exp_node  (Lval(lv,off)) in
+	let loc_info =   Var_validity.loc_info_of_lval (lv, off) in
+	and_atomic_ptnil (Pointsnil(pvar_left)) sslv.ssl_part;
+	let new_sslv = set_pvar_validity_in_absdomain sslv pvar_left FalsevarValid loc_info in
 	(new_sslv , [])::[]
       end
 	

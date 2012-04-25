@@ -15,7 +15,8 @@ open Validity_types
 open Ast_goodies
 open Composite_type_types
 open Composite_types
-
+open Ssl 
+open Ssl_types
 (* 
 Boolean doesn't have a peculiar type in ANSI C. 
 Any non-zero scalar expression (char, Int, float, double, signed or unsigned)
@@ -144,6 +145,12 @@ into the FLATA grammar, if there exists a matching transformation.
 The negation unary operators are pushed in the bottmost position
 in the expression tree.
 *)
+
+let lipvar_of_pvar ( pvar : SSL_lex.ptvar)(typ : Cil_types.typ) =
+  match pvar with
+      SSL_lex.PVar(name)-> LiPVar(Unprimed,LiIntPtr(name),typ)
+
+
 let rec negate_bool_bot ( b_exp : c_bool ) =
   match b_exp with
       LiBNot ( exp ) -> exp
@@ -402,22 +409,27 @@ and cil_expr_2_ptr (expr : Cil_types.exp ) =
       end
 
     | Lval (Mem(e), offset ) -> 
+      
       let type_of_e = Cil.typeOf e in
+      
       begin
-	Format.printf "[cil_expr_2_ptr] :  Lval (Mem(e), offset ) \n";
-	match type_of_e with
-	  (* TInt(_,_) -> (* Addresses of constants such as 0x0, NULL *)
-	     LiAddrOfScal((cil_expr_2_scalar e), type_of_e) *)
-	  | TPtr(TPtr(a,b),_) ->
-	    begin
-	      (* match offset with
-		 | Field (finfo,_) -> 
-	      *)  
-	      (*let pvar =  Ast_goodies.get_pvar_from_exp_node expr.enode*)
-	      let inner_cpt = cil_expr_2_ptr e in
-   
-	      LiStarOfPtr(inner_cpt,type_of_e)
-	    end	
+	Format.printf "[cil_expr_2_ptr] :  Lval (Mem(e), offset ) has type :";
+	let type_of_lval = Cil.typeOfLval ( Mem(e) , offset ) in
+	Cil.d_type debug_out type_of_lval;
+	Format.printf "\n LVal expression is";
+	Cil.d_lval Ast_goodies.debug_out ( Mem(e) , offset );
+	Format.fprintf Ast_goodies.debug_out "\n";
+	
+	match type_of_lval with
+	   TInt(_,_) -> (* Addresses of constants such as 0x0, NULL *)
+	     LiAddrOfScal((cil_expr_2_scalar e), type_of_e) 
+	  | TPtr(_,_) ->
+	    let pvar = 
+	      Ast_goodies.get_pvar_from_exp_node (Lval (Mem(e), offset ))
+	    in  
+	    let li_pvar = lipvar_of_pvar  pvar type_of_lval in
+	      LiStarOfPtr(li_pvar,type_of_lval)
+	    
 	      
 	  | _ ->  raise (Bad_expression_type ("In cil_expre_2_ptr, trying to accessed the value of a pointer, which value isn't a pointer."))
       end

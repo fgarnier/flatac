@@ -1,6 +1,6 @@
 open Ssl_types
 open Ssl
-open SSL_lex
+open Ssl_types.SSL_lex
 open Ssl_types
 open Ssl_valid_abs_dom_types
 open Var_validity_types
@@ -58,7 +58,30 @@ let set_var_validity_in_absdomain  (domain : ssl_validity_absdom) ( vinfo : Cil_
     composite_types_infos = domain.composite_types_infos ;
   }
 
+let set_pvar_validity_in_absdomain (domain : ssl_validity_absdom) ( pvar : ptvar ) (valid : var_valid) (locality : var_cathegory ) =
+  let ptvar_name = Ast_goodies.string_of_ptvar pvar in
+  let valid_infos = (set_validity_in_by_name domain.validinfos ptvar_name valid locality) in
+  {
+    ssl_part = domain.ssl_part ;
+    validinfos = valid_infos ;
+    composite_types_infos = domain.composite_types_infos ;
+  }
+
+
+(* This function subsumes the behaviour of set_var_validity_in_absdomain
+and is able to deal with lvalues, which is needed to consider the case
+where the considered pointer are subfields of referenced structures, b->out 
+for instance.
+*)
+
+(*
+let set_pvar_of_lval_validity_in_absdomain (domain : ssl_validity_absdom) ( (lv,off): Cil_types.lval ) (valid : var_valid) =
+  let pvar_name = Ast_goodies.get_pvar_from_exp_node (LVal(lv,off)) in
   
+*)
+  
+  
+    
 
 
 

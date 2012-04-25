@@ -69,6 +69,7 @@ module SSL_lex = SSL_types_gen (struct
 			      let order_relation = (>)
 			      let equals_to = (=)
 				end) 
+open SSL_lex
 
 
 exception Top_heap_exception
