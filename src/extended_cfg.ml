@@ -384,13 +384,22 @@ struct
 	      already_found
       in
       try
-	let brotherhood_abs = Hashtbl.find unfoldsid_2_abs_map (Sid_class(next_stmt.sid)) in
+	let brotherhood_abs =
+	  begin
+	    try
+	      Hashtbl.find unfoldsid_2_abs_map (Sid_class(next_stmt.sid))
+	    with
+		Not_found -> raise No_such_state_id 
+	  (*(false ,Ecfg_id(-1))*)
+	  end
+	in
 	let candidate = (Hashtbl.fold entail_folder brotherhood_abs (false , Ecfg_id( - 2 ))) in
 	candidate
-     
       with
-	  Not_found -> (false ,Ecfg_id(-1)) 
-	    
+	  No_such_state_id -> (false ,Ecfg_id(-1))
+     
+     
+     	    
 
  
    (*
@@ -404,7 +413,7 @@ struct
      label parameter.
     *) 
 
-    method add_transition_from_to ( current : ecfg_vertex ) 
+  (*  method add_transition_from_to ( current : ecfg_vertex ) 
       (next_stmt : Cil_types.stmt ) (next_abs : abs_dom_val ) 
       ( label : trans_label_val) =
       try
@@ -415,7 +424,7 @@ struct
 	    match is_entailed_abstraction with
 		(false , _ ) -> 
 		  begin
-		    Format.printf "Add transition from to Adding new node to ecfg \n";
+		    Format.printf "[ECFG : add_transition_from_to ] Add transition from to Adding new node to ecfg, with new abstraction %s \n" (front_end#pretty next_abs);
 		  let new_abs_state_id = 
 		    self#add_abstract_state next_stmt next_abs in
 		    self#register_edge current.id new_abs_state_id label;
@@ -435,14 +444,14 @@ struct
 		  end
 	      | (true , entailing_state_id ) ->
 		 Format.printf "Not adding a new node, creating a new edge\n";
-		  self#register_edge current.id entailing_state_id label;
-		  if not( self#is_visited entailing_state_id ) then
-		    Queue.push entailing_state_id not_visited_vertices
+		  self#register_edge current.id entailing_state_id label
+		  (*if not( self#is_visited entailing_state_id ) then
+		    Queue.push entailing_state_id not_visited_vertices*)
 	  end
       with
 	  Not_found -> 
 raise (Debug_exception("In method add_transition_from_to, a Not_found exception was raised"))
-
+  *)
 
 
  (* Pre and post reprensent the identificators of the abstract states,
@@ -491,10 +500,11 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
       let is_entailed_by_existing_vertex_abs = 
 	self#entailed_by_same_id_absvalue next_stmt abs 
       in
-	
+       Format.fprintf Ast_goodies.debug_out "[In add_to_not_visited_iterator \n]";
       match is_entailed_by_existing_vertex_abs with
 	  (true, more_genid ) ->
 	    begin
+	      Format.fprintf  Ast_goodies.debug_out "[ECFG : add_to_not_visited_iterator ] More general label exists for the same statement, addind edge only  %s \n" (front_end#pretty abs);
 	      self#register_edge current_node.id more_genid label
 		(*
 		if (not (self#is_visited more_genid)) then 
@@ -505,6 +515,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	    end
 	| (false , _ ) ->
 	  begin
+	    Format.fprintf Ast_goodies.debug_out "[ECFG : add_to_not_visited_iterator ] Adding a new node to ecfg, with new abstraction %s \n" (front_end#pretty abs);
 	    let new_ecfg_vertex_id = 
 	      self#add_abstract_state next_stmt abs in
 	    self#register_edge current_node.id new_ecfg_vertex_id label;
@@ -512,12 +523,12 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 		       front_end#is_control_state_erroneous next_stmt.skind))
 	    then
 	      begin
-		Format.printf "Scheduling another vertex for execution \n";
+		Format.fprintf  Ast_goodies.debug_out "[add_to_not_visited_iterator ] Scheduling another vertex for execution \n";
 		Queue.push new_ecfg_vertex_id not_visited_vertices
 	      end
 	      else 
 	      begin
-		Format.printf "This state is an error state, I'm not going to traverse it.\n";
+		Format.fprintf  Ast_goodies.debug_out "[add_to_not_visited_iterator ] This state is an error state, I'm not going to traverse it.\n";
 		self#mark_as_visited new_ecfg_vertex_id
 	
 	      end

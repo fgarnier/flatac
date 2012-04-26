@@ -555,11 +555,12 @@ let entails_abstraction_adder (etp : entail_problem ) =
     right = (Ssl.copy etp.right) ;
   } 
   in
-  Self.feedback ~level:0 "I reached does_entail \n";
-  Format.printf " \n [ accept_new_abstraction ] %s \n " (pprint_entailement_problem etp);  
+  Self.feedback ~level:0 " In entails_abstraction_adder \n";
+  Format.printf " \n [ entails_abstraction_adder : ] %s \n " (pprint_entailement_problem etp);  
   begin
 (*    try *)
-      ssl_entailement etp_prime
+      ssl_entailement etp_prime;
+    Format.fprintf Ast_goodies.debug_out "[entails_abstraction_adder ] ETP after call to entailement %s " (pprint_entailement_problem etp_prime);
    (* with *
 	Top_heap_exception -> raise Top_heap_exception *)        
 	  (** We shall not deal with exception
@@ -572,45 +573,44 @@ let entails_abstraction_adder (etp : entail_problem ) =
   match etp_prime.left.space , etp_prime.right.space with 
       ( Space ( space_table_l) , Space(space_table_r)) ->
 	begin
-	  if ( Hashtbl.length space_table_l > 0 ) ||
-	    (Hashtbl.length space_table_r > 0 ) then
-	      begin
-		Printf.printf " \n [ entails_abstraction_adder ] Add rhs formula, heap of different size \n";
-		false
-	      end
+	  if (( Hashtbl.length space_table_l > 0 ) ||
+	    (Hashtbl.length space_table_r > 0 )) 
+	  then
+	    begin
+	      Format.fprintf Ast_goodies.debug_out  " \n [ entails_abstraction_adder ] Add rhs formula, heap of different size \n";
+	      Format.fprintf  Ast_goodies.debug_out " \n [ entails_abstraction_adder Post computations : ] %s \n " (pprint_entailement_problem etp_prime);
+	      false
+	    end
 	  else
+	    begin
+	      if( (Hashtbl.length etp_prime.right.pure.affectations == 0 )
+		&& (Hashtbl.length etp_prime.right.pure.ptnil == 0))
+	      then
 		begin
-		  if (Hashtbl.length etp_prime.right.pure.affectations == 0 )
-		    && (Hashtbl.length etp_prime.right.pure.ptnil == 0)
-		  then
-		    begin
-		      Printf.printf " \n [entails_abstraction_adder] Don't add, rigth formula is entailed by a more precise one\n";
-		      true
-		    end
-		  else
-		    begin
-		      Printf.printf " \n [entails_abstraction_adder] Add rhs, non empty right formula, meaning it is not comparable with the left hand side \n";
-		      Format.printf " \n [ False : Post computations : ] %s \n " (pprint_entailement_problem etp_prime);
-		      
-		      
-		      false
-		    end
+		  Format.fprintf Ast_goodies.debug_out  " \n [entails_abstraction_adder] Don't add, rigth formula is entailed by a more precise one\n";
+		  Format.fprintf  Ast_goodies.debug_out " \n [entails_abstraction_addder :] Entailement holds : Post computation %s \n " (pprint_entailement_problem etp_prime);
+		  true
 		end
+	      else
+		begin
+		  Format.fprintf Ast_goodies.debug_out " \n [entails_abstraction_adder] Rhs not entailed by Lhs as non empty right formula, meaning it is not comparable with the left hand side \n";
+		  Format.fprintf  Ast_goodies.debug_out " \n [ entails_abstraction Post computations : ] %s \n " (pprint_entailement_problem etp_prime);
+		  false
+		end
+	    end
 	end
     | (Top_heap,Top_heap) ->
-	Printf.printf " \n [ entails abstraction adder ] FALSE, False formula aren't
-added, as all are equivalent ";
+	Format.fprintf  Ast_goodies.debug_out " \n [ entails abstraction adder ] (Top,Top) Lhs entails RHS , as both have a broken heap ";
 	true (** One of the heap is broken, shall raise an
 		 exception.*)
     |(_,Top_heap)->
-       Printf.printf "\n  [ entails abstraction adder ] FALSE, Rhs has Top_heap
-whilst Lhs don't, accepting it";
+       Format.fprintf  Ast_goodies.debug_out "\n  [ entails abstraction adder ] (_,Top) Lhs does not entails Rhs has Top_heap";
        false  (* One heap is broken whilst the other on isn't, hence
 		no entailement relation between those two incomparable
 		formulae.*)
  
     |(Top_heap,_) ->
-       Printf.printf "\n  [ entails abstraction adder ] TRUE, Rhs has not Top_heap
+       Format.fprintf  Ast_goodies.debug_out "\n  [ entails abstraction adder ] (Top,_) Lhs does not etails Rhs has not Top_heap
 whilst Lhs has, accepting it";
        false
 

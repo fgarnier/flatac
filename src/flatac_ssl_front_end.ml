@@ -492,8 +492,8 @@ being error states.*)
      
   method accepts_adder sslvg sslvd = 
      let etp = {
-      left = Ssl.copy sslvd.ssl_part ;
-      right = Ssl.copy sslvg.ssl_part;
+      left = Ssl.copy sslvg.ssl_part ;
+      right = Ssl.copy sslvd.ssl_part;
     }
     in
     (*not (Ssl_entailement.does_entail etp )*)
