@@ -153,7 +153,7 @@ let subst_against_space (subst : loc_subst ) (sform : space_formula ) =
    match subst_1 , subst_2 with
        ( Subst (table_1) , Subst (table_2) ) ->
 	 let subst_2_iterator lvarg lvard =
-	   if Hashtbl.mem table_1 lvard then
+	   if not ( Hashtbl.mem table_1 lvard ) then
 	     Hashtbl.add ret_table lvarg lvard 
 	   else 
 	     let succs =  Hashtbl.find table_1 lvard in
