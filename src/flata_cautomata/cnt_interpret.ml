@@ -248,6 +248,7 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
 	match cptr with
 	    LiDerefCVar(vname,_) ->
 	      CntVar(NtsIVar(vname))
+	  
 	  | LiDerefCPtr(vptr,_) ->
 	    let cnt_vptr = interpret_c_ptrexp_to_cnt sslf vptr in
 	    cnt_vptr
