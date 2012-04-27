@@ -1,0 +1,24 @@
+nts ex0;
+ 
+main{
+in offset__argv_,validity__argv_,argc,validity__argc_ : int;
+
+mid_4_base,mid_4_size,mid_3_base,mid_3_size,mid_2_base,mid_2_size,mid_1_base,mid_1_size,__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retres_,validity__alice_,validity__charly_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_0,__retres : int ;
+
+ out ret_val_, validity__ret_val__  : int;
+initial sinit ;
+final s19;
+error s3,s5,s7,s11,s13,s15,s17; sinit->s0 { mid_4_size'=4*1 and mid_1_size'=5*1 and mid_2_size'=4*1 and mid_3_size'=6*1 } 
+ s0->s1 { mid_1_base'=1 and mid_1_size'=5*1 and havoc(mid_1_size,mid_1_base) } 
+ s1->s2 { mid_2_base'=2 and mid_2_size'=4*1 and havoc(mid_2_size,mid_2_base) } 
+ s2->s4 { havoc() } 
+ s4->s6 { havoc() } 
+ s6->s8 { havoc() } 
+ s8->s9 { mid_3_base'=3 and mid_3_size'=6*1 and havoc(mid_3_size,mid_3_base) } 
+ s9->s10 { mid_4_base'=4 and mid_4_size'=4*1 and havoc(mid_4_size,mid_4_base) } 
+ s10->s12 { havoc() } 
+ s12->s14 { havoc() } 
+ s14->s16 { havoc() } 
+ s16->s18 { __retres'=0 and havoc(__retres) } 
+ s18->s19 { ret_val_'=__retres and havoc(ret_val_) }
+}

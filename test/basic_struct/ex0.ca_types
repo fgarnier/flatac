@@ -1,0 +1,20 @@
+Pointers : 
+Global type __anonstruct_personne_1: 
+firstname : char 
+name : char 
+
+Global type personne: 
+firstname : char 
+name : char 
+
+
+Integer values : 
+Global type __anonstruct_personne_1: 
+firstname : char 
+name : char 
+
+Global type personne: 
+firstname : char 
+name : char 
+
+ 
