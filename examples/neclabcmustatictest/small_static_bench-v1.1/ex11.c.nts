@@ -1,0 +1,65 @@
+nts ex11;
+ 
+main{
+
+mid_2_base,mid_2_size,mid_1_base,mid_1_size,__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retres_,validity__a_,validity__len_,validity__tmp_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_0,__retres,tmp,len : int ;
+
+ out ret_val_, validity__ret_val__  : int;
+initial sinit ;
+final s21;
+error s1,s4,s8,s10,s13,s15,s17,s19; sinit->s0 { mid_1_size'=5*4 and mid_2_size'=5*4 } 
+ s0->s2 { len'=0 and havoc(len) } 
+ s2->s3 { havoc() } 
+ s3->sinter0 { havoc() } 
+ sinter0->s5 { (tmp',validity__tmp_')=NonDetInt() and havoc(tmp,validity__tmp_) } 
+ s5->s6 { havoc() } 
+ s6->s7 { tmp != 0 and havoc() } 
+ s6->s9 { tmp = 0 and havoc() } 
+ s7->s11 { havoc() } 
+ s9->s12 { havoc() } 
+ s11->s14 { len'=0 and len = 4 and havoc(len) } 
+ s11->s15 { not (len < 5 and len >= 0) and len != 4 and havoc() } 
+ s11->s16 { len < 5 and len >= 0 and len != 4 and havoc() } 
+ s12->s18 { __retres'=1 and havoc(__retres) } 
+ s14->s15 { not (len < 5 and len >= 0) and havoc() } 
+ s14->s16 { len < 5 and len >= 0 and havoc() } 
+ s16->s20 { len'=len+1 and havoc(len) } 
+ s18->s21 { ret_val_'=__retres and havoc(ret_val_) } 
+ s20->s3 { havoc() }
+}
+__assert_fail{
+in a,b,c,d,e,f,g,h : int;
+initial sinit ;
+error s0;
+sinit->s0 { true and havoc() }
+}
+
+NonDetInt{
+out ndet, validity_ndet_: int;
+initial sinit;
+final s1;
+
+sinit->s0{ havoc(ndet,  validity_ndet_)}
+s0->s1{havoc()}
+
+}
+
+__VERIFIER_nondet_int{
+out ndet, validity_ndet_: int;
+initial sinit;
+final s1;
+
+sinit->s0{ havoc(ndet,  validity_ndet_)}
+s0->s1{havoc()}
+
+}
+
+__NdetValInRange {
+ out ndval, ndvalid : int;
+ in lowerb, lbval, upperb, upbval : int;
+ initial sinit;
+ final s1;
+
+ sinit->s1 { ndval' <= upperb and ndval' >= lowerb and ndvalid'=1 and havoc(ndval, ndvalid) }
+
+}

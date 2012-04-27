@@ -1,0 +1,125 @@
+nts ex10;
+ 
+main{
+in offset__buf_,validity__buf_,offset__addr_,validity__addr_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retres_,validity__tmp_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_4,_ndet_arg_3,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,__retres,tmp : int ;
+
+ out ret_val_, validity__ret_val__  : int;
+initial sinit ;
+final s19;
+error s3,s4,s5,s7,s9,s11,s12,s14,s16; sinit->s0 {  } 
+ s0->s1 { havoc() } 
+ s1->s2 { offset__addr_ != 0*4 and havoc() } 
+ s1->sinter0 { offset__addr_ = 0*4 and havoc(_ndet_arg_1,_ndet_arg_2) } 
+ sinter0->s5 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,21,1,_ndet_arg_2,1) and havoc() } 
+ s1->sinter1 { offset__addr_ = 0*4 and havoc(_ndet_arg_1,_ndet_arg_2) } 
+ sinter1->s5 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,21,1,_ndet_arg_2,1) and havoc() } 
+ s2->s7 { havoc() } 
+ s2->s9 { havoc() } 
+ s6->s10 { havoc() } 
+ s8->s11 { havoc() } 
+ s8->sinter2 { havoc() } 
+ sinter2->s12 { (tmp',validity__tmp_')=f1(offset__addr_,-1,offset__buf_,-1) and havoc(tmp,validity__tmp_) } 
+ s10->s15 { __retres'=0 and havoc(__retres) } 
+ s13->s17 { __retres'=tmp and havoc(__retres) } 
+ s15->s18 { havoc() } 
+ s17->s19 { ret_val_'=__retres and havoc(ret_val_) } 
+ s18->s19 { ret_val_'=__retres and havoc(ret_val_) }
+}
+f1{
+in offset__buf_,validity__buf_,offset__addr_,validity__addr_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retres_,validity__i_,validity__ret1_,validity__ret2_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,__retres,ret2,ret1,i : int ;
+
+ out ret_val_, validity__ret_val__  : int;
+initial sinit ;
+final s8;
+error s2,s4,s11,s13,s14,s18,s20,s22,s26,s28; sinit->s0 {  } 
+ s0->s1 { havoc() } 
+ s1->s2 { __retres'=1 and havoc(__retres) } 
+ s1->s4 { havoc() } 
+ s3->s6 { havoc() } 
+ s5->s7 { havoc() } 
+ s6->s8 { ret_val_'=__retres and havoc(ret_val_) } 
+ s7->s9 { havoc() } 
+ s9->s10 { i != 0 and havoc() } 
+ s9->s12 { i = 0 and havoc() } 
+ s10->s14 { havoc() } 
+ s12->s16 { havoc() } 
+ s15->s17 { havoc() } 
+ s16->s18 { havoc() } 
+ s17->s21 { __retres'=ret1 and ret1 != 0 and havoc(__retres) } 
+ s17->s23 { i'=i-1 and ret1 = 0 and havoc(i) } 
+ s19->s24 { havoc() } 
+ s21->s25 { havoc() } 
+ s23->s7 { havoc() } 
+ s24->s27 { __retres'=ret2 and ret2 != 0 and havoc(__retres) } 
+ s24->s29 { __retres'=0 and ret2 = 0 and havoc(__retres) } 
+ s25->s8 { ret_val_'=__retres and havoc(ret_val_) } 
+ s27->s30 { havoc() } 
+ s29->s8 { ret_val_'=__retres and havoc(ret_val_) } 
+ s30->s8 { ret_val_'=__retres and havoc(ret_val_) }
+}
+f2{
+in offset__buf_,validity__buf_,val,validity__val_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retres_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,__retres : int ;
+
+ out ret_val_, validity__ret_val__  : int;
+initial sinit ;
+final s5;
+error s1,s3; sinit->s0 {  } 
+ s0->sinter0 { havoc() } 
+ sinter0->s2 { (__nts__naffected_ret_val_',validity____nts__naffected_ret_val__')=f3(val,-1,offset__buf_,-1) and havoc(__nts__naffected_ret_val_,validity____nts__naffected_ret_val__) } 
+ s2->s4 { __retres'=0 and havoc(__retres) } 
+ s4->s5 { ret_val_'=__retres and havoc(ret_val_) }
+}
+f3{
+in offset__buf_,validity__buf_,data,validity__data_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retres_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_0,__retres : int ;
+
+ out ret_val_, validity__ret_val__  : int;
+initial sinit ;
+final s3;
+error s1; sinit->s0 {  } 
+ s0->s2 { __retres'=0 and havoc(__retres) } 
+ s2->s3 { ret_val_'=__retres and havoc(ret_val_) }
+}
+__assert_fail{
+in a,b,c,d,e,f,g,h : int;
+initial sinit ;
+error s0;
+sinit->s0 { true and havoc() }
+}
+
+NonDetInt{
+out ndet, validity_ndet_: int;
+initial sinit;
+final s1;
+
+sinit->s0{ havoc(ndet,  validity_ndet_)}
+s0->s1{havoc()}
+
+}
+
+__VERIFIER_nondet_int{
+out ndet, validity_ndet_: int;
+initial sinit;
+final s1;
+
+sinit->s0{ havoc(ndet,  validity_ndet_)}
+s0->s1{havoc()}
+
+}
+
+__NdetValInRange {
+ out ndval, ndvalid : int;
+ in lowerb, lbval, upperb, upbval : int;
+ initial sinit;
+ final s1;
+
+ sinit->s1 { ndval' <= upperb and ndval' >= lowerb and ndvalid'=1 and havoc(ndval, ndvalid) }
+
+}
