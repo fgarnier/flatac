@@ -143,6 +143,7 @@ let set_validity_in_by_name (loc_map : validity_loc_map) (vname : string )
 			     } in
 	let res =  Validvarmap.add vname new_valid_info var_name_map 
 	in
+	Format.fprintf Ast_goodies.debug_out "[set_validity in_by_name]Setting %s validity \n %!" vname;
 	Validlocmap(res)
   
 

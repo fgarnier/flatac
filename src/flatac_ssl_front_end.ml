@@ -192,12 +192,15 @@ class ssl_flatac_front_end = object(self)
       raise IndexOfCompositeTypesNotSet
     else
       let absdom = Ssl_valid_abs_dom.create_validity_abstdomain () in
-	Format.printf "[get°entry_point_from_fundec ]  New absdom : %s \n" (Ssl_pprinters.pprint_ssl_formula_tex absdom.ssl_part);
+	Format.fprintf Ast_goodies.debug_out "[get_entry_point_from_fundec ]  New absdom : %s \n" (Ssl_pprinters.pprint_ssl_formula_tex absdom.ssl_part);
       absdom.composite_types_infos <- index_of_pointers_of_composite_types ; 
       let absdom = Var_registration.register_slocals mid funinfo absdom in
-	Format.printf "[get°entry_point_from_fundec ]  Absdom after registering slocals : %s \n" (Ssl_pprinters.pprint_ssl_formula_tex absdom.ssl_part);
+	Format.fprintf Ast_goodies.debug_out "[get_entry_point_from_fundec ]  Absdom after registering slocals : %s \n" (Ssl_pprinters.pprint_ssl_formula_tex absdom.ssl_part);
 	let absdom = register_sformals mid funinfo absdom in
-	  Format.printf "[get°entry_point_from_fundec ]  Absdom after registering sformals : %s \n" (Ssl_pprinters.pprint_ssl_formula_tex absdom.ssl_part);
+	  Format.fprintf Ast_goodies.debug_out "[get_entry_point_from_fundec ]  Absdom after registering sformals : %s \n" (Ssl_pprinters.pprint_ssl_formula_tex absdom.ssl_part);
+
+	Format.fprintf Ast_goodies.debug_out "%!";
+ 
 	  let absdom = register_globals mid finfo absdom in
 	    absdom
 

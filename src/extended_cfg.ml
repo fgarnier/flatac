@@ -875,8 +875,6 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
 	
     method pprint_transitions () =
       
-      
-
       let dest_table_print_folder ( origin : ecfg_id ) (dest : ecfg_id ) label 
 	  (prescript : string ) =
 	 if (front_end#static_unsat_label label) 

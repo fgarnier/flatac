@@ -392,7 +392,8 @@ and cil_expr_2_ptr (expr : Cil_types.exp ) =
 	
     | Lval (Var(vinfo), _ ) ->
       begin
-	match vinfo.vtype with
+	let type_of_exp = Cil.typeOf expr in
+	match type_of_exp with
 	    TPtr( vtypeptr, _ ) ->
 	      begin  
 		let pvar = Ast_goodies.get_pvar_from_exp_node expr.enode  in

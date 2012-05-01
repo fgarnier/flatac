@@ -36,12 +36,11 @@ let ptrvar_adder_iterator (struct_var_name : string ) sslf mid (field_name : str
 
 let new_struct_on_stack ( struct_varinfo : varinfo ) (sslf: ssl_formula ) 
     ( typedef_index : index_of_composite_types) mid =
-  
+  Format.fprintf Ast_goodies.debug_out "[new_struct_on_stack : %s]" (Ssl_pprinters.pprint_ssl_formula_tex sslf );
   let struct_vname = struct_varinfo.vname in
   let struct_type = struct_varinfo.vtype in
   let type_name_of_var =  
     Typename_of_cil_types.typename_of_ciltype struct_type in
- (* try *)
     Format.printf "[new_struct_on_stack:] type name definition : %s \n" (pprint_composite_type_name type_name_of_var);
     begin
       match typedef_index with
