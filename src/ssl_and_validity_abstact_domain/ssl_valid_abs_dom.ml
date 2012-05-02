@@ -58,7 +58,7 @@ let set_var_validity_in_absdomain  (domain : ssl_validity_absdom) ( vinfo : Cil_
     composite_types_infos = domain.composite_types_infos ;
   }
 
-let set_pvar_validity_in_absdomain (domain : ssl_validity_absdom) ( pvar : ptvar ) (valid : var_valid) (locality : var_cathegory ) =
+let set_pvar_validity_in_absdomain (domain : ssl_validity_absdom) ( pvar : ptvar ) (valid : var_valid) (locality : var_cathegory) =
   let ptvar_name = Ast_goodies.string_of_ptvar pvar in
   let valid_infos = (set_validity_in_by_name domain.validinfos ptvar_name valid locality) in
   {

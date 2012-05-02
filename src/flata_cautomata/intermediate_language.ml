@@ -17,6 +17,18 @@ open Composite_type_types
 open Composite_types
 open Ssl 
 open Ssl_types
+open Ssl_types.SSL_lex
+
+
+exception Bad_expression_type of string
+exception Array_elements_not_integers
+exception Not_Array_Index
+exception Not_Array_type
+exception UnnammedLocalArray
+exception Contains_no_ivar
+
+
+
 (* 
 Boolean doesn't have a peculiar type in ANSI C. 
 Any non-zero scalar expression (char, Int, float, double, signed or unsigned)
@@ -46,17 +58,6 @@ and integers constants.
 
 *)
 
-exception Bad_expression_type of string
-exception Array_elements_not_integers
-exception Not_Array_Index
-exception Not_Array_type
-exception UnnammedLocalArray
-
-
-
-let get_name_of_c_ptr p =
-  match p with
-      LiIntPtr s -> s
 
 
 
@@ -88,7 +89,8 @@ type c_scal = LiVar of primed * c_int_var
 	      | LiScalOfLiBool of c_bool
 
 	      | LiBitLogicOp of c_scal_bit_op * c_scal * c_scal
-
+	      | LiIntStarOfPtr  of c_ptrexp * Cil_types.typ
+	     (* Access to the value of a pointer of type TPtr(TInt(_,_),_)*)
 
 and c_ptrexp = LiPVar of primed * c_ptr *  Cil_types.typ
 	       | LiBaseAddrOfArray (* Base address of an array*)
@@ -146,6 +148,13 @@ The negation unary operators are pushed in the bottmost position
 in the expression tree.
 *)
 
+
+
+let get_name_of_c_ptr p =
+  match p with
+      LiIntPtr s -> s
+
+
 let lipvar_of_pvar ( pvar : SSL_lex.ptvar)(typ : Cil_types.typ) =
   match pvar with
       SSL_lex.PVar(name)-> LiPVar(Unprimed,LiIntPtr(name),typ)
@@ -186,6 +195,11 @@ let get_base_type_of_array (ttab : Cil_types.typ) =
       TArray(subtype,_,_,_) -> base_type subtype
     | _ -> raise Not_Array_type
       
+
+
+
+
+
 
 let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 
@@ -234,10 +248,13 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 	      
 
 	  | _-> begin 
-	      let alias_tname = Composite_types.is_integer_type f.vtype in
+	    let typeofexp = Cil.typeOf expr in
+	    let alias_tname = Composite_types.is_integer_type typeofexp in
 		begin
 		  match alias_tname with
-		    | Some(_) -> LiVar(Unprimed,LiIntVar(f.vname))
+		    | Some(_) ->
+		      let name_of_var = get_ivar_from_exp  expr in
+		      LiVar(Unprimed,LiIntVar(f.vname))
 		    | None ->
 			let msg = "This variable : "^f.vname ^"isn't of type TInt, but appears in a scalar expression \n" in 
 			let exc =  Bad_expression_type msg in
@@ -272,30 +289,40 @@ e is not of type TPtr(_,_), e : %s\n" (Ast_goodies.pprint_cil_exp e) in
 	match exp_type with
 	    TComp (_,_,_)  |
 		TNamed(_,_) |
-		TInt(_,_) ->  cil_expr_2_scalar expr (* Added 9-9-11,
-							  Completed 21-10-11*)
+		    TInt(_,_) ->  cil_expr_2_scalar expr (* Added 9-9-11,
+							    Completed 21-10-11*)
 	  | TPtr(_,_) ->
 	    let ptr_val = cil_expr_2_ptr expr in
 	    LiScalOfAddr(ptr_val , t )
 	      
-	  | TEnum(_,_) ->
+	  | _ -> 
+	    begin
+	      match (Composite_types.is_integer_type exp_type) with
+		  Some(_) ->
+		    cil_expr_2_scalar expr 
+		      
+		| None ->
+		  raise ( Bad_expression_type "This is not an integer value, as I expected \n")
+	    end 
+      end
+
+	  (*| TEnum(_,_) ->
 	    begin
 	      match expr.enode with
 		  Const(CEnum(e)) -> cil_enumitem_2_scalar e
 		| _ -> 
 		  let msg = Format.sprintf  "[Cil_exp_2_scalar :] Trying to
-cast an expression whose type is TEnum but which is not embeded in a CEnum constructor \n"  in
+cast an expression whose type is TEnum but which is not embeded in a CEnum constructor \n"  
+		  in
+		  Format.fprintf Ast_goodies.debug_out "[Cil_exp_2_scalar :] Raising exception, expression is : \n";
+		  Cil.d_exp Ast_goodies.debug_out expr;
+		  Format.fprintf Ast_goodies.debug_out "\n";
 	    raise ( Bad_expression_type(msg))
-	    end
-	      
-	  | _ ->  
-	    let msg = Format.sprintf  "Trying to cast a value to an
-integer type, which type is neither TInt nor TPtr : %s , type : %s .\n" (pprint_cil_exp expr) (pprint_ciltypes exp_type)in
-	    raise ( Bad_expression_type(msg))
-      end
-	
+	    end*)
+	     
 
-    | BinOp (PlusA, expg, expd, t ) ->
+   
+     | BinOp (PlusA, expg, expd, t ) ->
       let alias_tname = Composite_types.is_integer_type t in
       begin
 	match alias_tname with
@@ -686,6 +713,105 @@ and  array_dim (tinfo : Cil_types.typ)
 	   match type_name_if_int_type with
 	       Some(_) -> index_list
 	     | _ -> raise Array_elements_not_integers
+
+and get_li_intvar_from_exp_node (expn : Cil_types.exp_node ) =
+  match expn with
+      Lval ( Var( p ) , off ) ->
+	begin
+	  Format.fprintf  debug_out "get_pvar_from_exp_node : lval is a Var(p) \n";
+	  Cil.d_lval debug_out  ( Var(p), off);
+	  Format.fprintf  debug_out "\n";
+	  let type_of_lval = Cil.typeOfLval ( Var( p ) , off ) in
+	   Format.fprintf  debug_out "get_ivar_from_exp_node : lval has type : \n";
+	  Cil.d_type debug_out type_of_lval;
+	   
+	 (* match type_of_lval with 
+	      TPtr(_,_) -> 
+		raise (Debug_info (" In get_ivar_from_exp : The expression has a pointer type, whereas I was expecting some integer value \n"))
+		  
+	 *)	
+	   
+	 
+	  let itypeval_of_expn = Composite_types.is_integer_type type_of_lval 
+	  in
+	  match itypeval_of_expn, off with
+	      (Some(_), NoOffset) -> (*We have an integer or alias integer here*)
+		LiVar(Unprimed,LiIntVar(p.vname))
+		  
+	    | (Some(_), Field(finfo,offs)) ->
+	      begin
+		let vname = get_subfield_name "" finfo offs in
+		let vname = p.vname^"."^vname in
+		LiVar(Unprimed,LiIntVar(vname))
+	      end
+
+	    | (Some(_),Index(_,_)) ->
+		  (* In this case, an access to an element of an array
+		     is performed.
+		  *)
+	      begin	
+		match p.vtype with 
+		    TArray(tinfo,_,_,_)->
+		      begin
+			let index_access = get_array_index off [] in
+			let dim_of_tabs = array_dim p.vtype [] in
+			let c_array =  LiTab(Some(p.vname),dim_of_tabs,tinfo) in
+			LiElemOfCTab(index_access,c_array)
+		      end
+		  | _ -> 
+		    raise (Debug_info ("In get_ivar_from_exp : The expression is not an Array, as it was expected, crash"))
+	      end
+		      
+	    |  (None,_)-> 
+	      raise (Debug_info (" In get_ivar_from_exp : The expression has not an integer type, whereas I was expecting some integer value \n"))
+	end
+
+    | Lval(Mem(e), off ) ->
+      begin
+	Format.printf "get_pvar_from_exp_node : lval is a Mem(e) \n";
+	let type_of_expn = Cil.typeOfLval (Mem(e),off) in
+	let itypeval_of_expn = Composite_types.is_integer_type type_of_expn 
+	in
+	match itypeval_of_expn, off with
+	    (Some(_),NoOffset) ->
+	      let pointer_var = Ast_goodies.get_pvar_from_exp_node expn in
+	      Format.fprintf Ast_goodies.debug_out 
+		"Star of a pvar which value is an int \n" ;
+	      let vtype_e = Cil.typeOf e in
+	      let param_c_pvar =  lipvar_of_pvar pointer_var vtype_e in
+	      LiIntStarOfPtr(param_c_pvar,type_of_expn)
+		
+	 | (Some(_), Field(finfo,offs)) -> 
+	   let pointer_pvar =  Ast_goodies.get_pvar_from_exp_node (Lval(Mem(e), off )) in
+	   let varname = Ssl.get_name_of_ptvar pointer_pvar in
+	   Format.printf "%s \n" varname;
+	   LiVar(Unprimed,LiIntVar(varname))
+	     
+	     
+	 | (_,Index(_,_)) -> Format.printf "Some index \n"; 
+	   raise (Debug_info ("In get_pvar_from_exp_node : I don't handle
+  array indexes here and there is no reason why I should do it here.\n"))
+	 | (_,_) -> raise (Debug_info ("Lost in get_ivar_from_exp_node \n"))
+      end
+	 
+
+    (*| CastE (TPtr (_,_), e ) ->
+	get_pvar_from_exp e*)
+
+    | CastE(t,e) ->
+      begin
+	let itypeval_of_expn = Composite_types.is_integer_type t
+	in 
+	match  itypeval_of_expn with
+            Some(_) ->  get_ivar_from_exp e
+	  | None -> raise (Debug_info ("Casting subexpression into a non integer type"))
+      end
+
+    
+    | _ ->  raise Contains_no_ivar
+	  
+and  get_ivar_from_exp (expr : Cil_types.exp ) =
+  get_li_intvar_from_exp_node expr.enode
 	       
 
 

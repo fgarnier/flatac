@@ -402,56 +402,6 @@ struct
      	    
 
  
-   (*
-      This operation takes as input the current state and the next abstract
-      state, and :
-      If there exits an abstract state in the extended cfg that entails/(
-      implies) the "asbtract domain valuation" of the next state, with the
-      mame Cil_types.sid, then one adds an edge from the current state to
-      this state. Otherwise, create a new abstact state, and add an edge
-      between the current vertex and the new one, labelled using the
-     label parameter.
-    *) 
-
-  (*  method add_transition_from_to ( current : ecfg_vertex ) 
-      (next_stmt : Cil_types.stmt ) (next_abs : abs_dom_val ) 
-      ( label : trans_label_val) =
-      try
-	Format.printf "Entering add transition_from_to \n";
-	let is_entailed_abstraction = self#entailed_by_same_id_absvalue 
-	  next_stmt next_abs in
-	  begin
-	    match is_entailed_abstraction with
-		(false , _ ) -> 
-		  begin
-		    Format.printf "[ECFG : add_transition_from_to ] Add transition from to Adding new node to ecfg, with new abstraction %s \n" (front_end#pretty next_abs);
-		  let new_abs_state_id = 
-		    self#add_abstract_state next_stmt next_abs in
-		    self#register_edge current.id new_abs_state_id label;
-		  if (not (front_end#is_error_state next_abs ))
-		  then
-		    begin
-		      Format.printf 
-			"[add_transition_from_to] Queuing a new ecfg node id \n";
-		       Queue.push new_abs_state_id not_visited_vertices
-		    end
-		  else
-		    begin
-		      Format.printf "Next state is an error state. not schduled for travesal. This state goes nowhere \n";
-		      Hashtbl.add error_state new_abs_state_id ()
-		    end
-		  
-		  end
-	      | (true , entailing_state_id ) ->
-		 Format.printf "Not adding a new node, creating a new edge\n";
-		  self#register_edge current.id entailing_state_id label
-		  (*if not( self#is_visited entailing_state_id ) then
-		    Queue.push entailing_state_id not_visited_vertices*)
-	  end
-      with
-	  Not_found -> 
-raise (Debug_exception("In method add_transition_from_to, a Not_found exception was raised"))
-  *)
 
 
  (* Pre and post reprensent the identificators of the abstract states,
@@ -916,20 +866,7 @@ raise (Debug_exception("In method add_transition_from_to, a Not_found exception 
     method private pprint_inits () =
       "initial sinit ;"
 
-    (*  let elem_left = ref 0 in
-      let pprint_folder id () prescript =
-	if (!elem_left) <= 1 then
- 	  (prescript^(Printf.sprintf "s%d" ( get_id_of_ecfg_id  id )))
-	else
- 	  begin
-	    elem_left  := (!elem_left) - 1;
- 	    prescript^(Printf.sprintf "s%d," ( get_id_of_ecfg_id  id ))
-	  end
-      in 
-       elem_left := (Hashtbl.length init_state);
-      let retstring = Hashtbl.fold pprint_folder init_state ""
-       in
-      "initial "^retstring^";"*)
+    
 	
 
     method private pprint_finals () =

@@ -17,7 +17,7 @@ open Ssl_valid_abs_dom
 
 (* Registers the set of local variables in the validity table*)
 let register_slocals mid (funinfos : Cil_types.fundec ) ( absdom_param : ssl_validity_absdom ) =
-
+  
   let path_to_pointer_field_folder (struct_name : string ) (path : string)  _ (loc_map : validity_loc_map) =
     let pvar_name = struct_name^"."^path in
     let res = set_validity_in_by_name loc_map pvar_name  FalsevarValid 
@@ -32,6 +32,8 @@ let register_slocals mid (funinfos : Cil_types.fundec ) ( absdom_param : ssl_val
       res
   in
   let slocals_register_folder absdom sloc  =
+Format.fprintf Ast_goodies.debug_out "[register_slocal : slocal iterator]  Validity tab contains %s \n" (pprint_validity_loc_map absdom.validinfos );
+    
     match sloc.vtype with 
 	
       | TPtr( TComp(_,_,_) ,_) | TPtr( TNamed(_,_) ,_) ->
@@ -51,7 +53,7 @@ let register_slocals mid (funinfos : Cil_types.fundec ) ( absdom_param : ssl_val
 	      Composite_types.get_index_of_pointer_by_type_name
 		typedef_index typedef_name
 	    in
-	    let valid_info_res = absdom_param.validinfos in
+	    let valid_info_res = absdom.validinfos in
 	    let valid_info_res = 
 	      Hashtbl.fold ( path_to_pointer_field_folder_of_ptr_struct vname)
 		index_of_pointer_field.pointers valid_info_res in
@@ -104,9 +106,9 @@ let register_slocals mid (funinfos : Cil_types.fundec ) ( absdom_param : ssl_val
 
       | TComp(_,_,_) | TNamed(_,_) ->
 	begin
-	  let sslf_abstr = absdom_param.ssl_part in
+	  let sslf_abstr = absdom.ssl_part in
 	  let vname = sloc.vname in
-	  let typedef_index =  absdom_param.composite_types_infos in
+	  let typedef_index =  absdom.composite_types_infos in
 	  let typedef_name = Typename_of_cil_types.typename_of_ciltype 
 	    sloc.vtype
 	  in
@@ -114,7 +116,7 @@ let register_slocals mid (funinfos : Cil_types.fundec ) ( absdom_param : ssl_val
 	    Composite_types.get_index_of_pointer_by_type_name
 	      typedef_index typedef_name
 	  in
-	  let valid_info_res = absdom_param.validinfos in
+	  let valid_info_res = absdom.validinfos in
 	  let valid_info_res = 
 	   Hashtbl.fold ( path_to_pointer_field_folder vname)
 	    index_of_pointer_field.pointers valid_info_res in
@@ -134,9 +136,14 @@ let register_slocals mid (funinfos : Cil_types.fundec ) ( absdom_param : ssl_val
 end
       | _ -> absdom
   in
-let absdom_param = List.fold_left (slocals_register_folder) absdom_param funinfos.slocals in
-  List.fold_left ( fun absdom vinf_slocal -> set_var_validity_in_absdomain absdom vinf_slocal None FalsevarValid ) absdom_param (funinfos.slocals)
 
+Format.fprintf Ast_goodies.debug_out "[register_slocal] slocal list contains : %s " (List.fold_left (fun  s v -> s^"var :"^v.vname^" \n") "" funinfos.slocals);
+Format.fprintf Ast_goodies.debug_out "[register_slocal] Before registerin slocals : Validity tab contains %s \n" (pprint_validity_loc_map absdom_param.validinfos );
+
+let absdom_param = List.fold_left (slocals_register_folder) absdom_param funinfos.slocals in 
+Format.fprintf Ast_goodies.debug_out "[register_slocal] After registering slocals : Validity tab contains %s \n" (pprint_validity_loc_map absdom_param.validinfos );
+ List.fold_left ( fun absdom vinf_slocal -> set_var_validity_in_absdomain absdom vinf_slocal None FalsevarValid ) absdom_param (funinfos.slocals)
+ 
 
 
 (* Registers the set of local variables in the validity table.
