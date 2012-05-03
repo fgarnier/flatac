@@ -81,7 +81,7 @@ let  offset_of_mem_access_to_cnt sslv (t : Cil_types.typ ) ( off : Cil_types.off
     | Index (exp , _ ) -> 
       let offset_exp = compile_cil_exp_2_cnt sslv exp in
       let sizeof_type = interpret_ciltypes_size t in
-      (*CntProd(offset_exp,sizeof_type)*) 
+      (*CntProd(offset_exp,sizeof_type) *)
       sizeof_type
 
     | Field(_,_) -> raise (Unhandled_offset_type ("Field met in offset_of_mem_access"))

@@ -119,26 +119,31 @@ let affect_int_val_upon_sslv ((lv , off) : Cil_types.lval) (expr : Cil_types.exp
   
 	Self.debug ~level:0 " Entering affect_int_val_upon_sslv ";
 	let scal_of_exp = cil_expr_2_scalar expr in
+	let type_of_lval = Cil.typeOfLval (lv , off ) in
 	let validity_of_rval = valid_sym_cscal sslv.validinfos sslv.ssl_part 
 	  scal_of_exp in
 	let ret_absdomain = copy_validity_absdomain sslv in
 	let (cnt_affect_list , ret_absdomain ) =(
-	  match lv with
-	      Var(v) -> 
+	  match ( Composite_types.is_integer_type type_of_lval) with 
+	      Some(_) -> 
 		begin
-		  match ( Composite_types.is_integer_type v.vtype) with 
-		      Some(_) -> 
-			let ret_absdomain =
-			  set_var_validity_in_absdomain ret_absdomain v 
-			    None validity_of_rval in
-			let c_scal_exp = cil_expr_2_scalar expr in 
-			let cnt_expr = interpret_c_scal_to_cnt sslv.ssl_part
-			  c_scal_exp in
-			let cnt_affect = CntAffect(NtsIVar(v.vname),cnt_expr) in
-			(cnt_affect::[],ret_absdomain)
-		    | None -> ([], ret_absdomain)
-		end
+		  let nts_lvar = Compile_2_nts.compile_ntsivar_of_int_cil_lval 
+		    (lv , off) in
+		  let vname = Nts.nts_pprint_nts_var nts_lvar in 
+		  let locality_of_lval = Var_validity.loc_info_of_lval (lv,off)
+		  in
 		  
+		  let ret_absdomain =
+		    set_var_validity_by_name ret_absdomain vname 
+		      validity_of_rval locality_of_lval in
+		  let c_scal_exp = cil_expr_2_scalar expr in 
+		  let cnt_expr = interpret_c_scal_to_cnt sslv.ssl_part
+		    c_scal_exp in
+		  
+		  let cnt_affect = CntAffect(nts_lvar,cnt_expr) in
+		  (cnt_affect::[],ret_absdomain)
+		end
+	    | None -> ([], ret_absdomain)
 	    | _ ->
 	      ([], ret_absdomain)
 	)
@@ -161,59 +166,10 @@ let affect_int_val_upon_sslv ((lv , off) : Cil_types.lval) (expr : Cil_types.exp
 	  
   
 
-(** This function aims at getting the first variable name
-of the list of parameters. Might be useful if some parameter
-expressions are prefixed by a cast or any other ugly stuff so
-pecuiliar to the C-language.
+(**
+Impact and guards of a pointer affectation upon the SSL domain.
 *)
 
-(*If lv is a variable whose type is TPtr(_,_), then return it,
-else raise an exception
-*)
-
-
-(*  This function is deprecated and must be removed. f.g. Apr 23rd 2012*)
-(*
-let get_pvarinfo_of_left_value (lv,off) =
-  match lv with
-      Var(v) -> 
-	begin
-	  match v.vtype with
-	      TPtr(_,_) -> v
-	    (*| CString(s)->
-	      raise (Debug_info ("[get_pvarinfo_of_left_value ] I have a constant string : "^s))*)
-	    | _ ->
-	      begin
-		Format.fprintf Ast_goodies.debug_out "[get_pvarinfo_of_left_value ] Type of v.vtype is :";
-		Cil.d_type Ast_goodies.debug_out v.vtype;
-		Format.fprintf Ast_goodies.debug_out "[get_pvarinfo_of_left_value ] Warning, the called parameter is a subfield of the current term !!! \n";
-		v
-		(*raise (Debug_info("I have a variable, but it's not a pointer var, as I expected \n"))*)
-	      end
-	end
-    | Mem(e)-> 
-      begin
-	Format.fprintf  Ast_goodies.debug_out "[get_pvar_of_left value] Get a Mem(e),off \n";
-	Cil.d_lval Ast_goodies.debug_out (Mem(e),off);
-	raise (Debug_info ("This left value is not a variable \n"))
-      end
-
-(* Deprecated, need to get it out of that code !*)
-let get_pvarname_of_left_value lv =
-  match lv with
-      Var(v) -> 
-	begin
-	  match v.vtype with
-	      TPtr(_,_) -> v.vname
-	    | _ -> Format.fprintf Ast_goodies.debug_out "[get_pvarname_of_left_value (Deprecated) ] I have a variable, but it's not a pointer var, as I expected \n"; v.vname
-	end
-    | Mem(e) -> 
-      begin
-	Format.fprintf  Ast_goodies.debug_out "[get_pvar_of_left value] Get a Mem(e) \n";
-	Cil.d_exp Ast_goodies.debug_out e ;
-	raise (Debug_info ("This left value is not a variable \n"))
-      end
-*)
 
 let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) mid (sslv : ssl_validity_absdom ) =
   Self.debug ~level:0 "Im am in affect_ptr_upon_sslv \n";

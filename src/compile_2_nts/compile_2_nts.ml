@@ -25,6 +25,13 @@ let valid_sym_cscal_sslv sslv (exp : c_scal ) =
 let valid_sym_ptrexp_sslv sslv (ptrexp : c_ptrexp ) =
   valid_sym_ptrexp sslv.validinfos sslv.ssl_part ptrexp
 
+let compile_ntsivar_of_int_cil_lval  (l : Cil_types.lval ) =
+  let il_lval = Intermediate_language.get_li_intvar_from_exp_node (Lval(l)) in
+  match il_lval with
+      LiVar(_,LiIntVar(vname))-> NtsIVar(vname)
+      
+  
+
 
 let compile_cil_exp_2_cnt sslv ( e : Cil_types.exp ) =
   let type_of_e = Cil.typeOf e 

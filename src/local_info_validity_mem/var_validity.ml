@@ -13,13 +13,17 @@ exception Neither_intvar_nor_ptvar
 exception Unregistered_var of string
 exception Relation_between_vars_out_of_ssl_context
 
+exception Unhandled_lval_subterm
 
 (* Returns the infos from the top most variable descriptor
 of a lvalue, concerning its locality information, 
 if any, raise an exception in all
 other cases *)
 
-let loc_info_of_lval (lv,off) =
+
+
+
+let rec loc_of_lvar_lhost lv =
   match lv with
       Var(v) -> 
 	begin
@@ -27,6 +31,17 @@ let loc_info_of_lval (lv,off) =
 	  else if v.vformal then ParameterVar
 	  else LocalVar
 	end
+and loc_info_of_lval ((lv,_):Cil_types.lval) = 
+  match lv with
+      Var(v) -> loc_of_lvar_lhost lv 
+    | Mem(e) ->
+      begin
+	match e.enode with
+	    Lval(lv,off) -> loc_info_of_lval (lv,off)
+	  | AddrOf(lv,off) -> loc_info_of_lval (lv,off)
+	  | _ -> raise Unhandled_lval_subterm
+      end
+
 
 
 let pprint_var_cath ( v : var_cathegory) =
