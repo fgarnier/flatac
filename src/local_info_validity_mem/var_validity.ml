@@ -39,6 +39,13 @@ and loc_info_of_lval ((lv,_):Cil_types.lval) =
 	match e.enode with
 	    Lval(lv,off) -> loc_info_of_lval (lv,off)
 	  | AddrOf(lv,off) -> loc_info_of_lval (lv,off)
+	  | CastE(_,e) ->
+	    begin
+	      match e.enode with
+		  Lval(lvl) -> loc_info_of_lval lvl
+		| _ -> 
+		  raise Unhandled_lval_subterm
+	    end
 	  | _ -> raise Unhandled_lval_subterm
       end
 

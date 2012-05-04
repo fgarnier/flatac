@@ -29,6 +29,7 @@ let compile_ntsivar_of_int_cil_lval  (l : Cil_types.lval ) =
   let il_lval = Intermediate_language.get_li_intvar_from_exp_node (Lval(l)) in
   match il_lval with
       LiVar(_,LiIntVar(vname))-> NtsIVar(vname)
+    | LiIntStarOfPtr(LiPVar(_,LiIntPtr(param_c_pvar),_),_) -> NtsIVar(param_c_pvar)
       
   
 

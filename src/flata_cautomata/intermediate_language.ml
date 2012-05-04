@@ -91,6 +91,9 @@ type c_scal = LiVar of primed * c_int_var
 	      | LiBitLogicOp of c_scal_bit_op * c_scal * c_scal
 	      | LiIntStarOfPtr  of c_ptrexp * Cil_types.typ
 	     (* Access to the value of a pointer of type TPtr(TInt(_,_),_)*)
+	      | LiIntStarOfPtrField of c_ptr * string * Cil_types.typ 
+		  (*Access to an int field of a struct through a pointer
+		  on an instance of the structure.*)
 
 and c_ptrexp = LiPVar of primed * c_ptr *  Cil_types.typ
 	       | LiBaseAddrOfArray (* Base address of an array*)
@@ -108,6 +111,7 @@ and c_ptrexp = LiPVar of primed * c_ptr *  Cil_types.typ
 							   TPtr(TPtr(_,_))
 							 *p.
 							 *)
+	       | LiStarOfPtrStructField of c_ptr * string * Cil_types.typ
 	       | LiDerefCPtr of c_ptrexp  * Cil_types.typ
 		   (*&v where v is a pointer expression *)
 	       | LiDerefCTab of c_tab
@@ -198,9 +202,6 @@ let get_base_type_of_array (ttab : Cil_types.typ) =
 
 
 
-
-
-
 let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 
   Format.printf "In cil_expr_2_scalar %s \n" (Ast_goodies.pprint_cil_exp expr );
@@ -212,7 +213,7 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
     	  
     | Lval(Var(f),offset)->
       begin
-	match f.vtype with
+	(*match f.vtype with
 	    TInt(_,_) ->
 	      begin 
 		Format.fprintf Ast_goodies.debug_out "INTEGER VAR : %s \b" f.vname;
@@ -247,21 +248,22 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 	    LiElemOfCTab(index,c_array)
 	      
 
-	  | _-> begin 
-	    let typeofexp = Cil.typeOf expr in
-	    let alias_tname = Composite_types.is_integer_type typeofexp in
-		begin
-		  match alias_tname with
-		    | Some(_) ->
-		      let name_of_var = get_ivar_from_exp  expr in
-		      LiVar(Unprimed,LiIntVar(f.vname))
-		    | None ->
-			let msg = "This variable : "^f.vname ^"isn't of type TInt, but appears in a scalar expression \n" in 
-			let exc =  Bad_expression_type msg in
-			  raise  exc
-		end  
-	    end
-      end	
+	  | _-> begin
+	*)
+	let typeofexp = Cil.typeOf expr in
+	let alias_tname = Composite_types.is_integer_type typeofexp in
+	begin
+	  match alias_tname with
+	    | Some(_) ->
+	      get_ivar_from_exp expr 
+	      (*LiVar(Unprimed,LiIntVar(name_of_var))*)
+	    | None ->
+	      let msg = "This variable : "^f.vname ^"isn't of type TInt, but appears in a scalar expression \n" in 
+	      let exc =  Bad_expression_type msg in
+	      raise  exc
+	end  
+      end
+      	
 
     | Lval(Mem(e),offset) ->
       begin
@@ -795,8 +797,7 @@ and get_li_intvar_from_exp_node (expn : Cil_types.exp_node ) =
       end
 	 
 
-    (*| CastE (TPtr (_,_), e ) ->
-	get_pvar_from_exp e*)
+    
 
     | CastE(t,e) ->
       begin

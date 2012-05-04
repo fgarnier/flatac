@@ -38,6 +38,15 @@ exception Bothparameter_are_None_option
 
 
 
+  
+type ast_li_ptr_field = AstGLiIntStarOfPtrField of string * string (*s->ival*)
+			| AstGLiPtrStarOfPtrField of string * string (*s->ptr*)
+			| AstGLiPtrOfField of string * string (*s.ptr*)
+			| AstGliIntOfField of string * string (*s.ival*)
+			| AstGLiPVar of string  (*ptr*)
+			| AstGLiIntVar of string (* ival*)
+			| AstGLiStarOfPVar of string (* *ptr *)
+			
 
 (*Does the lvalue given as paramater points to the value of
 a structure field or a structure given at some address ? *)
@@ -387,6 +396,18 @@ let rec get_subfield_name (prefix : string ) (finfo : Cil_types.fieldinfo)
     | _ -> raise (Debug_info (" In get_subfield_name : I don't know how to deal with array indexes \n"))
     
 
+
+(* This function is of use to get :
+
+ (Lval(Var(v),off)) in Mem(e) where e=(int * )(b->off) *)  
+
+
+let rec get_lval_under_cast (expr : Cil_types.exp ) =
+  match expr.enode with 
+      CastE(_,e) -> get_lval_under_cast e 
+    | _ -> expr 
+
+
 (** This function checks whether the argument is a pointer 
 variable or a casted pointer variable. It returns a Ssl_type.PVar("vname")
 if so, and raise an exception if the other case.*)
@@ -410,8 +431,8 @@ let rec get_pvar_from_exp_node (expn : Cil_types.exp_node ) =
 			  (p.vname) finfo suboffset in
 			
 			Format.printf "[get_pvar_from_exp_node]Pvar name is : %s \n" pvar_name;
-			  (PVar(pvar_name))
-
+			(PVar(pvar_name))
+			  
 		    | NoOffset -> 
 		      Format.printf "No offset for pvar \n";
 		      (PVar(p.vname))
@@ -424,27 +445,8 @@ let rec get_pvar_from_exp_node (expn : Cil_types.exp_node ) =
 
     | Lval(Mem(e), off ) ->
       Format.printf "get_pvar_from_exp_node : lval is a Mem(e) \n";
-      begin
-	match e.enode , off with
-	    (Lval(Var(v'),_),NoOffset) ->
-	      Format.printf "Mem(e) :*%s- \n" v'.vname ;
-	      PVar(v'.vname)
+      get_pvar_from_mem_access expn
 
-	  | (Lval(Var(v'),_), Field(finfo,offs)) -> 
-	    
-	    let pointer_name = get_subfield_name "" finfo offs in
-	    let pointer_name = Format.sprintf "%s->%s" v'.vname pointer_name
-	    in
-	    Format.printf "%s \n" pointer_name;
-	    PVar(pointer_name)
-	    
-	  
-	  | (_,Index(_,_)) -> Format.printf "Some index \n"; 
-	    raise (Debug_info ("In get_pvar_from_exp_node : I don't handle
-  array indexes here and there is no reason why I should do it here.\n"))
-	  | (_,_) -> raise (Debug_info ("Lost in get_pvar_from_exp_node \n"))
-      end
-	 
 
     | CastE (TPtr (_,_), e ) ->
 	get_pvar_from_exp e
@@ -481,6 +483,89 @@ to do with Info"))
 	  
 and  get_pvar_from_exp (expr : Cil_types.exp ) =
   get_pvar_from_exp_node expr.enode
+
+and get_pvar_from_mem_access ( expn : Cil_types.exp_node) =
+  match expn with 
+      Lval(Mem(e),off) ->
+	begin
+	  match e.enode , off with
+	      (Lval(Var(v'),_),NoOffset) ->
+		Format.printf "Mem(e) :*%s- \n" v'.vname ;
+		PVar(v'.vname)
+		  
+	    | (Lval(Var(v'),_), Field(finfo,offs)) -> 
+	      
+	      let pointer_name = get_subfield_name "" finfo offs in
+	      let pointer_name = Format.sprintf "%s->%s" v'.vname pointer_name
+	      in
+	      Format.printf "%s \n" pointer_name;
+	      PVar(pointer_name)
+		
+		
+	    | (_,Index(_,_)) -> Format.printf "Some index \n"; 
+	      raise (Debug_info ("In get_pvar_from_exp_node : I don't handle
+  array indexes here and there is no reason why I should do it here.\n"))
+		
+	    | (CastE(TPtr(_,_),e), NoOffset) ->
+	      let exprprime = get_lval_under_cast e in
+	      get_pvar_from_mem_access exprprime.enode
+
+
+	  (* let pcasted =  ptr_access_caster e in
+	     begin
+	     match pcasted with
+	     AstGLiPtrOfField(s,f) -> 
+	     (PVar((s^"->"^f)))
+	     | AstGLiPtrStarOfPtrField(s,f) -> 
+	     (PVar(("*"^"("^s^"->"^f^")")))
+	  (*| AstGLiPVar(s) -> PVar("*"^s)*)
+	     end *)
+	  (*raise (Debug_info ("CastE(TPtr(_,_),e) \n"))*)
+	    
+	    
+	  | (_,_) ->
+	    Format.fprintf debug_out "I don't know what to do with :";
+	    Cil.d_lval debug_out (Mem(e),off);
+	    Format.fprintf debug_out "\n%!";
+	    raise (Debug_info ("Lost in get_pvar_from_exp_node \n"))
+	end
+    |_ -> raise (Debug_info ("This function is only for analysing Mem(e) lhosts in lval types"))
+
+      (*
+and ptr_access_caster (expr : Cil_types.exp ) =
+  match expr.enode with
+      (CastE(TPtr(_,_),e)) ->
+	ptr_access_caster e 
+	  
+    | ( (Lval( Var(v'), NoOffset ))) ->     
+      AstGLiPVar(v'.vname)
+	
+    | (Lval(Var(v'), Field(finfo,offs))) ->
+       let pointer_name = get_subfield_name "" finfo offs in
+       AstGLiPtrOfField ( v'.vname , pointer_name)
+    | (LVar(Mem(e),off)) ->
+      begin
+	match e.enode , off with
+	    (Lval(Var(v'),_),NoOffset) ->
+	      PVar(v'.vname)
+
+	  | (Lval(Var(v'),_), Field(finfo,offs)) -> 
+	    
+	    let pointer_name = get_subfield_name "" finfo offs in
+	    
+	    in
+	    Format.printf "%s \n" pointer_name;
+	    PVar(pointer_name)
+      end
+   
+    | _ ->
+      Format.fprintf debug_out "I don't know how to parse : ";
+      Cil.d_exp debug_out expr;
+      Format.fprintf debug_out "\n%!";
+      raise (Debug_info ("I failed to parse some expression in ptr_access_caster"))
+(* | (Lval(Mem(e),off))->*)
+      *)    
+	    
 
 let rec get_first_ptvar_from_lparam ( lparam : Cil_types.exp list ) =
   Format.printf " I am in get_first_ptvar_from lparam\n"; 
