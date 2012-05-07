@@ -7,6 +7,8 @@ int main (int argc, char ** argv){
  
  
  char* alice_name, *firstname;
+ alice = (personne *)malloc(sizeof(personne));
+ charly =  (personne *)malloc(sizeof(personne)); 
 
  alice->firstname=firstname;
  alice->name=alice_name;

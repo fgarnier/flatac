@@ -232,7 +232,7 @@ to do with Info"))
       *)
 	    end
 	  else
-	    CntBFalse
+	    CntBTrue
 	
 	with
 	    _ -> 

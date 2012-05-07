@@ -165,7 +165,7 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
 	      let ld = interpret_c_ptrexp_to_cnt sslf r in
 		CntMinus ( lg , ld )
 	    end
-	  else CntInvalidExp
+	  else CntNdet
     
     | LiSymConst ( cnt ) ->
 	begin

@@ -129,39 +129,53 @@ let affect_int_val_upon_sslv ((lv , off) : Cil_types.lval) (expr : Cil_types.exp
 		begin
 		  let nts_lvar = Compile_2_nts.compile_ntsivar_of_int_cil_lval 
 		    (lv , off) in
-		  let vname = Nts.nts_pprint_nts_var nts_lvar in 
+		  let vname = Nts.nts_pprint_nts_var nts_lvar in
+		    Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] lval %s has type int \n%! " vname;
 		  let locality_of_lval = Var_validity.loc_info_of_lval (lv,off)
 		  in
 		  
 		  let ret_absdomain =
 		    set_var_validity_by_name ret_absdomain vname 
 		      validity_of_rval locality_of_lval in
+		     Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] got ret_absdomain \n%! ";
 		  let c_scal_exp = cil_expr_2_scalar expr in 
 		  let cnt_expr = interpret_c_scal_to_cnt sslv.ssl_part
 		    c_scal_exp in
-		  
+		    Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] cnt_expr is %s \n %!"  (Nts.cnt_pprint_arithm_exp cnt_expr);
+		
 		  let cnt_affect = CntAffect(nts_lvar,cnt_expr) in
 		  (cnt_affect::[],ret_absdomain)
 		end
-	    | None -> ([], ret_absdomain)
-	    | _ ->
-	      ([], ret_absdomain)
+	    | None -> 
+		begin
+		  Format.fprintf Ast_goodies.debug_out "Rejecting lval as an int value, lval is ";
+		  Cil.d_lval Ast_goodies.debug_out (lv,off);
+		  Format.fprintf Ast_goodies.debug_out "\n%!";
+		([], ret_absdomain)
+		end
+	    (*| _ ->
+	      ([], ret_absdomain)*) 
 	)
 	in
 	
   (***********Transition for valid memory access in expr parameter *******************)
+	  Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] begin compute valid transition block \n %!";
 	let access_cond_of_expr = cnt_guard_of_mem_access sslv expr in
 	let access_cond_of_lval = cnt_guard_of_mem_access_enode sslv (Lval(lv , off))
 	in
+	  Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] Guard for success %s \n %!" (Nts.cnt_pprint_translabel (CntGuard(access_cond_of_expr)));  
+	  Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] Guard for lval %s \n %!" (Nts.cnt_pprint_translabel (CntGuard(access_cond_of_lval))); 
 	let global_succs_guard = CntBAnd(access_cond_of_lval,access_cond_of_expr) in
 	let success_guard = CntGuard(global_succs_guard) in
+	   Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] Guard for success %s \n %!" (Nts.cnt_pprint_translabel success_guard); 
 	let success_transition = (ret_absdomain , success_guard::(cnt_affect_list)) in
     (******** Transition for invalid memory access in expr parameter ****************)
-
+	   Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] begin compute invalid transition block \n %!";
 	let failure_absdom = create_validity_abstdomain () in
 	set_heap_to_top failure_absdom.ssl_part;
 	let failure_guard = CntGuard(CntNot(global_succs_guard)) in
 	let fail_trans = (failure_absdom,failure_guard ::[] )  in
+	  Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] end compute invalid transition block \n %!";
 	fail_trans::(success_transition::[])
 	  
   
