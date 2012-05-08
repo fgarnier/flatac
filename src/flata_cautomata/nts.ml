@@ -17,8 +17,17 @@ and then send me your message.
 *)
 
 
+
+let is_ntisvar_det v =
+  match v with
+      NtsINdetVar(_) -> false
+    | _ -> true
+
+
 (* This part defines the function used to export the nts trees into
 a NTS compliant syntax -- as well as being human readable.*)
+
+
 
 
 let negate_cntbool_shallow ( b : cnt_bool) =

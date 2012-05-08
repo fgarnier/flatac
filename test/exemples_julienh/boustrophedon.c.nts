@@ -7,30 +7,29 @@ __nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retre
  out ret_val_, validity__ret_val__  : int;
 initial sinit ;
 
-error s1,s3,s10,s11,s13,s14,s15,s18,s20; sinit->s0 {  } 
+error s1,s3,s9,s10,s11,s13,s14,s15,s16,s19,s20,s22; sinit->s0 {  } 
  s0->s2 { x'=0 and havoc(x) } 
  s2->s4 { d'=1 and havoc(d) } 
  s4->s5 { havoc() } 
  s5->s6 { havoc() } 
  s6->s7 { havoc() } 
- s7->s8 { havoc() } 
- s8->s9 { 0 <=  x and havoc() } 
- s8->sinter0 { 0 > x and havoc(_ndet_arg_1,_ndet_arg_2) } 
+ s7->s8 { 0 <=  x and havoc() } 
+ s7->sinter0 { 0 > x and havoc(_ndet_arg_1,_ndet_arg_2) } 
  sinter0->s11 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,10,1,_ndet_arg_2,1) and havoc() } 
- s8->sinter1 { 0 > x and havoc(_ndet_arg_1,_ndet_arg_2) } 
+ s7->sinter1 { 0 > x and havoc(_ndet_arg_1,_ndet_arg_2) } 
  sinter1->s11 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,10,1,_ndet_arg_2,1) and havoc() } 
- s9->s12 { x <=  1000 and havoc() } 
- s9->sinter2 { x > 1000 and havoc(_ndet_arg_1,_ndet_arg_2) } 
- sinter2->s14 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,10,1,_ndet_arg_2,1) and havoc() } 
- s9->sinter3 { x > 1000 and havoc(_ndet_arg_1,_ndet_arg_2) } 
- sinter3->s14 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,10,1,_ndet_arg_2,1) and havoc() } 
- s12->s16 { d'=1 and x = 0 and havoc(d) } 
- s12->s17 { x != 0 and havoc() } 
- s16->s17 { havoc() } 
- s17->s19 { d'=-1 and x = 1000 and havoc(d) } 
- s17->s21 { x'=x+d and x != 1000 and havoc(x) } 
- s19->s21 { x'=x+d and havoc(x) } 
- s21->s6 { havoc() }
+ s8->s12 { x <=  1000 and havoc() } 
+ s8->sinter2 { x > 1000 and havoc(_ndet_arg_1,_ndet_arg_2) } 
+ sinter2->s15 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,10,1,_ndet_arg_2,1) and havoc() } 
+ s8->sinter3 { x > 1000 and havoc(_ndet_arg_1,_ndet_arg_2) } 
+ sinter3->s15 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,10,1,_ndet_arg_2,1) and havoc() } 
+ s12->s17 { d'=1 and x = 0 and havoc(d) } 
+ s12->s18 { x != 0 and havoc() } 
+ s17->s18 { havoc() } 
+ s18->s21 { d'=-1 and x = 1000 and havoc(d) } 
+ s18->s23 { x'=x+d and x != 1000 and havoc(x) } 
+ s21->s23 { x'=x+d and havoc(x) } 
+ s23->s5 { havoc() }
 }
 __assert_fail{
 in a,b,c,d,e,f,g,h : int;

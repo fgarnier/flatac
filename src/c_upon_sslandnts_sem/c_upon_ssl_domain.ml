@@ -112,6 +112,8 @@ This function progates the validity to an expression to the lvalue
 when the latter is an integer variable
 *)
 
+
+
 let affect_int_val_upon_sslv ((lv , off) : Cil_types.lval) (expr : Cil_types.exp) 
     (sslv : ssl_validity_absdom ) =
 
@@ -129,22 +131,26 @@ let affect_int_val_upon_sslv ((lv , off) : Cil_types.lval) (expr : Cil_types.exp
 		begin
 		  let nts_lvar = Compile_2_nts.compile_ntsivar_of_int_cil_lval 
 		    (lv , off) in
-		  let vname = Nts.nts_pprint_nts_var nts_lvar in
-		    Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] lval %s has type int \n%! " vname;
-		  let locality_of_lval = Var_validity.loc_info_of_lval (lv,off)
-		  in
+		    if (not (Nts.is_ntisvar_det nts_lvar)) 
+		    then
+		      ([],ret_absdomain)
+		    else
+		      let vname = Nts.nts_pprint_nts_var nts_lvar in
+			Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] lval %s has type int \n%! " vname;
+			let locality_of_lval = Var_validity.loc_info_of_lval (lv,off)
+			in
 		  
-		  let ret_absdomain =
-		    set_var_validity_by_name ret_absdomain vname 
-		      validity_of_rval locality_of_lval in
-		     Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] got ret_absdomain \n%! ";
-		  let c_scal_exp = cil_expr_2_scalar expr in 
-		  let cnt_expr = interpret_c_scal_to_cnt sslv.ssl_part
-		    c_scal_exp in
-		    Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] cnt_expr is %s \n %!"  (Nts.cnt_pprint_arithm_exp cnt_expr);
+			let ret_absdomain =
+			  set_var_validity_by_name ret_absdomain vname 
+			    validity_of_rval locality_of_lval in
+			  Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] got ret_absdomain \n%! ";
+			  let c_scal_exp = cil_expr_2_scalar expr in 
+			  let cnt_expr = interpret_c_scal_to_cnt sslv.ssl_part
+			    c_scal_exp in
+			    Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] cnt_expr is %s \n %!"  (Nts.cnt_pprint_arithm_exp cnt_expr);
 		
-		  let cnt_affect = CntAffect(nts_lvar,cnt_expr) in
-		  (cnt_affect::[],ret_absdomain)
+			    let cnt_affect = CntAffect(nts_lvar,cnt_expr) in
+			      (cnt_affect::[],ret_absdomain)
 		end
 	    | None -> 
 		begin

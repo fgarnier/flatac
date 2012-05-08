@@ -31,6 +31,7 @@ This type definition allows to encode multi dimentional arrays.
 *)   			      
  
 type nts_var = NtsIVar of string (*Integer type variable*)
+	       | NtsINdetVar of string
 	       | NtsRVar of string (*Real valued variable*)
 	       (*| NtsBVar of String (*Boolean variable*)*)
 	       | NtsMiscType of string (* Just here for the demo*)

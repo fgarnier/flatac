@@ -25,11 +25,25 @@ let valid_sym_cscal_sslv sslv (exp : c_scal ) =
 let valid_sym_ptrexp_sslv sslv (ptrexp : c_ptrexp ) =
   valid_sym_ptrexp sslv.validinfos sslv.ssl_part ptrexp
 
+let is_ntisvar_det v =
+  match v with
+      NtsINdetVar(_) -> false
+    | _ -> true
+
 let compile_ntsivar_of_int_cil_lval  (l : Cil_types.lval ) =
   let il_lval = Intermediate_language.get_li_intvar_from_exp_node (Lval(l)) in
   match il_lval with
       LiVar(_,LiIntVar(vname))-> NtsIVar(vname)
     | LiIntStarOfPtr(LiPVar(_,LiIntPtr(param_c_pvar),_),_) -> NtsIVar(param_c_pvar)
+    | LiElemOfCTab(_,_) -> NtsINdetVar("tab_access")
+    | _ -> 
+	Format.fprintf Ast_goodies.debug_out "Failed to fetch ivar in ";
+	Cil.d_lval Ast_goodies.debug_out l;
+	Format.fprintf Ast_goodies.debug_out "\n%!";
+	let msg = Intermediate_language.scal_to_string il_lval in 
+
+	let msg = "[compile_ntsivar_ov_in_cil_lval] I don't parse this expression : "^msg in
+	  raise (Debug_info(msg))
       
   
 

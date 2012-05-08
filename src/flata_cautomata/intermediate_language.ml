@@ -724,7 +724,7 @@ and get_li_intvar_from_exp_node (expn : Cil_types.exp_node ) =
 	  Cil.d_lval debug_out  ( Var(p), off);
 	  Format.fprintf  debug_out "\n";
 	  let type_of_lval = Cil.typeOfLval ( Var( p ) , off ) in
-	   Format.fprintf  debug_out "get_ivar_from_exp_node : lval has type : \n";
+	   Format.fprintf  debug_out "get_ivar_from_exp_node : lval has type : \n %!";
 	  Cil.d_type debug_out type_of_lval;
 	   
 	 (* match type_of_lval with 
@@ -947,6 +947,9 @@ let rec scal_to_string ( b_exp : c_scal ) =
     
     | LiMinusPP (ptrg , ptrd, _ ) ->
       "("^( ptrexp_to_str  ptrg )^"-"^ ( ptrexp_to_str  ptrd )^")"
+
+    | LiElemOfCTab(index,carray) -> 
+	(c_tab_to_string carray)^"["^(pprint_accessed_elem "" index)^"]"
 
 and ptrexp_to_str ( cptr : c_ptrexp ) =
   match cptr with 
