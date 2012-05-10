@@ -7,31 +7,29 @@ __nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retre
  out ret_val_, validity__ret_val__  : int;
 initial sinit ;
 final s26;
-error s1,s3,s9,s11,s15,s20,s21,s22,s24,s25; sinit->s0 {  } 
+error s1,s3,s8,s10,s14,s15,s19,s20,s21,s22,s24,s25; sinit->s0 {  } 
  s0->s2 { x'=0 and havoc(x) } 
  s2->s4 { y'=0 and havoc(y) } 
  s4->s5 { havoc() } 
  s5->s6 { havoc() } 
  s6->s7 { havoc() } 
- s7->s8 { havoc() } 
- s8->s10 { y'=y+1 and x <=  50 and havoc(y) } 
- s8->s12 { y'=y-1 and x > 50 and havoc(y) } 
- s10->s13 { havoc() } 
- s12->s13 { havoc() } 
- s13->s14 { y < 0 and havoc() } 
- s13->s16 { x'=x+1 and y >= 0 and havoc(x) } 
- s14->s17 { havoc() } 
- s16->s6 { havoc() } 
- s17->s18 { havoc() } 
- s18->s19 { 0 <=  x and havoc() } 
- s18->sinter0 { 0 > x and havoc(_ndet_arg_1,_ndet_arg_2) } 
+ s7->s9 { y'=y+1 and x <=  50 and havoc(y) } 
+ s7->s11 { y'=y-1 and x > 50 and havoc(y) } 
+ s9->s12 { havoc() } 
+ s11->s12 { havoc() } 
+ s12->s13 { y < 0 and havoc() } 
+ s12->s16 { x'=x+1 and y >= 0 and havoc(x) } 
+ s13->s17 { havoc() } 
+ s16->s5 { havoc() } 
+ s17->s18 { 0 <=  x and havoc() } 
+ s17->sinter0 { 0 > x and havoc(_ndet_arg_1,_ndet_arg_2) } 
  sinter0->s21 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,14,1,_ndet_arg_2,1) and havoc() } 
- s18->sinter1 { 0 > x and havoc(_ndet_arg_1,_ndet_arg_2) } 
+ s17->sinter1 { 0 > x and havoc(_ndet_arg_1,_ndet_arg_2) } 
  sinter1->s21 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,14,1,_ndet_arg_2,1) and havoc() } 
- s19->s23 { __retres'=0 and x <=  102 and havoc(__retres) } 
- s19->sinter2 { x > 102 and havoc(_ndet_arg_1,_ndet_arg_2) } 
+ s18->s23 { __retres'=0 and x <=  102 and havoc(__retres) } 
+ s18->sinter2 { x > 102 and havoc(_ndet_arg_1,_ndet_arg_2) } 
  sinter2->s25 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,14,1,_ndet_arg_2,1) and havoc() } 
- s19->sinter3 { x > 102 and havoc(_ndet_arg_1,_ndet_arg_2) } 
+ s18->sinter3 { x > 102 and havoc(_ndet_arg_1,_ndet_arg_2) } 
  sinter3->s25 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,14,1,_ndet_arg_2,1) and havoc() } 
  s23->s26 { ret_val_'=__retres and havoc(ret_val_) }
 }

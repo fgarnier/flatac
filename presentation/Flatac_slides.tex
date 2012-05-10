@@ -1,0 +1,532 @@
+%\include{commands}
+
+\documentclass[compress]{beamer}
+%\documentclass{beamer}
+
+\usepackage{beamerthemeJuanLesPins}
+\usepackage{amsfonts,amsmath,amsthm,amssymb}
+\usepackage{graphicx}
+\usepackage{epsfig}
+\usepackage{listings}
+\usepackage[latin1]{inputenc}
+
+
+\newcommand\xor{\oplus}
+\newcommand{\emath}[1]{\ensuremath{#1}}
+  \newcommand\tred[1]{\textcolor{red}{#1}}
+  \newcommand\tblue[1]{\textcolor{blue}{#1}}
+\newcommand\tgreen[1]{\textcolor{green}{#1}}
+%\newcommand\tred[1]{\textcolor{red}{#1}}
+
+\input{macro_filip}
+
+%%%%%%%%%%%%%%%%%%%%%%  SSL RELATED STUFFS %%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\bi}[1]{{}^\omega\!{#1}^\omega}
+\newcommand{\rbr}{{\bf ]\!]}}
+\newcommand{\lbr}{{\bf [\![}}
+
+
+\newcommand{\sem}[1]{\lbr #1 \rbr}
+
+\newcommand{\arrow}[2]{\xrightarrow[{\scriptstyle #2}]{{\scriptstyle #1}}}
+
+\newcommand{\defeq}[0]{:=}
+\newcommand{\syntaxeq}[0]{::=}
+
+\newcommand{\Dom}[1]{\mathcal{D}om(#1)}
+
+\newcommand{\rrule}[2]{\lstinline!#1!  \to \lstinline!#2!}
+\newcommand\Addr{\mathcal{A}ddr} %The set of heap addresses
+\newcommand\LVar{\mathcal{L}Var} %The set of location variables
+\newcommand\PVar{\mathcal{P}Var} %The set of pointer variables.
+
+\newcommand{\Pp}[1]{PP(#1)} %% The set of the atomic propositions that appear inside a formula.
+\newcommand{\Sp}[1]{SP(#1)} %% The set of spacial propositions that appear insde a formula.
+
+
+%Size of a formula.
+\newcommand{\sizef}[1]{|{#1}|}
+%subformula
+\newcommand{\subf}[0]{\triangleright}
+
+\newcommand{\gton}[1]{>_{#1}}
+\newcommand{\gtlvar}[0]{\gton{\LVar}}
+\newcommand{\gtptrvar}[0]{\gton{\PVar}}
+
+\newcommand{\Locvar}[1]{Locvar(#1)} %The set of location variables appearing
+	%in a formula
+\newcommand{\Ptrvar}[1]{Ptrvar(#1)} %same as abovem but for Ptr variables.
+
+\newcommand{\NULL}[0]{\mbox{\texttt{NULL}}}
+
+\newcommand{\Alloc}[1]{alloc(#1)}
+\newcommand{\Emp}{\lstinline{Emp}}
+
+\newcommand{\Unsep}[0]{\ast}
+\newcommand{\Sep}[2]{#1 \Unsep #2}
+\newcommand{\Sepf}[2]{ #1 \star #2}
+
+\newcommand{\EqLoc}[2]{ (#1 = #2) }
+\newcommand{\Andpure}[2]{ #1 \wedge #2}
+\newcommand{\Pointsto}[2]{ #1 \mapsto #2}
+\newcommand{\nil}[0]{\lstinline!nil!}
+\newcommand{\Pointstonil}[1]{ #1 \mapsto \mbox{\nil}}
+\newcommand{\Formula}[2]{ #1  \updownarrow #2}
+\newcommand{\Exists}[2]{ \exists #1. #2}
+
+\newcommand{\Substin}[3]{#1\lbrack #2 \gets #3 \rbrack}
+\newcommand{\NForm}[1]{\mathcal{NF}(#1)}
+
+\newcommand{\Ran}[1]{\mathcal{R}an(#1)}
+
+\newcommand{\Vars}[1]{\mathcal{V}ars(#1)}
+\newcommand{\FVars}[1]{\mathcal{F}Vars(#1)}
+
+
+\newcommand{\Equa}[1]{\mathcal{E}q(#1)}
+\newcommand{\Aff}[1]{\mathcal{A}ff{#1}}
+\newcommand{\Nullptr}[1]{\mathcal{N}ullptr{#1}}
+
+
+\newcommand{\Subst}[3]{#3\lbrack #1\leftarrow #2 \rbrack}
+\newcommand{\fundec}[5]{\begin{array}{llll} {#1}:&{#2} &\mapsto & {#3} \\ &{#4} & \mapsto& #5  \end{array}}
+
+
+% add/replaces A.P. #2 in formula #1.
+\newcommand{\Addrep}[2]{#1 \lbrack #2 \rbrack}
+
+
+%%%%%%%%%%% Compute new name for existential variables %%%%%%%%
+
+\newcommand{\renfresh}[2]{Renfresh(#1,#2)}
+
+
+
+%%%%%%%%%% Order Relation %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\LocOrderIneq}[0]{\sqsubset_{I}}
+\newcommand{\LocOrderIeq}[0]{\sqsubseteq_{I}}
+\newcommand{\PtrOrderIneq}[0]{\sqsubset_{S}}
+\newcommand{\PtrOrderIeq}[0]{\sqsubseteq_{S}}
+\newcommand{\ModOrderIeq}[0]{\sqsubseteq_{I,S}}
+\newcommand{\ModOrderIneq}[0]{\sqsubset_{I,S}}
+
+
+\newcommand{\true}{true}
+\newcommand{\false}{false}
+\newcommand{\dk}{dk}
+%% #1 var name, #2 base, size, #4 offset
+\newcommand{\ptrexp}[3]{\left ( \begin{array}{l} 
+\ptrbase{#1}=#2 \\ 
+\ptroffset{#1}=#3
+\end{array} \right )}
+
+
+\newcommand{\base}[2]{base_{#1}(#2)}
+\newcommand{\samebase}[3]{Same\_base_{#1}({#2},{#3})}
+
+\newcommand{\lbase}[1]{#1_{base}}
+\newcommand{\lsize}[1]{#1_{size}}
+
+\newcommand{\locvar}[3]{
+\left ( \begin{array}{l}
+\lbase{#1}=#2 \\
+\lsize{#1}=#3
+\end{array} \right )
+}
+%%%%%%%%%%%%% Hoar triples and sematic transformations %%%%%%%%%%%%%%%%%
+
+%     instr  
+% {P} -----> {Q}
+%     effect
+\newcommand{\transmodel}[4]{\lbrace #1 \rbrace \arrow{#2}{#3} \lbrace #4 \rbrace }
+
+\newcommand{\Pre}[0]{\lbrace P \rbrace}
+\newcommand{\Post}[0]{\lbrace Q \rbrace}
+
+%%%%%%%%%%%% Footprint related stuff %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\newcommand{\ptrbase}[1]{{#1}_{base}}
+\newcommand{\ptrsize}[1]{{#1}_{size}}
+\newcommand{\ptroffset}[1]{{#1}_{off}}
+\newcommand{\gmallocid}[0]{mid}
+
+
+\newcommand{\interpretZ}[1]{\sem{#1}_{\mathbb{Z}}}
+\newcommand{\interpretI}[1]{\sem{#1}_{I}}
+\newcommand{\interpretP}[1]{\sem{#1}_{P}}
+\newcommand{\interpretC}[1]{\sem{#1}_{C}}
+
+\newcommand{\Eval}[1]{Eval(#1)}
+
+%%%%%%%%%%%%%%%%%%% Validity interpretation compters 
+\newcommand{\ival}[1]{{#1}_{\mbox{valid}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Inline text typology and other short notation definitions        %
+
+\newcommand{\nth}[1]{$#1^{\mbox{th}}$}
+\newcommand{\rd}[1]{$#1^{\mbox{rd}}$}
+
+
+\newcommand{\syneq}[0]{::=} %Syntatic definition
+\newcommand{\seq}[0]{\equiv} %Syntactic equality/equivalence
+
+%%%%%%%%% Arithmetic operations
+\newcommand{\intval}[2]{\left ( \begin{array}{l} #1 \\ #2 \end{array} \right )}
+
+\newcommand{\valid}[1]{{#1}_{\mbox{\lstinline!valid!}}}
+\newcommand{\intptr}[2]{\left ( \begin{array}{l} {#1} \\ {#2} 
+
+\end{array} \right )}
+
+\newcommand{\segfault}[0]{\mbox{\lstinline!segfault!}}
+
+\newcommand{\andmath}[0]{\mbox{and}}
+\newcommand{\congmod}[3]{#1 \equiv #2 \lbrack #3 \rbrack}
+\newcommand{\notcongmod}[3]{#1 \not\equiv #2 \lbrack #3 \rbrack}
+\newcommand{\isvalid}[2]{Valid_{#1}(#2)}
+\newcommand{\DK}[2]{DK_{#1}(#2)}
+%\newcommand{\interpa}[2]{Tr_{#1}(#2)}
+\newcommand{\interpa}[2]{\sem{#2}_{#1}}
+
+\newcommand{\interpacomp}[2]{Comp_{#1}(#2)}
+\newcommand{\FRAMAC}{FRAMA-C}
+\newcommand{\sizeof}[1]{\mbox{\lstinline!sizeof!}(#1)}
+
+%% Counter associated to an interger variable.
+\newcommand{\icnt}[1]{#1_{\mbox{cnt}}}
+
+%% Access to memory @ pointer address P :
+\newcommand{\accs}[1]{\mbox{\lstinline!access!}(#1)}
+
+
+
+%%%%%%%%%%%%%%%%%% SSL RELATED STUFFS END BLOCK %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+  
+  
+
+%  \newcommand\bo[1]{\mathcal{#1}}
+%  \newcommand\mA{\bo{A}}
+%  \newcommand\terminemachin{+a.s. }
+%  \newcommand\truc\terminemachin
+%  \newtheorem{proposition}{Proposition}
+%  \newtheorem{condition}{Condition}
+%  \newtheorem{exemple}{Exemple}
+%  \newtheorem{theoreme}{Theorème}
+%
+%  \newtheorem{notation}{Notation}
+%  \newcommand\notat[2]{\begin{condition}[#1] #2 \end{condition}}
+%
+%  \newcommand\cond[2]{\begin{condition}[#1] #2 \end{condition}}
+%  \newtheorem{remarque}{Remarque}
+  \usepackage{latexsym}
+  \usepackage{graphicx}
+
+%\input{../macros}
+
+  \title{The Flatac Frama-c front-end}
+ % \part{Main}
+
+
+  \author{Radu Iosif, Florent Garnier}
+
+\begin{document}
+\frame{\titlepage 
+}
+
+\date{Febuary 2012}
+\part{Main}
+
+
+
+
+
+
+\section{Introduction : }
+\frame{
+\frametitle{What is flatac ?}
+\begin{itemize}
+\item Part of a toolchain that aims at proving that C programs don't generate memory faults and don't violates assertions.
+\item A front end that generates NTS based models of C programs.
+\item Coded as a Frama-C plugin. 
+\end{itemize}
+}
+\frame{
+\frametitle{Typical memory faults :}
+
+\begin{itemize}
+\item Memory access outside and allocated memory zone of the heap 
+\item Access to an array outside of its bounds
+\item Memory access using a non aligned address
+\item Double free
+\item Freeing an allocated segment using an pointer that does not points at the begining of the segment.
+\item Memory leaks
+\end{itemize}
+}
+
+\frame{
+\frametitle{Two subkinds of properties :}
+\begin{itemize}
+\item Properties concerning the memory shape (Simple Separation Logic):
+	\begin{itemize}
+	\item Relation between pointer variables (Stack) and location variables (heaps).
+	\item Memory allocation.
+	\item Allocated Segment separation.
+
+	\end{itemize}
+\item Arithmetic properties :
+	\begin{itemize}
+	\item Memory segment access within its bounds. 
+	\item Memory address alignment (Congruence).
+	\end{itemize}
+\end{itemize}
+}
+
+\frame{
+\frametitle{Tracked property}
+\tgreen{This front end aims at proving that C programs :}
+\begin{itemize}
+\item Have no execution run that lead to memory fault.
+\item Have no exectution that violates some assertion expressed
+using arithmetic constraints.
+\end{itemize}
+\tgreen{Flatac plugin: Front end of NTS error state reachability analysis }
+\begin{itemize}
+\item Extracts models of C Programs using Abstract Interpretation Techniques. 
+\item Adds \tred{Numerical Transitions Systems} informations on the
+model for \tred{a posteri Verification Phase}.  
+
+\end{itemize}
+}
+
+
+
+
+
+
+\frame{
+\frametitle{How to do that ?}
+\begin{enumerate}
+\item Extracting an extended cfg from Frama-c cfg $($Cil statements $\times$SSL memory abstractions$)^2$
+\item Labelling the Ecfg transitions with Numerical Transition System expression --Guards, counter affectation and Function Calls.
+\item If a SSL Abs value of a state is $\bot$, define this state as
+an error state.
+\item Export the labelled Ecfg into Nts Format.
+\item Ask an analysis tool --Flata, Eldarica, to check whether 
+some error state is reachable from the entry point (main function).
+
+\end{enumerate}
+
+}
+
+
+\frame{
+\frametitle{Flatac in the tool-chain:}
+\begin{center}
+\resizebox{9.5cm}{7cm}{\input{toolchain.pstex_t}}
+\end{center}
+
+
+}
+
+
+\frame{
+\frametitle{Abstract interpretation preliminary part}
+ Simple Separation Logic formulae : Abstract domain.
+
+$$
+\begin{array}{lclr}
+\phi & := & \Formula{\pi}{\sigma} \gspace | \gspace \Exists{l}{\phi} & \mbox{Formulae} \\
+\pi & := & \Pointsto{x}{l} \gspace | \gspace \Pointstonil{x} \gspace | \gspace \EqLoc{l_1}{l_2} \gspace | \gspace \Andpure{\pi_1}{\pi_2} & {\mbox{Pure part}} \\
+\sigma &:=& \Emp  \gspace | \gspace \Alloc{l} \gspace | \gspace \Sep{\sigma_1}{\sigma_2} & \mbox{Spatial part}
+\end{array}
+$$
+
+}
+
+
+\frame{
+\frametitle{Properties of SSL}
+
+The problem that follows are decidable :
+\begin{itemize}
+\item Satisfiability (Valid configuration)
+\item Entailment, Equivalence.
+\item Memory leaks
+\end{itemize}
+
+Those problems are solved using rewriting techniques.
+}
+
+\frame{
+\frametitle{Example of SSL formulae}
+\begin{itemize}
+\item $\Formula{ \Andpure{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l}}}{\Pointstonil{z}}}{\Emp}$
+\item $\Formula{\Andpure{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l}}}{\Pointstonil{z}}}{\Alloc{l_1}}$
+\item $\Formula{ \Andpure{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l}}}{\Pointstonil{z}}}{\Sep{\Alloc{l_1}}{\Alloc{l}}}$
+\item $\Formula{ \Andpure{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l}}}{\Pointstonil{z}}}{\Sep{\Alloc{l_1}}{\Alloc{l}}}$
+\item $\Formula{ \Andpure{x=y}{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l}}}}{\Sep{\Alloc{l_1}}{\Alloc{l}}}$ (Unsat)
+\item $\Formula{ \Andpure{x=y}{\Andpure{\Pointsto{x}{l_1}}{\Pointstonil{y}}}}{\Alloc{l_1}}$ (Unsat)
+\item $\Formula{ true }{\Alloc{l}}$ (Leak)
+\end{itemize}
+}
+
+
+\frame{
+\frametitle{Model extraction :}
+
+Input : Cil AST and Control flow graph
+
+Generated Model : Extended CFG,
+  
+$(S_i,S_f,S_{err},S,\to \in (S\times R \times S)) $
+
+where :
+\begin{itemize}
+\item $S \in  ($Cil\_types.stmt$\times \ Abs)$,
+\item $Abs =$ Set of SSL formula $\bigcup \bot$, 
+\item $R$ is a set of possibly guarded NTS transitions. 
+\end{itemize}
+}
+
+
+
+%
+%\frame{
+%\frametitle{Rules for malloc}
+%{\tiny
+%$$
+%\begin{array}{|l|}
+%\hline
+%\transmodel{\phi}{\mbox{\lstinline!x=malloc(!} I \mbox{\lstinline!)!}}{\isvalid{\phi}{I} \wedge \interpa{\phi}{I} > 0 \wedge \locvar{l^{\prime}}{\gmallocid}{\interpa{\phi}{I}} \ \wedge \ptroffset{x^{\prime}}=0 \wedge \gmallocid^{\prime}=\gmallocid + 1}{\Sep{\exists l. \Addrep{\phi}{\Pointsto{x}{l}}}{\Alloc{l}}} \\
+%\hline
+%\end{array}
+%$$ 
+%}
+%
+%If the expression $I$ evaluates to some negative value then malloc will return a null pointer :
+%
+%{\tiny
+%$$
+%\begin{array}{|l|}
+%\hline
+%\transmodel{\phi}{\mbox{\lstinline!x=malloc(!} I \mbox{\lstinline!)!}}{\isvalid{\phi}{I} \wedge \interpa{\phi}{I} \leq 0 }{\Addrep{\phi}{\Pointsto{x}{\nil}}} \\
+%\hline
+%\end{array}
+%$$ 
+%}
+%
+%Allocating a memory segment using some integer value that is the result of some
+%invalid operation is considered as an error :
+%
+%$$
+%\begin{array}{|l|}
+%\hline
+%\transmodel{\phi}{\mbox{\lstinline!x=malloc(!} I \mbox{\lstinline!)!}}{\neg \isvalid{\phi}{I}}{\bot} \\
+%\hline
+%\end{array}
+%$$ 
+%
+%
+%
+%
+%}
+%
+%
+\frame{
+\frametitle{Memory access rules}
+Correct access:
+{\tiny
+$$
+\begin{array}{|l|}
+\hline
+\transmodel{\phi}{\accs{P}}{
+\begin{array}{l}
+0 \leq \interpa{\phi}{x}+\sizeof{\tau}\leq \lsize{l} \\
+ \wedge \congmod{(\interpa{\phi}{P}+\base{\phi}{P})
+}{0}{\sizeof{\tau}}
+\end{array}
+}{\phi} \gspace \Alloc{l}\in \Sp{\phi} \gspace \mbox{where } \left \lbrace \begin{array}{l} P:\tau *, \\l\seq \base{\phi}{P}.\\ \end{array} \right.\\
+\hline
+\end{array}
+$$
+}
+
+Access to an unallocated address :
+{\tiny
+$$
+\begin{array}{|l|}
+\hline
+\transmodel{\exists l. \phi}{\accs{P}}{}{\bot} \gspace  \Alloc{l}\not \in \Sp{\phi}, l \in \FVars{\phi}, \mbox{ where } l \seq \base{\phi}{P} \\
+\hline
+\end{array}
+$$
+}
+Access outside of an allocated zone, or with an unaligned address :
+{\tiny
+$$
+\begin{array}{|l|}
+\hline
+\transmodel{\phi}{\accs{P}}{
+\begin{array}{l}
+\phantom{\vee}  \interpa{\phi}{P}+\sizeof{x} > \lsize{l} \\
+\vee \notcongmod{\interpa{\phi}{P}}{0}{\sizeof{\tau}}
+\end{array}
+}{\bot} \gspace \Alloc{l}\in \Sp{\phi} \left \lbrace  \begin{array}{l} \mbox{where } P:\tau *,\\ l\seq\base{\phi}{P},\\ \end{array} \right . \\
+\hline
+\end{array}
+$$
+}
+
+
+}
+
+\frame{
+\frametitle{Among other things}
+\begin{itemize}
+\item Validity of integer values : Initialization, difference
+between two pointers, (Valid, Not Valid, Don't Know)
+\item Transitions not generated when guards can be statically
+proved false.
+\end{itemize}
+
+}
+
+
+\frame{
+\frametitle{Verification Phase : Reachability Analysis}
+
+\begin{itemize}
+\item Exporting the Ecfg Hierarchical Numerical Transition System.
+\item Reachability analisys of the error states by FLATA and/or ELDARICA
+\item If some error state is reachable : An alarm is raised.
+\item If no error states is reachable : The program is free of the memory fault we consider. 
+\end{itemize}
+}
+
+%\fram
+%\frame{
+%\frametitle{How to label terms with A.P. ?}
+%\begin{center}
+%\resizebox{10cm}{!}{\input{LabelLucas.pstex_t}}
+%\end{center}
+%}
+%
+%\frame{
+%\frametitle{Precision of computational sets}
+%\begin{center}
+%\resizebox{8cm}{!}{\input{Precision.pstex_t}}
+%\end{center}
+%}
+%
+
+\end{document}
+

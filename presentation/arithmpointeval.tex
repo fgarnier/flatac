@@ -1,0 +1,253 @@
+\section{Pointer arithmetics : Validity and evaluation}
+
+As previously mentionned, the evaluation of an arithmetic pointer
+expression can be errouneous or meaningless. For instance, the difference
+between two pointers that point to two differents memory segments returns an
+integer value that corresponds to the difference between their addresses. The value of such an operation depends on other factors than the program itself. Moreover some of those behaviour are unspecified, such as how the \lstinline{malloc} function computes the base address of the memory segments it allocates. 
+This kind of result can be abstracted  as being non-deterministic, and such 
+values ought not be used in latter computations.
+
+In this part, we define two important functions : A traduction function and a function that determines whether an arithmetic expression is valid or not.  
+The first one evaluates any
+arithmetic pointer expression and the second one determines whether
+a poitner expression is valid or not.
+The second function relies on a set of booleans value, that is used
+to store the fact that the current evaluation of a pointer variable
+has been the result of a valid chain of computation.
+In the sequel of the paragraph, \lstinline!n!, resp. \lstinline!i!, reps. \lstinline!x!, is an integer constant, resp. an integer variable, resp. an integer
+pointer variable.
+Before defining those two functions, we need to introduce a few notations and
+functions before :
+
+Consider $\phi$ a SSL formula. Any pointer arythmetic operation computes
+an address, which is an offset added to some base address. The base
+address of an arithmetic operation is defined as follows :
+
+$$
+\begin{array}{|lll|}
+\hline
+\base{\phi}{x}&:=& l \mbox{ if }  \Pointsto{x}{l} \in \Pp{\phi} \\
+\base{\phi}{\NULL} &:=& \nil \gspace \forall \phi \\
+\base{\phi}{P+I} &:=& \base{\phi}{P} \\
+\hline
+\end{array}
+$$
+
+One also note $P:\tau *$ to mention that the expression $P$ has type $\tau *$,
+and $\sizeof{\tau}$ denotes the amount, in bytes, of memory used to represent  an element of type $\tau$.
+The symbol $\bowtie$ stands for an element of $\lbrace <,>,\geq,\leq \rbrace$ and
+$\icnt{i}$, is a counter used to abstract the integer variable $i$. 
+$$
+\begin{array}{|lll|}
+\hline
+ \interpa{\phi}{n} & := & n \\
+\interpa{\phi}{i} & := & \icnt{i} \\
+\interpa{\phi}{\NULL} & := & 0 \\
+\interpa{\phi}{x} &:=& \ptroffset{x} \\
+\interpa{\phi}{x_1 - x_2} & :=&  \ptroffset{x_1}-\ptroffset{x_2} \\
+\interpa{\phi}{P+I} & := & \interpa{\phi}{P}+\interpa{\phi}{I}\times \sizeof{\tau}, \mbox{ where } P:\tau *\\
+\interpa{\phi}{P_1 - P_2} & := & ( \interpa{\phi}{P_1}-\interpa{\phi}{P_2}) / \sizeof{\tau}, \mbox{ where } P_1:\tau * \\
+\interpa{\phi}{I_1+I_2} &:=& \interpa{\phi}{I_1} + \interpa{\phi}{I_2} \\
+\interpa{\phi}{I_1 \times I_2} &:= &\interpa{\phi}{I_1} \times \interpa{\phi}{I_2} \\
+&&\\
+\interpa{\phi}{P_1 == P_2} &:=& \left \lbrace \begin{array}{ll} 
+	\interpa{\phi}{P_1} == \interpa{\phi}{P_2} & \mbox{ if } \base{\phi}{P_1}\seq\base{\phi}{P_2} \\
+	\bot & \mbox{else} 
+	\end{array} \right . \\
+&&\\
+\interpa{\phi}{P_1 != P_2} &:=& \left \lbrace \begin{array}{ll} 
+	\interpa{\phi}{P_1} != \interpa{\phi}{P_2} & \mbox{ if } \base{\phi}{P_1}\seq\base{\phi}{P_2} \\
+	\bot & \mbox{else} 
+	\end{array} \right . \\
+&&\\
+\interpa{\phi}{P_1 \bowtie P_2} &:=& \left \lbrace \begin{array}{ll} 
+	\interpa{\phi}{P_1} \bowtie \interpa{\phi}{P_2} & \mbox{ if } \base{\phi}{P_1}\seq\base{\phi}{P_2} \\
+	\bot & \mbox{else} 
+	\end{array} \right . \\
+
+
+
+
+\hline
+\end{array}
+$$
+
+We introduce a function, called the validity, that interprets a pointer arithmetics expression into the domain of value $\lbrace \true, \false, \dk \rbrace$,
+where the value $\dk$ abstracts the fact that one can't statically determine
+wheter an expression is valid or not.
+The validity of an expression depends on the validity of the evaluation
+of both the  pointer variables and the correctness of all the substractions between pointer expressions.
+In order to be able to compute the vality of an pointer arithmetic expression,
+one need to associate to each integer variable $i$, resp. to each pointer variable $x$, a variable $\ival{i}$, resp. $\ival{x}$, all ranging in $\lbrace \true, \false, \dk \rbrace$. The evaluation of the validity of an arithmetic pointer
+expression depends on the evaluation of the integer and pointer variables. 
+At this stage, we assume that those variables are properly assigned a value, 
+so that $\isvalid{}$ defines a function from the set of pointer aritmetic
+expression to $\lbrace \true, \false, \dk  \rbrace$. We will latter discuss
+on the impact that the initialization of those values has on the validity
+of a pointer arithmetic expression, in the sequel of this
+document.
+We use the symbols $\oplus$ and $\bowtie$, for $\oplus \in \lbrace + , \times  \rbrace$, and $\bowtie \in \lbrace \leq,\geq,<> \rbrace$.
+
+One of the operations that may be performed to evaluate the validity of a
+pointer aritmetical expression, is the comparison between the base address
+of two expression that represents some address. Sometime, the validity
+information of each variable and the memory abstaction expressed with
+a SSL formula $\phi$ is not sufficient to decide whether the base address
+of two memory address are equal or not. That's why, on define the $\samebase{\phi}{.}{.}$ operator, that is defined as :
+
+Condider $\phi$ a SSL formula, and let be $P_1$ and $P_2$ two expression that represent two addresses. Without loss of generality, consider two pointer variables be $x,y$ such that $x=\base{P_1}$ and $y=\base{P_2}$.
+
+So, the value of $\samebase{\phi}{P_1}{P_2}$ is defined as bellow :
+
+$$
+\begin{array}{|lll|}
+\hline 
+\true & \mbox{if } & \Pointsto{x}{l}\wedge\Pointsto{y}{l} \in \Pp{\phi}\\
+&&\\
+\dk & \mbox{if} & \left \lbrace 
+\begin{array}{l} 
+ \Pointsto{x}{l_1}\wedge\Pointsto{y}{l_2} \in \Pp{\phi} \ \mbox{and} \ l_1 \not\in \Sp{\phi}\wedge l_2\not\in\Sp{\phi} \\
+ \Pointsto{x}{l_1}\wedge\Pointsto{y}{l_2} \in \Pp{\phi} \ \mbox{and} \
+	l_i \in \Sp{\phi} \ \mbox{and} \ l_{\overline{i}} \not\in \Sp{\phi}
+	\end{array} \right . \\
+&&\\
+\false & \mbox{if}& \Pointsto{x}{l_1}\wedge\Pointsto{y}{l_2} \in \Pp{\phi} \ \mbox{and} \ \Sep{\Alloc{l_1}}{\Alloc{l_2}} \in \Sp{\phi} \\ 
+\hline
+\end{array} 
+$$ 
+
+ The validity of a pointer expression, in a context $\phi$, is recusively evaluated as : 
+
+$$
+\begin{array}{|lll|}
+\hline
+ \isvalid{\phi}{n} & := & \true, \mbox{ where} \ n \mbox{ is a constant} \\
+\isvalid{\phi}{i} & := & \ival{i}, \mbox{ where}\ i \mbox{ is an integer variable} \\
+\isvalid{\phi}{\NULL} & := & \false \\
+\isvalid{\phi}{x} &:=& \ival{x} \\
+%\isvalid{\phi}{x_1 - x_2} & :=&  (\base{\phi}{x_1}==\base{\phi}{x_2})\wedge \valid{x_1} \wedge \valid{x_2} \\
+&&\\
+\isvalid{\phi}{P_1-P_2} & :=& \left \lbrace \begin{array}{ll}
+ \samebase{\phi}{P_1}{P_2} & \mbox{if } \isvalid{\phi}{P_1} \ \andmath \ \isvalid{\phi}{P_2} \\
+&\\
+\dk & \mbox{if } 
+\left \lbrace \begin{array}{l} \phantom{\mbox{ or }}\isvalid{\phi}{P_1} \ \andmath \ \DK{\phi}{P_2} \\ 
+\mbox{ or } \isvalid{\phi}{P_2}  \ \andmath \ \DK{\phi}{P_1}  \\
+\mbox{ or } \DK{\phi}{P_1} \ \andmath \ \DK{\phi}{P_2} \\\end{array} \right .\\ 
+&\\
+\false & \mbox{in all other cases.} 
+\end{array} \right . \\
+&&\\
+\isvalid{\phi}{P + I} & :=& \left \lbrace \begin{array}{ll}
+ \true & \mbox{if } \isvalid{\phi}{P} \ \andmath \ \isvalid{\phi}{I} \\
+&\\
+\dk & \mbox{if } 
+\left \lbrace \begin{array}{l} \phantom{\mbox{ or }}\isvalid{\phi}{P} \ \andmath \ \DK{\phi}{I} \\ 
+\mbox{ or } \isvalid{\phi}{I}\ \andmath \ \DK{\phi}{P}  \\
+\mbox{ or } \DK{\phi}{P} \ \andmath \ \DK{\phi}{I} \\\end{array} \right .\\ 
+&\\
+\false & \mbox{in all other cases.} 
+\end{array} \right . \\
+&&\\
+
+\isvalid{\phi}{I_1\oplus I_2} & := & \left \lbrace \begin{array}{ll} 
+ \true & \mbox{if } \isvalid{\phi}{I_1}\ \andmath \ \isvalid{\phi}{I_2} \\
+&\\ 
+\dk & \mbox{if} 
+   \left \lbrace 
+    \begin{array}{l} \phantom{\mbox{or}} \isvalid{\phi}{I_1} \ \andmath \ \DK{\phi}{I_2} \\
+    \mbox{or } \isvalid{\phi}{I_2}\ \andmath \  \DK{\phi}{I_1}  \\ 
+    \mbox{or } \DK{\phi}{I_1} \ \andmath \ \DK{\phi}{I_2}  \\
+ \end{array} \right . \\
+&\\ 
+\false & \mbox{else} \\ \end{array} \right . \\
+&&\\
+\isvalid{\phi}{P_1 \bowtie P_2} &:=&\left \lbrace \begin{array}{ll}
+ \samebase{\phi}{P_1}{P_2} & \mbox{if } \isvalid{\phi}{P_1} \ \andmath \ \isvalid{\phi}{P_2} \\
+&\\
+\dk & \mbox{if } 
+\left \lbrace \begin{array}{l} \phantom{\mbox{ or }}\isvalid{\phi}{P_1} \ \andmath \ \DK{\phi}{P_2} \\ 
+\mbox{ or } \isvalid{\phi}{P_2}\ \andmath \ \DK{\phi}{P_1}  \\
+\mbox{ or } \DK{\phi}{P_1} \ \andmath \ \DK{\phi}{P_2} \\\end{array} \right .\\ 
+&\\
+\false & \mbox{in all other cases.} 
+\end{array} \right . \\ 
+ %\left \lbrace \begin{array}{ll} 
+%	\isvalid{\phi}{P_1} \wedge \isvalid{\phi}{P_2} & \mbox{if } (\base{\phi}{P_1} == \base{\phi}{P_2}) \\
+%\bot & \mbox{else} 
+%\end{array} \right .\\
+
+\DK{\phi}{P} & \Leftrightarrow & \isvalid{\phi}{P}==\dk, \\
+\DK{\phi}{I} & \Leftrightarrow & \isvalid{\phi}{I}==\dk, \\ 
+
+
+\hline
+
+\end{array}
+$$
+
+
+%$$
+%\begin{array}{|lll|}
+%\hline
+%
+%\interpa{\phi}{x} &&
+%\interpa{\phi}{P_1 - P_2} & := & \interpa{\phi}{P_1}-\interpa{\phi}{P_2}\\
+%\interpa{\phi}{I_1+I_2} &:=& \interpa{\phi}{I_1} + \interpa{\phi}{I_2} \\
+%\interpa{\phi}{I_1 \times I_2} &:= &\interpa{\phi}{I_1} \times \interpa{\phi}{I_2}\\
+%\hline
+%\end{array}
+%$$
+%
+
+
+%Here, we define the evaluation of an arithmetic pointer expression, in
+%function of the current context.
+%We encode the values that appear inside pointer arithmetic expressions,
+%as a couple of value, the first corresponding to their evaluation and the
+%second corresponding to the fact their value has been computed using 
+%a valid succession of operations.
+%
+%Let us describe how pointer arithmetic expressions are evaluated and
+%how their validity is decided recursively on the structure of the 
+%formulae :
+%
+%
+%
+%
+%$$
+%\begin{array}{lll}
+% \interpretI{n} & := & \intval{n}{\true} \mbox{ if }n\in \N \\
+%\\
+%\interpretI{i} & := & \intval{\Eval{i}}{\true} \mbox{ if } i\in IVars \\
+%\\
+%\interpretP{\NULL} & := & \intval{0}{\false} \\
+%\\
+%
+%\interpretP{x} &:=& \left  \lbrace \begin{array}{l} 
+%\intval{\ptroffset{x}}{\true} \mbox{ if } \Pointsto{x}{l} \\
+%\\
+%\intval{0}{\false} \mbox{ if } \Pointstonil{x}
+%\end{array}
+%\right .
+%\\
+%\\ 
+%\interpretI{x_1 - x_2} & :=& \left 
+%		\lbrace \begin{array}{ll} 
+%		 \intval{\ptroffset{x_1}-\ptroffset{x_2}}{\true} & \mbox{ if } \exists l.\Pointsto{{x_1}}{l}\wedge \Pointsto{{x_2}}{l} \\
+%	\\	
+%	 \intval{0}{\false} & \mbox{ else.}
+%		\end{array}	
+%	\right . 
+%
+%% n \in \mathbb{Z} & \interpretZ{n} & = & \intval{n}{true} \\
+%% i \in IVar & \interpretZ{i} & = & \intval{valueof(i)}{true} \\
+%%P+I
+%\end{array}
+%$$
+%
+
+\subsection{Impact of the initialization of the interpretation of pointer and integer variables on the validity of an arithmetic pointer expression}
+
+TODO
+
