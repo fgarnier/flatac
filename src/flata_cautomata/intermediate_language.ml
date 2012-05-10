@@ -776,9 +776,12 @@ and get_li_intvar_from_exp_node (expn : Cil_types.exp_node ) =
 	in
 	match itypeval_of_expn, off with
 	    (Some(_),NoOffset) ->
-	      let pointer_var = Ast_goodies.get_pvar_from_exp_node expn in
 	      Format.fprintf Ast_goodies.debug_out 
-		"Star of a pvar which value is an int \n" ;
+		"\n Star of a pvar which value is an int \n%!" ;
+	      Cil.d_lval Ast_goodies.debug_out (Mem(e),off);
+	      
+	      let pointer_var = Ast_goodies.get_pvar_from_exp e in
+	      
 	      let vtype_e = Cil.typeOf e in
 	      let param_c_pvar =  lipvar_of_pvar pointer_var vtype_e in
 	      LiIntStarOfPtr(param_c_pvar,type_of_expn)
