@@ -8,31 +8,30 @@ __nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retre
  out ret_val_, validity__ret_val__  : int;
 initial sinit ;
 
-error s1,s6,s9,s12,s14,s18,s19,s20,s21; sinit->s0 {  } 
+error s1,s5,s8,s11,s12,s14,s18,s19,s20,s21,s22,s23; sinit->s0 {  } 
  s0->s2 { x_old'=0 and havoc(x_old) } 
  s2->s3 { havoc() } 
  s3->s4 { havoc() } 
- s4->s5 { havoc() } 
- s5->sinter0 { havoc() } 
- sinter0->s7 { (x',validity__x_')=__NdetValInRange(-100,1,100,1) and havoc(x,validity__x_) } 
- s7->s8 { havoc() } 
- s8->s10 { x'=x_old+10 and x > x_old+10 and havoc(x) } 
- s8->s11 { x <=  x_old+10 and havoc() } 
- s10->s11 { havoc() } 
- s11->s13 { x'=x_old-10 and x < x_old-10 and havoc(x) } 
- s11->s15 { x_old'=x and x >= x_old-10 and havoc(x_old) } 
+ s4->sinter0 { havoc() } 
+ sinter0->s6 { (x',validity__x_')=__NdetValInRange(-100,1,100,1) and havoc(x,validity__x_) } 
+ s6->s7 { havoc() } 
+ s7->s9 { x'=x_old+10 and x > x_old+10 and havoc(x) } 
+ s7->s10 { x <=  x_old+10 and havoc() } 
+ s9->s10 { havoc() } 
+ s10->s13 { x'=x_old-10 and x < x_old-10 and havoc(x) } 
+ s10->s15 { x_old'=x and x >= x_old-10 and havoc(x_old) } 
  s13->s15 { x_old'=x and havoc(x_old) } 
  s15->s16 { havoc() } 
  s16->s17 { x <=  100 and havoc() } 
  s16->sinter1 { x > 100 and havoc(_ndet_arg_1,_ndet_arg_2) } 
- sinter1->s19 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,13,1,_ndet_arg_2,1) and havoc() } 
+ sinter1->s20 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,13,1,_ndet_arg_2,1) and havoc() } 
  s16->sinter2 { x > 100 and havoc(_ndet_arg_1,_ndet_arg_2) } 
- sinter2->s19 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,13,1,_ndet_arg_2,1) and havoc() } 
- s17->s4 { x >= -100 and havoc() } 
+ sinter2->s20 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,13,1,_ndet_arg_2,1) and havoc() } 
+ s17->s3 { x >= -100 and havoc() } 
  s17->sinter3 { x < -100 and havoc(_ndet_arg_1,_ndet_arg_2) } 
- sinter3->s21 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,13,1,_ndet_arg_2,1) and havoc() } 
+ sinter3->s23 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,13,1,_ndet_arg_2,1) and havoc() } 
  s17->sinter4 { x < -100 and havoc(_ndet_arg_1,_ndet_arg_2) } 
- sinter4->s21 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,13,1,_ndet_arg_2,1) and havoc() }
+ sinter4->s23 { __assert_fail(_ndet_arg_0,1,_ndet_arg_1,1,13,1,_ndet_arg_2,1) and havoc() }
 }
 __assert_fail{
 in a,b,c,d,e,f,g,h : int;

@@ -23,7 +23,7 @@ char *str_ws_remove(char *str, int mode)
    int ws_start = start, ws_end = end, i;
 
    for (i = 0; i < end; i++)
-      if (str[i] != ' ') {
+      if (*(str + i) != ' ') {
          ws_start = i;
          break;
       }
@@ -53,14 +53,16 @@ char *str_ws_remove(char *str, int mode)
 
 }
 
-int main(char *str){
+int main(int argc, char **argv){
 
    char *res;
+   char *str = (char *)malloc(30*sizeof(char));
    
-   ASSUME(strlen(str) > 0);
-   
+   //ASSUME(strlen(str) > 0);
+   if (strlen(str)>0){  
+ 
    res = str_ws_remove(str, 0);
    free(res);
-   
+   }
    return 1;
 }
