@@ -777,13 +777,14 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 		 
 		| _ ->  
 		  begin
-		    let msg = Format.sprintf "[!!! next_on_ssl_instr !!!] The lhs is not a variable : ? = %s, leaving absdomain untouched \n" (pprint_cil_exp exp1 ) in
-		    Format.printf "%s %!" msg;
+		  (*  let msg = Format.sprintf "[!!! next_on_ssl_instr !!!] The lhs is not a variable : ? = %s, leaving absdomain untouched \n" (pprint_cil_exp exp1 ) in
+		    Format.printf "%s %!" msg;*)
+		    Format.printf "[!!! next_on_ssl_instr !!!] The lhs is not a variable : ? = %s, leaving absdomain untouched \n";
 		    (sslv,[])::[]
-		  end
+		  end 
 	  (** Here the returned value is not a variable,
 	      the returned value shall be logged in this case.*)
-	end
+ end
 	  
 
       |  Call( None , exp1, lparam , _ )->

@@ -251,6 +251,7 @@ being error states.*)
 	  begin
 	    let erroneous_label l =
 	      match l with
+		  Label("ERROR",_,true)|
 		  Label("Error",_,true) ->
 		    true    
 		| _-> false

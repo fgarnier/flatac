@@ -34,7 +34,9 @@ let compile_ntsivar_of_int_cil_lval  (l : Cil_types.lval ) =
   let il_lval = Intermediate_language.get_li_intvar_from_exp_node (Lval(l)) in
   match il_lval with
       LiVar(_,LiIntVar(vname))-> NtsIVar(vname)
-    | LiIntStarOfPtr(LiPVar(_,LiIntPtr(param_c_pvar),_),_) -> NtsIVar(param_c_pvar)
+    | LiIntStarOfPtr(LiPVar(_,LiIntPtr(param_c_pvar),_),_) -> 
+	NtsINdetVar("pvar_access"^param_c_pvar)
+    (*NtsIVar(param_c_pvar)*)
     | LiElemOfCTab(_,_) -> NtsINdetVar("tab_access")
     | _ -> 
 	Format.fprintf Ast_goodies.debug_out "Failed to fetch ivar in ";

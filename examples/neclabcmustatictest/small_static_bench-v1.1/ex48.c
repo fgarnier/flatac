@@ -16,7 +16,7 @@ char *str_sub(char *str, int start, int end)
 // remove the white space of head or tail or both.
 char *str_ws_remove(char *str, int mode)
 {
-   if (!str) return NULL;
+   if (str==NULL) return NULL;
    
    int start = 0;
    int end = strlen(str);

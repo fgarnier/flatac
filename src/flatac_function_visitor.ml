@@ -33,11 +33,11 @@ open Flatac_extended_cfg
 	GVar(vinfo,_,_) -> 
 	  begin
 	    match vinfo.vtype with
-		TPtr(_,_) -> vinfo.vname::pre_list
+		TPtr(_,_) -> ("validity__"^vinfo.vname^"_")::(("offset__"^vinfo.vname^"_")::pre_list)
 	      | _ ->
 		  begin
 		    match (Composite_types.is_integer_type vinfo.vtype) with
-			Some(_) -> vinfo.vname::pre_list
+			Some(_) ->("validity__"^vinfo.vname^"_")::(vinfo.vname::pre_list)
 		      | None -> vinfo.vname::pre_list
 		  end
 	  end

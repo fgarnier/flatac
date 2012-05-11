@@ -1,10 +1,9 @@
-extern int __NONDET__();
 
 extern char x[100], y[100];
 extern int i,j,k;
 
-int mainFunc() {  
-  k = __NONDET__();
+int main() {  
+  k = NonDetInt();
   
   i = 0;
   while(x[i] != 0){
