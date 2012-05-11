@@ -9,13 +9,13 @@ main(){
   k = NonDetInt();
   
   i = 0;
-  while(x[i] != 0){
+  while(x[i] != 0 && i< 99){
     y[i] = x[i];
     i++;
   }
   y[i] = 0;
   
-  if(k >= 0 && k < i)
+  /*if(k >= 0 && k < i)
     if( k-i > 0)
-      {assert(0);}
+      {assert(0);}*/
 }
