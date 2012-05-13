@@ -8,8 +8,9 @@
 \usepackage{graphicx}
 \usepackage{epsfig}
 \usepackage{listings}
-\usepackage[latin1]{inputenc}
 
+\usepackage[latin1]{inputenc}
+%\usepackage{dcpic,pictex} %for commutative diagrams
 
 \newcommand\xor{\oplus}
 \newcommand{\emath}[1]{\ensuremath{#1}}
@@ -17,6 +18,8 @@
   \newcommand\tblue[1]{\textcolor{blue}{#1}}
 \newcommand\tgreen[1]{\textcolor{green}{#1}}
 %\newcommand\tred[1]{\textcolor{red}{#1}}
+\usepackage[small,nhug,heads=vee]{diagrams}
+\diagramstyle[labelstyle=\scriptstyle]
 
 \input{macro_filip}
 
@@ -503,6 +506,68 @@ For each function of the AST :
 \end{block}
 }
 
+
+\frame{
+\frametitle{Nts guards for valid memory access}
+
+Let \texttt{x} a $PVar$ such that \texttt{x:}$\tau$\texttt{*}
+Let $\texttt{valid\_mem}:\texttt{Cil\_types.expr}\times SSL \mapsto NtsGuards$
+
+\begin{block}{Memory access guards Cil for atomic expressions}
+\begin{tabular}{lcl}
+Cil expressions&Memory abstraction & Nts Guard \\ 
+\texttt{*x} &$\Formula{\Pointsto{x}{l}}{\Alloc{l}}$ & \texttt{true}\\
+\texttt{*x} &$\Formula{\Pointsto{x}{l}}{\Emp}$& \texttt{false}\\ 
+\texttt{*(x+i)} & $\Formula{\Pointsto{x}{l}}{\Alloc{l}}$& $0\leq i\times$\texttt{sizeof(}$\tau$\texttt{)}$<$\texttt{l\_size}\\
+\texttt{tab[i]}&$\Formula{true}{\Emp}$& $0\leq i <$ \texttt{tab\_size}\\
+
+\end{tabular}
+\end{block}
+}
+
+
+
+
+
+%\begin{block}{Memory access guards Cil expressions}
+%\end{block}
+
+%\begin{tabular}{lcr}
+%Cil expressions&Memory abstraction & Nts Guard \\ 
+%\texttt{*x} &$\Formula{\Pointsto{x}{l}}{\Alloc{l}}$ & \texttt{true}\\
+%\texttt{*x} &$\Formula{\Pointsto{x}{l}}{\Emp}$& \texttt{false}\\ 
+%\texttt{*(x+i)} & $\Formula{\Pointsto{x}{l}}{\Alloc{l}}$& $0\leq i\times$\texttt{sizeof(}$\tau$\texttt{)}$<$\texttt{l\_size}\\
+%\texttt{tab[i]}&$\Formula{true}{\Emp}$& $0\leq i <$ \texttt{tab\_size}\\
+
+%\end{tabular}
+%\end{block}
+%}
+
+
+\frame{
+\frametitle{Nts guards for valid memory access}
+\begin{block}{Cil expression type definition (Non exhaustive)}
+\begin{tabular}{l}
+\texttt{UnOp(UOp,expr)} \\
+\texttt{BinOp(BOp,expg,expd)}\\
+\texttt{UOP}=\texttt{UnMin| BNot | Neg}$\ldots$ \\
+\texttt{BOP}=\texttt{BAnd|BOr}$\ldots$\\
+\phantom{UOP}\texttt{Plus|Minus|Prod|Div}$\ldots$\\
+\phantom{BOP}\texttt{PlusPI|MinusPI|MinusPP}$\ldots$\\
+\end{tabular}
+\end{block}
+
+\begin{block}{\texttt{valid\_mem} of Cil expression}
+\begin{tabular}{ll}
+Cil expr & \texttt{valid\_mem} \\
+\texttt{UnOp(UOp,expr)} & \texttt{valid\_mem(expr)}\\
+\texttt{BinOp(BOp,expg,expd)} & \texttt{valid\_mem(expg)}$\wedge$\texttt{valid\_mem(expg)} \\
+\end{tabular}
+\end{block}
+}
+
+
+
 \frame{
 \frametitle{Model extraction :}
 
@@ -520,6 +585,42 @@ where :
 \end{itemize}
 }
 
+
+\frame{
+\frametitle{Extraction : Basic statment}
+
+\begin{block}{\texttt{Var(v)=expr}}
+\begin{center}
+\resizebox{8cm}{!}{\input{affectvar.pstex_t}}
+\end{center}
+%\begin{diagram}
+% &&\Formula{\true}{\Emp}\\
+%\Formula{\true}{\Emp}&\ruTo^{\texttt{valid\_mem(expr)}}&\\
+%&\rdTo^{\not\texttt{valid\_mem(expr)}}&\\
+%&&\bot
+%\end{diagram}
+\end{block}
+}
+
+
+
+\frame{
+\frametitle{Extraction : Basic statment}
+
+\begin{block}{\texttt{lval=expr}}
+Here, an lval can be an array element, a referenced mem
+cell or an int variable.
+\begin{center}
+\resizebox{8cm}{!}{\input{affectlval.pstex_t}}
+\end{center}
+%\begin{diagram}
+% &&\Formula{\true}{\Emp}\\
+%\Formula{\true}{\Emp}&\ruTo^{\texttt{valid\_mem(expr)}}&\\
+%&\rdTo^{\not\texttt{valid\_mem(expr)}}&\\
+%&&\bot
+%\end{diagram}
+\end{block}
+}
 
 \frame{
 \frametitle{Memory access rules}

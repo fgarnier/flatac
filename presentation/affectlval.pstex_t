@@ -1,0 +1,25 @@
+\begin{picture}(0,0)%
+\includegraphics{affectlval.pstex}%
+\end{picture}%
+\setlength{\unitlength}{4144sp}%
+%
+\begingroup\makeatletter\ifx\SetFigFont\undefined%
+\gdef\SetFigFont#1#2#3#4#5{%
+  \reset@font\fontsize{#1}{#2pt}%
+  \fontfamily{#3}\fontseries{#4}\fontshape{#5}%
+  \selectfont}%
+\fi\endgroup%
+\begin{picture}(7500,5722)(301,-5237)
+\put(7786,-826){\makebox(0,0)[lb]{\smash{{\SetFigFont{20}{24.0}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\Formula{\true}{\Emp}$}%
+}}}}
+\put(7786,-3841){\makebox(0,0)[lb]{\smash{{\SetFigFont{20}{24.0}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}\tred{$\Formula{\true}{\bot}$}}%
+}}}}
+\put(316,-2131){\makebox(0,0)[lb]{\smash{{\SetFigFont{20}{24.0}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\Formula{\true}{\Emp}$}%
+}}}}
+\put(4681,-5146){\makebox(0,0)[lb]{\smash{{\SetFigFont{17}{20.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}\texttt{lval=expr}}%
+}}}}
+\put(2206,254){\makebox(0,0)[lb]{\smash{{\SetFigFont{17}{20.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}\texttt{valid\_mem(expr)}$\wedge$\texttt{valid\_mem(lval)}}%
+}}}}
+\put(2341,-4156){\makebox(0,0)[lb]{\smash{{\SetFigFont{17}{20.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\neg$(\texttt{valid\_mem(expr)}$\wedge$\texttt{valid\_mem(lval)})}%
+}}}}
+\end{picture}%
