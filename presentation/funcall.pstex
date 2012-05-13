@@ -1,8 +1,8 @@
 %!PS-Adobe-2.0 EPSF-2.0
-%%Title: affectvar.fig
+%%Title: funcall.fig
 %%Creator: fig2dev Version 3.2 Patchlevel 5a
-%%CreationDate: Sun May 13 19:00:46 2012
-%%BoundingBox: 0 0 405 238
+%%CreationDate: Sun May 13 19:19:40 2012
+%%BoundingBox: 0 0 382 265
 %Magnification: 1.0000
 %%EndComments
 %%BeginProlog
@@ -81,8 +81,8 @@ end
 
 /pageheader {
 save
-newpath 0 238 moveto 0 0 lineto 405 0 lineto 405 238 lineto closepath clip newpath
--86.9 302.6 translate
+newpath 0 265 moveto 0 0 lineto 382 0 lineto 382 265 lineto closepath clip newpath
+-13.2 315.0 translate
 1 -1 scale
 $F2psBegin
 10 setmiterlimit
@@ -105,25 +105,25 @@ pageheader
 0 slc
 7.500 slw
 gs  clippath
-7467 1829 m 7628 1779 l 7610 1721 l 7449 1771 l 7449 1771 l 7573 1765 l 7467 1829 l cp
+5884 1715 m 6045 1665 l 6027 1607 l 5866 1657 l 5866 1657 l 5990 1651 l 5884 1715 l cp
 eoclip
-n 4410 2745 m
- 7605 1755 l gs col0 s gr gr
+n 2827 2631 m
+ 6022 1641 l gs col0 s gr gr
 
 % arrowhead
 15.000 slw
-n 7467 1829 m 7573 1765 l 7449 1771 l  col0 s
+n 5884 1715 m 5990 1651 l 5866 1657 l  col0 s
 % Polyline
 7.500 slw
 gs  clippath
-7406 4250 m 7563 4308 l 7584 4251 l 7426 4194 l 7426 4194 l 7529 4264 l 7406 4250 l cp
+5875 4477 m 6032 4535 l 6053 4478 l 5895 4421 l 5895 4421 l 5998 4491 l 5875 4477 l cp
 eoclip
-n 4365 3105 m
- 7560 4275 l gs col0 s gr gr
+n 2834 3332 m
+ 6029 4502 l gs col0 s gr gr
 
 % arrowhead
 15.000 slw
-n 7406 4250 m 7529 4264 l 7426 4194 l  col0 s
+n 5875 4477 m 5998 4491 l 5895 4421 l  col0 s
 % here ends figure;
 pagefooter
 showpage

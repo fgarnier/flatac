@@ -586,6 +586,71 @@ where :
 }
 
 
+
+\frame{
+\frametitle{Compiling expressions}
+
+$$
+\begin{array}{|lll|}
+\hline
+\base{\phi}{x}&:=& l \mbox{ if }  \Pointsto{x}{l} \in \Pp{\phi} \\
+\base{\phi}{\NULL} &:=& \nil \gspace \forall \phi \\
+\base{\phi}{P+I} &:=& \base{\phi}{P} \\
+\hline
+\end{array}
+$$
+
+
+}
+
+\frame{
+\frametitle{Compiling Integer expressions}
+
+$$
+\begin{array}{|lll|}
+\hline
+ \interpa{\phi}{n} & := & n \\
+\interpa{\phi}{i} & := & \icnt{i} \\
+\interpa{\phi}{\NULL} & := & 0 \\
+\interpa{\phi}{x} &:=& \ptroffset{x} \\
+\interpa{\phi}{x_1 - x_2} & :=&  \ptroffset{x_1}-\ptroffset{x_2} \\
+\interpa{\phi}{P+I} & := & \interpa{\phi}{P}+\interpa{\phi}{I}\times \sizeof{\tau}, \mbox{ where } P:\tau *\\
+\interpa{\phi}{P_1 - P_2} & := & ( \interpa{\phi}{P_1}-\interpa{\phi}{P_2}) / \sizeof{\tau}, \mbox{ where } P_1:\tau * \\
+\interpa{\phi}{I_1+I_2} &:=& \interpa{\phi}{I_1} + \interpa{\phi}{I_2} \\
+\interpa{\phi}{I_1 \times I_2} &:= &\interpa{\phi}{I_1} \times \interpa{\phi}{I_2} \\
+\hline
+\end{array}
+$$
+}
+
+
+\frame{
+\frametitle{Compiling Boolean expressions}
+
+$$
+\begin{array}{|lll|}
+\hline
+\interpa{\phi}{P_1 == P_2} &:=& \left \lbrace \begin{array}{ll} 
+        \interpa{\phi}{P_1} == \interpa{\phi}{P_2} & \mbox{ if } \base{\phi}{P_1}\seq\base{\phi}{P_2} \\
+        \bot & \mbox{else} 
+        \end{array} \right . \\
+&&\\
+\interpa{\phi}{P_1 != P_2} &:=& \left \lbrace \begin{array}{ll} 
+        \interpa{\phi}{P_1} != \interpa{\phi}{P_2} & \mbox{ if } \base{\phi}{P_1}\seq\base{\phi}{P_2} \\
+        \bot & \mbox{else} 
+        \end{array} \right . \\
+&&\\
+\interpa{\phi}{P_1 \bowtie P_2} &:=& \left \lbrace \begin{array}{ll} 
+        \interpa{\phi}{P_1} \bowtie \interpa{\phi}{P_2} & \mbox{ if } \base{\phi}{P_1}\seq\base{\phi}{P_2} \\
+        \bot & \mbox{else} 
+        \end{array} \right . \\ 
+\hline
+\end{array}
+$$
+
+}
+
+
 \frame{
 \frametitle{Extraction : Basic statment}
 
@@ -608,8 +673,8 @@ where :
 \frametitle{Extraction : Basic statment}
 
 \begin{block}{\texttt{lval=expr}}
-Here, an lval can be an array element, a referenced mem
-cell or an int variable.
+Considered lvals are array element and referenced mem
+cells. 
 \begin{center}
 \resizebox{8cm}{!}{\input{affectlval.pstex_t}}
 \end{center}
@@ -622,53 +687,35 @@ cell or an int variable.
 \end{block}
 }
 
+
 \frame{
-\frametitle{Memory access rules}
-Correct access:
-{\tiny
-$$
-\begin{array}{|l|}
-\hline
-\transmodel{\phi}{\accs{P}}{
-\begin{array}{l}
-0 \leq \interpa{\phi}{x}+\sizeof{\tau}\leq \lsize{l} \\
- \wedge \congmod{(\interpa{\phi}{P}+\base{\phi}{P})
-}{0}{\sizeof{\tau}}
-\end{array}
-}{\phi} \gspace \Alloc{l}\in \Sp{\phi} \gspace \mbox{where } \left \lbrace \begin{array}{l} P:\tau *, \\l\seq \base{\phi}{P}.\\ \end{array} \right.\\
-\hline
-\end{array}
-$$
-}
+\frametitle{Extraction : Basic statement}
+\begin{block}{\texttt{lval=call(fun,arg1},...,\texttt{argn)}}
+Call of \texttt{fun} where \texttt{\{P\} fun \{Q\}}.
+\begin{center}
+\resizebox{7cm}{!}{\input{funcall.pstex_t}}
+\end{center}
 
-Access to an unallocated address :
-{\tiny
-$$
-\begin{array}{|l|}
-\hline
-\transmodel{\exists l. \phi}{\accs{P}}{}{\bot} \gspace  \Alloc{l}\not \in \Sp{\phi}, l \in \FVars{\phi}, \mbox{ where } l \seq \base{\phi}{P} \\
-\hline
-\end{array}
-$$
-}
-Access outside of an allocated zone, or with an unaligned address :
-{\tiny
-$$
-\begin{array}{|l|}
-\hline
-\transmodel{\phi}{\accs{P}}{
-\begin{array}{l}
-\phantom{\vee}  \interpa{\phi}{P}+\sizeof{x} > \lsize{l} \\
-\vee \notcongmod{\interpa{\phi}{P}}{0}{\sizeof{\tau}}
-\end{array}
-}{\bot} \gspace \Alloc{l}\in \Sp{\phi} \left \lbrace  \begin{array}{l} \mbox{where } P:\tau *,\\ l\seq\base{\phi}{P},\\ \end{array} \right . \\
-\hline
-\end{array}
-$$
+\end{block}
 }
 
 
+\frame{
+\frametitle{Exctraction : Control Flow operation}
+\begin{block}{\texttt{if(test, stmtif, stmtelse)}}
+Expression \texttt{test} might perform some illegal operations.
+\begin{center}
+\resizebox{5cm}{!}{\input{ifthen.pstex_t}}
+\end{center}
+\end{block}
 }
+
+
+
+
+
+
+
 
 \frame{
 \frametitle{Among other things}
