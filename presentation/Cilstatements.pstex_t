@@ -1,5 +1,5 @@
 \begin{picture}(0,0)%
-\includegraphics{Cil_statements.pstex}%
+\includegraphics{Cilstatements.pstex}%
 \end{picture}%
 \setlength{\unitlength}{4144sp}%
 %
@@ -9,5 +9,5 @@
   \fontfamily{#3}\fontseries{#4}\fontshape{#5}%
   \selectfont}%
 \fi\endgroup%
-\begin{picture}(11647,5174)(166,-5573)
+\begin{picture}(11647,5977)(166,-6376)
 \end{picture}%

@@ -251,12 +251,97 @@
 
 \begin{frame}
 \frametitle{Outline}
- \tableofcontents[part=1,pausesections]
+ \tableofcontents[pausesections]
 \end{frame}
 
 
 
 \section{Introduction }
+
+
+\subsection{Motivations}
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.7\textwidth]{torino-24.pdf}
+\end{center}
+}
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.7\textwidth]{torino-25.pdf}
+\end{center}
+}
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.7\textwidth]{torino-26.pdf}
+\end{center}
+}
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.7\textwidth]{torino-27.pdf}
+\end{center}
+}
+
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.7\textwidth]{torino-28.pdf}
+\end{center}
+}
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.7\textwidth]{torino-29.pdf}
+\end{center}
+}
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.7\textwidth]{torino-30.pdf}
+\end{center}
+}
+
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.7\textwidth]{torino-31.pdf}
+\end{center}
+}
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.7\textwidth]{torino-32.pdf}
+\end{center}
+}
+
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.7\textwidth]{torino-33.pdf}
+\end{center}
+}
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.7\textwidth]{torino-34.pdf}
+\end{center}
+}
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.7\textwidth]{torino-35.pdf}
+\end{center}
+}
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.7\textwidth]{torino-36.pdf}
+\end{center}
+}
+
 \subsection{What is flatac}
 \frame{
 \frametitle{What is flatac ?}
@@ -266,6 +351,7 @@
 \item Coded as a Frama-C plugin. 
 \end{itemize}
 }
+
 \subsection{Tracking memory faults}
 \frame{
 \frametitle{Typical memory faults :}
@@ -354,27 +440,32 @@ some error state is reachable from the entry point (main function).
 \frametitle{Abstract interpretation preliminary part}
  Simple Separation Logic formulae : Abstract domain.
 
+\begin{block}{Syntax of SSL}
 $$
 \begin{array}{lclr}
 \phi & := & \Formula{\pi}{\sigma} \gspace | \gspace \Exists{l}{\phi} & \mbox{Formulae} \\
 \pi & := & \Pointsto{x}{l} \gspace | \gspace \Pointstonil{x} \gspace | \gspace \EqLoc{l_1}{l_2} \gspace | \gspace \Andpure{\pi_1}{\pi_2} & {\mbox{Pure part}} \\
-\sigma &:=& \Emp  \gspace | \gspace \Alloc{l} \gspace | \gspace \Sep{\sigma_1}{\sigma_2}\ \bot & \mbox{Spatial part}
+\sigma &:=& \Emp  \gspace | \gspace \Alloc{l} \gspace | \gspace \Sep{\sigma_1}{\sigma_2}\ \gspace | \gspace \bot & \mbox{Spatial part}
 \end{array}
 $$
+\end{block}
 
 }
 
 
 
 \frame{
-\frametitle{Properties of SSL}
+\frametitle{Good properties of SSL}
 
+\begin{block}{Properties}
 The problem that follows are decidable :
 \begin{itemize}
 \item Satisfiability (Valid configuration)
 \item Entailment, Equivalence.
+\item SSL formula with $\vdash$ is a complete latice.
 \item Memory leaks
 \end{itemize}
+\end{block}
 
 Those problems are solved using rewriting techniques.
 }
@@ -399,6 +490,7 @@ Those problems are solved using rewriting techniques.
 A memory model that associates counters to SSL
 variables :
 
+\begin{block}{Additional quantitative informations}
 $$
 \begin{array}{lcr}
 \mbox{SSL Variable} & \mbox{NTS counter} & \\
@@ -412,6 +504,7 @@ In order to :
 \item Associate to pointer their offset.
 \item To express guards on memory access.
 \end{itemize}
+\end{block}
 }
 
 \frame{
@@ -464,8 +557,9 @@ $$
 \tred{Access to \texttt{*x} is out of bounds of allocated segment at \texttt{l}.}
 }
 
-\section{Model extraction}
 
+\section{Model extraction}
+\subsection{Cil representation of C programs}
 \frame{
 \frametitle{Cil representation of C programs}
 
@@ -485,26 +579,39 @@ For each function of the AST :
 
 
 
+\frame{
+\frametitle{From cil statments to NTS}
+\begin{center}
+\resizebox{8cm}{!}{\input{Cilstatements.pstex_t}}
+\end{center}
+}
+
+
+\subsection{Extraction steps}
+
+\frame{
+\frametitle{Step 1 : Compile expression + Valid mem conditions}
+\begin{center}
+\resizebox{8cm}{!}{\input{compilestep1.pstex_t}}
+\end{center}
+}
 
 
 \frame{
-\frametitle{Control flow statemnt v.s. basic instructions}
-
-\begin{block}{Control flow statement}
-\begin{itemize}
-\item \texttt{if(expr,blockif,blockelse)}
-\item \texttt{switch(expr,case\_list)}
-\item \texttt{while(expr)}
-\end{itemize}
-\end{block}
-
-\begin{block}{Instruction statement}
-\begin{itemize}
-\item \texttt{lval=expr}
-\item \texttt{lval=funcall(name,exp list)}
-\end{itemize}
-\end{block}
+\frametitle{Step 2 : Updating absdomain evaluation}
+\begin{center}
+\resizebox{8cm}{!}{\input{compilestep2.pstex_t}}
+\end{center}
 }
+
+\frame{
+\frametitle{Step 3 : Recurse on all abstract successors}
+\begin{center}
+\resizebox{8cm}{!}{\input{compilestep3.pstex_t}}
+\end{center}
+}
+
+
 
 
 \frame{
@@ -526,22 +633,6 @@ Cil expressions&Memory abstraction & Nts Guard \\
 }
 
 
-
-
-
-%\begin{block}{Memory access guards Cil expressions}
-%\end{block}
-
-%\begin{tabular}{lcr}
-%Cil expressions&Memory abstraction & Nts Guard \\ 
-%\texttt{*x} &$\Formula{\Pointsto{x}{l}}{\Alloc{l}}$ & \texttt{true}\\
-%\texttt{*x} &$\Formula{\Pointsto{x}{l}}{\Emp}$& \texttt{false}\\ 
-%\texttt{*(x+i)} & $\Formula{\Pointsto{x}{l}}{\Alloc{l}}$& $0\leq i\times$\texttt{sizeof(}$\tau$\texttt{)}$<$\texttt{l\_size}\\
-%\texttt{tab[i]}&$\Formula{true}{\Emp}$& $0\leq i <$ \texttt{tab\_size}\\
-
-%\end{tabular}
-%\end{block}
-%}
 
 
 \frame{
@@ -568,6 +659,96 @@ Cil expr & \texttt{valid\_mem} \\
 
 
 
+
+
+
+
+\frame{
+\frametitle{Compiling expressions}
+
+
+\begin{block}{From pointer arithmetics to Nts expressions}
+$$
+\begin{array}{|lll|}
+\hline
+\base{\phi}{x}&:=& l \mbox{ if }  \Pointsto{x}{l} \in \Pp{\phi} \\
+\base{\phi}{\NULL} &:=& \nil \gspace \forall \phi \\
+\base{\phi}{P+I} &:=& \base{\phi}{P} \\
+
+%\end{array}
+%$$
+
+
+%}
+
+%\frame{
+%\frametitle{Compiling Integer expressions}
+
+%$$
+%\begin{array}{|lll|}
+ \interpa{\phi}{n} & := & n \\
+\interpa{\phi}{i} & := & \icnt{i} \\
+\interpa{\phi}{\NULL} & := & 0 \\
+\interpa{\phi}{x} &:=& \ptroffset{x} \\
+\interpa{\phi}{x_1 - x_2} & :=&  \ptroffset{x_1}-\ptroffset{x_2} \\
+\interpa{\phi}{P+I} & := & \interpa{\phi}{P}+\interpa{\phi}{I}\times \sizeof{\tau}, \mbox{ where } P:\tau *\\
+\interpa{\phi}{P_1 - P_2} & := & ( \interpa{\phi}{P_1}-\interpa{\phi}{P_2}) / \sizeof{\tau}, \mbox{ where } P_1:\tau * \\
+\interpa{\phi}{I_1+I_2} &:=& \interpa{\phi}{I_1} + \interpa{\phi}{I_2} \\
+\interpa{\phi}{I_1 \times I_2} &:= &\interpa{\phi}{I_1} \times \interpa{\phi}{I_2} \\
+\hline
+\end{array}
+$$
+\end{block}
+}
+
+
+\frame{
+\frametitle{Compiling booleans to Nts guards}
+
+\begin{block}{}
+$$
+\begin{array}{lll}
+
+\interpa{\phi}{P_1 == P_2} &:=& \left \lbrace \begin{array}{ll} 
+        \interpa{\phi}{P_1} == \interpa{\phi}{P_2} & \mbox{ if } \base{\phi}{P_1}\seq\base{\phi}{P_2} \\
+        \bot & \mbox{else} 
+        \end{array} \right . \\
+&&\\
+\interpa{\phi}{P_1 != P_2} &:=& \left \lbrace \begin{array}{ll} 
+        \interpa{\phi}{P_1} != \interpa{\phi}{P_2} & \mbox{ if } \base{\phi}{P_1}\seq\base{\phi}{P_2} \\
+        \bot & \mbox{else} 
+        \end{array} \right . \\
+&&\\
+\interpa{\phi}{P_1 \bowtie P_2} &:=& \left \lbrace \begin{array}{ll} 
+        \interpa{\phi}{P_1} \bowtie \interpa{\phi}{P_2} & \mbox{ if } \base{\phi}{P_1}\seq\base{\phi}{P_2} \\
+        \bot & \mbox{else} 
+        \end{array} \right . \\ 
+\end{array}
+$$
+\end{block}
+}
+
+
+\frame{
+\frametitle{Control flow statements v.s. basic instructions}
+
+\begin{block}{Control flow statement}
+Those require a special handling, to deal with the
+case where \texttt{expr} is invalid.
+\begin{itemize}
+\item \texttt{if(expr,blockif,blockelse)}
+\item \texttt{switch(expr,case\_list)}
+\end{itemize}
+\end{block}
+Basic statement are easier to model.
+\begin{block}{Instruction statement}
+\begin{itemize}
+\item \texttt{lval=expr}
+\item \texttt{lval=funcall(name,exp list)}
+\end{itemize}
+\end{block}
+}
+
 \frame{
 \frametitle{Model extraction :}
 
@@ -583,71 +764,6 @@ where :
 \item $Abs =$ Set of SSL formula $\bigcup \bot$, 
 \item $R$ is a set of possibly guarded NTS transitions. 
 \end{itemize}
-}
-
-
-
-\frame{
-\frametitle{Compiling expressions}
-
-$$
-\begin{array}{|lll|}
-\hline
-\base{\phi}{x}&:=& l \mbox{ if }  \Pointsto{x}{l} \in \Pp{\phi} \\
-\base{\phi}{\NULL} &:=& \nil \gspace \forall \phi \\
-\base{\phi}{P+I} &:=& \base{\phi}{P} \\
-\hline
-\end{array}
-$$
-
-
-}
-
-\frame{
-\frametitle{Compiling Integer expressions}
-
-$$
-\begin{array}{|lll|}
-\hline
- \interpa{\phi}{n} & := & n \\
-\interpa{\phi}{i} & := & \icnt{i} \\
-\interpa{\phi}{\NULL} & := & 0 \\
-\interpa{\phi}{x} &:=& \ptroffset{x} \\
-\interpa{\phi}{x_1 - x_2} & :=&  \ptroffset{x_1}-\ptroffset{x_2} \\
-\interpa{\phi}{P+I} & := & \interpa{\phi}{P}+\interpa{\phi}{I}\times \sizeof{\tau}, \mbox{ where } P:\tau *\\
-\interpa{\phi}{P_1 - P_2} & := & ( \interpa{\phi}{P_1}-\interpa{\phi}{P_2}) / \sizeof{\tau}, \mbox{ where } P_1:\tau * \\
-\interpa{\phi}{I_1+I_2} &:=& \interpa{\phi}{I_1} + \interpa{\phi}{I_2} \\
-\interpa{\phi}{I_1 \times I_2} &:= &\interpa{\phi}{I_1} \times \interpa{\phi}{I_2} \\
-\hline
-\end{array}
-$$
-}
-
-
-\frame{
-\frametitle{Compiling Boolean expressions}
-
-$$
-\begin{array}{|lll|}
-\hline
-\interpa{\phi}{P_1 == P_2} &:=& \left \lbrace \begin{array}{ll} 
-        \interpa{\phi}{P_1} == \interpa{\phi}{P_2} & \mbox{ if } \base{\phi}{P_1}\seq\base{\phi}{P_2} \\
-        \bot & \mbox{else} 
-        \end{array} \right . \\
-&&\\
-\interpa{\phi}{P_1 != P_2} &:=& \left \lbrace \begin{array}{ll} 
-        \interpa{\phi}{P_1} != \interpa{\phi}{P_2} & \mbox{ if } \base{\phi}{P_1}\seq\base{\phi}{P_2} \\
-        \bot & \mbox{else} 
-        \end{array} \right . \\
-&&\\
-\interpa{\phi}{P_1 \bowtie P_2} &:=& \left \lbrace \begin{array}{ll} 
-        \interpa{\phi}{P_1} \bowtie \interpa{\phi}{P_2} & \mbox{ if } \base{\phi}{P_1}\seq\base{\phi}{P_2} \\
-        \bot & \mbox{else} 
-        \end{array} \right . \\ 
-\hline
-\end{array}
-$$
-
 }
 
 
@@ -701,7 +817,7 @@ Call of \texttt{fun} where \texttt{\{P\} fun \{Q\}}.
 
 
 \frame{
-\frametitle{Exctraction : Control Flow operation}
+\frametitle{Extraction : Control Flow operation}
 \begin{block}{\texttt{if(test, stmtif, stmtelse)}}
 Expression \texttt{test} might perform some illegal operations.
 \begin{center}
@@ -710,12 +826,46 @@ Expression \texttt{test} might perform some illegal operations.
 \end{block}
 }
 
+\frame{
+\frametitle{Extraction : Extended Cfg building algorithm}
+When computing a new realation $(s_{curr},\phi),R,(s_{next},\phi^{\prime})$ do
+\begin{itemize}
+\item If $\exists (sid,\psi)\in S$ s.t. $sid=s_{next}$ and $\psi\vdash\phi$
+then $\to = \to \cup (s_{curr},\phi),R,(s_{next},\psi)$
+\item Else 
+  \begin{itemize}
+  \item $\to = \to \cup (s_{curr},\phi),R,(s_{next},\phi^{\prime})$
+  \item Recurse on abstract state $(s_{next},\phi^{\prime})$
+  \end{itemize}
+\end{itemize}
+
+\begin{block}{Termination}
+This algorith terminates as the $sid$ index is a fixed set and
+that the SSL formula w.r.t. the partial order $\vdash$ is a 
+complete lattice.
+\end{block}
+}
+
+
+\subsection{Exporting into NTL format for verification step}
+
+\frame{
+\frametitle{Exporting the ECFG of a function into the NTL format}
+\begin{itemize}
+\item Assign to all $(sid,\phi)\in S$ an unique id $id_{sid,\phi}$.
+\item Input state $IdS_i=\{id_{s_0,\phi_{enty}}\}$.
+\item Error states : $IdS_{err}=\lbrace id_{s,\phi} | \phi = \bot \rbrace$.
+\item States : $IdS = \lbrace id_{s,\phi} | (s,\phi) \not\in(S_i \cup S_f \cup S_{err})\rbrace$
+\item Transitions : 
+  \begin{itemize}
+  \item For all $\tred{(s,\phi)}\times R \tgreen{(q,\psi)} \in \to$ do :
+  \item Print $\tred{id_{s,\phi}}\to\tgreen{id_{q,\psi}} \{R\}$
+ \end{itemize}
+\end{itemize}
 
 
 
-
-
-
+}
 
 \frame{
 \frametitle{Among other things}
