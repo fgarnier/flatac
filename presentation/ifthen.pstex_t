@@ -1,0 +1,27 @@
+\begin{picture}(0,0)%
+\includegraphics{ifthen.pstex}%
+\end{picture}%
+\setlength{\unitlength}{4144sp}%
+%
+\begingroup\makeatletter\ifx\SetFigFont\undefined%
+\gdef\SetFigFont#1#2#3#4#5{%
+  \reset@font\fontsize{#1}{#2pt}%
+  \fontfamily{#3}\fontseries{#4}\fontshape{#5}%
+  \selectfont}%
+\fi\endgroup%
+\begin{picture}(5565,6069)(2416,-5224)
+\put(7786,524){\makebox(0,0)[lb]{\smash{{\SetFigFont{20}{24.0}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}(sid\_then,$\phi$)}%
+}}}}
+\put(7831,-5101){\makebox(0,0)[lb]{\smash{{\SetFigFont{20}{24.0}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}\tred{$\bot$}}%
+}}}}
+\put(7966,-2761){\makebox(0,0)[lb]{\smash{{\SetFigFont{20}{24.0}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}(sid\_else,$\phi$)}%
+}}}}
+\put(2431,-2131){\makebox(0,0)[lb]{\smash{{\SetFigFont{20}{24.0}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}(sid\_if,$\phi$)}%
+}}}}
+\put(5266,-1996){\makebox(0,0)[lb]{\smash{{\SetFigFont{17}{20.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\neg \interpa{\phi}{\mbox{\texttt{test}}} \wedge$ \texttt{valid\_mem(test)}}%
+}}}}
+\put(3916,614){\makebox(0,0)[lb]{\smash{{\SetFigFont{17}{20.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\interpa{\phi}{\mbox{\texttt{test}}} \wedge$ \texttt{valid\_mem(test)}}%
+}}}}
+\put(6931,-4336){\makebox(0,0)[lb]{\smash{{\SetFigFont{17}{20.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\neg$ \texttt{valid\_mem(test)}}%
+}}}}
+\end{picture}%
