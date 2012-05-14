@@ -18,8 +18,8 @@
   \newcommand\tblue[1]{\textcolor{blue}{#1}}
 \newcommand\tgreen[1]{\textcolor{green}{#1}}
 %\newcommand\tred[1]{\textcolor{red}{#1}}
-\usepackage[small,nhug,heads=vee]{diagrams}
-\diagramstyle[labelstyle=\scriptstyle]
+%\usepackage[small,nhug,heads=vee]{diagrams}
+%\diagramstyle[labelstyle=\scriptstyle]
 
 \input{macro_filip}
 
@@ -480,19 +480,19 @@ The problem that follows are decidable :
 Those problems are solved using rewriting techniques.
 }
 
-\frame{
-\frametitle{Example of SSL formulae}
-\begin{itemize}
-\item $\Formula{ \Andpure{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l}}}{\Pointstonil{z}}}{\Emp}$
-\item $\Formula{\Andpure{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l}}}{\Pointstonil{z}}}{\Alloc{l_1}}$
-\item $\Formula{ \Andpure{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l}}}{\Pointstonil{z}}}{\Sep{\Alloc{l_1}}{\Alloc{l}}}$
-\item $\Formula{ \Andpure{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l}}}{\Pointstonil{z}}}{\Sep{\Alloc{l_1}}{\Alloc{l}}}$
-\item $\Formula{ \Andpure{x=y}{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l}}}}{\Sep{\Alloc{l_1}}{\Alloc{l}}}$ (Unsat)
-\item $\Formula{ \Andpure{x=y}{\Andpure{\Pointsto{x}{l_1}}{\Pointstonil{y}}}}{\Alloc{l_1}}$ (Unsat)
-\item $\Formula{ true }{\Alloc{l}}$ (Leak)
-\end{itemize}
-}
-
+%\frame{
+%\frametitle{Example of SSL formulae}
+%\begin{itemize}
+%\item $\Formula{ \Andpure{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l}}}{\Pointstonil{z}}}{\Emp}$
+%\item $\Formula{\Andpure{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l}}}{\Pointstonil{z}}}{\Alloc{l_1}}$
+%\item $\Formula{ \Andpure{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l}}}{\Pointstonil{z}}}{\Sep{\Alloc{l_1}}{\Alloc{l}}}$
+%\item $\Formula{ \Andpure{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l}}}{\Pointstonil{z}}}{\Sep{\Alloc{l_1}}{\Alloc{l}}}$
+%\item $\Formula{ \Andpure{x=y}{\Andpure{\Pointsto{x}{l_1}}{\Pointsto{y}{l}}}}{\Sep{\Alloc{l_1}}{\Alloc{l}}}$ (Unsat)
+%\item $\Formula{ \Andpure{x=y}{\Andpure{\Pointsto{x}{l_1}}{\Pointstonil{y}}}}{\Alloc{l_1}}$ (Unsat)
+%\item $\Formula{ true }{\Alloc{l}}$ (Leak)
+%\end{itemize}
+%}
+%
 
 \subsection{Memory model}
 \frame{
