@@ -259,100 +259,8 @@
 \section{Introduction }
 
 
-\subsection{Motivations}
+\subsection{Motivations : Proving memory faults freedom of C programs}
 
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.7\textwidth]{torino-24.pdf}
-\end{center}
-}
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.7\textwidth]{torino-25.pdf}
-\end{center}
-}
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.7\textwidth]{torino-26.pdf}
-\end{center}
-}
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.7\textwidth]{torino-27.pdf}
-\end{center}
-}
-
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.7\textwidth]{torino-28.pdf}
-\end{center}
-}
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.7\textwidth]{torino-29.pdf}
-\end{center}
-}
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.7\textwidth]{torino-30.pdf}
-\end{center}
-}
-
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.7\textwidth]{torino-31.pdf}
-\end{center}
-}
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.7\textwidth]{torino-32.pdf}
-\end{center}
-}
-
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.7\textwidth]{torino-33.pdf}
-\end{center}
-}
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.7\textwidth]{torino-34.pdf}
-\end{center}
-}
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.7\textwidth]{torino-35.pdf}
-\end{center}
-}
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.7\textwidth]{torino-36.pdf}
-\end{center}
-}
-
-\subsection{What is flatac}
-\frame{
-\frametitle{What is flatac ?}
-\begin{itemize}
-\item Part of a toolchain that aims at proving that C programs don't generate memory faults and don't violates assertions.
-\item A front end that generates NTS based models of C programs.
-\item Coded as a Frama-C plugin. 
-\end{itemize}
-}
-
-\subsection{Tracking memory faults}
 \frame{
 \frametitle{Typical memory faults :}
 
@@ -365,6 +273,7 @@
 \item Memory leaks
 \end{itemize}
 }
+
 
 \frame{
 \frametitle{Two subkinds of properties :}
@@ -383,6 +292,107 @@
 	\end{itemize}
 \end{itemize}
 }
+
+\subsection{What is flatac}
+\frame{
+\frametitle{What is flatac ?}
+\begin{itemize}
+\item Part of a toolchain that aims at proving that C programs don't generate memory faults and don't violates assertions.
+\item Build a NTS based model of C programs, using static analysis techniques.
+\item Exports this model in the NTL format for an a-posteriori verification pahse :
+\begin{itemize}
+\item Reachability of error states.
+\item Termination.
+\end{itemize}
+
+\item Coded as a Frama-C plugin. 
+\end{itemize}
+}
+
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.8\textwidth]{torino-24.pdf}
+\end{center}
+}
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.8\textwidth]{torino-25.pdf}
+\end{center}
+}
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.8\textwidth]{torino-26.pdf}
+\end{center}
+}
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.8\textwidth]{torino-27.pdf}
+\end{center}
+}
+
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.8\textwidth]{torino-28.pdf}
+\end{center}
+}
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.8\textwidth]{torino-29.pdf}
+\end{center}
+}
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.8\textwidth]{torino-30.pdf}
+\end{center}
+}
+
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.8\textwidth]{torino-31.pdf}
+\end{center}
+}
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.8\textwidth]{torino-32.pdf}
+\end{center}
+}
+
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.8\textwidth]{torino-33.pdf}
+\end{center}
+}
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.8\textwidth]{torino-34.pdf}
+\end{center}
+}
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.8\textwidth]{torino-35.pdf}
+\end{center}
+}
+
+\frame{
+\begin{center}
+\includegraphics[angle=270,width=0.8\textwidth]{torino-36.pdf}
+\end{center}
+}
+
+
+
 
 \frame{
 \frametitle{Tracked property}

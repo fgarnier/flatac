@@ -1,9 +1,8 @@
 \beamer@endinputifotherversion {3.07pt}
 \beamer@sectionintoc {1}{Introduction }{5}{0}{1}
-\beamer@subsectionintoc {1}{1}{Motivations}{5}{0}{1}
-\beamer@subsectionintoc {1}{2}{What is flatac}{18}{0}{1}
-\beamer@subsectionintoc {1}{3}{Tracking memory faults}{19}{0}{1}
-\beamer@subsectionintoc {1}{4}{Flata-c a link in a toolchain}{23}{0}{1}
+\beamer@subsectionintoc {1}{1}{Motivations : Proving memory faults freedom of C programs}{5}{0}{1}
+\beamer@subsectionintoc {1}{2}{What is flatac}{7}{0}{1}
+\beamer@subsectionintoc {1}{3}{Flata-c a link in a toolchain}{23}{0}{1}
 \beamer@sectionintoc {2}{Abstract reprentation of the memory}{24}{0}{2}
 \beamer@subsectionintoc {2}{1}{The SSL logic}{24}{0}{2}
 \beamer@subsectionintoc {2}{2}{Memory model}{27}{0}{2}
