@@ -9,7 +9,7 @@
   \fontfamily{#3}\fontseries{#4}\fontshape{#5}%
   \selectfont}%
 \fi\endgroup%
-\begin{picture}(5565,6069)(2416,-5224)
+\begin{picture}(5565,6105)(2416,-5224)
 \put(7786,524){\makebox(0,0)[lb]{\smash{{\SetFigFont{20}{24.0}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}(sid\_then,$\phi$)}%
 }}}}
 \put(7831,-5101){\makebox(0,0)[lb]{\smash{{\SetFigFont{20}{24.0}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}\tred{$\bot$}}%
@@ -18,10 +18,10 @@
 }}}}
 \put(2431,-2131){\makebox(0,0)[lb]{\smash{{\SetFigFont{20}{24.0}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}(sid\_if,$\phi$)}%
 }}}}
-\put(5266,-1996){\makebox(0,0)[lb]{\smash{{\SetFigFont{17}{20.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\neg \interpa{\phi}{\mbox{\texttt{test}}} \wedge$ \texttt{valid\_mem(test)}}%
+\put(6931,-4336){\makebox(0,0)[lb]{\smash{{\SetFigFont{20}{24.0}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\neg$ \texttt{safe\_mem(test)}}%
 }}}}
-\put(3916,614){\makebox(0,0)[lb]{\smash{{\SetFigFont{17}{20.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\interpa{\phi}{\mbox{\texttt{test}}} \wedge$ \texttt{valid\_mem(test)}}%
+\put(3916,614){\makebox(0,0)[lb]{\smash{{\SetFigFont{20}{24.0}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\interpa{\phi}{\mbox{\texttt{test}}} \wedge$ \texttt{safe\_mem(test)}}%
 }}}}
-\put(6931,-4336){\makebox(0,0)[lb]{\smash{{\SetFigFont{17}{20.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\neg$ \texttt{valid\_mem(test)}}%
+\put(4996,-1591){\makebox(0,0)[lb]{\smash{{\SetFigFont{20}{24.0}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\neg \interpa{\phi}{\mbox{\texttt{test}}} \wedge$ \texttt{safe\_mem(test)}}%
 }}}}
 \end{picture}%

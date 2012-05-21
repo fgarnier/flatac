@@ -472,7 +472,6 @@ The problem that follows are decidable :
 \begin{itemize}
 \item Satisfiability (Valid configuration)
 \item Entailment, Equivalence.
-\item SSL formula with $\vdash$ is a complete latice.
 \item Memory leaks
 \end{itemize}
 \end{block}
@@ -517,55 +516,6 @@ In order to :
 \end{block}
 }
 
-\frame{
-\frametitle{Example}
-$$
-\begin{array}{lll}
-\mbox{C "statement"} & \mbox{SSL formula}& \texttt{NTS transition} \\
-\mbox{\texttt{int *x;}} &\Formula{\exists l \Pointsto{x}{l}}{\Emp}&\texttt{offset\_x'=0}\\
-\mbox{\texttt{x=malloc(10);}} &\Formula{\exists l \Pointsto{x}{l}}{\Alloc{l}}&\texttt{size\_l=10}\\
-\mbox{\texttt{x++;}} & \Formula{\exists l \Pointsto{x}{l}}{\Alloc{l}}& \texttt{offset\_x'+=sizeof(int)} \\
-\mbox{\texttt{int y =*x;}} & \Formula{\exists l \Pointsto{x}{l}}{\Alloc{l}}& \texttt{offset\_x'} < \mbox{size\_l} \\
-&\Formula{\exists . l \Pointsto{x}{l}}{\Alloc{l}}& \mbox{havoc(y)}
-\end{array}
-$$
-
-}
-
-\frame{
-\frametitle{Example}
-$$
-\begin{array}{lll}
-\mbox{C "statement"} & \mbox{SSL formula}& \texttt{NTS transition} \\
-\mbox{\texttt{int *x;}} &\Formula{\exists l \Pointsto{x}{l}}{\Emp}&\texttt{offset\_x'=0}\\
-\mbox{\texttt{x=malloc(10);}} &\Formula{\exists l \Pointsto{x}{l}}{\Alloc{l}}&\texttt{size\_l=10}\\
-\mbox{\texttt{x++;}} & \Formula{\exists l \Pointsto{x}{l}}{\Alloc{l}}& \texttt{offset\_x'+=sizeof(int)} \\
-\mbox{\texttt{int y =*x;}} & \Formula{\exists l \Pointsto{x}{l}}{\Alloc{l}}& \texttt{offset\_x'}<\mbox{size\_l} \\
-&\Formula{\exists . l \Pointsto{x}{l}}{\Alloc{l}}& \mbox{havoc(y)}\\
-\mbox{\texttt{x+=10;}} & \Formula{\exists l \Pointsto{x}{l}}{\Alloc{l}}& \texttt{offset\_x'+=10*sizeof(int)} \\
-\end{array}
-$$
-}
-
-
-
-\frame{
-\frametitle{Example}
-$$
-\begin{array}{lll}
-\mbox{C "statement"} & \mbox{SSL formula}& \texttt{NTS transition} \\
-\mbox{\texttt{int *x;}} &\Formula{\exists l \Pointsto{x}{l}}{\Emp}&\texttt{offset\_x'=0}\\
-\mbox{\texttt{x=malloc(10);}} &\Formula{\exists l \Pointsto{x}{l}}{\Alloc{l}}&\texttt{size\_l=10}\\
-\mbox{\texttt{x++;}} & \Formula{\exists l \Pointsto{x}{l}}{\Alloc{l}}& \texttt{offset\_x'+=sizeof(int)} \\
-\mbox{\texttt{int y =*x;}} & \Formula{\exists l \Pointsto{x}{l}}{\Alloc{l}}& \texttt{offset\_x'}<\mbox{size\_l} \\
-&\Formula{\exists . l \Pointsto{x}{l}}{\Alloc{l}}& \mbox{havoc(y)}\\
-\mbox{\texttt{x+=10;}} & \Formula{\exists l \Pointsto{x}{l}}{\Alloc{l}}& \texttt{offset\_x'+=10*sizeof(int)} \\
-\mbox{\texttt{*x=42;}} & \bot & \tred{\texttt{offset\_x}\geq\mbox{size\_l}} \\
-\end{array}
-$$
-
-\tred{Access to \texttt{*x} is out of bounds of allocated segment at \texttt{l}.}
-}
 
 
 \section{Model extraction}
@@ -622,55 +572,310 @@ For each function of the AST :
 }
 
 
+\frame{
+\frametitle{Non deterministic evaluation : validity}
+To any integer variable is associated a validity counter. An
+expression is valid if it is the result of deterministic values.
+\begin{block}{Basic rules}
+\begin{tabular}{lll}
+\texttt{int x;} & \texttt{valid\_x = false} \\
+\texttt{int x=cst;} & \texttt{valid\_x = true} \\
+\texttt{x=y;} & \texttt{valid\_x= valid\_y;} \\
+\texttt{x=ptrw-ptrz;} & \texttt{true} &if $\Formula{\Pointsto{ptrw}{l}\wedge\Pointsto{ptrz}{l}}{.}$\\
+& \texttt{false} &else
+\end{tabular}
+\end{block}
 
+}
 
 \frame{
-\frametitle{Nts guards for valid memory access}
+\frametitle{Nts guards for safe memory access}
 
 Let \texttt{x} a $PVar$ such that \texttt{x:}$\tau$\texttt{*}
-Let $\texttt{valid\_mem}:\texttt{Cil\_types.expr}\times SSL \mapsto NtsGuards$
+Let $\texttt{safe\_mem}:\texttt{Cil\_types.expr}\times SSL \mapsto NtsGuards$
 
 \begin{block}{Memory access guards Cil for atomic expressions}
 \begin{tabular}{lcl}
-Cil expressions&Memory abstraction & Nts Guard \\ 
+Expr &Mem abstraction & Nts Guard \\ 
 \texttt{*x} &$\Formula{\Pointsto{x}{l}}{\Alloc{l}}$ & \texttt{true}\\
 \texttt{*x} &$\Formula{\Pointsto{x}{l}}{\Emp}$& \texttt{false}\\ 
-\texttt{*(x+i)} & $\Formula{\Pointsto{x}{l}}{\Alloc{l}}$& $0\leq i\times$\texttt{sizeof(}$\tau$\texttt{)}$<$\texttt{l\_size}\\
-\texttt{tab[i]}&$\Formula{true}{\Emp}$& $0\leq i <$ \texttt{tab\_size}\\
-
+\texttt{*(x+i)} & $\Formula{\Pointsto{x}{l}}{\Alloc{l}}$& \texttt{valid\_i}$\wedge 0\leq i\times$\texttt{sizeof(}$\tau$\texttt{)}$<$\texttt{l\_size}\\
+\texttt{tab[i]}&$\Formula{true}{\Emp}$& \texttt{valid\_i}$\wedge 0\leq i <$ \texttt{tab\_size}\\
 \end{tabular}
 \end{block}
 }
 
+
+\frame{
+\frametitle{Control flow statements v.s. basic instructions}
+
+\begin{block}{Control flow statement}
+One need to consider a transition to $\bot$ guarded by
+$\neg$ \texttt{safe\_mem(expr)}.
+\begin{itemize}
+\item \texttt{if(expr,blockif,blockelse)}
+\item \texttt{switch(expr,case\_list)}
+\end{itemize}
+\end{block}
+Basic statement are easier to model.
+\begin{block}{Instruction statement}
+\begin{itemize}
+\item \texttt{lval=expr}
+\item \texttt{lval=funcall(name,exp list)}
+\end{itemize}
+\end{block}
+}
+
+\frame{
+\frametitle{Model extraction :}
+
+Input : Cil AST and Control flow graph
+
+Generated Model : Extended CFG,
+  
+
+
+where :
+\begin{itemize}
+\item The verticies are statement id labelled with SSL formula.
+\item The edges are labelled with Nts Guards, affectation, and
+function calls.
+\end{itemize}
+}
+
+
+\frame{
+\frametitle{Extraction : Basic statment}
+
+\begin{block}{\texttt{Var(v)=expr}}
+\begin{center}
+\resizebox{8cm}{!}{\input{affectvar.pstex_t}}
+\end{center}
+
+\end{block}
+}
 
 
 
 \frame{
-\frametitle{Nts guards for valid memory access}
-\begin{block}{Cil expression type definition (Non exhaustive)}
-\begin{tabular}{l}
-\texttt{UnOp(UOp,expr)} \\
-\texttt{BinOp(BOp,expg,expd)}\\
-\texttt{UOP}=\texttt{UnMin| BNot | Neg}$\ldots$ \\
-\texttt{BOP}=\texttt{BAnd|BOr}$\ldots$\\
-\phantom{UOP}\texttt{Plus|Minus|Prod|Div}$\ldots$\\
-\phantom{BOP}\texttt{PlusPI|MinusPI|MinusPP}$\ldots$\\
-\end{tabular}
-\end{block}
+\frametitle{Extraction : Basic statment}
 
-\begin{block}{\texttt{valid\_mem} of Cil expression}
-\begin{tabular}{ll}
-Cil expr & \texttt{valid\_mem} \\
-\texttt{UnOp(UOp,expr)} & \texttt{valid\_mem(expr)}\\
-\texttt{BinOp(BOp,expg,expd)} & \texttt{valid\_mem(expg)}$\wedge$\texttt{valid\_mem(expg)} \\
-\end{tabular}
+\begin{block}{\texttt{lval=expr}}
+Considered lvals are array element and referenced mem
+cells. 
+\begin{center}
+\resizebox{8cm}{!}{\input{affectlval.pstex_t}}
+\end{center}
+
 \end{block}
+}
+
+
+\frame{
+\frametitle{Extraction : Basic statement}
+\begin{block}{\texttt{lval=call(fun,arg1},...,\texttt{argn)}}
+Call of \texttt{fun} where \texttt{\{P\} fun \{Q\}}.
+\begin{center}
+\resizebox{7cm}{!}{\input{funcall.pstex_t}}
+\end{center}
+
+\end{block}
+}
+
+
+\frame{
+\frametitle{Extraction : Control Flow operation}
+\begin{block}{\texttt{if(test, stmtif, stmtelse)}}
+Expression \texttt{test} might perform some illegal operations.
+\begin{center}
+\resizebox{5cm}{!}{\input{ifthen.pstex_t}}
+\end{center}
+\end{block}
+}
+
+
+\frame{
+\frametitle{Extraction : Extended Cfg building algorithm}
+
+When generating some $(sid_i,\psi_i)$ from the current abstract
+state $(s,\phi)$, with label $R$ do:
+\begin{itemize}
+\item Create a new vertex $(sid_i,\psi_i)$ if $\psi_i$
+is the most general formula associated to $sid_i$.
+Create a new edge between the two vertex, with label $R$.
+Recurse on $(sid_i,\psi_i)$
+\item Else 
+  \begin{itemize}
+  \item Add an edge labelled R from the current state 
+    to $(sid_i,\psi_g)$ with $\psi_g$ greatest element.
+  \end{itemize}
+\end{itemize}
+
+
 }
 
 
 
 
 
+\subsection{Exporting into NTL format for verification step}
+
+\frame{
+\frametitle{Verification Phase : Reachability Analysis}
+
+\begin{itemize}
+\item Exporting the Ecfg Hierarchical Numerical Transition System.
+\item Reachability analisys of the error states by FLATA and/or ELDARICA
+\item If some error state is reachable : An alarm is raised.
+\item If no error states is reachable : The program is free of the memory fault we consider. 
+\end{itemize}
+}
+
+
+\section{Benchmarks}
+
+\frame{
+\frametitle{Benchmarks}
+
+\begin{figure}[h!]
+%\begin{scriptsize}
+{\small
+\begin{minipage}[t]{.5\textwidth}
+%\begin{scriptsize}
+\begin{tabular}[t]{lrrrr}
+\hline
+%\multirow{2}{*}{Model} & \multicolumn{2}{c}{ Time [s]} \\
+& F. & E. & S. & D. \\
+\hline
+\multicolumn{3}{l}{\textbf{(a) Examples from TACASO6\[\]}} \\
+\hline
+anubhav (C)  &  0.6  & 1.5 &  1.8  &  1.5\\
+copy1 (E)  &  1.7 & 8.1  &  1.2  &  3.5\\
+cousot (C) &  0.5 & -  &  -  &  4.3 \\
+loop1 (C) &  0.4 & 2.1  &  0.9  &  2.1 \\
+loop (C) &  0.4 & 0.3  &  0.9  &  0.3 \\
+scan  (E) &  2.4 & -  &  1.0  &  2.9 \\
+string\_concat1  (E) &  4.4  & -  &  3.2  &  5.0  \\
+string\_concat  (E) &  4.1  & -  &  2.5  &  4.2  \\
+string\_copy  (E) &  3.7  & -  &  1.5  &  3.6  \\
+substring1 (E) &  0.3  & 1.6  &  23.9  &  1.5 \\
+substring (E) &  1.8  & 0.6  &  1.6  &  0.6 \\
+\hline
+\end{tabular}
+\end{minipage}%
+\hspace*{-2ex}%
+} % end small
+%\end{scriptsize}
+\end{figure}
+\textbf{F}lata, \textbf{E}ldarica, Eldarica (\textbf{S}tatic loop acceleration)
+ and CEGAAR (\textbf{D}ynamic acceleration).  
+
+}
+
+
+\frame{
+\frametitle{Benchmarks}
+
+\begin{figure}[h!]
+%\begin{scriptsize}
+{\small
+\begin{minipage}[t]{.5\textwidth}
+%\begin{scriptsize}
+\begin{tabular}[t]{lrrrr}
+\hline
+%\multirow{2}{*}{Model} & \multicolumn{2}{c}{ Time [s]} \\
+& F. & E. & S. & D. \\
+\hline
+\multicolumn{3}{l}{\textbf{ Examples from Monniaux}} \\
+boustrophedon (C) &  -  & -  &  -  &  12.2 \\
+gopan (C) &  0.5  & -  &  -  &  6.7 \\
+halbwachs (C) & -  & -  &  1.6  &  8.2 \\
+rate\_limiter (C) &  -  & 7.2  &  2.7  &  7.1 \\
+\hline
+\multicolumn{3}{l}{\textbf{(e) NECLA benchmarks}} \\
+\hline
+inf1 (E) &  0.1  & 0.3  &  0.3  &  0.3 \\
+inf4 (E) &  0.8  & 0.5  &  0.5  &  0.5 \\
+inf6 (C) & 0.1  & 0.3  &  0.3  &  0.3 \\
+inf8 (C) &  0.3  & 0.6  &  0.6  &  0.6 \\
+\hline
+\end{tabular}
+\end{minipage}%
+\hspace*{-2ex}%
+} % end small
+%\end{scriptsize}
+\end{figure}
+\textbf{F}lata, \textbf{E}ldarica, Eldarica (\textbf{S}tatic loop acceleration)
+ and CEGAAR (\textbf{D}ynamic acceleration).  
+
+}
+%\fram
+%\frame{
+%\frametitle{How to label terms with A.P. ?}
+%\begin{center}
+%\resizebox{10cm}{!}{\input{LabelLucas.pstex_t}}
+%\end{center}
+%}
+%
+%\frame{
+%\frametitle{Precision of computational sets}
+%\begin{center}
+%\resizebox{8cm}{!}{\input{Precision.pstex_t}}
+%\end{center}
+%}
+%
+
+\end{document}
+
+\frame{
+\frametitle{Example}
+$$
+\begin{array}{lll}
+\mbox{C "statement"} & \mbox{SSL formula}& \texttt{NTS transition} \\
+\mbox{\texttt{int *x;}} &\Formula{\exists l \Pointsto{x}{l}}{\Emp}&\texttt{offset\_x'=0}\\
+\mbox{\texttt{x=malloc(10);}} &\Formula{\exists l \Pointsto{x}{l}}{\Alloc{l}}&\texttt{size\_l=10}\\
+\mbox{\texttt{x++;}} & \Formula{\exists l \Pointsto{x}{l}}{\Alloc{l}}& \texttt{offset\_x'+=sizeof(int)} \\
+\mbox{\texttt{int y =*x;}} & \Formula{\exists l \Pointsto{x}{l}}{\Alloc{l}}& \texttt{offset\_x'} < \mbox{size\_l} \\
+&\Formula{\exists . l \Pointsto{x}{l}}{\Alloc{l}}& \mbox{havoc(y)}
+\end{array}
+$$
+
+}
+
+\frame{
+\frametitle{Example}
+$$
+\begin{array}{lll}
+\mbox{C "statement"} & \mbox{SSL formula}& \texttt{NTS transition} \\
+\mbox{\texttt{int *x;}} &\Formula{\exists l \Pointsto{x}{l}}{\Emp}&\texttt{offset\_x'=0}\\
+\mbox{\texttt{x=malloc(10);}} &\Formula{\exists l \Pointsto{x}{l}}{\Alloc{l}}&\texttt{size\_l=10}\\
+\mbox{\texttt{x++;}} & \Formula{\exists l \Pointsto{x}{l}}{\Alloc{l}}& \texttt{offset\_x'+=sizeof(int)} \\
+\mbox{\texttt{int y =*x;}} & \Formula{\exists l \Pointsto{x}{l}}{\Alloc{l}}& \texttt{offset\_x'}<\mbox{size\_l} \\
+&\Formula{\exists . l \Pointsto{x}{l}}{\Alloc{l}}& \mbox{havoc(y)}\\
+\mbox{\texttt{x+=10;}} & \Formula{\exists l \Pointsto{x}{l}}{\Alloc{l}}& \texttt{offset\_x'+=10*sizeof(int)} \\
+\end{array}
+$$
+}
+
+
+
+\frame{
+\frametitle{Example}
+$$
+\begin{array}{lll}
+\mbox{C "statement"} & \mbox{SSL formula}& \texttt{NTS transition} \\
+\mbox{\texttt{int *x;}} &\Formula{\exists l \Pointsto{x}{l}}{\Emp}&\texttt{offset\_x'=0}\\
+\mbox{\texttt{x=malloc(10);}} &\Formula{\exists l \Pointsto{x}{l}}{\Alloc{l}}&\texttt{size\_l=10}\\
+\mbox{\texttt{x++;}} & \Formula{\exists l \Pointsto{x}{l}}{\Alloc{l}}& \texttt{offset\_x'+=sizeof(int)} \\
+\mbox{\texttt{int y =*x;}} & \Formula{\exists l \Pointsto{x}{l}}{\Alloc{l}}& \texttt{offset\_x'}<\mbox{size\_l} \\
+&\Formula{\exists . l \Pointsto{x}{l}}{\Alloc{l}}& \mbox{havoc(y)}\\
+\mbox{\texttt{x+=10;}} & \Formula{\exists l \Pointsto{x}{l}}{\Alloc{l}}& \texttt{offset\_x'+=10*sizeof(int)} \\
+\mbox{\texttt{*x=42;}} & \bot & \tred{\texttt{offset\_x}\geq\mbox{size\_l}} \\
+\end{array}
+$$
+
+\tred{Access to \texttt{*x} is out of bounds of allocated segment at \texttt{l}.}
+}
 
 
 \frame{
@@ -740,105 +945,74 @@ $$
 
 
 \frame{
-\frametitle{Control flow statements v.s. basic instructions}
-
-\begin{block}{Control flow statement}
-Those require a special handling, to deal with the
-case where \texttt{expr} is invalid.
-\begin{itemize}
-\item \texttt{if(expr,blockif,blockelse)}
-\item \texttt{switch(expr,case\_list)}
-\end{itemize}
-\end{block}
-Basic statement are easier to model.
-\begin{block}{Instruction statement}
-\begin{itemize}
-\item \texttt{lval=expr}
-\item \texttt{lval=funcall(name,exp list)}
-\end{itemize}
-\end{block}
-}
-
-\frame{
-\frametitle{Model extraction :}
-
-Input : Cil AST and Control flow graph
-
-Generated Model : Extended CFG,
-  
-$(S_i,S_f,S_{err},S,\to \in (S\times R \times S)) $
-
-where :
-\begin{itemize}
-\item $S \in  ($Cil\_types.stmt$\times \ Abs)$,
-\item $Abs =$ Set of SSL formula $\bigcup \bot$, 
-\item $R$ is a set of possibly guarded NTS transitions. 
-\end{itemize}
-}
+\frametitle{Compiling expressions}
 
 
-\frame{
-\frametitle{Extraction : Basic statment}
+\begin{block}{From pointer arithmetics to Nts expressions}
+$$
+\begin{array}{|lll|}
+\hline
+\base{\phi}{x}&:=& l \mbox{ if }  \Pointsto{x}{l} \in \Pp{\phi} \\
+\base{\phi}{\NULL} &:=& \nil \gspace \forall \phi \\
+\base{\phi}{P+I} &:=& \base{\phi}{P} \\
 
-\begin{block}{\texttt{Var(v)=expr}}
-\begin{center}
-\resizebox{8cm}{!}{\input{affectvar.pstex_t}}
-\end{center}
-%\begin{diagram}
-% &&\Formula{\true}{\Emp}\\
-%\Formula{\true}{\Emp}&\ruTo^{\texttt{valid\_mem(expr)}}&\\
-%&\rdTo^{\not\texttt{valid\_mem(expr)}}&\\
-%&&\bot
-%\end{diagram}
-\end{block}
-}
+%\end{array}
+%$$
 
 
+%}
 
-\frame{
-\frametitle{Extraction : Basic statment}
+%\frame{
+%\frametitle{Compiling Integer expressions}
 
-\begin{block}{\texttt{lval=expr}}
-Considered lvals are array element and referenced mem
-cells. 
-\begin{center}
-\resizebox{8cm}{!}{\input{affectlval.pstex_t}}
-\end{center}
-%\begin{diagram}
-% &&\Formula{\true}{\Emp}\\
-%\Formula{\true}{\Emp}&\ruTo^{\texttt{valid\_mem(expr)}}&\\
-%&\rdTo^{\not\texttt{valid\_mem(expr)}}&\\
-%&&\bot
-%\end{diagram}
+%$$
+%\begin{array}{|lll|}
+ \interpa{\phi}{n} & := & n \\
+\interpa{\phi}{i} & := & \icnt{i} \\
+\interpa{\phi}{\NULL} & := & 0 \\
+\interpa{\phi}{x} &:=& \ptroffset{x} \\
+\interpa{\phi}{x_1 - x_2} & :=&  \ptroffset{x_1}-\ptroffset{x_2} \\
+\interpa{\phi}{P+I} & := & \interpa{\phi}{P}+\interpa{\phi}{I}\times \sizeof{\tau}, \mbox{ where } P:\tau *\\
+\interpa{\phi}{P_1 - P_2} & := & ( \interpa{\phi}{P_1}-\interpa{\phi}{P_2}) / \sizeof{\tau}, \mbox{ where } P_1:\tau * \\
+\interpa{\phi}{I_1+I_2} &:=& \interpa{\phi}{I_1} + \interpa{\phi}{I_2} \\
+\interpa{\phi}{I_1 \times I_2} &:= &\interpa{\phi}{I_1} \times \interpa{\phi}{I
+_2} \\
+\hline
+\end{array}
+$$
 \end{block}
 }
 
 
 \frame{
-\frametitle{Extraction : Basic statement}
-\begin{block}{\texttt{lval=call(fun,arg1},...,\texttt{argn)}}
-Call of \texttt{fun} where \texttt{\{P\} fun \{Q\}}.
-\begin{center}
-\resizebox{7cm}{!}{\input{funcall.pstex_t}}
-\end{center}
+\frametitle{Compiling booleans to Nts guards}
 
-\end{block}
-}
+\begin{block}{}
+$$
+\begin{array}{lll}
 
-
-\frame{
-\frametitle{Extraction : Control Flow operation}
-\begin{block}{\texttt{if(test, stmtif, stmtelse)}}
-Expression \texttt{test} might perform some illegal operations.
-\begin{center}
-\resizebox{5cm}{!}{\input{ifthen.pstex_t}}
-\end{center}
+\interpa{\phi}{P_1 == P_2} &:=& \left \lbrace \begin{array}{ll} 
+        \interpa{\phi}{P_1} == \interpa{\phi}{P_2} & \mbox{ if } \base{\phi}{P_1}\seq\base{\phi}{P_2} \\
+        \bot & \mbox{else} 
+        \end{array} \right . \\
+&&\\
+\interpa{\phi}{P_1 != P_2} &:=& \left \lbrace \begin{array}{ll} 
+        \interpa{\phi}{P_1} != \interpa{\phi}{P_2} & \mbox{ if } \base{\phi}{P_1}\seq\base{\phi}{P_2} \\
+        \bot & \mbox{else} 
+        \end{array} \right . \\
+&&\\
+\interpa{\phi}{P_1 \bowtie P_2} &:=& \left \lbrace \begin{array}{ll} 
+        \interpa{\phi}{P_1} \bowtie \interpa{\phi}{P_2} & \mbox{ if } \base{\phi}{P_1}\seq\base{\phi}{P_2} \\
+        \bot & \mbox{else} 
+        \end{array} \right . \\ 
+\end{array}
+$$
 \end{block}
 }
 
 \frame{
 \frametitle{Extraction : Extended Cfg building algorithm}
-When computing a new realation $(s_{curr},\phi),R,(s_{next},\phi^{\prime})$ do
+
 \begin{itemize}
 \item If $\exists (sid,\psi)\in S$ s.t. $sid=s_{next}$ and $\psi\vdash\phi$
 then $\to = \to \cup (s_{curr},\phi),R,(s_{next},\psi)$
@@ -857,64 +1031,44 @@ complete lattice.
 }
 
 
-\subsection{Exporting into NTL format for verification step}
-
 \frame{
-\frametitle{Exporting the ECFG of a function into the NTL format}
-\begin{itemize}
-\item Assign to all $(sid,\phi)\in S$ an unique id $id_{sid,\phi}$.
-\item Input state $IdS_i=\{id_{s_0,\phi_{enty}}\}$.
-\item Error states : $IdS_{err}=\lbrace id_{s,\phi} | \phi = \bot \rbrace$.
-\item States : $IdS = \lbrace id_{s,\phi} | (s,\phi) \not\in(S_i \cup S_f \cup S_{err})\rbrace$
-\item Transitions : 
-  \begin{itemize}
-  \item For all $\tred{(s,\phi)}\times R \tgreen{(q,\psi)} \in \to$ do :
-  \item Print $\tred{id_{s,\phi}}\to\tgreen{id_{q,\psi}} \{R\}$
- \end{itemize}
-\end{itemize}
+\frametitle{Nts guards for safe memory access}
+\begin{block}{Cil expression type definition (Non exhaustive)}
+\begin{tabular}{l}
+\texttt{UnOp(UOp,expr)} \\
+\texttt{BinOp(BOp,expg,expd)}\\
+\texttt{UOP}=\texttt{UnMin| BNot | Neg}$\ldots$ \\
+\texttt{BOP}=\texttt{BAnd|BOr}$\ldots$\\
+\phantom{UOP}\texttt{Plus|Minus|Prod|Div}$\ldots$\\
+\phantom{BOP}\texttt{PlusPI|MinusPI|MinusPP}$\ldots$\\
+\end{tabular}
+\end{block}
 
-
-
-}
-
-\frame{
-\frametitle{Among other things}
-\begin{itemize}
-\item Validity of integer values : Initialization, difference
-between two pointers, (Valid, Not Valid, Don't Know)
-\item Transitions not generated when guards can be statically
-proved false.
-\end{itemize}
-
+\begin{block}{\texttt{valid\_mem} of Cil expression}
+\begin{tabular}{ll}
+Cil expr & \texttt{valid\_mem} \\
+\texttt{UnOp(UOp,expr)} & \texttt{valid\_mem(expr)}\\
+\texttt{BinOp(BOp,expg,expd)} & \texttt{valid\_mem(expg)}$\wedge$\texttt{valid\_mem(expg)} \\
+\end{tabular}
+\end{block}
 }
 
 
-\frame{
-\frametitle{Verification Phase : Reachability Analysis}
 
-\begin{itemize}
-\item Exporting the Ecfg Hierarchical Numerical Transition System.
-\item Reachability analisys of the error states by FLATA and/or ELDARICA
-\item If some error state is reachable : An alarm is raised.
-\item If no error states is reachable : The program is free of the memory fault we consider. 
-\end{itemize}
-}
-
-%\fram
 %\frame{
-%\frametitle{How to label terms with A.P. ?}
-%\begin{center}
-%\resizebox{10cm}{!}{\input{LabelLucas.pstex_t}}
-%\end{center}
-%}
-%
-%\frame{
-%\frametitle{Precision of computational sets}
-%\begin{center}
-%\resizebox{8cm}{!}{\input{Precision.pstex_t}}
-%\end{center}
-%}
-%
+%\frametitle{Exporting the ECFG of a function into the NTL format}
+%\begin{itemize}
+%\item Assign to all $(sid,\phi)\in S$ an unique id $id_{sid,\phi}$.
+%\item Input state $IdS_i=\{id_{s_0,\phi_{enty}}\}$.
+%\item Error states : $IdS_{err}=\lbrace id_{s,\phi} | \phi = \bot \rbrace$.
+%\item States : $IdS = \lbrace id_{s,\phi} | (s,\phi) \not\in(S_i \cup S_f \cup S_{err})\rbrace$
+%\item Transitions : 
+%  \begin{itemize}
+%  \item For all $\tred{(s,\phi)}\times R \tgreen{(q,\psi)} \in \to$ do :
+%  \item Print $\tred{id_{s,\phi}}\to\tgreen{id_{q,\psi}} \{R\}$
+% \end{itemize}
+%\end{itemize}
 
-\end{document}
 
+
+%}

@@ -1,8 +1,8 @@
 %!PS-Adobe-2.0 EPSF-2.0
 %%Title: ifthen.fig
 %%Creator: fig2dev Version 3.2 Patchlevel 5a
-%%CreationDate: Sun May 13 17:55:42 2012
-%%BoundingBox: 0 0 351 383
+%%CreationDate: Mon May 14 23:37:47 2012
+%%BoundingBox: 0 0 351 385
 %Magnification: 1.0000
 %%EndComments
 %%BeginProlog
@@ -81,7 +81,7 @@ end
 
 /pageheader {
 save
-newpath 0 383 moveto 0 0 lineto 351 0 lineto 351 383 lineto closepath clip newpath
+newpath 0 385 moveto 0 0 lineto 351 0 lineto 351 385 lineto closepath clip newpath
 -152.1 381.9 translate
 1 -1 scale
 $F2psBegin

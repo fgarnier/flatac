@@ -14,8 +14,7 @@ Single
 	0 0 2.00 60.00 120.00
 	 4365 3105 7560 4275
 4 0 0 50 -1 0 22 0.0000 6 360 3825 7785 1665 $\\Formula{\\true}{\\Emp}$\001
-4 0 0 50 -1 0 22 0.0000 6 360 4560 7785 4680 \\tred{$\\Formula{\\true}{\\bot}$}\001
 4 0 0 50 -1 0 22 0.0000 6 360 3825 315 2970 $\\Formula{\\true}{\\Emp}$\001
-4 0 0 50 -1 0 18 0.0000 6 255 2040 4680 5985 \\texttt{lval=expr}\001
-4 0 0 50 -1 0 18 0.0000 6 270 6990 2205 585 \\texttt{valid\\_mem(expr)}$\\wedge$\\texttt{valid\\_mem(lval)}\001
-4 0 0 50 -1 0 18 0.0000 6 270 7950 2340 4995 $\\neg$(\\texttt{valid\\_mem(expr)}$\\wedge$\\texttt{valid\\_mem(lval)})\001
+4 0 0 50 -1 0 18 0.0000 6 270 6885 2205 585 \\texttt{safe\\_mem(expr)}$\\wedge$\\texttt{valid\\_mem(lval)}\001
+4 0 0 50 -1 0 18 0.0000 6 270 7740 2340 4995 $\\neg$(\\texttt{safe\\_mem(expr)}$\\wedge$\\texttt{safe\\_mem(lval)})\001
+4 0 0 50 -1 0 22 0.0000 6 360 1905 7785 4680 $\\tred{\\bot}$\001
