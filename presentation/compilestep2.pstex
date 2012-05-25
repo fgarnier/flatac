@@ -1,8 +1,8 @@
 %!PS-Adobe-2.0 EPSF-2.0
 %%Title: compilestep2.fig
 %%Creator: fig2dev Version 3.2 Patchlevel 5a
-%%CreationDate: Mon May 14 10:35:49 2012
-%%BoundingBox: 0 0 668 326
+%%CreationDate: Mon May 14 19:45:58 2012
+%%BoundingBox: 0 0 773 326
 %Magnification: 1.0000
 %%EndComments
 %%BeginProlog
@@ -81,7 +81,7 @@ end
 
 /pageheader {
 save
-newpath 0 326 moveto 0 0 lineto 668 0 lineto 668 326 lineto closepath clip newpath
+newpath 0 326 moveto 0 0 lineto 773 0 lineto 773 326 lineto closepath clip newpath
 -10.4 403.9 translate
 1 -1 scale
 $F2psBegin
@@ -138,27 +138,18 @@ gs 1 -1 sc (Cil_types.stmt) col0 sh gr
 /Times-Roman ff 285.75 scf sf
 2250 5175 m
 gs 1 -1 sc (expr) col0 sh gr
-/Times-Roman ff 285.75 scf sf
-7875 2880 m
-gs 1 -1 sc (Compute the abstract) col0 sh gr
-/Times-Roman ff 285.75 scf sf
-7875 3210 m
-gs 1 -1 sc (somain evaluation ) col0 sh gr
-/Times-Roman ff 285.75 scf sf
-7875 3540 m
-gs 1 -1 sc (w.r.t. Cil_stmt semantic.) col0 sh gr
-/Times-Roman ff 285.75 scf sf
-7920 4095 m
-gs 1 -1 sc (Generate transitions to) col0 sh gr
-/Times-Roman ff 285.75 scf sf
-7920 4425 m
-gs 1 -1 sc (error states labelled by) col0 sh gr
-/Times-Roman ff 285.75 scf sf
-7920 4755 m
-gs 1 -1 sc (the negation of mem) col0 sh gr
-/Times-Roman ff 285.75 scf sf
-7920 5085 m
-gs 1 -1 sc (access guards.) col0 sh gr
+/Times-Roman ff 349.25 scf sf
+7920 5130 m
+gs 1 -1 sc (to error states.) col0 sh gr
+/Times-Roman ff 349.25 scf sf
+7875 4635 m
+gs 1 -1 sc (Compute guards for transition) col0 sh gr
+/Times-Roman ff 349.25 scf sf
+7920 3615 m
+gs 1 -1 sc (sucessors.) col0 sh gr
+/Times-Roman ff 349.25 scf sf
+7920 3195 m
+gs 1 -1 sc (Compute abstractions for) col0 sh gr
 % here ends figure;
 pagefooter
 showpage

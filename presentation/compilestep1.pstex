@@ -1,8 +1,8 @@
 %!PS-Adobe-2.0 EPSF-2.0
 %%Title: compilestep1.fig
 %%Creator: fig2dev Version 3.2 Patchlevel 5a
-%%CreationDate: Mon May 14 10:34:15 2012
-%%BoundingBox: 0 0 692 326
+%%CreationDate: Mon May 14 19:48:36 2012
+%%BoundingBox: 0 0 760 326
 %Magnification: 1.0000
 %%EndComments
 %%BeginProlog
@@ -81,7 +81,7 @@ end
 
 /pageheader {
 save
-newpath 0 326 moveto 0 0 lineto 692 0 lineto 692 326 lineto closepath clip newpath
+newpath 0 326 moveto 0 0 lineto 760 0 lineto 760 326 lineto closepath clip newpath
 -10.4 403.9 translate
 1 -1 scale
 $F2psBegin
@@ -138,16 +138,16 @@ gs 1 -1 sc (Cil_types.stmt) col0 sh gr
 /Times-Roman ff 285.75 scf sf
 2250 5175 m
 gs 1 -1 sc (expr) col0 sh gr
-/Times-Roman ff 238.13 scf sf
+/Times-Roman ff 317.50 scf sf
 8280 4770 m
 gs 1 -1 sc (Compile expression in) col0 sh gr
-/Times-Roman ff 238.13 scf sf
+/Times-Roman ff 317.50 scf sf
 8280 5055 m
 gs 1 -1 sc (Nts integer or booleans) col0 sh gr
-/Times-Roman ff 238.13 scf sf
+/Times-Roman ff 317.50 scf sf
 8280 5625 m
 gs 1 -1 sc (Compile mem access guards) col0 sh gr
-/Times-Roman ff 238.13 scf sf
+/Times-Roman ff 317.50 scf sf
 8280 5910 m
 gs 1 -1 sc (from expressions.) col0 sh gr
 % here ends figure;

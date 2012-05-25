@@ -14,7 +14,7 @@ Single
 	0 0 2.00 60.00 120.00
 	 2834 3332 6029 4502
 4 0 0 50 -1 0 22 0.0000 6 360 1770 405 3240 (sid,$P*R$)\001
-4 0 0 50 -1 0 18 0.0000 6 270 6135 3510 4905 $\\exists i, \\neg$ \\texttt{valid\\_mem(}$arg_i$\\texttt{)}\001
-4 0 0 50 -1 0 18 0.0000 6 270 15570 225 1035 $\\bigwedge \\limits_{0\\leq i\\leq n}$\\texttt{valid\\_mem(}$arg_i$\\texttt{)} and fun($\\interpa{P*R}{arg_1},\\ldots,\\interpa{P*R}{arg_n}$)\001
 4 0 0 50 -1 0 22 0.0000 6 360 2775 6120 1755 (next\\_sid,$Q*R$)\001
 4 0 0 50 -1 0 22 0.0000 6 360 1905 6255 4680 \\tred{$\\bot$}\001
+4 0 0 50 -1 0 18 0.0000 6 270 15465 225 1035 $\\bigwedge \\limits_{0\\leq i\\leq n}$\\texttt{safe\\_mem(}$arg_i$\\texttt{)} and fun($\\interpa{P*R}{arg_1},\\ldots,\\interpa{P*R}{arg_n}$)\001
+4 0 0 50 -1 0 18 0.0000 6 270 6030 3510 4905 $\\exists i, \\neg$ \\texttt{safe\\_mem(}$arg_i$\\texttt{)}\001

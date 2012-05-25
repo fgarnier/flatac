@@ -12,12 +12,12 @@
 \begin{picture}(6060,4197)(211,-4162)
 \put(406,-2401){\makebox(0,0)[lb]{\smash{{\SetFigFont{20}{24.0}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}(sid,$P*R$)}%
 }}}}
-\put(3511,-4066){\makebox(0,0)[lb]{\smash{{\SetFigFont{17}{20.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\exists i, \neg$ \texttt{valid\_mem(}$arg_i$\texttt{)}}%
-}}}}
-\put(226,-196){\makebox(0,0)[lb]{\smash{{\SetFigFont{17}{20.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\bigwedge \limits_{0\leq i\leq n}$\texttt{valid\_mem(}$arg_i$\texttt{)} and fun($\interpa{P*R}{arg_1},\ldots,\interpa{P*R}{arg_n}$)}%
-}}}}
 \put(6121,-916){\makebox(0,0)[lb]{\smash{{\SetFigFont{20}{24.0}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}(next\_sid,$Q*R$)}%
 }}}}
 \put(6256,-3841){\makebox(0,0)[lb]{\smash{{\SetFigFont{20}{24.0}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}\tred{$\bot$}}%
+}}}}
+\put(226,-196){\makebox(0,0)[lb]{\smash{{\SetFigFont{17}{20.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\bigwedge \limits_{0\leq i\leq n}$\texttt{safe\_mem(}$arg_i$\texttt{)} and fun($\interpa{P*R}{arg_1},\ldots,\interpa{P*R}{arg_n}$)}%
+}}}}
+\put(3511,-4066){\makebox(0,0)[lb]{\smash{{\SetFigFont{17}{20.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\exists i, \neg$ \texttt{safe\_mem(}$arg_i$\texttt{)}}%
 }}}}
 \end{picture}%

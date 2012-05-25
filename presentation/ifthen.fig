@@ -20,6 +20,6 @@ Single
 4 0 0 50 -1 0 22 0.0000 6 360 1905 7830 5940 \\tred{$\\bot$}\001
 4 0 0 50 -1 0 22 0.0000 6 360 2565 7965 3600 (sid\\_else,$\\phi$)\001
 4 0 0 50 -1 0 22 0.0000 6 360 2190 2430 2970 (sid\\_if,$\\phi$)\001
-4 0 0 50 -1 0 18 0.0000 6 270 8880 5265 2835 $\\neg \\interpa{\\phi}{\\mbox{\\texttt{test}}} \\wedge$ \\texttt{valid\\_mem(test)}\001
-4 0 0 50 -1 0 18 0.0000 6 270 8325 3915 225 $\\interpa{\\phi}{\\mbox{\\texttt{test}}} \\wedge$ \\texttt{valid\\_mem(test)}\001
-4 0 0 50 -1 0 18 0.0000 6 270 3735 6930 5175 $\\neg$ \\texttt{valid\\_mem(test)}\001
+4 0 0 50 -1 0 20 0.0000 6 315 4215 6930 5175 $\\neg$ \\texttt{safe\\_mem(test)}\001
+4 0 0 50 -1 0 20 0.0000 6 315 9600 3915 225 $\\interpa{\\phi}{\\mbox{\\texttt{test}}} \\wedge$ \\texttt{safe\\_mem(test)}\001
+4 0 0 50 -1 0 20 0.0000 6 315 10260 4995 2430 $\\neg \\interpa{\\phi}{\\mbox{\\texttt{test}}} \\wedge$ \\texttt{safe\\_mem(test)}\001

@@ -1,8 +1,8 @@
 %!PS-Adobe-2.0 EPSF-2.0
 %%Title: affectlval.fig
 %%Creator: fig2dev Version 3.2 Patchlevel 5a
-%%CreationDate: Sun May 13 16:05:07 2012
-%%BoundingBox: 0 0 473 361
+%%CreationDate: Mon May 14 23:34:01 2012
+%%BoundingBox: 0 0 473 299
 %Magnification: 1.0000
 %%EndComments
 %%BeginProlog
@@ -81,8 +81,8 @@ end
 
 /pageheader {
 save
-newpath 0 361 moveto 0 0 lineto 473 0 lineto 473 361 lineto closepath clip newpath
--18.9 382.7 translate
+newpath 0 299 moveto 0 0 lineto 473 0 lineto 473 299 lineto closepath clip newpath
+-18.9 320.7 translate
 1 -1 scale
 $F2psBegin
 10 setmiterlimit
