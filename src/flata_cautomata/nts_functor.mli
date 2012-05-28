@@ -2,23 +2,27 @@ open Nts_types
 open Hashtbl
 open Option
 
-module type ANOTATIONS_TYPES =
+module type NTS_PARAM =
   sig
-    type t
-    val pprint: t -> string
-  end
+    type t         (*Type for key id of control states: e.g : int, string*)
+    type anot_type (*Type for anotations*)
+    val make_anot : unit -> anot_type (*Needed In case of anotation
+				      are using mutable container that
+				      need to be created, hashtbl for
+				      instance*)
+    val pprint: anot_types -> string (*Types for pprinting anotations*)
+  end 
 
 
-module type 
 
 
 module type Nts_gen =
-  functor( Anot : ANOTATIONS_TYPES ) ->
+  functor( Param : NTS_PARAM ) ->
 sig 
-  type anotations = Nts_Anot of Anot.t
-  type control = Nts_state of int (* Control state *)
+  type anotations = Nts_Anot of Param.anot_type
+  type control = Nts_state of Param.t (* Control state *)
       
-  type nts_automata
+  type nts_automaton
   val create_nts : unit -> nts_automata (* Creates a new structure
 					nts_automata*)
   val pprint : nts_automata -> string
