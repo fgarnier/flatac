@@ -479,18 +479,20 @@ being error states.*)
  
  
   method havocise_label l =
-     let l = Nts.rewrite_ndet_assignation l
+    Nts.havocise_label l
+     (*let l = Nts.rewrite_ndet_assignation l
        in		
-    Nts.havocise l
+    Nts.havocise l*)
 
 
   method need_split_transition l =
     Nts.need_split_transition l
 
   method split_guard_call_transition translabel =
-    let translabel = 
-      Nts.rewrite_ndet_assignation translabel in
     Nts.split_guard_call_transition translabel
+    (*let translabel = 
+      Nts.rewrite_ndet_assignation translabel in
+    Nts.split_guard_call_transition translabel*)
 
 
      

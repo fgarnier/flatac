@@ -670,6 +670,15 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
     let tpost = List.filter is_a_call trans_label_list in
     (tpre,tpost)
 	  
+
+
+  let havocise_label l =
+    let l = rewrite_ndet_assignation l
+    in		
+      havocise l
+
+
+
   (* Replace every  argument of a function that is equal to NDet by
      an argument variable that is previous havocised.
   *)
@@ -863,6 +872,13 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
   (* Replace non deterministic
     guards by simpler non deterministic test, when possible.*)
     (*l*) (*Retuns the labels untouched*) 
+
+
+
+  let split_guard_call_transition translabel =
+     let translabel = 
+       rewrite_ndet_assignation translabel in
+       split_guard_call_transition translabel
 
      
 (************** Implementation of the structural equality between nts

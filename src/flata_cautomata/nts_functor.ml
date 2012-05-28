@@ -4,6 +4,38 @@ open Option
 
 
 
+
+let pprint_trans_list_foldleft (s : string ) ( trans : cnt_trans_label ) =
+  match (s,trans) with 
+    | ("",CntGuard(guard))-> 
+      let s_guard = simplify_cnt_boolexp guard in
+      (*let s_guard = guard in*)
+      begin
+	match s_guard with 
+	    CntBTrue -> ""
+	  | _ -> cnt_pprint_boolexp s_guard
+      end
+    | ("",_) ->
+      (cnt_pprint_translabel trans )
+    | (_,CntGuard(guard)) -> 
+      let s_guard = simplify_cnt_boolexp guard in
+      (*let s_guard=guard in *)
+      begin
+	match s_guard with 
+	    CntBTrue -> s
+	  | _ -> s^ " and "^(cnt_pprint_boolexp s_guard) 
+      end
+	
+    | (_,_) -> s^" and "^(cnt_pprint_translabel trans )
+  
+
+let prefix_trans_label_list (prefix : Nts_types.cnt_trans_label list ) 
+    ((abs, labels):(ssl_validity_absdom * Nts_types.cnt_trans_label list )) 
+     =
+  (abs,prefix@labels)
+
+
+
 module type NTS_PARAM =
   sig
     type t         (*Type for key id of control states: e.g : int, string*)
@@ -31,7 +63,7 @@ struct
   type nts_automaton =
       {
 	mutable nts_automata_name : string 
-	anot : anotations
+	mutable anot : anotations
 	states : (control , unit ) Hastbl.t;
 	init_states : (control , unit ) Hashtbl.t;
 	final_states : (control , unit ) Hashtbl.t;
@@ -42,9 +74,24 @@ struct
 	transitions : (control, (control , cnt_trans_label list ) Hashtbl.t) Hashtbl.t ;
       }
 
+  type nts_system = 
+      {
+	mutable nts_system_name : string;
+	mutable nts_global_vars : nts_var list;
+	mutable nts_automata : nts_automaton list;
+      }
+
   val size_hash = 97
 
-  let create_nts () = 
+  let create_nts_system name =
+    {
+      nts_system_name <- name;
+      nts_global_vars <- [];
+      nts_automata <- [];
+    }
+
+
+  let create_nts_automaton name = 
     let anot_i = Param.make_anot () in
     let states_i = Hashtbl.create size_hash in
     let final_states_i = Hashtbl.create size_hash in
@@ -52,8 +99,8 @@ struct
     let error_states_i = Hashtbl.create size_hash in
     let transition_i = Hashtbl.create size_hash in
       {
-	nts_automata_name <- "";
-	anot=anot_i;
+	nts_automata_name <- name;
+	anot<-anot_i;
 	states=states_i;
 	init_states=init_states_i;
 	final_states=init_states_i;
@@ -88,7 +135,7 @@ struct
     then Hashtbl.add cautomata.error_states s
     else ()
 
-  (*I dont check the unicity of s1->l->s2 transition.*) 
+  (**I dont check the unicity of s1->l->s2 transition.*) 
   let add_transition (cautomata : nts_automata) 
     ( orig : control ) (dest : control) ( lab : cnt_trans_label list) =
     let master_rel = cautomata.transitions in
@@ -105,8 +152,9 @@ struct
 	  Hashtbl.add master_rel orig orig_binding
       end
 
-  (*Returns the collection of transitions betwenn sorg and sdests
-    The result has type cnt_translabel list list
+
+  (**Returns the collection of transitions betwenn sorg and sdests
+     The result has type cnt_translabel list list
   *)
   let get_transition_from  cautomata sorg sdest =
     if not (Hashtb.mem cautomata.transitions sorg)
@@ -121,6 +169,17 @@ struct
 	      Not_found -> None
       end
   (*None is returned if no transition exists*)
+
+
+  let pprint_inputvars cautomata = 
+     Nts.pprint_typeinfo_nts_var_list c.input_vars
+       
+  let pprint_outputvars cautomata =
+    Nts.pprint_typeinfo_nts_var_list c.input_vars
+    
+  let pretty_label tlist =
+    let  str = List.fold_left pprint_trans_list_foldleft "" tlist in
+      str
   
   (* The function below need not appear in the interface file*)
   let pprint_initial_states c =
@@ -180,6 +239,46 @@ struct
       else
 	""
 
+
+  let pprint_transitions cautomata =
+    let dest_table_print_folder ( origin : control ) (dest : control ) label 
+	(prescript : string ) =
+      if (Nts.static_check_if_translist_unsat label) 
+      then prescript 
+      else
+	if not (Nts.need_split_transition label) 
+	then
+	  begin
+	    let label = Nts.rewrite_ndet_assignation label in
+	    let label = Nts.havocise label in
+	    let post_script = Format.sprintf "%s \n s%d->s%d { %s }" prescript ( pprint_control origin)  ( pprint_control dest) 
+	      (pretty_label label)
+	    in 
+	      post_script
+	  end
+	       
+	else
+	  begin
+	    let label =  Nts.rewrite_ndet_assignation translabel in
+	    let (pre,post) = Nts.split_guard_call_transition translabel in
+	       let pre= Nts.havocise_label pre in
+	       let post = Nts.havocise_label post in
+	       let post_script = Format.sprintf "%s \n s%d->sinter%d { %s }" prescript   ( pprint_control origin) ( intermediate_sid)
+		 (pretty_label pre) in
+	       let post_script=Format.sprintf "%s \n sinter%d->s%d { %s }" post_script ( intermediate_sid)  ( pprint_control dest) 
+		 (pretty_label post) in
+	       intermediate_sid<-intermediate_sid + 1;
+	       post_script
+	     end 
+
+      in
+      let origin_table_print_folder (origin : control ) table_dest 
+	  (pre_script :  string ) =
+	Hashtbl.fold (dest_table_print_folder origin) table_dest pre_script
+      in
+      Hashtbl.fold origin_table_print_folder cautomata.transitions prescript
+
+
   let pprint_to_nts cautomata = 
       (* let current_ecfg_node = Hashtbl.get vertex current_vertex_id in *)
       let res_string = cautomata.name^"{\n" in
@@ -189,14 +288,11 @@ struct
 	else res_string
       )
       in
-      let pprint_loc = self#pprint_local_vars () in
-      let pprint_loc_pre = front_end#pprint_list_of_malloc_vars () in
-      let pprint_loc=Nts.concat_comma_both_arg_non_empty pprint_loc_pre 
-	pprint_loc in
+      let pprint_loc = pprint_local_vars cautomata in
       let res_string=res_string^"\n"^Nts.concat_if_first_arg_nonzero pprint_loc " : int ;\n" in
     
       
-      let ret_vars = self#pprint_out_vars () in
+      let ret_vars = pprint_out_vars cautomata in
       Format.printf "Outvars are : %s \n" ret_vars;
       let res_string =  (
 	if String.length ret_vars > 0 
@@ -205,24 +301,13 @@ struct
 	  res_string
       ) 
       in
-      let res_string = res_string^((self#pprint_inits ()))^"\n"  in
-      let res_string = res_string^((self#pprint_finals ()))^"\n" in
-      let res_string = res_string^((self#pprint_error_states())) in
-      let res_string = res_string^((self#pprint_transitions()))
+      let res_string = res_string^((pprint_inits cautomata))^"\n"  in
+      let res_string = res_string^((pprint_finals cautomata))^"\n" in
+      let res_string = res_string^((pprint_error_states cautomata)) in
+      let res_string = res_string^((pprint_transitions cautomata))
       in
       let res_string = res_string^"\n}" in
       res_string
 
-
-
-
-  let pprint_inputvars cautomata = 
-     Nts.pprint_typeinfo_nts_var_list c.input_vars
-       
-  let pprint_outputvars cautomata =
-    Nts.pprint_typeinfo_nts_var_list c.input_vars
-
-  let pprint_cautomata cautomata =
-    
     
 end
