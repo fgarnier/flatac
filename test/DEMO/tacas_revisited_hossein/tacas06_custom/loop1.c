@@ -6,7 +6,7 @@ int i,j,n;
 
 main(){
 
-
+	n=10;
     for(i = 0; i < n; i++){
       x[i] = i;
     }
