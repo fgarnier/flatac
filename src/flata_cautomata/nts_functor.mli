@@ -22,10 +22,15 @@ sig
   type anotations = Nts_Anot of Param.anot_type
   type control = Nts_state of Param.t (* Control state *)
       
+  type nts_system 
   type nts_automaton
-  val create_nts : unit -> nts_automata (* Creates a new structure
+  val create_nts_cautomata : unit -> nts_automata (* Creates a new structure
 					nts_automata*)
+  val add_cautomata_to_nts : nts_automata -> nts_system -> unit
+  val rename_nts_automaton :  nts_automata -> string -> unit
   val pprint : nts_automata -> string
+  val add_nts_int_vars_to_nts_system : nts_system -> string list -> unit 
+  val add_nts_real_vars_to_nts_system : nts_system -> string list -> unit 
   val add_inputvar_left : nts_automata -> nts_var -> nts_automata
   val add_outputvar_left : nts_automata -> nts_var -> nts_automata
   val add_transition : nts_automata -> control -> control -> cnt_trans_label -> unit

@@ -3,7 +3,7 @@ open Hashtbl
 open Option
 
 
-
+exception Var_name_already_used
 
 let pprint_trans_list_foldleft (s : string ) ( trans : cnt_trans_label ) =
   match (s,trans) with 
@@ -46,7 +46,7 @@ module type NTS_PARAM =
 
 
 
-module Nts_gen =
+module Make =
   functor( Param : NTS_PARAM ) =
 struct 
   type anotations = Nts_Anot of Param.anot_type
@@ -81,6 +81,46 @@ struct
 	mutable nts_automata : nts_automaton list;
       }
 
+  (* Check whether a variable name is a global_var*)	
+  let check_var_name_availability_in_cautomaton  vname ntsys c =
+    let is_taken vname var =
+      match var with
+	  NtsIVar(vn)|NtsRVar(vn)
+	    -> if (String.compare vn vname == 0)
+	      then true
+	      else
+		false
+    in
+    let res =
+      List.exists  (is_taken vname) c.intput_vars in
+    let res =
+      (res &&
+	 List.exists  (is_taken vname) c.output_vars) in
+    let res = ( res &&
+		  List.exists (is_taken vname) c.local_vars )  
+      
+    in
+    (
+      res && 
+	List.exits (is_taken vname ) ntsys.global_vars
+    )
+      
+      
+  let check_var_name_availability_in_ntsystem  vname ntsys  =
+    let is_taken vname var =
+      match var with
+	  NtsIVar(vn)|NtsRVar(vn)
+	    -> 
+		  if (String.compare vn vname == 0)
+		  then true
+		  else
+		    false
+    in
+    List.exits (is_taken vname ) ntsys.global_vars
+	  
+
+  
+
   val size_hash = 97
 
   let create_nts_system name =
@@ -89,6 +129,22 @@ struct
       nts_global_vars <- [];
       nts_automata <- [];
     }
+
+  let add_nts_int_vars_to_nts_system nts_sys 
+      (vnames : string list) =
+    List.iter (fun s -> begin
+      if check_var_name_availability_in_ntsystem s nts_sys
+	nts_sys.global_vars <- (NtsIVar(s)::nts_sys.global_vars)
+      end
+      ) vnames
+      
+  let add_nts_real_vars_to_nts_system nts_sys
+      (vnames : string list ) =
+    List.iter (fun s -> begin
+      if check_var_name_availability_in_ntsystem s nts_sys
+	nts_sys.global_vars <- (NtsRVar(s)::nts_sys.global_vars)
+      end
+      ) vnames
 
 
   let create_nts_automaton name = 
@@ -109,7 +165,11 @@ struct
 	output_vars <- [];
 	local_vars <- [];
       }
-      
+     
+
+  let rename_nts_automaton c name =
+    c.nts_automata_name <- name
+
   val pprint_nts_automata : nts_automata -> string
   
   let add_inputvar_left  (c : nts_automata)  ( v : nts_var) =
