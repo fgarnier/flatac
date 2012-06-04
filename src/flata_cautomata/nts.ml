@@ -672,10 +672,7 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
 	  
 
 
-  let havocise_label l =
-    let l = rewrite_ndet_assignation l
-    in		
-      havocise l
+ 
 
 
 
@@ -873,6 +870,11 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
     guards by simpler non deterministic test, when possible.*)
     (*l*) (*Retuns the labels untouched*) 
 
+
+  let havocise_label l =
+    let l = rewrite_ndet_assignation l
+    in		
+      havocise l
 
 
   let split_guard_call_transition translabel =
