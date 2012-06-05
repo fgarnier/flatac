@@ -163,7 +163,7 @@ struct
       }
      
 
-  let control_of_id_para p =
+  let control_of_id_param p =
     NtsState (p)
 
   let rename_nts_automaton c name =
@@ -244,6 +244,13 @@ struct
     let  str = List.fold_left pprint_trans_list_foldleft "" tlist in
       str
   
+
+
+  let var_defined_in_cautomata  nts  (subsystem_name : string option) vname =
+    
+
+
+
   (* The function below need not appear in the interface file*)
   let pprint_initial_states c =
      let elem_left = ref 0 in

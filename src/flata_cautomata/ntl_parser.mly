@@ -56,7 +56,7 @@
 %token RBRACE LBRACK RBRACK COLON SEMICOLON COMMA ARROW
 %token EQUAL PRIME BAND BOR BNOT EOF
 %token NTSDECL INTDECL NATDECL REALDECL INITSTATE FINALSTATE ERRORSTATE
-%token INPUTVARSLIST OUTPUTVARSLIST LOCALVARLIST
+%token INPUTVARSLIST OUTPUTVARSLIST LOCALVARLIST PRIMEDVAR
 
 %type 
 
@@ -120,7 +120,12 @@
 
 }
 
-| IDENT ARROW IDENT LBRACK nts_transit RBRACK {}  
+| IDENT ARROW IDENT LBRACK nts_transit RBRACK {
+  let control_org = control_of $1 in
+  let control_dest= control_of $2 in
+  let transit = $3 in
+  Nts_int.add_transition !current_instance control_org control_dest transit
+}  
 
 
 
@@ -130,9 +135,26 @@
 
 
 
+%pressburg_bool : BTRUE
+| BFALSE
+| pressburg_bool BOR pressburg_bool
+| pressburg_bool BAND pressburg_bool
+
+
+%arithm_expr : INT { let  cst = My_bigint.of_string $1 in 
+		   CntCst(cst)}
+| 
+| arithm_expr PLUS arithm_expr { CntSum($1,$3)}
+| arithm_expr MINUS arithm_expr {CntMinus($1,$3)}
+| UNMIN arithm_expr {CntUnMin($2)}
+| arithm_expr DIV arithm_expr {CntDiv($1,$3)}
+| arithm_expr MOD arithm_expr {CntMod($1,$3)}
+| arithm_expr TIMES arithm_expr {CntProd($1,$3)}
 
 
 
-%expr :  
+
+
+
 
 

@@ -37,6 +37,8 @@ sig
 					nts_automata*)
   val add_nts_int_vars_to_nts_system : nts_system -> string list -> unit 
   val add_nts_real_vars_to_nts_system : nts_system -> string list -> unit 
+  (* string option check in a subsystem; string var name *)
+  val var_defined_in_cautomata : nts_system -> string option -> string -> nts_var option 
 
   val add_cautomata_to_nts : nts_automata -> nts_system -> unit
   val rename_nts_automaton :  nts_automata -> string -> unit

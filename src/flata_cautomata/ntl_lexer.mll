@@ -22,21 +22,23 @@
   register_kwd "error" ERRORSTATE;;
   register_kwd "in" INPUTVARSLIST;;
   register_kwd "out" OUTPUTVARSLIST;;
- (* register_kwd "not" BOP_NOT;;
-  register_kwd "and" BOP_AND;;
-  register_kwd "or" BOP_OR;;
+  register_kwd "true" BTRUE;;
+  register_kwd "false" BFALSE;;
+  (* register_kwd "not" BOP_NOT;;
+     register_kwd "and" BOP_AND;;
+     register_kwd "or" BOP_OR;;
   register_kwd "&&" BOP_AND;;
-  register_kwd "||" BOP_OR;;
-  register_kwd "!" BOP_NOT;;
- *)
+     register_kwd "||" BOP_OR;;
+     register_kwd "!" BOP_NOT;;
+  *)
   
 
   let new_line lexbuf =
     let pos = lexbuf.lex_curr_p in
-     lexbuf.lex_curr_p <- { pos with
-			      pos_lnum = pos.pos_lnum + 1;
-			      pos_bol = pos.pos_cnum }
- 
+    lexbuf.lex_curr_p <- { pos with
+      pos_lnum = pos.pos_lnum + 1;
+      pos_bol = pos.pos_cnum }
+      
 }
 
 
@@ -46,7 +48,7 @@ let number =  ['0' - '9']
 let intval = number +
 let quote = ["'"]
 let identifier = uletter ( uletter | '_' | number )*
-  let primed_var = (identifier quote)
+let primed_var = (identifier quote)
     
  rule token = parse
   | ['\n'] {Lexing.new_line lexbuf; token lexbuf}
@@ -76,6 +78,7 @@ let identifier = uletter ( uletter | '_' | number )*
   | "||" {BOR}
   | "not" {BNOT}
   | "!" {BNOT}
+  | primed_var {PRIMEDVAR}
   | eof {EOF}
 
 
