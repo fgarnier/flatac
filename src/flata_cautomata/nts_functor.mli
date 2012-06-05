@@ -24,7 +24,7 @@ module Make :
   functor( Param : NTS_PARAM ) ->
 sig 
       
-    type anotations (** Type for anotations*)
+  type anotations (** Type for anotations*)
   type control   (** Type of a control state*)
   type nts_automaton (** counter automata with inputs and
 			 output variables and hierachical 
@@ -32,7 +32,7 @@ sig
 		     *) 
   type nts_system (** Hierarchical numerical transition systems *)
   
-  
+  val control_of_id : Param.t -> control
   val create_nts_cautomata : unit -> nts_automata (* Creates a new structure
 					nts_automata*)
   val add_nts_int_vars_to_nts_system : nts_system -> string list -> unit 

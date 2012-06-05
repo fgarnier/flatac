@@ -58,6 +58,9 @@
 %token NTSDECL INTDECL NATDECL REALDECL INITSTATE FINALSTATE ERRORSTATE
 %token INPUTVARSLIST OUTPUTVARSLIST LOCALVARLIST
 
+%type 
+
+
 %start ntldescr
 
 
@@ -99,21 +102,37 @@
   List.iter (  add_local_var_iterator REAL !current_instance) $2  }
 
 | INITSTATE ident_list SEMICOLON  {
-  List.iter 
+  List.iter ( fun s -> 
+		add_init_state !current_instance (Nts_int.control_of_id s)  
+	    ) $2
+  }
+
+| FINALSTATE ident_list SEMICOLON {
+    List.iter ( fun s -> 
+		  add_final_state !current_instance (Nts_int.control_of_id s)  
+	      ) $2
+
 }
-| FINALSTATE ident_list SEMICOLON {}
-| ERRORSTATE ident_list SEMICOLON {}
+| ERRORSTATE ident_list SEMICOLON {
+    List.iter ( fun s -> 
+		  add_final_state !current_instance (Nts_int.control_of_id s)  
+	      ) $2
 
-|  
+}
 
-
-
-
-
-
+| IDENT ARROW IDENT LBRACK nts_transit RBRACK {}  
 
 
 
 
+%nts_ntrans_split : trans_elem { [$1] }
+| trans_elem BAND trans
 
-%cautomata_vars : 
+
+
+
+
+
+%expr :  
+
+

@@ -163,6 +163,9 @@ struct
       }
      
 
+  let control_of_id_para p =
+    NtsState (p)
+
   let rename_nts_automaton c name =
     c.nts_automata_name <- name
 
