@@ -4,6 +4,9 @@
   open Nts_types
   open Nts_functor
   
+
+  type varsort = Nat | Int | Real (**)
+
   module P =
   struct
     type t = string
@@ -18,6 +21,30 @@
   let ntsinstance = Nts_int.create_nts ();;
   let current_cautomata = (ref Nts_int.create_nts_cautomata ());;
 
+  (* *)
+  let add_input_vars_iterator (vsort : varsort) (c : Nts_int.nts_automaton) s =
+    match varsort with 
+	Int ->
+	  c.input_vars <- c.input_vars@(NtsIVar(s))
+      | Real -> 
+	c.intput_vars@(NtsRVar(s))
+      (* One need to define Nat implementation*)
+  
+  let add_output_vars_iterator (vsort : varsort) (c : Nts_int.nts_automaton) s =
+    match varsort with 
+	Int ->
+	  c.output_vars <- c.input_vars@(NtsIVar(s))
+      | Real -> 
+	c.output_vars@(NtsRVar(s))
+
+  let add_local_vars_iterator (vsort : varsort) (c : Nts_int.nts_automaton) s =
+    match varsort with 
+	Int ->
+	  c.local_vars <- c.input_vars@(NtsIVar(s))
+      | Real -> 
+	c.local_vars@(NtsRVar(s))	
+	  
+
 %}
 
 
@@ -29,9 +56,11 @@
 %token RBRACE LBRACK RBRACK COLON SEMICOLON COMMA ARROW
 %token EQUAL PRIME BAND BOR BNOT EOF
 %token NTSDECL INTDECL NATDECL REALDECL INITSTATE FINALSTATE ERRORSTATE
-%token INPUTVARSLIST OUTPUTVARSLIST
+%token INPUTVARSLIST OUTPUTVARSLIST LOCALVARLIST
 
 %start ntldescr
+
+
 
 %ntldescr : IDENT hsystemname COLON decl {  Nts_int.rename_nts_cautomaton  $2 } 
 
@@ -55,7 +84,31 @@
 
 
 %cautomaton_decl : INPUTVARLIST ident_list INTDECL SEMICOLON 
-{Nts_int.add_inputvar_left   }
+{Nts_int.add_inputvar_left !current_instance $2  }
+| INPUTVARLIST ident_list INTDECL SEMICOLON {
+  List.iter (  add_input_var_iterator Int !current_instance) $2  }
+| INPUTVARLIST ident_list REALDECL SEMICOLON {
+  List.iter (  add_input_var_iterator REAL !current_instance) $2  }
+| OUTPUTVARLIST ident_list INTDECL SEMICOLON {
+  List.iter (  add_output_var_iterator Int !current_instance) $2  }
+| OUTPUTVARLIST ident_list REALDECL SEMICOLON {
+  List.iter (  add_output_var_iterator REAL !current_instance) $2  }
+| LOCALVARLIST ident_list INTDECL SEMICOLON {
+  List.iter (  add_local_var_iterator Int !current_instance) $2  }
+| LOCALVARLIST ident_list REALDECL SEMICOLON {
+  List.iter (  add_local_var_iterator REAL !current_instance) $2  }
+
+| INITSTATE ident_list SEMICOLON  {
+  List.iter 
+}
+| FINALSTATE ident_list SEMICOLON {}
+| ERRORSTATE ident_list SEMICOLON {}
+
+|  
+
+
+
+
 
 
 
