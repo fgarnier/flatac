@@ -24,6 +24,7 @@
   register_kwd "out" OUTPUTVARSLIST;;
   register_kwd "true" BTRUE;;
   register_kwd "false" BFALSE;;
+  register_kwd "havoc" HAVOC
   (* register_kwd "not" BOP_NOT;;
      register_kwd "and" BOP_AND;;
      register_kwd "or" BOP_OR;;

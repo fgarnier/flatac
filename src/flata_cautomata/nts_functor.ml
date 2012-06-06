@@ -174,6 +174,7 @@ struct
 	
   let add_globvar_to_nts_system  gvar nts_sys =
     nts_sys.nts_global_vars <- gvar::(nts_sys.nts_global_vars) 
+ 
   let add_inputvar_left  (c : nts_automaton)  ( v : nts_var) =
     c.input_vars <- (v::c.input_vars)
     
@@ -197,15 +198,17 @@ struct
 
   (**I dont check the unicity of s1->l->s2 transition.
      should I ?
-  *) 
+  *)
+      
   let add_transition (cautomata : nts_automaton) 
-    ( orig : control ) (dest : control) ( lab : cnt_trans_label list) =
+      ( orig : control ) (dest : control) ( lab : cnt_trans_label list) =
+    
     let master_rel = cautomata.transitions in
     if Hashtbl.mem master_rel orig then
       begin
 	let orig_binding = Hashtbl.find master_rel orig
 	in 
-	  Hashtbl.add orig_binding dest lab
+	Hashtbl.add orig_binding dest lab
       end
     else
       begin
@@ -218,6 +221,7 @@ struct
   (**Returns the collection of transitions betwenn sorg and sdests
      The result has type cnt_translabel list list
   *)
+	
   let get_transition_from  cautomata sorg sdest =
     if not (Hashtbl.mem cautomata.transitions sorg)
     then None
@@ -230,12 +234,13 @@ struct
 	  with
 	      Not_found -> None
       end
+	
   (*None is returned if no transition exists*)
-
-  
+	
+	
   (*  Search for a variable name, return Some(sort)  if referenced
-  in the globals or within the cautomaton, or none if not found at 
-  all 
+      in the globals or within the cautomaton, or none if not found at 
+      all 
   *)
 
   let get_cautomata_names_of_nts nts_sys =

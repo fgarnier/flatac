@@ -19,8 +19,10 @@
   module Nts_int = Nts_functor.Make(P)
   (*open Nts_int*)
   
-  let ntsinstance = Nts_int.create_nts ();;
-  let current_cautomata = (ref Nts_int.create_nts_cautomata ());;
+  module Parse_machine = struct
+    let ntsinstance = Nts_int.create_nts ()
+    let current_cautomata = (ref Nts_int.create_nts_cautomata ())
+  end
 
   (* *)
   let add_input_vars_iterator (vsort : varsort) (c : Nts_int.nts_automaton) s =
@@ -44,6 +46,20 @@
 	  c.local_vars <- c.input_vars@(NtsIVar(s))
       | Real -> 
 	c.local_vars@(NtsRVar(s))
+
+
+  let get_varname_of_primedvarname pvname =
+    String.sub pvname 0 ((String.length pvname)-1)
+
+  let get_vinfo vname =
+    let vinfo = Nts_int.get_var_info Parse_machine.nts_instance Some((!Parse_machine.current_instance).name) vname in
+    match vinfo
+      None -> (raise UnBoundVarName (vname, lexbuf.lex_curr_p ))
+    
+      | Some(v) ->
+	v (* The nts var is here*)
+
+  
 
 %}
 
@@ -89,33 +105,33 @@
 %cautomaton_decl : INPUTVARLIST ident_list INTDECL SEMICOLON 
 {Nts_int.add_inputvar_left !current_instance $2  }
 | INPUTVARLIST ident_list INTDECL SEMICOLON {
-  List.iter (  add_input_var_iterator Int !current_instance) $2  }
+  List.iter (  add_input_var_iterator Int !Parse_machine.current_instance) $2  }
 | INPUTVARLIST ident_list REALDECL SEMICOLON {
-  List.iter (  add_input_var_iterator REAL !current_instance) $2  }
+  List.iter (  add_input_var_iterator REAL !Parse_machine.current_instance) $2  }
 | OUTPUTVARLIST ident_list INTDECL SEMICOLON {
-  List.iter (  add_output_var_iterator Int !current_instance) $2  }
+  List.iter (  add_output_var_iterator Int !Parse_machine.current_instance) $2  }
 | OUTPUTVARLIST ident_list REALDECL SEMICOLON {
-  List.iter (  add_output_var_iterator REAL !current_instance) $2  }
+  List.iter (  add_output_var_iterator REAL !Parse_machine.current_instance) $2  }
 | LOCALVARLIST ident_list INTDECL SEMICOLON {
-  List.iter (  add_local_var_iterator Int !current_instance) $2  }
+  List.iter (  add_local_var_iterator Int !Parse_machine.current_instance) $2  }
 | LOCALVARLIST ident_list REALDECL SEMICOLON {
-  List.iter (  add_local_var_iterator REAL !current_instance) $2  }
+  List.iter (  add_local_var_iterator REAL !Parse_machine.current_instance) $2  }
 
 | INITSTATE ident_list SEMICOLON  {
   List.iter ( fun s -> 
-		add_init_state !current_instance (Nts_int.control_of_id s)  
+		add_init_state !Parse_machine.current_instance (Nts_int.control_of_id s)  
 	    ) $2
   }
 
 | FINALSTATE ident_list SEMICOLON {
     List.iter ( fun s -> 
-		  add_final_state !current_instance (Nts_int.control_of_id s)  
+		  add_final_state !Parse_machine.current_instance (Nts_int.control_of_id s)  
 	      ) $2
 
 }
 | ERRORSTATE ident_list SEMICOLON {
     List.iter ( fun s -> 
-		  add_final_state !current_instance (Nts_int.control_of_id s)  
+		  add_final_state !Parse_machine.current_instance (Nts_int.control_of_id s)  
 	      ) $2
 }
 
@@ -123,7 +139,7 @@
   let control_org = control_of $1 in
   let control_dest= control_of $2 in
   let transit = $3 in
-  Nts_int.add_transition !current_instance control_org control_dest transit
+  Nts_int.add_transition !Parse_machine.current_instance control_org control_dest transit
 }  
 
 
@@ -134,35 +150,56 @@
 
 
 
-%pressburg_bool : BTRUE
-| BFALSE
-| pressburg_bool BOR pressburg_bool
-| pressburg_bool BAND pressburg_bool
+%pressburg_bool : BTRUE {CntBTrue}
+| BFALSE {CntBFalse}
+| pressburg_bool BOR pressburg_bool  {CntBOr ( $1 , $3)}
+| pressburg_bool BAND pressburg_bool {CntBAnd ( $1 , $3)}
+| BNOT pressburg {CntBNot($2)}
+| arithm_expr GT arithm_expr {CntBool(CntGt,$1,$3)}
+| arithm_expr LT arithm_expr {CntBool(CntLt,$1,$3)}
+| arithm_expr GEQ arithm_expr {CntBool(CntGeq,$1,$3)}
+| arithm_expr LEQ arithm_expr {CntBool(CntLeq,$1,$3)}
+| arithm_expr EQ arithm_expr {CntBool(CntEq,$1,$3)}
 
 
+%primed_express : PRIMEDVAR { 
+  let varname = get_varname_of_primedvarname $1 in
+  let vinfo = Nts_int.get_var_info Parse_machine.nts_instance Some((!Parse_machine.current_instance).name) varname in
+  match
+    
+}
+| primed_express PLUS  arithm_expr { CntSum($1,$3) }
 
+%rel_decl :
 
-%rel_decl : 
+ 
 
 %arithm_expr : INT { let  cst = My_bigint.of_string $1 in 
 		   CntCst(cst)}
 | IDENT { let vname = $i in
-	  let vinfo = Nts_int.get_var_info nts_instance Some((!current_instance).name) vname in
-	  match 
-	    None -> (raise UnBoundVarName (vname, lexbuf.lex_curr_p ))
-	    
-	    | Some(v) ->
-	      v (* The nts var is here*)
+	  get_vinfo vname
+	  
 	}
-| arithm_expr PLUS arithm_expr { CntSum($1,$3)}
-| arithm_expr MINUS arithm_expr {CntMinus($1,$3)}
-| UNMIN arithm_expr {CntUnMin($2)}
-| arithm_expr DIV arithm_expr {CntDiv($1,$3)}
-| arithm_expr MOD arithm_expr {CntMod($1,$3)}
-| arithm_expr TIMES arithm_expr {CntProd($1,$3)}
+
+| arithm_expr PLUS arithm_expr { CntSum($1,$3) }
+| arithm_expr MINUS arithm_expr { CntMinus($1,$3) }
+| UNMIN arithm_expr { CntUnMin($2) }
+| arithm_expr DIV arithm_expr { CntDiv($1,$3) }
+| arithm_expr MOD arithm_expr { CntMod($1,$3) }
+| arithm_expr TIMES arithm_expr { CntProd($1,$3) }
 
 
 
+%havocise : HAVOC LBRACE ident_list RBRACE {
+  let ntvarlist = List.map getvinfo $3 in 
+  CntHavoc(ntvarlist)
+}
+
+%affect : PRIMEDVAR EQ arithm_expr {
+  let vname = get_varname_of_primedvarname $1 in
+  let vinfo = get_vinfo vname in
+  CntAffect(vinfo,$3)
+}
 
 
 
