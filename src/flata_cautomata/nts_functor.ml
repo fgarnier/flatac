@@ -5,6 +5,9 @@ open Hashtbl
 
 
 exception Var_name_already_used
+exception Found_var of nts_var
+exception No_such_counter_automata_in_nts_system of string * string list
+
 
 let pprint_trans_list_foldleft (s : string ) ( trans : cnt_trans_label ) =
   match (s,trans) with 
@@ -74,7 +77,7 @@ struct
       {
 	mutable nts_system_name : string;
 	mutable nts_global_vars : nts_var list;
-	mutable nts_automata : nts_automaton list;
+        nts_automata : ( string , nts_automaton ) Hashtbl.t;
       }
 
   (* Check whether a variable name is a global_var*)	
@@ -168,7 +171,6 @@ struct
 
   let rename_nts_automaton c name =
     c.nts_automata_name <- name
-
 	
   let add_globvar_to_nts_system  gvar nts_sys =
     nts_sys.nts_global_vars <- gvar::(nts_sys.nts_global_vars) 
@@ -230,6 +232,55 @@ struct
       end
   (*None is returned if no transition exists*)
 
+  
+  (*  Search for a variable name, return Some(sort)  if referenced
+  in the globals or within the cautomaton, or none if not found at 
+  all 
+  *)
+
+  let get_cautomata_names_of_nts nts_sys =
+    let key_name_folder vname _ retlist  =
+      vname :: ret_list
+    in
+    (Hashtbl.fold key_name_folder  nts_sys.cautomata [])
+
+  let get_varinfo nts_sys  (cname : string option) (vname : string) =
+    let search_varname_iterator vname ntvar =
+      match ntvar with
+	| NtsIVar(name) | NtsRVar(name) ->
+	  if (String.compare name vname )==0 then
+	    raise Found_var ntvar
+	  else ()
+    in
+    try
+      List.iter (search_varname_iterator vname) nts_sys.nts_global_vars;
+      match cname with
+	  Some(cname)-> 
+	    begin
+	      try
+		let c = Hashtbl.find nts_sys.nts_automata cname 
+		in
+		List.iter (search_varname_iterator vname) c.input_vars;
+		List.iter (search_varname_iterator vname) c.output_vars;
+		List.iter (search_varname_iterator vname) c.local_vars;
+		(*If found, the raised exception of type Found_var is
+		handled in the topmost try ... with block.*)
+	      with
+		  Not_found -> 
+		    begin
+		      let cautomata_name_list = 
+			get_cautomata_names_of_nts nts_sys in
+		      let ex = 
+			No_such_counter_automata_in_nts_system
+			  (cname,cautomata_name_list) in
+		      raise ex
+		    end   
+	    end
+	| None -> None
+    with 
+	Found_var v -> Some(v)
+
+
 
   let pprint_inputvars cautomata = 
      Nts.pprint_typeinfo_nts_var_list cautomata.input_vars
@@ -246,8 +297,7 @@ struct
   
 
 
-  let var_defined_in_cautomata  nts  (subsystem_name : string option) vname =
-    
+
 
 
 

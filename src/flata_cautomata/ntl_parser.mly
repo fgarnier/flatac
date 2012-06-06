@@ -5,7 +5,8 @@
   open Nts_functor
   
 
-  type varsort = Nat | Int | Real (**)
+  exception UnBoundVariable of string * Lexing.position
+  type varsort = Nat | Int | Real 
 
   module P =
   struct
@@ -16,7 +17,7 @@
   end
     
   module Nts_int = Nts_functor.Make(P)
-  open Nts_int
+  (*open Nts_int*)
   
   let ntsinstance = Nts_int.create_nts ();;
   let current_cautomata = (ref Nts_int.create_nts_cautomata ());;
@@ -42,8 +43,7 @@
 	Int ->
 	  c.local_vars <- c.input_vars@(NtsIVar(s))
       | Real -> 
-	c.local_vars@(NtsRVar(s))	
-	  
+	c.local_vars@(NtsRVar(s))
 
 %}
 
@@ -117,7 +117,6 @@
     List.iter ( fun s -> 
 		  add_final_state !current_instance (Nts_int.control_of_id s)  
 	      ) $2
-
 }
 
 | IDENT ARROW IDENT LBRACK nts_transit RBRACK {
@@ -141,9 +140,20 @@
 | pressburg_bool BAND pressburg_bool
 
 
+
+
+%rel_decl : 
+
 %arithm_expr : INT { let  cst = My_bigint.of_string $1 in 
 		   CntCst(cst)}
-| 
+| IDENT { let vname = $i in
+	  let vinfo = Nts_int.get_var_info nts_instance Some((!current_instance).name) vname in
+	  match 
+	    None -> (raise UnBoundVarName (vname, lexbuf.lex_curr_p ))
+	    
+	    | Some(v) ->
+	      v (* The nts var is here*)
+	}
 | arithm_expr PLUS arithm_expr { CntSum($1,$3)}
 | arithm_expr MINUS arithm_expr {CntMinus($1,$3)}
 | UNMIN arithm_expr {CntUnMin($2)}
