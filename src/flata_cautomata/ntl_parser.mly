@@ -21,7 +21,7 @@
   
   module Parse_machine = struct
     let ntsinstance = Nts_int.create_nts ()
-    let current_cautomata = (ref Nts_int.create_nts_cautomata ())
+    let current_cautomaton = (ref Nts_int.create_nts_cautomata ())
   end
 
   (* *)
@@ -64,45 +64,49 @@
 %}
 
 
-
 %token <int>  INT
 %token <string> IDENT
-%token <float> REAL 
+%token <float> REAL
+%token <string> PRIMEDVAR 
+%type <Nts_int.nts_system> ntldescr 
 %token TIMES PLUS MINUS DIV MOD LT GT MOD LEQ GEQ LBRACE
 %token RBRACE LBRACK RBRACK COLON SEMICOLON COMMA ARROW
-%token EQUAL PRIME BAND BOR BNOT EOF
+%token EQUAL PRIME BTRUE BFALSE BAND BOR BNOT EOF
 %token NTSDECL INTDECL NATDECL REALDECL INITSTATE FINALSTATE ERRORSTATE
-%token INPUTVARSLIST OUTPUTVARSLIST LOCALVARLIST PRIMEDVAR
-
-%type 
-
+%token INPUTVARLIST OUTPUTVARLIST LOCALVARLIST
 
 %start ntldescr
+%%
 
 
 
-%ntldescr : IDENT hsystemname COLON decl {  Nts_int.rename_nts_cautomaton  $2 } 
 
+ntldescr : 
+NTSDECL IDENT COLON {  Nts_int.rename_nts_cautomaton  $2 } 
+;
 
-
-%ident_list : IDENT COLON {[$1]}
+ident_list : 
+IDENT COLON {[$1]}
 | IDENT COMMA ident_list {$1::$3}
+;
 
-%gvars_decl : ident_list INTDECL SEMICOLON { Nts_int.add_nts_int_vars_to_nts_system $1}
+gvars_decl : 
+ident_list INTDECL SEMICOLON { Nts_int.add_nts_int_vars_to_nts_system $1}
 | ident_list REALDECL SEMICOLON { Nts_int.add_nts_real_vars_to_nts_system $1 } 
+;
 
-
-%decl :  gvars_decl decl {}
-| INDENT LBRACK cautomaton_decl RBRACK decl { 
-  current_cautomata := ref (Nts_int.create_nts_cautomata ()) in
-  rename_nts_automaton !current_cautomaton $1;
-  Nts_int.add_cautomata_to_nts nts_instance !current_cautomaton 
+decl :  
+gvars_decl  {}
+| IDENT LBRACK cautomaton_decl RBRACK decl { 
+  Parse_machine.current_cautomata := ref (Nts_int.create_nts_cautomata ()) in
+  rename_nts_automaton !Parse_machine.current_cautomaton $1;
+  Nts_int.add_cautomata_to_nts nts_instance !Parse_machine.current_cautomaton 
 }
 | EOF {}
+;
 
-
-
-%cautomaton_decl : INPUTVARLIST ident_list INTDECL SEMICOLON 
+cautomaton_decl :
+ INPUTVARLIST ident_list INTDECL SEMICOLON 
 {Nts_int.add_inputvar_left !current_instance $2  }
 | INPUTVARLIST ident_list INTDECL SEMICOLON {
   List.iter (  add_input_var_iterator Int !Parse_machine.current_instance) $2  }
@@ -137,20 +141,36 @@
 
 | IDENT ARROW IDENT LBRACK nts_transit RBRACK {
   let control_org = control_of $1 in
-  let control_dest= control_of $2 in
+  let control_dest= control_of $3 in
   let transit = $3 in
   Nts_int.add_transition !Parse_machine.current_instance control_org control_dest transit
 }  
+;
 
 
 
 
-%nts_ntrans_split : trans_elem { [$1] }
-| trans_elem BAND trans
+
+
+nts_trans_split : nts_trans BAND nts_trans_split { $1 :: $2}
+| nts_trans {[$1]}
+
+
+nts_trans :  pressburg_bool {CntGuard ( $1 )}
+| affect {$1}
+| havocise {$1)}
+| callaffect {$1}
 
 
 
-%pressburg_bool : BTRUE {CntBTrue}
+primed_var_list : primed_express COMMA primed_var_list {$1::$2}
+| primed_express {[$1]}
+
+callaffect : primed_var_list EQ IDENT LBRACE arithm_expr RBRACE
+{CntCall($3,Some($1),$5)}
+| IDENT LBRACE arithm_expr RBRACE  {CntCall($1,None,$3)}
+
+pressburg_bool : BTRUE { CntBTrue }
 | BFALSE {CntBFalse}
 | pressburg_bool BOR pressburg_bool  {CntBOr ( $1 , $3)}
 | pressburg_bool BAND pressburg_bool {CntBAnd ( $1 , $3)}
@@ -160,25 +180,24 @@
 | arithm_expr GEQ arithm_expr {CntBool(CntGeq,$1,$3)}
 | arithm_expr LEQ arithm_expr {CntBool(CntLeq,$1,$3)}
 | arithm_expr EQ arithm_expr {CntBool(CntEq,$1,$3)}
+;
 
-
-%primed_express : PRIMEDVAR { 
+primed_express : PRIMEDVAR { 
   let varname = get_varname_of_primedvarname $1 in
   let vinfo = Nts_int.get_var_info Parse_machine.nts_instance Some((!Parse_machine.current_instance).name) varname in
-  match
-    
+  vinfo
 }
-| primed_express PLUS  arithm_expr { CntSum($1,$3) }
-
-%rel_decl :
+;
 
  
+arithm_expr_list : arithm_expr {$1}
+| arithm_expr COMMA arithm_expr_list {$1::$3} 
 
-%arithm_expr : INT { let  cst = My_bigint.of_string $1 in 
+arithm_expr : INT { let  cst = My_bigint.of_string $1 in 
 		   CntCst(cst)}
+
 | IDENT { let vname = $i in
 	  get_vinfo vname
-	  
 	}
 
 | arithm_expr PLUS arithm_expr { CntSum($1,$3) }
@@ -187,20 +206,21 @@
 | arithm_expr DIV arithm_expr { CntDiv($1,$3) }
 | arithm_expr MOD arithm_expr { CntMod($1,$3) }
 | arithm_expr TIMES arithm_expr { CntProd($1,$3) }
+;
 
 
-
-%havocise : HAVOC LBRACE ident_list RBRACE {
+havocise : HAVOC LBRACE ident_list RBRACE {
   let ntvarlist = List.map getvinfo $3 in 
   CntHavoc(ntvarlist)
 }
+;
 
-%affect : PRIMEDVAR EQ arithm_expr {
+affect : PRIMEDVAR EQ arithm_expr {
   let vname = get_varname_of_primedvarname $1 in
   let vinfo = get_vinfo vname in
   CntAffect(vinfo,$3)
 }
-
+;
 
 
 

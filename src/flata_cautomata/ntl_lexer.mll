@@ -47,7 +47,7 @@ let lletter = ['a' - 'z']
 let uletter = ['A' - 'Z']
 let number =  ['0' - '9']
 let intval = number +
-let quote = ["'"]
+let quote = ['\'']
 let identifier = uletter ( uletter | '_' | number )*
 let primed_var = (identifier quote)
     
@@ -79,7 +79,8 @@ let primed_var = (identifier quote)
   | "||" {BOR}
   | "not" {BNOT}
   | "!" {BNOT}
-  | primed_var {PRIMEDVAR}
+  | identifier  { IDENT ( Lexing.lexeme lexbuf ) }
+  | primed_var {PRIMEDVAR ( Lexing.lexeme lexbuf )}
   | eof {EOF}
 
 

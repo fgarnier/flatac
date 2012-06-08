@@ -51,9 +51,13 @@ struct
   type anotations = Nts_Anot of Param.anot_type
   type control = Nts_State of Param.t (* Control state *)
  
+  let size_hash = 97
   let pprint_control c =
     match c with
 	Nts_State(s) -> Param.pprint_keyid s
+
+  (*let pprint = Param.pprint_keyid*)
+  
 
   let pprint_anotation a =
     match a with
@@ -80,18 +84,26 @@ struct
         nts_automata : ( string , nts_automaton ) Hashtbl.t;
       }
 
+  (*Need not appear in the API*)
+  let get_cautomata_names_of_nts nts_sys =
+    let key_name_folder vname _ retlist  =
+      vname :: retlist
+    in
+    (Hashtbl.fold key_name_folder  nts_sys.nts_automata [])
+
+
   (* Check whether a variable name is a global_var*)	
-  let check_var_name_availability_in_cautomaton  vname ntsys c =
+  let check_var_name_availability_in_cautomaton  vname ntsys c  =
     let is_taken vname var =
       match var with
-	  NtsIVar(vn)|NtsRVar(vn)
+	  NtsIVar(vn) | NtsRVar(vn)
 	    -> if (String.compare vn vname == 0)
 	      then true
 	      else
 		false
     in
     let res =
-      List.exists  (is_taken vname) c.intput_vars in
+      List.exists  (is_taken vname) c.input_vars in
     let res =
       (res &&
 	 List.exists  (is_taken vname) c.output_vars) in
@@ -101,7 +113,7 @@ struct
     in
     (
       res && 
-	List.exits (is_taken vname ) ntsys.global_vars
+	List.exists (is_taken vname ) ntsys.nts_global_vars
     )
       
       
@@ -115,7 +127,7 @@ struct
 		  else
 		    false
     in
-    List.exits (is_taken vname ) ntsys.global_vars
+    List.exists (is_taken vname ) ntsys.nts_global_vars
 	  
 
 
@@ -123,7 +135,7 @@ struct
     {
       nts_system_name = name;
       nts_global_vars = [];
-      nts_automata = [];
+      nts_automata = Hashtbl.create size_hash;
     }
 
   let add_nts_int_vars_to_nts_system nts_sys 
@@ -131,7 +143,7 @@ struct
     List.iter (fun s -> begin
       if (check_var_name_availability_in_ntsystem s nts_sys)
 	then	
-	nts_sys.global_vars <- (NtsIVar(s)::nts_sys.global_vars)
+	nts_sys.nts_global_vars <- (NtsIVar(s)::nts_sys.nts_global_vars)
       end			
       ) vnames
       
@@ -140,7 +152,7 @@ struct
     List.iter (fun s -> begin
       if (check_var_name_availability_in_ntsystem s nts_sys)
 	then	
-	nts_sys.global_vars <- (NtsRVar(s)::nts_sys.global_vars)
+	nts_sys.nts_global_vars <- (NtsRVar(s)::nts_sys.nts_global_vars)
       end		
       ) vnames
 
@@ -166,11 +178,28 @@ struct
       }
      
 
-  let control_of_id_param p =
-    NtsState (p)
+  let add_cautomata_to_nts c nts_sys =
+    Hashtbl.add nts_sys.nts_automata (c.nts_automata_name) c
 
-  let rename_nts_automaton c name =
-    c.nts_automata_name <- name
+  let control_of_id_param p =
+    Nts_State (p)
+
+  let rename_nts_automaton c nts_sys name =
+    if not( Hashtbl.mem nts_sys.nts_automata c.nts_automata_name)
+    then 
+      begin
+	let cautomaton_names =  get_cautomata_names_of_nts nts_sys in
+	let except =  No_such_counter_automata_in_nts_system 
+	  (name, cautomaton_names) in
+	raise except
+      end
+    else
+      begin
+	let former_name = c.nts_automata_name in
+	c.nts_automata_name <- name;
+	Hashtbl.remove nts_sys.nts_automata former_name;
+	Hashtbl.add nts_sys.nts_automata c.nts_automata_name c
+      end
 	
   let add_globvar_to_nts_system  gvar nts_sys =
     nts_sys.nts_global_vars <- gvar::(nts_sys.nts_global_vars) 
@@ -243,18 +272,14 @@ struct
       all 
   *)
 
-  let get_cautomata_names_of_nts nts_sys =
-    let key_name_folder vname _ retlist  =
-      vname :: ret_list
-    in
-    (Hashtbl.fold key_name_folder  nts_sys.cautomata [])
+  
 
   let get_varinfo nts_sys  (cname : string option) (vname : string) =
     let search_varname_iterator vname ntvar =
       match ntvar with
 	| NtsIVar(name) | NtsRVar(name) ->
 	  if (String.compare name vname )==0 then
-	    raise Found_var ntvar
+	    raise (Found_var(ntvar))
 	  else ()
     in
     try
@@ -270,6 +295,8 @@ struct
 		List.iter (search_varname_iterator vname) c.local_vars;
 		(*If found, the raised exception of type Found_var is
 		handled in the topmost try ... with block.*)
+	
+		None (* This is the default value, i.e. matching variable*)
 	      with
 		  Not_found -> 
 		    begin

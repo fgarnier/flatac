@@ -32,17 +32,21 @@ sig
 		     *) 
   type nts_system (** Hierarchical numerical transition systems *)
   
-  val control_of_id : Param.t -> control
-  val create_nts_cautomata : unit -> nts_automata (* Creates a new structure
-					nts_automata*)
+  val control_of_id_param : Param.t -> control
+  (*val create_nts_cautomaton : unit -> nts_automaton (* Creates a new structure
+					nts_automata*)*)
   val add_nts_int_vars_to_nts_system : nts_system -> string list -> unit 
   val add_nts_real_vars_to_nts_system : nts_system -> string list -> unit 
   (* string option check in a subsystem; string var name *)
-  val var_defined_in_cautomata : nts_system -> string option -> string -> nts_var option 
+  val get_varinfo : nts_system -> string option -> string -> nts_var option 
 
-  val add_cautomata_to_nts : nts_automata -> nts_system -> unit
-  val rename_nts_automaton :  nts_automata -> string -> unit
-  val pprint : nts_automata -> string
+  val add_cautomata_to_nts : nts_automaton -> nts_system -> unit
+  
+  (*One must be sure that any binding name->cautomaton in an nts is
+  updated as well*)
+  val rename_nts_automaton :  nts_automaton -> nts_system ->string -> unit
+  
+  (*val pprint : nts_automaton -> string*)
         
   val create_nts_system : string -> nts_system
   val add_globvar_to_nts_system : nts_var -> nts_system -> unit
@@ -61,6 +65,6 @@ sig
     control -> control -> Nts_types.cnt_trans_label list list option
   
   val pprint_to_nts : nts_automaton -> string
- 
+  
 end
 
