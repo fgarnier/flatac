@@ -69,11 +69,15 @@
 %token <float> REAL
 %token <string> PRIMEDVAR 
 %type <Nts_int.nts_system> ntldescr 
-%token TIMES PLUS MINUS DIV MOD LT GT MOD LEQ GEQ LBRACE
+%token TIMES PLUS MINUS DIV MOD LT GT MOD LEQ GEQ EQ LBRACE
 %token RBRACE LBRACK RBRACK COLON SEMICOLON COMMA ARROW
 %token EQUAL PRIME BTRUE BFALSE BAND BOR BNOT EOF
 %token NTSDECL INTDECL NATDECL REALDECL INITSTATE FINALSTATE ERRORSTATE
-%token INPUTVARLIST OUTPUTVARLIST LOCALVARLIST
+%token INPUTVARLIST OUTPUTVARLIST LOCALVARLIST HAVOC
+
+%nonassoc EQ 
+%left TIMES DIV MOD
+%left PLUS MINUS 
 
 %start ntldescr
 %%
@@ -81,22 +85,20 @@
 
 
 
-ntldescr : 
-NTSDECL IDENT COLON {  Nts_int.rename_nts_cautomaton  $2 } 
+ntldescr : NTSDECL IDENT COLON decl {  Nts_int.rename_nts_cautomaton  $2 }
 ;
 
-ident_list : 
-IDENT COLON {[$1]}
+
+ident_list : IDENT COLON {[$1]}
 | IDENT COMMA ident_list {$1::$3}
 ;
 
-gvars_decl : 
-ident_list INTDECL SEMICOLON { Nts_int.add_nts_int_vars_to_nts_system $1}
+gvars_decl : ident_list INTDECL SEMICOLON { Nts_int.add_nts_int_vars_to_nts_system $1}
 | ident_list REALDECL SEMICOLON { Nts_int.add_nts_real_vars_to_nts_system $1 } 
 ;
 
-decl :  
-gvars_decl  {}
+
+decl :  gvars_decl  {}
 | IDENT LBRACK cautomaton_decl RBRACK decl { 
   Parse_machine.current_cautomata := ref (Nts_int.create_nts_cautomata ()) in
   rename_nts_automaton !Parse_machine.current_cautomaton $1;
@@ -106,9 +108,7 @@ gvars_decl  {}
 ;
 
 cautomaton_decl :
- INPUTVARLIST ident_list INTDECL SEMICOLON 
-{Nts_int.add_inputvar_left !current_instance $2  }
-| INPUTVARLIST ident_list INTDECL SEMICOLON {
+ INPUTVARLIST ident_list INTDECL SEMICOLON {
   List.iter (  add_input_var_iterator Int !Parse_machine.current_instance) $2  }
 | INPUTVARLIST ident_list REALDECL SEMICOLON {
   List.iter (  add_input_var_iterator REAL !Parse_machine.current_instance) $2  }
@@ -139,7 +139,7 @@ cautomaton_decl :
 	      ) $2
 }
 
-| IDENT ARROW IDENT LBRACK nts_transit RBRACK {
+| IDENT ARROW IDENT LBRACK nts_trans_split RBRACK {
   let control_org = control_of $1 in
   let control_dest= control_of $3 in
   let transit = $3 in
@@ -149,10 +149,7 @@ cautomaton_decl :
 
 
 
-
-
-
-nts_trans_split : nts_trans BAND nts_trans_split { $1 :: $2}
+nts_trans_split : nts_trans BAND nts_trans_split { $1 :: $3}
 | nts_trans {[$1]}
 
 
@@ -163,10 +160,10 @@ nts_trans :  pressburg_bool {CntGuard ( $1 )}
 
 
 
-primed_var_list : primed_express COMMA primed_var_list {$1::$2}
+primed_var_list : primed_express COMMA primed_var_list {$1::$3}
 | primed_express {[$1]}
 
-callaffect : primed_var_list EQ IDENT LBRACE arithm_expr RBRACE
+callaffect : primed_var_list EQ IDENT LBRACE arithm_expr_list RBRACE
 {CntCall($3,Some($1),$5)}
 | IDENT LBRACE arithm_expr RBRACE  {CntCall($1,None,$3)}
 
@@ -174,7 +171,7 @@ pressburg_bool : BTRUE { CntBTrue }
 | BFALSE {CntBFalse}
 | pressburg_bool BOR pressburg_bool  {CntBOr ( $1 , $3)}
 | pressburg_bool BAND pressburg_bool {CntBAnd ( $1 , $3)}
-| BNOT pressburg {CntBNot($2)}
+| BNOT pressburg_bool {CntBNot($2)}
 | arithm_expr GT arithm_expr {CntBool(CntGt,$1,$3)}
 | arithm_expr LT arithm_expr {CntBool(CntLt,$1,$3)}
 | arithm_expr GEQ arithm_expr {CntBool(CntGeq,$1,$3)}
@@ -199,10 +196,10 @@ arithm_expr : INT { let  cst = My_bigint.of_string $1 in
 | IDENT { let vname = $i in
 	  get_vinfo vname
 	}
-
+| LBRACE arithm_expr RBRACE {$2}
+| MINUS arithm_expr { CntUnMin($2) }
 | arithm_expr PLUS arithm_expr { CntSum($1,$3) }
 | arithm_expr MINUS arithm_expr { CntMinus($1,$3) }
-| UNMIN arithm_expr { CntUnMin($2) }
 | arithm_expr DIV arithm_expr { CntDiv($1,$3) }
 | arithm_expr MOD arithm_expr { CntMod($1,$3) }
 | arithm_expr TIMES arithm_expr { CntProd($1,$3) }
