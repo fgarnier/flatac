@@ -69,16 +69,19 @@
 %token <float> REAL
 %token <string> PRIMEDVAR 
 %type <Nts_int.nts_system> ntldescr 
-%token TIMES PLUS MINUS DIV MOD LT GT MOD LEQ GEQ EQ LBRACE
+%token TIMES PLUS MINUS UMINUS DIV MOD LT GT MOD LEQ GEQ EQUAL LBRACE
 %token RBRACE LBRACK RBRACK COLON SEMICOLON COMMA ARROW
-%token EQUAL PRIME BTRUE BFALSE BAND BOR BNOT EOF
+%token  PRIME BTRUE BFALSE BAND BOR BNOT EOF
 %token NTSDECL INTDECL NATDECL REALDECL INITSTATE FINALSTATE ERRORSTATE
 %token INPUTVARLIST OUTPUTVARLIST LOCALVARLIST HAVOC
 
-%nonassoc EQ 
-%left TIMES DIV MOD
-%left PLUS MINUS 
+%nonassoc AFFRULERED
+%nonassoc EQ LBRACK RBRACK
+%nonassoc UMINUS 
 
+%left BOR
+%left PLUS MINUS 
+%left TIMES DIV MOD BAND 
 %start ntldescr
 %%
 
@@ -197,7 +200,7 @@ arithm_expr : INT { let  cst = My_bigint.of_string $1 in
 	  get_vinfo vname
 	}
 | LBRACE arithm_expr RBRACE {$2}
-| MINUS arithm_expr { CntUnMin($2) }
+| MINUS arithm_expr %prec UMINUS { CntUnMin($2) }
 | arithm_expr PLUS arithm_expr { CntSum($1,$3) }
 | arithm_expr MINUS arithm_expr { CntMinus($1,$3) }
 | arithm_expr DIV arithm_expr { CntDiv($1,$3) }
@@ -212,7 +215,7 @@ havocise : HAVOC LBRACE ident_list RBRACE {
 }
 ;
 
-affect : PRIMEDVAR EQ arithm_expr {
+affect : PRIMEDVAR EQ arithm_expr %prec AFFRULERED {
   let vname = get_varname_of_primedvarname $1 in
   let vinfo = get_vinfo vname in
   CntAffect(vinfo,$3)
