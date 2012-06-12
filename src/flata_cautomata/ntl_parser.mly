@@ -76,12 +76,15 @@
 %token INPUTVARLIST OUTPUTVARLIST LOCALVARLIST HAVOC
 
 %nonassoc AFFRULERED
-%nonassoc EQ LBRACK RBRACK
+%nonassoc PRIMEDEXPR EQ LBRACK RBRACK
 %nonassoc UMINUS 
+%nonassoc NTS_TRANS
+
 
 %left BOR
 %left PLUS MINUS 
-%left TIMES DIV MOD BAND 
+%left TIMES DIV MOD BAND
+%right BNOT 
 %start ntldescr
 %%
 
@@ -156,7 +159,7 @@ nts_trans_split : nts_trans BAND nts_trans_split { $1 :: $3}
 | nts_trans {[$1]}
 
 
-nts_trans :  pressburg_bool {CntGuard ( $1 )}
+nts_trans :  pressburg_bool %prec NTS_TRANS {CntGuard ( $1 )}
 | affect {$1}
 | havocise {$1)}
 | callaffect {$1}
@@ -182,7 +185,7 @@ pressburg_bool : BTRUE { CntBTrue }
 | arithm_expr EQ arithm_expr {CntBool(CntEq,$1,$3)}
 ;
 
-primed_express : PRIMEDVAR { 
+primed_express : PRIMEDVAR %prec PRIMEDEXPR { 
   let varname = get_varname_of_primedvarname $1 in
   let vinfo = Nts_int.get_var_info Parse_machine.nts_instance Some((!Parse_machine.current_instance).name) varname in
   vinfo
