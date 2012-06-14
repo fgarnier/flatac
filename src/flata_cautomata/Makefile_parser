@@ -1,0 +1,24 @@
+
+
+
+interfaces = ntl_parser.mli ntl_lexer.mli 
+objects = ntl_lexer.cmo ntl_parser.cmo
+
+clean : 
+	rm -f $(interfaces) \ 
+	rm -f $(objects)
+
+all : $(interfaces) $(objects)
+	
+
+ntl_parser.cmo : ntl_parser.ml ntl_parser.mli
+	ocamlc -c $<
+
+ntl_lexer.cmo : ntl_lexer.ml ntl_lexer.mli 
+	ocamlc -c $<
+
+ntl_lexer.mli : ntl_lexer.mll
+	ocamllex $<
+
+ntl_parser.mli : ntl_parser.mly
+	ocamlyacc $<

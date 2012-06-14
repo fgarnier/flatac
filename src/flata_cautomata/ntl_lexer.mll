@@ -1,15 +1,15 @@
 {
   
-  open Parser
+  open Ntl_parser
   open Lexing
   
-  module KWD: sig val register_kwd : string -> token -> unit val _KWD_or_LIDENT : string -> token end =
+  module KWD: sig val register_kwd : string -> token -> unit val _KWD_or_IDENT : string -> token end =
   struct
   let kwds = Hashtbl.create 17
     
   let register_kwd = Hashtbl.add kwds
     
-  let _KWD_or_LIDENT str = try Hashtbl.find kwds str with Not_found -> LIDENT str
+  let _KWD_or_IDENT str = try Hashtbl.find kwds str with Not_found -> IDENT(str)
   end;;
   
   open KWD;;
@@ -20,18 +20,12 @@
   register_kwd "init" INITSTATE;;
   register_kwd "final" FINALSTATE;;
   register_kwd "error" ERRORSTATE;;
-  register_kwd "in" INPUTVARSLIST;;
-  register_kwd "out" OUTPUTVARSLIST;;
+  register_kwd "in" INPUTVARLIST;;
+  register_kwd "out" OUTPUTVARLIST;;
   register_kwd "true" BTRUE;;
   register_kwd "false" BFALSE;;
   register_kwd "havoc" HAVOC
-  (* register_kwd "not" BOP_NOT;;
-     register_kwd "and" BOP_AND;;
-     register_kwd "or" BOP_OR;;
-  register_kwd "&&" BOP_AND;;
-     register_kwd "||" BOP_OR;;
-     register_kwd "!" BOP_NOT;;
-  *)
+  
   
 
   let new_line lexbuf =
@@ -79,7 +73,16 @@ let primed_var = (identifier quote)
   | "||" {BOR}
   | "not" {BNOT}
   | "!" {BNOT}
-  | identifier  { IDENT ( Lexing.lexeme lexbuf ) }
+  | identifier  { 
+
+    KWD._KWD_or_IDENT (Lexing.lexeme lexbuf)
+    (*try
+      
+    with
+	Not_found ->
+	  IDENT ( Lexing.lexeme lexbuf ) *)
+
+  }
   | primed_var {PRIMEDVAR ( Lexing.lexeme lexbuf )}
   | eof {EOF}
 
