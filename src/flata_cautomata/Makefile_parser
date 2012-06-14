@@ -1,7 +1,9 @@
+include /home/fgarnier/REPOSITORIES/flatac/src/Makefile.conf
 
+FLATAC_ROOT := /home/fgarnier/REPOSITORIES/flatac 
+TYPES_INCLUDES := /home/fgarnier/REPOSITORIES/flatac/src
 
-
-interfaces = ntl_parser.mli ntl_lexer.mli 
+interfaces = ntl_parser.mli 
 objects = ntl_lexer.cmo ntl_parser.cmo
 
 clean : 
@@ -12,13 +14,19 @@ all : $(interfaces) $(objects)
 	
 
 ntl_parser.cmo : ntl_parser.ml ntl_parser.mli
-	ocamlc -c $<
+	ocamlc -c $< -I${TYPES_INCLUDES} -I./ 
 
-ntl_lexer.cmo : ntl_lexer.ml ntl_lexer.mli 
-	ocamlc -c $<
+ntl_lexer.cmo : ntl_lexer.ml ntl_parser.cmi
+	ocamlc -c $< -I${TYPES_INCLUDES}
 
 ntl_lexer.mli : ntl_lexer.mll
 	ocamllex $<
 
-ntl_parser.mli : ntl_parser.mly
+ntl_parser.cmi : ntl_parser.mli
+	ocamlc -c $< 
+
+ntl_parser.ml : ntl_parser.mly
+	ocamlyacc $<
+
+ntl_parser.mli :  ntl_parser.mly
 	ocamlyacc $<

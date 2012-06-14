@@ -1,6 +1,5 @@
 %{
   open Lexing
-  open Error
   open Nts_types
   open Nts_functor
   open Ntsint
@@ -56,9 +55,9 @@
     String.sub pvname 0 ((String.length pvname)-1)
 
   let get_vinfo vname =
-    let vinfo = Nts_int.get_var_info Parse_machine.nts_instance Some((!Parse_machine.current_instance).name) vname in
+    let vinfo = Nts_int.get_var_info Parse_machine.nts_instance (Some(!Parse_machine.current_instance.name)) vname in
     match vinfo with
-      None -> (raise UnBoundVarName (vname, lexbuf.lex_curr_p ))
+      None -> raise (UnBoundVarName (vname, lexbuf.lex_curr_p ))
     
       | Some(v) ->
 	v (* The nts var is here*)
@@ -165,7 +164,7 @@ nts_trans_split : nts_trans BAND nts_trans_split { $1 :: $3}
 
 nts_trans :  pressburg_bool %prec NTS_TRANS {CntGuard ( $1 )}
 | affect {$1}
-| havocise {$1)}
+| havocise {$1}
 | callaffect {$1}
 
 
@@ -203,7 +202,7 @@ arithm_expr_list : arithm_expr {$1}
 arithm_expr : INT { let  cst = My_bigint.of_string $1 in 
 		   CntCst(cst)}
 
-| IDENT { let vname = $i in
+| IDENT { let vname = $1 in
 	  get_vinfo vname
 	}
 | LBRACE arithm_expr RBRACE {$2}
