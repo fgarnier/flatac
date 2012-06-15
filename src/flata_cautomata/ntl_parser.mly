@@ -2,7 +2,8 @@
   open Lexing
   open Nts_types
   open Nts_functor
-  open Ntsint
+  open Ntsint.Nts_int
+ 
   
 
   exception UnBoundVariable of string * Lexing.position
@@ -17,14 +18,27 @@
     let pprint_anot () = ""
   end
     
-  module Nts_int = Nts_functor.Make(P)*)
+  module Nts_int = Nts_functor.Make(P)
+*)
+
   open Ntsint (* This module contains the definition of the moduel
 	      Nts_int, which is an "instance of the functor 
 		 Nts_functor"*)
   
-  module Parse_machine = struct
-    let ntsinstance = Nts_int.create_nts ()
-    let current_cautomaton = (ref Nts_int.create_nts_cautomata ())
+
+(*
+ sig
+    val ntsinstance : Ntsint.Nts_int.nts_system
+    val current_cautomaton : Pervasives.ref Ntsint.Nts_int.cautomaton
+  end
+*)
+ 
+
+module Parse_machine  
+    = 
+  struct
+    let ntsinstance = (Ntsint.Nts_int.create_nts_system "")
+    let current_cautomaton = ref (Ntsint.Nts_int.create_nts_automaton "")
   end
 
   (* *)

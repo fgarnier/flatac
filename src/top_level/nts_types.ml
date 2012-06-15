@@ -110,7 +110,7 @@ type cnt_trans_label = CntGuard of cnt_bool
 						flow graph*)
 		       | CntGuardElse of cnt_bool (*Same as above*)
 		       | CntFunCall of string * nts_var list option * il_fun_arguments list (*Too specific, need to be removed*)
-		       | CntCall of string * nts_var list option * cnt_aritm_expr
+		       | CntCall of string * nts_var list option * cnt_arithm_exp
 		       | CntAffect of nts_var * cnt_arithm_exp
 		       | CntNdetAssign of nts_var 
 		       | CntHavoc of nts_var list (* The value of the listed 

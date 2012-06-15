@@ -1,32 +1,67 @@
 include /home/fgarnier/REPOSITORIES/flatac/src/Makefile.conf
+#
 
 FLATAC_ROOT := /home/fgarnier/REPOSITORIES/flatac 
-TYPES_INCLUDES := /home/fgarnier/REPOSITORIES/flatac/src
+TYPES_INCLUDES := -I /home/fgarnier/REPOSITORIES/flatac/src 
+GENSOURCE := ntl_parser.ml ntl_parser.mli ntl_lexer.ml
 
-interfaces = ntl_parser.mli 
-objects = ntl_lexer.cmo ntl_parser.cmo
+
+INTERFACES = ntl_parser.mli
+OBJECTS = ntl_lexer.cmo ntl_parser.cmo ntsint.cmo
+INTERFACES = $(OBJECTS:.cmo=.cmi)
 
 clean : 
-	rm -f $(interfaces) \ 
-	rm -f $(objects)
+	rm -f *.cmo *.cmi $(GENSOURCE)
 
-all : $(interfaces) $(objects)
-	
+all : .depend $(INTERFACES) $(OBJECTS)
 
-ntl_parser.cmo : ntl_parser.ml ntl_parser.mli
-	ocamlc -c $< -I${TYPES_INCLUDES} -I./ 
+%.cmo : %.ml
+	ocamlc ${CFLAGS}  $< -o $@ ${TYPES_INCLUDES}
 
-ntl_lexer.cmo : ntl_lexer.ml ntl_parser.cmi
-	ocamlc -c $< -I${TYPES_INCLUDES}
+%.cmi : %.mli
+	ocamlc ${CFLAGS}  $< -o $@ $(TYPES_INCLUDES)
 
-ntl_lexer.mli : ntl_lexer.mll
-	ocamllex $<
+ntl_lexer.cmi : ntl_parser.mli
 
-ntl_parser.cmi : ntl_parser.mli
-	ocamlc -c $< 
+ntl_parser.mli : ntl_parser.ml
+
 
 ntl_parser.ml : ntl_parser.mly
 	ocamlyacc $<
 
-ntl_parser.mli :  ntl_parser.mly
-	ocamlyacc $<
+ntl_lexer.ml : ntl_lexer.mll
+	ocamllex $<
+
+include .depend
+
+.depend: $(GENSOURCE) 
+	ocamldep *.ml *.mli > .depend
+
+ #ocamldep $(OBJECTS:.cmo=.ml) > .depend
+
+# ntl_lexer.cmo : ntl_lexer.ml ntl_lexer.cmi ntl_parser.cmi
+# 	ocamlc -c $< $(TYPES_INCLUDES)
+
+
+# ntl_parser.cmi : ntl_parser.mli ntsint.cmi
+# 	ocamlc -c $< 
+# ntl_parser.ml : ntl_parser.mly
+#	ocamlyacc $<
+
+# ntl_parser.mli :  ntl_parser.mly
+#	ocamlyacc $<
+
+# ntsint.cmi : ntsint.ml nts_functor.cmo
+# 	ocamlc -c $<	
+
+# ntsint.cmo : ntsint.ml nts_functor.cmo
+# 	 ocamlc -c $<
+
+# nts_functor.cmo : nts_functor.ml
+# 	ocamlc -c $< -I ${TYPES_INCLUDES} -I ./
+
+# nts_functor.cmi : nts_functor.ml
+# 	ocamlc -c $< -I ${TYPES_INCLUDES} -I ./
+
+
+
