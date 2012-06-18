@@ -4,7 +4,7 @@
 ############################
 
 SRC_DIR=`pwd`/src
-OBJ_DIR=${SRC_DIR}
+OBJ_DIR=`pwd`/build
 DOC_DIR=`pwd`/doc
 
 MAKEFILE_CONF_NAME=Makefile.conf
@@ -25,7 +25,7 @@ build_configuration_file () {
     -I $1/src/lib \
     -I . \
     -I $1/lib/fc \
-    -I ${SRC_DIR}/"
+    -I ${OBJ_DIR}/"
 
   echo -e "FRAMA_C_INCLUDES=${FRAMA_C_INCLUDES}" > ${MKCONF}
   echo -e "FRAMAC_SHARE:=`frama-c.byte -print-path`" >> ${MKCONF}
@@ -66,6 +66,7 @@ build_global_makefile () {
   echo -e "\t@echo \"Compilation du module Self...\"" >> Makefile
   echo -e "\t@cd ${SRC_DIR}/. && \$(OCAMLC) \$(FRAMA_C_INCLUDES) \$(CFLAGS) \
     self.ml -o self.cmo && \$(OCAMLOPT) \$(FRAMA_C_INCLUDES) \$(CFLAGS) self.ml -o self.cmx" >> Makefile
+  echo -e "\tcp -f ${SRC_DIR}/self.cmo ${OBJ_DIR} && cp -f ${SRC_DIR}/self.cmi ${OBJ_DIR} && cp -f ${SRC_DIR}/self.cmx ${OBJ_DIR} && cp -f ${SRC_DIR}/self.o ${OBJ_DIR}"  >> Makefile
   # ----
   for i in $1
   do

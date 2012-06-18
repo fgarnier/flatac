@@ -1,5 +1,5 @@
 SRC_DIR=`pwd`/src
-OBJ_DIR=${SRC_DIR}
+OBJ_DIR=`pwd`/build
 
 MAKEFILE_CONF_NAME=Makefile.conf
 MKCONF=${SRC_DIR}/${MAKEFILE_CONF_NAME}
