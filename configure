@@ -66,7 +66,7 @@ build_global_makefile () {
   echo -e "\t@echo \"Compilation du module Self...\"" >> Makefile
   echo -e "\t@cd ${SRC_DIR}/. && \$(OCAMLC) \$(FRAMA_C_INCLUDES) \$(CFLAGS) \
     self.ml -o self.cmo && \$(OCAMLOPT) \$(FRAMA_C_INCLUDES) \$(CFLAGS) self.ml -o self.cmx" >> Makefile
-  echo -e "\tcp -f ${SRC_DIR}/self.cmo ${OBJ_DIR} && cp -f ${SRC_DIR}/self.cmi ${OBJ_DIR} && cp -f ${SRC_DIR}/self.cmx ${OBJ_DIR} && cp -f ${SRC_DIR}/self.o ${OBJ_DIR}"  >> Makefile
+  echo -e "\t@cp -f ${SRC_DIR}/self.cmo ${OBJ_DIR} && cp -f ${SRC_DIR}/self.cmi ${OBJ_DIR} && cp -f ${SRC_DIR}/self.cmx ${OBJ_DIR} && cp -f ${SRC_DIR}/self.o ${OBJ_DIR}"  >> Makefile
   # ----
   for i in $1
   do
@@ -127,7 +127,7 @@ build_global_makefile () {
 [[ $# == 0 ]] && echo "type : ./configure PATH_TO_FRAMAC_SOURCE" && exit
 
 build_configuration_file $1
-build_global_makefile "SSL/ top_level/ global_mem/ flata_cautomata/ local_info_validity_mem/ composite_types/  ssl_and_validity_abstact_domain/ compile_2_nts/ c_upon_sslandnts_sem/ debug_tools/"
+build_global_makefile "SSL/ top_level/ global_mem/ flata_cautomata/ local_info_validity_mem/ composite_types/  ssl_and_validity_abstact_domain/ compile_2_nts/ c_upon_sslandnts_sem/ debug_tools/ ."
 
 echo ""
 echo "Configuration done."

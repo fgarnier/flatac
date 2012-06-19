@@ -44,7 +44,7 @@ type cnt_binop = CntEq
 		 | CntGt
 		 | CntGeq
 		 
-type cnt_arithm_exp = CntCst of My_bigint.t
+type cnt_arithm_exp = CntCst of Big_int.big_int
 		      | CntNdet
 		      | CntNdetVar of string (* non deterministic value *)
 		      | CntSymCst of string
