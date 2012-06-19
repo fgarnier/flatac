@@ -1,0 +1,46 @@
+include ../Makefile.conf
+#
+
+#FLATAC_ROOT := flatac 
+TYPES_INCLUDES := ${FRAMA_C_INCLUDES} 
+GENSOURCE := ntl_parser.ml ntl_parser.mli ntl_lexer.ml
+
+
+INTERFACES = ntl_parser.mli
+OBJECTS = ntl_lexer.cmo ntl_parser.cmo ntsint.cmo
+INTERFACES = $(OBJECTS:.cmo=.cmi)
+
+clean : 
+	rm -f *.cmo *.cmi $(GENSOURCE)
+
+all : .depend $(INTERFACES) $(OBJECTS)
+
+%.cmo : %.ml
+	@echo  "Compilation de"  $<
+	@ocamlc ${CFLAGS}  $< -o $@ ${TYPES_INCLUDES}
+
+%.cmi : %.mli
+	@echo  "Compilation de l'interface " $<
+	@ocamlc ${CFLAGS}  $< -o $@ $(TYPES_INCLUDES)
+
+ntl_lexer.cmi : ntl_parser.mli
+
+ntl_parser.mli : ntl_parser.ml
+
+
+ntl_parser.ml : ntl_parser.mly
+	@echo  "Generating Parser" $<
+	@ocamlyacc $<
+
+ntl_lexer.ml : ntl_lexer.mll
+	@echo  "Generating Lexer" $<
+	@ocamllex $<
+
+include .depend
+
+.depend: $(GENSOURCE) 
+	ocamldep *.ml *.mli > .depend
+
+
+
+
