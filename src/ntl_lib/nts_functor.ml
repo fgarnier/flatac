@@ -7,7 +7,7 @@ open Hashtbl
 exception Var_name_already_used
 exception Found_var of nts_var
 exception No_such_counter_automata_in_nts_system of string * string list
-
+exception UnboundVarName of string 
 
 let pprint_trans_list_foldleft (s : string ) ( trans : cnt_trans_label ) =
   match (s,trans) with 
@@ -182,6 +182,9 @@ struct
 
   let control_of_id_param p =
     Nts_State (p)
+
+  let rename_nts_system nts_sys name =
+    nts_sys.nts_system_name <- name
 
   let rename_nts_automaton c nts_sys name =
     if not( Hashtbl.mem nts_sys.nts_automata c.nts_automata_name)

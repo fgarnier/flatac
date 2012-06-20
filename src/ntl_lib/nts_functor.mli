@@ -1,6 +1,7 @@
 open Nts_types
 open Hashtbl
 
+exception UnboundVarName of string 
 
 module type NTS_PARAM =
   sig
@@ -45,6 +46,8 @@ sig
 	}
   type nts_system (** Hierarchical numerical transition systems *)
   
+
+  val rename_nts_system : nts_system -> string -> unit
   val control_of_id_param : Param.t -> control
   (*val create_nts_cautomaton : unit -> nts_automaton (* Creates a new structure
 					nts_automata*)*)

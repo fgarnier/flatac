@@ -3,36 +3,18 @@
   open Nts_types
   open Nts_functor
   open Ntsint.Nts_int
- 
+  open Parsing_error 
   
 
-  exception UnBoundVariable of string * Lexing.position
+  exception UnBoundVariable of string * Parsing_error.loc option
   type varsort = Nat | Int | Real 
-
- (* module P =
-  struct
-    type t = string
-    type anot_type = ()
-    let make_anot () = ()
-    let pprint_keyid s = s
-    let pprint_anot () = ""
-  end
-    
-  module Nts_int = Nts_functor.Make(P)
-*)
 
   open Ntsint (* This module contains the definition of the moduel
 	      Nts_int, which is an "instance of the functor 
 		 Nts_functor"*)
   
 
-(*
- sig
-    val ntsinstance : Ntsint.Nts_int.nts_system
-    val current_cautomaton : Pervasives.ref Ntsint.Nts_int.cautomaton
-  end
-*)
- 
+
 
 module Parse_machine  
     = 
@@ -73,8 +55,11 @@ module Parse_machine
   let get_vinfo vname =
     let vinfo = Nts_int.get_varinfo Parse_machine.ntsinstance (Some(!Parse_machine.current_cautomaton.nts_automata_name)) vname in
     match vinfo with
-      None -> raise (UnBoundVariable (vname, lexbuf.lex_curr_p ))
-    
+      None -> 
+	begin
+	  (*raise (UnBoundVariable (vname, (loc_of_pos lexbuf) ))*)
+	  raise (UnBoundVariable (vname, None ))
+	end
       | Some(v) ->
 	v (* The nts var is here*)
 
@@ -88,6 +73,8 @@ module Parse_machine
 %token <float> REAL
 %token <string> PRIMEDVAR 
 %type <Ntsint.Nts_int.nts_system> ntldescr 
+%type <Nts_types.cnt_arithm_exp> arithm_expr
+
 %token TIMES PLUS MINUS UMINUS DIV MOD LT GT MOD LEQ GEQ EQUAL LBRACE
 %token RBRACE LBRACK RBRACK COLON SEMICOLON COMMA ARROW
 %token  PRIME BTRUE BFALSE BAND BOR BNOT EOF
@@ -109,64 +96,63 @@ module Parse_machine
 
 
 
-ntldescr : NTSDECL IDENT COLON decl {  Nts_int.rename_nts_cautomaton  $2 }
+ntldescr : NTSDECL IDENT COLON decl { Nts_int.rename_nts_system Parse_machine.ntsinstance   $2; Parse_machine.ntsinstance }
 ;
 
 ident_list : IDENT COLON {[$1]}
 | IDENT COMMA ident_list {$1::$3}
 ;
 
-gvars_decl : ident_list INTDECL SEMICOLON { Nts_int.add_nts_int_vars_to_nts_system $1}
-| ident_list REALDECL SEMICOLON { Nts_int.add_nts_real_vars_to_nts_system $1 } 
+gvars_decl : ident_list INTDECL SEMICOLON { Nts_int.add_nts_int_vars_to_nts_system Parse_machine.ntsinstance $1}
+| ident_list REALDECL SEMICOLON { Nts_int.add_nts_real_vars_to_nts_system Parse_machine.ntsinstance $1 } 
 ;
 
 
 decl :  gvars_decl  {}
 | IDENT LBRACK cautomaton_decl RBRACK decl { 
-  Parse_machine.current_cautomata := ref ( Nts_int.create_nts_cautomata ());
-  Nts_int.rename_nts_automaton !Parse_machine.current_cautomaton $1;
-  Nts_int.add_cautomata_to_nts nts_instance !Parse_machine.current_cautomaton 
+  Parse_machine.current_cautomaton :=  ( Nts_int.create_nts_automaton $1);
+  Nts_int.add_cautomata_to_nts  !Parse_machine.current_cautomaton Parse_machine.ntsinstance
 }
 | EOF {}
 ;
 
 cautomaton_decl :
  INPUTVARLIST ident_list INTDECL SEMICOLON {
-  List.iter (  add_input_var_iterator Int !Parse_machine.current_instance) $2  }
+  List.iter (  add_input_vars_iterator Int !Parse_machine.current_cautomaton) $2  }
 | INPUTVARLIST ident_list REALDECL SEMICOLON {
-  List.iter (  add_input_var_iterator REAL !Parse_machine.current_instance) $2  }
+  List.iter (  add_input_vars_iterator Real !Parse_machine.current_cautomaton) $2  }
 | OUTPUTVARLIST ident_list INTDECL SEMICOLON {
-  List.iter (  add_output_var_iterator Int !Parse_machine.current_instance) $2  }
+  List.iter (  add_output_vars_iterator Int !Parse_machine.current_cautomaton) $2  }
 | OUTPUTVARLIST ident_list REALDECL SEMICOLON {
-  List.iter (  add_output_var_iterator REAL !Parse_machine.current_instance) $2  }
+  List.iter (  add_output_vars_iterator Real !Parse_machine.current_cautomaton) $2  }
 | LOCALVARLIST ident_list INTDECL SEMICOLON {
-  List.iter (  add_local_var_iterator Int !Parse_machine.current_instance) $2  }
+  List.iter (  add_local_vars_iterator Int !Parse_machine.current_cautomaton) $2  }
 | LOCALVARLIST ident_list REALDECL SEMICOLON {
-  List.iter (  add_local_var_iterator REAL !Parse_machine.current_instance) $2  }
+  List.iter (  add_local_vars_iterator Real !Parse_machine.current_cautomaton) $2  }
 
 | INITSTATE ident_list SEMICOLON  {
   List.iter ( fun s -> 
-		add_init_state !Parse_machine.current_instance (Nts_int.control_of_id s)  
+		add_init_state !Parse_machine.current_cautomaton (Nts_int.control_of_id_param s)  
 	    ) $2
   }
 
 | FINALSTATE ident_list SEMICOLON {
     List.iter ( fun s -> 
-		  add_final_state !Parse_machine.current_instance (Nts_int.control_of_id s)  
+		  add_final_state !Parse_machine.current_cautomaton (Nts_int.control_of_id_param s)  
 	      ) $2
 
 }
 | ERRORSTATE ident_list SEMICOLON {
     List.iter ( fun s -> 
-		  add_final_state !Parse_machine.current_instance (Nts_int.control_of_id s)  
+		  add_final_state !Parse_machine.current_cautomaton (Nts_int.control_of_id_param s)  
 	      ) $2
 }
 
 | IDENT ARROW IDENT LBRACK nts_trans_split RBRACK {
-  let control_org = control_of $1 in
-  let control_dest= control_of $3 in
-  let transit = $3 in
-  Nts_int.add_transition !Parse_machine.current_instance control_org control_dest transit
+  let control_org = control_of_id_param $1 in
+  let control_dest= control_of_id_param $3 in
+  let transit = $5 in
+  Nts_int.add_transition !Parse_machine.current_cautomaton control_org control_dest transit
 }  
 ;
 
@@ -187,13 +173,13 @@ primed_var_list : primed_express COMMA primed_var_list {$1::$3}
 
 callaffect : primed_var_list EQ IDENT LBRACE arithm_expr_list RBRACE
 {CntCall($3,Some($1),$5)}
-| IDENT LBRACE arithm_expr RBRACE  {CntCall($1,None,$3)}
+| IDENT LBRACE arithm_expr_list RBRACE  {CntCall($1,None,$3)}
 
 pressburg_bool : BTRUE { CntBTrue }
 | BFALSE {CntBFalse}
 | pressburg_bool BOR pressburg_bool  {CntBOr ( $1 , $3)}
 | pressburg_bool BAND pressburg_bool {CntBAnd ( $1 , $3)}
-| BNOT pressburg_bool {CntBNot($2)}
+| BNOT pressburg_bool {CntNot($2)}
 | arithm_expr GT arithm_expr {CntBool(CntGt,$1,$3)}
 | arithm_expr LT arithm_expr {CntBool(CntLt,$1,$3)}
 | arithm_expr GEQ arithm_expr {CntBool(CntGeq,$1,$3)}
@@ -203,20 +189,30 @@ pressburg_bool : BTRUE { CntBTrue }
 
 primed_express : PRIMEDVAR %prec PRIMEDEXPR { 
   let varname = get_varname_of_primedvarname $1 in
-  let vinfo = Nts_int.get_var_info Parse_machine.nts_instance Some((!Parse_machine.current_instance).name) varname in
-  vinfo
+  let vinfo = Nts_int.get_varinfo Parse_machine.ntsinstance (Some((!Parse_machine.current_cautomaton).nts_automata_name)) varname in
+  match vinfo with
+      Some(v) -> v
+    | None -> raise (UnboundVarName ( varname ))
 }
 ;
 
  
-arithm_expr_list : arithm_expr {$1}
+arithm_expr_list : arithm_expr {$1::[]}
 | arithm_expr COMMA arithm_expr_list {$1::$3} 
 
-arithm_expr : INT { let  cst = My_bigint.of_string $1 in 
+arithm_expr : INT { let  cst = Big_int.big_int_of_int $1 in 
 		   CntCst(cst)}
 
 | IDENT { let vname = $1 in
-	  get_vinfo vname
+	  let vinfo = Nts_int.get_varinfo Parse_machine.ntsinstance 
+	    (Some(!Parse_machine.current_cautomaton).nts_automata_name) 
+	    vname in
+	  let var =
+	    match vinfo with
+		Some(v) -> v
+	      | None ->  raise (UnboundVarName ( vname ))
+	  in
+	  CntVar(var)
 	}
 | LBRACE arithm_expr RBRACE {$2}
 | MINUS arithm_expr %prec UMINUS { CntUnMin($2) }
@@ -229,7 +225,7 @@ arithm_expr : INT { let  cst = My_bigint.of_string $1 in
 
 
 havocise : HAVOC LBRACE ident_list RBRACE {
-  let ntvarlist = List.map getvinfo $3 in 
+  let ntvarlist = List.map get_vinfo $3 in 
   CntHavoc(ntvarlist)
 }
 ;
