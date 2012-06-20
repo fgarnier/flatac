@@ -9,11 +9,12 @@ GENSOURCE := ntl_parser.ml ntl_parser.mli ntl_lexer.ml
 INTERFACES = ntl_parser.mli
 OBJECTS = ntl_lexer.cmo ntl_parser.cmo ntsint.cmo
 INTERFACES = $(OBJECTS:.cmo=.cmi)
-
+TEST = parse_n_print
+ 
 clean : 
 	rm -f *.cmo *.cmi $(GENSOURCE)
 
-all : .depend $(INTERFACES) $(OBJECTS)
+all : .depend $(INTERFACES) $(OBJECTS) $(TEST)
 
 %.cmo : %.ml
 	@echo  "Compilation de"  $<
@@ -35,6 +36,10 @@ ntl_parser.ml : ntl_parser.mly
 ntl_lexer.ml : ntl_lexer.mll
 	@echo  "Generating Lexer" $<
 	@ocamllex $<
+
+parse_n_print : parse_n_print.ml
+	@echo "Compiling parse_n_print test"
+	ocamlc -o parse_n_print parse_n_print.cmo ntl_lexer.cmo
 
 include .depend
 

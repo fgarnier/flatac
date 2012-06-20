@@ -63,7 +63,7 @@ sig
   val rename_nts_automaton :  nts_automaton -> nts_system ->string -> unit
   
   (*val pprint : nts_automaton -> string*)
-        
+     
   val create_nts_system : string -> nts_system
   val add_globvar_to_nts_system : nts_var -> nts_system -> unit
   val create_nts_automaton : string -> nts_automaton
@@ -81,6 +81,6 @@ sig
     control -> control -> Nts_types.cnt_trans_label list list option
   
   val pprint_to_nts : nts_automaton -> string
-  
+  val pprint_nts : nts_system -> string 
 end
 

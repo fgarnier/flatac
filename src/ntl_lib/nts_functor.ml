@@ -464,5 +464,32 @@ struct
       let res_string = res_string^"\n}" in
       res_string
 
+
+
+  let pprint_all_cautomata cautomata_table =
+    let pprint_automata_folder _ cautomaton prev_str =
+      match prev_str with
+	  "" -> pprint_to_nts cautomaton 
+	| _ ->
+	  begin
+	    let ret_str = prev_str ^"\n"^(pprint_to_nts cautomaton)
+	    in ret_str
+	  end
+    in
+    Hashtbl.fold pprint_automata_folder ""
+
+
+  let pprint_nts nt_system =
+    let ret_string =  Format.sprintf "nts %s { \n"
+      nt_system.nts_system_name in 
+    let ret_string = ret_string^(
+      Nts.pprint  pprint_typeinfo_nts_var_list nt_system.global_vars 
+    )^"\n" 
+    in
+    let all_automata = pprint_all_cautomata  nt_system.nts_automata
+    in
+    ret_string^all_automata^"\n } \n"
+    
+   
     
 end
