@@ -44,8 +44,13 @@ sig
         transitions : (control, (control , cnt_trans_label list ) Hashtbl.t) Hashtbl.t ;
 
 	}
-  type nts_system (** Hierarchical numerical transition systems *)
-  
+
+  type nts_system = (** Hierarchical numerical transition systems *)
+      {
+	mutable nts_system_name : string;
+	mutable nts_global_vars : nts_var list;
+        nts_automata : ( string , nts_automaton ) Hashtbl.t;
+      }
 
   val rename_nts_system : nts_system -> string -> unit
   val control_of_id_param : Param.t -> control

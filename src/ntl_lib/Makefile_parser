@@ -1,13 +1,16 @@
-include ../Makefile.conf
+#include ../Makefile.conf
 #
 
 #FLATAC_ROOT := flatac 
 TYPES_INCLUDES := ${FRAMA_C_INCLUDES} 
 GENSOURCE := ntl_parser.ml ntl_parser.mli ntl_lexer.ml
 
-
+CFLAGS = -g -annot -c
 INTERFACES = ntl_parser.mli
-OBJECTS = ntl_lexer.cmo ntl_parser.cmo ntsint.cmo
+OBJECTS = nts_types.cmo nts.cmo nts_functor.cmo ntsint.cmo \
+	ntl_lexer.cmo parsing_error.cmo ntl_parser.cmo parse_n_print.cmo 
+
+LIBNUM = nums.cma # Contains Big_int module   
 INTERFACES = $(OBJECTS:.cmo=.cmi)
 TEST = parse_n_print
  
@@ -37,9 +40,9 @@ ntl_lexer.ml : ntl_lexer.mll
 	@echo  "Generating Lexer" $<
 	@ocamllex $<
 
-parse_n_print : parse_n_print.ml
+parse_n_print : parse_n_print.ml $(OBJECTS)
 	@echo "Compiling parse_n_print test"
-	ocamlc -o parse_n_print parse_n_print.cmo ntl_lexer.cmo
+	ocamlc -o parse_n_print $(LIBNUM) $(OBJECTS)
 
 include .depend
 

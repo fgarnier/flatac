@@ -900,19 +900,19 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
   (* Replace non deterministic
     guards by simpler non deterministic test, when possible.*)
     (*l*) (*Retuns the labels untouched*) 
-
+    *)
 
   let havocise_label l =
-    let l = rewrite_ndet_assignation l
-    in		
+   (* let l = rewrite_ndet_assignation l
+    in*)		
       havocise l
 
 
-  let split_guard_call_transition translabel =
+ (* let split_guard_call_transition translabel =
      let translabel = 
        rewrite_ndet_assignation translabel in
-       split_guard_call_transition translabel
-*)
+       split_guard_call_transition translabel*)
+
 
      
 (************** Implementation of the structural equality between nts

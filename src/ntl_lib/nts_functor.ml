@@ -404,7 +404,7 @@ struct
 	if not (Nts.need_split_transition label) 
 	then
 	  begin
-	    let label = Nts.rewrite_ndet_assignation label in
+	   (* let label = Nts.rewrite_ndet_assignation label in *)
 	    let label = Nts.havocise label in
 	    let post_script = Format.sprintf "%s \n s%s->s%s { %s }" prescript ( pprint_control origin)  ( pprint_control dest) 
 	      (pretty_label label)
@@ -414,7 +414,7 @@ struct
 	       
 	else
 	  begin
-	    let label =  Nts.rewrite_ndet_assignation label in
+	    (*let label =  Nts.rewrite_ndet_assignation label in*)
 	    let (pre,post) = Nts.split_guard_call_transition label in
 	       let pre= Nts.havocise_label pre in
 	       let post = Nts.havocise_label post in
@@ -476,14 +476,14 @@ struct
 	    in ret_str
 	  end
     in
-    Hashtbl.fold pprint_automata_folder ""
+    Hashtbl.fold pprint_automata_folder cautomata_table "" 
 
 
   let pprint_nts nt_system =
     let ret_string =  Format.sprintf "nts %s { \n"
       nt_system.nts_system_name in 
     let ret_string = ret_string^(
-      Nts.pprint  pprint_typeinfo_nts_var_list nt_system.global_vars 
+      Nts.pprint_typeinfo_nts_var_list nt_system.nts_global_vars 
     )^"\n" 
     in
     let all_automata = pprint_all_cautomata  nt_system.nts_automata
