@@ -63,7 +63,7 @@ module Parse_machine
       | Some(v) ->
 	v (* The nts var is here*)
 
-  
+	  
 
 %}
 
@@ -96,10 +96,13 @@ module Parse_machine
 
 
 
-ntldescr : NTSDECL IDENT COLON decl { Nts_int.rename_nts_system Parse_machine.ntsinstance   $2; Parse_machine.ntsinstance }
+ntldescr : NTSDECL IDENT SEMICOLON decl { 
+  Nts_int.rename_nts_system Parse_machine.ntsinstance   $2; 
+  add_cautomata_to_nts !Parse_machine.current_cautomaton Parse_machine.ntsinstance;
+  Format.printf "Parsing automaton %s \n" $2;  Parse_machine.ntsinstance }
 ;
 
-ident_list : IDENT COLON {[$1]}
+ident_list : IDENT {[$1]}
 | IDENT COMMA ident_list {$1::$3}
 ;
 
@@ -107,28 +110,31 @@ gvars_decl : ident_list INTDECL SEMICOLON { Nts_int.add_nts_int_vars_to_nts_syst
 | ident_list REALDECL SEMICOLON { Nts_int.add_nts_real_vars_to_nts_system Parse_machine.ntsinstance $1 } 
 ;
 
-
 decl :  gvars_decl  {}
-| IDENT LBRACK cautomaton_decl RBRACK decl { 
+| IDENT LBRACK cautomaton_decl_sequence RBRACK decl { 
   Parse_machine.current_cautomaton :=  ( Nts_int.create_nts_automaton $1);
   Nts_int.add_cautomata_to_nts  !Parse_machine.current_cautomaton Parse_machine.ntsinstance
 }
 | EOF {}
 ;
 
+
+cautomaton_decl_sequence : cautomaton_decl cautomaton_decl_sequence {}
+| cautomaton_decl {}
+
 cautomaton_decl :
- INPUTVARLIST ident_list INTDECL SEMICOLON {
+ INPUTVARLIST ident_list COLON INTDECL SEMICOLON {
   List.iter (  add_input_vars_iterator Int !Parse_machine.current_cautomaton) $2  }
-| INPUTVARLIST ident_list REALDECL SEMICOLON {
+| INPUTVARLIST ident_list COLON REALDECL SEMICOLON {
   List.iter (  add_input_vars_iterator Real !Parse_machine.current_cautomaton) $2  }
-| OUTPUTVARLIST ident_list INTDECL SEMICOLON {
+| OUTPUTVARLIST ident_list COLON INTDECL SEMICOLON {
   List.iter (  add_output_vars_iterator Int !Parse_machine.current_cautomaton) $2  }
-| OUTPUTVARLIST ident_list REALDECL SEMICOLON {
+| OUTPUTVARLIST ident_list COLON REALDECL SEMICOLON {
   List.iter (  add_output_vars_iterator Real !Parse_machine.current_cautomaton) $2  }
-| LOCALVARLIST ident_list INTDECL SEMICOLON {
-  List.iter (  add_local_vars_iterator Int !Parse_machine.current_cautomaton) $2  }
-| LOCALVARLIST ident_list REALDECL SEMICOLON {
-  List.iter (  add_local_vars_iterator Real !Parse_machine.current_cautomaton) $2  }
+| ident_list COLON INTDECL SEMICOLON {
+  List.iter (  add_local_vars_iterator Int !Parse_machine.current_cautomaton) $1  }
+| ident_list COLON REALDECL SEMICOLON {
+  List.iter (  add_local_vars_iterator Real !Parse_machine.current_cautomaton) $1  }
 
 | INITSTATE ident_list SEMICOLON  {
   List.iter ( fun s -> 
@@ -154,6 +160,14 @@ cautomaton_decl :
   let transit = $5 in
   Nts_int.add_transition !Parse_machine.current_cautomaton control_org control_dest transit
 }  
+
+| IDENT ARROW IDENT LBRACK  RBRACK {
+  let control_org = control_of_id_param $1 in
+  let control_dest= control_of_id_param $3 in
+  let transit = [] in
+  Nts_int.add_transition !Parse_machine.current_cautomaton control_org control_dest transit
+}  
+
 ;
 
 

@@ -42,7 +42,7 @@ ntl_lexer.ml : ntl_lexer.mll
 
 parse_n_print : parse_n_print.ml $(OBJECTS)
 	@echo "Compiling parse_n_print test"
-	ocamlc -o parse_n_print $(LIBNUM) $(OBJECTS)
+	ocamlc -g -o parse_n_print $(LIBNUM) $(OBJECTS)
 
 include .depend
 

@@ -3,11 +3,14 @@
   open Ntl_parser
   open Lexing
   
+
+  exception UndefinedLexem of string
+
   module KWD: sig val register_kwd : string -> token -> unit val _KWD_or_IDENT : string -> token end =
   struct
   let kwds = Hashtbl.create 17
     
-  let register_kwd = Hashtbl.add kwds
+  let register_kwd k sort = Hashtbl.add kwds k sort
     
   let _KWD_or_IDENT str = try Hashtbl.find kwds str with Not_found -> IDENT(str)
   end;;
@@ -17,14 +20,15 @@
   register_kwd "int" INTDECL;;
   register_kwd "nat" NATDECL;;
   register_kwd "real" REALDECL;;
-  register_kwd "init" INITSTATE;;
+  register_kwd "initial" INITSTATE;;
   register_kwd "final" FINALSTATE;;
   register_kwd "error" ERRORSTATE;;
   register_kwd "in" INPUTVARLIST;;
   register_kwd "out" OUTPUTVARLIST;;
   register_kwd "true" BTRUE;;
   register_kwd "false" BFALSE;;
-  register_kwd "havoc" HAVOC
+  register_kwd "havoc" HAVOC;;
+ 
   
   
 
@@ -42,7 +46,7 @@ let uletter = ['A' - 'Z']
 let number =  ['0' - '9']
 let intval = number +
 let quote = ['\'']
-let identifier = uletter ( uletter | '_' | number )*
+let identifier = ( '_' | uletter | lletter)+ ( uletter | lletter | '_' | number )*
 let primed_var = (identifier quote)
     
  rule token = parse
@@ -74,18 +78,14 @@ let primed_var = (identifier quote)
   | "not" {BNOT}
   | "!" {BNOT}
   | identifier  { 
-
     KWD._KWD_or_IDENT (Lexing.lexeme lexbuf)
-    (*try
-      
-    with
-	Not_found ->
-	  IDENT ( Lexing.lexeme lexbuf ) *)
-
   }
   | primed_var {PRIMEDVAR ( Lexing.lexeme lexbuf )}
   | eof {EOF}
-
+  | _ { 
+    let error_msg = Lexing.lexeme lexbuf in 
+    raise (UndefinedLexem(error_msg))
+  }
 
 
 {

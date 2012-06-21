@@ -8,7 +8,7 @@ open Ntsint
   
 
 
-let _ =
+let _ = 
   if ( Array.length  Sys.argv ) != 2 then
     begin
       Format.printf " parse_n_print File.nts. \n Aborting \n %!"
@@ -28,6 +28,7 @@ let _ =
 		end
 	)
       in
+      Format.printf "I opened the file %s \n %!" filename;
       let buf = Lexing.from_channel input_channel in
       let nt_system = Ntl_parser.ntldescr Ntl_lexer.token buf in
       let out_put_reparsed = Nts_int.pprint_nts nt_system in
