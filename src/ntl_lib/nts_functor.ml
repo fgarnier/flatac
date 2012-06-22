@@ -6,7 +6,7 @@ open Hashtbl
 
 exception Var_name_already_used
 exception Found_var of nts_var
-exception No_such_counter_automata_in_nts_system of string * string list
+exception No_such_counter_automata_in_nts_system of string * string 
 exception UnboundVarName of string 
 
 let pprint_trans_list_foldleft (s : string ) ( trans : cnt_trans_label ) =
@@ -85,10 +85,12 @@ struct
 
   (*Need not appear in the API*)
   let get_cautomata_names_of_nts nts_sys =
-    let key_name_folder vname _ retlist  =
-      vname :: retlist
+    let key_name_folder vname _ retstring  =
+      match retstring with 
+	  "" -> vname
+	| _ -> vname ^","^ retstring
     in
-    (Hashtbl.fold key_name_folder  nts_sys.nts_automata [])
+    (Hashtbl.fold key_name_folder  nts_sys.nts_automata "")
 
 
   (* Check whether a variable name is a global_var*)	
@@ -211,6 +213,9 @@ struct
     
   let add_outputvar_left c v =
     c.output_vars <- (v::c.output_vars)
+
+  let add_localvar_left c v =
+     c.local_vars <- (v::c.local_vars)
      
   let add_init_state cautomata (s : control ) =
     if not (Hashtbl.mem cautomata.init_states s)
@@ -223,8 +228,8 @@ struct
     else ()
       
   let add_final_state cautomata (s : control ) =
-    if not (Hashtbl.mem cautomata.error_states s)
-    then Hashtbl.add cautomata.error_states s ()
+    if not (Hashtbl.mem cautomata.final_states s)
+    then Hashtbl.add cautomata.final_states s ()
     else ()
 
   (**I dont check the unicity of s1->l->s2 transition.
@@ -276,7 +281,7 @@ struct
 
   
 
-  let get_varinfo nts_sys  (cname : string option) (vname : string) =
+  let get_varinfo_by_optname nts_sys  (cname : string option) (vname : string) =
     let search_varname_iterator vname ntvar =
       match ntvar with
 	| NtsIVar(name) | NtsRVar(name) ->
@@ -306,13 +311,51 @@ struct
 			get_cautomata_names_of_nts nts_sys in
 		      let ex = 
 			No_such_counter_automata_in_nts_system
-			  (cname,cautomata_name_list) in
+			  (vname,cautomata_name_list) in
 		      raise ex
 		    end   
 	    end
 	| None -> None
     with 
 	Found_var v -> Some(v)
+
+
+  let get_varinfo_by_optcautomaton nts_sys  (cautomatopt : nts_automaton option) (vname : string) =
+    let search_varname_iterator vname ntvar =
+      match ntvar with
+	| NtsIVar(name) | NtsRVar(name) ->
+	  if (String.compare name vname )==0 then
+	    raise (Found_var(ntvar))
+	  else ()
+    in
+    try
+      List.iter (search_varname_iterator vname) nts_sys.nts_global_vars;
+      match cautomatopt with
+	  Some(c)-> 
+	    begin
+	      try
+		List.iter (search_varname_iterator vname) c.input_vars;
+		List.iter (search_varname_iterator vname) c.output_vars;
+		List.iter (search_varname_iterator vname) c.local_vars;
+		(*If found, the raised exception of type Found_var is
+		handled in the topmost try ... with block.*)
+	
+		None (* This is the default value, i.e. matching variable*)
+	      with
+		  Not_found -> 
+		    begin
+		      let cautomata_name_list = 
+			get_cautomata_names_of_nts nts_sys in
+		      let ex = 
+			No_such_counter_automata_in_nts_system
+			  (vname,cautomata_name_list) in
+		      raise ex
+		    end   
+	    end
+	| None -> None
+    with 
+	Found_var v -> Some(v)
+
 
 
 

@@ -35,14 +35,14 @@ module Parse_machine
   let add_output_vars_iterator (vsort : varsort) (c : nts_automaton) s =
     match vsort with 
 	Int ->
-	  c.output_vars <- c.input_vars@(NtsIVar(s)::[])
+	  c.output_vars <- c.output_vars@(NtsIVar(s)::[])
       | Real -> 
 	c.output_vars <- c.output_vars@(NtsRVar(s)::[])
 
   let add_local_vars_iterator (vsort : varsort) (c : nts_automaton) s =
     match vsort with 
 	Int ->
-	  c.local_vars <- c.input_vars@(NtsIVar(s)::[])
+	  c.local_vars <- c.local_vars@(NtsIVar(s)::[])
       | Real -> 
 	c.local_vars <- c.local_vars@(NtsRVar(s)::[])
 
@@ -53,11 +53,15 @@ module Parse_machine
 
 
   let get_vinfo vname =
-    let vinfo = Nts_int.get_varinfo Parse_machine.ntsinstance (Some(!Parse_machine.current_cautomaton.nts_automata_name)) vname in
+    let vinfo = Nts_int.get_varinfo_by_optcautomaton Parse_machine.ntsinstance (Some(!Parse_machine.current_cautomaton)) vname in
     match vinfo with
       None -> 
 	begin
 	  (*raise (UnBoundVariable (vname, (loc_of_pos lexbuf) ))*)
+	  Format.printf ("Current context cautomata has the following variables \n");
+	  Format.printf ("Input vars : %s \n") (pprint_inputvars !Parse_machine.current_cautomaton );
+	  Format.printf ("Output vars : %s \n") (pprint_outputvars !Parse_machine.current_cautomaton );
+	  Format.printf ("Local vars : %s \n") (pprint_localvars !Parse_machine.current_cautomaton  );
 	  raise (UnBoundVariable (vname, None ))
 	end
       | Some(v) ->
@@ -75,14 +79,15 @@ module Parse_machine
 %type <Ntsint.Nts_int.nts_system> ntldescr 
 %type <Nts_types.cnt_arithm_exp> arithm_expr
 
-%token TIMES PLUS MINUS UMINUS DIV MOD LT GT MOD LEQ GEQ EQUAL LBRACE
+%token TIMES PLUS MINUS UMINUS DIV MOD LT GT MOD EQ LEQ GEQ LBRACE
 %token RBRACE LBRACK RBRACK COLON SEMICOLON COMMA ARROW
 %token  PRIME BTRUE BFALSE BAND BOR BNOT EOF
 %token NTSDECL INTDECL NATDECL REALDECL INITSTATE FINALSTATE ERRORSTATE
 %token INPUTVARLIST OUTPUTVARLIST LOCALVARLIST HAVOC
 
-%nonassoc AFFRULERED
+%nonassoc PRIMEVARLIST 
 %nonassoc PRIMEDEXPR EQ LBRACK RBRACK
+
 %nonassoc UMINUS 
 %nonassoc NTS_TRANS
 
@@ -96,9 +101,9 @@ module Parse_machine
 
 
 
-ntldescr : NTSDECL IDENT SEMICOLON decl { 
+ntldescr : NTSDECL IDENT SEMICOLON decl_sequence { 
   Nts_int.rename_nts_system Parse_machine.ntsinstance   $2; 
-  add_cautomata_to_nts !Parse_machine.current_cautomaton Parse_machine.ntsinstance;
+ (* add_cautomata_to_nts !Parse_machine.current_cautomaton Parse_machine.ntsinstance;*)
   Format.printf "Parsing automaton %s \n" $2;  Parse_machine.ntsinstance }
 ;
 
@@ -110,19 +115,25 @@ gvars_decl : ident_list INTDECL SEMICOLON { Nts_int.add_nts_int_vars_to_nts_syst
 | ident_list REALDECL SEMICOLON { Nts_int.add_nts_real_vars_to_nts_system Parse_machine.ntsinstance $1 } 
 ;
 
-decl :  gvars_decl  {}
-| IDENT LBRACK cautomaton_decl_sequence RBRACK decl { 
+decl_sequence :  gvars_decl decl_sequence {}
+| IDENT LBRACK cautomaton_decl RBRACK decl_sequence { 
   Parse_machine.current_cautomaton :=  ( Nts_int.create_nts_automaton $1);
+  Format.printf "!!!!!##### Creating a new counter automaton %s \n" $1;
   Nts_int.add_cautomata_to_nts  !Parse_machine.current_cautomaton Parse_machine.ntsinstance
 }
+
 | EOF {}
 ;
 
 
+/* 
 cautomaton_decl_sequence : cautomaton_decl cautomaton_decl_sequence {}
-| cautomaton_decl {}
+| cautomaton_decl {} */
 
-cautomaton_decl :
+cautomaton_decl : cautomaton_decl_sections cautomaton_decl {}
+| cautomaton_decl_sections {}
+
+cautomaton_decl_sections :
  INPUTVARLIST ident_list COLON INTDECL SEMICOLON {
   List.iter (  add_input_vars_iterator Int !Parse_machine.current_cautomaton) $2  }
 | INPUTVARLIST ident_list COLON REALDECL SEMICOLON {
@@ -176,17 +187,29 @@ nts_trans_split : nts_trans BAND nts_trans_split { $1 :: $3}
 
 
 nts_trans :  pressburg_bool %prec NTS_TRANS {CntGuard ( $1 )}
-| affect {$1}
+| gen_affect {$1}
 | havocise {$1}
-| callaffect {$1}
 
 
 
-primed_var_list : primed_express COMMA primed_var_list {$1::$3}
-| primed_express {[$1]}
 
-callaffect : primed_var_list EQ IDENT LBRACE arithm_expr_list RBRACE
-{CntCall($3,Some($1),$5)}
+primed_var_list : primed_express COMMA primed_var_list %prec PRIMEVARLIST {$1::$3}
+| primed_express COMMA primed_express {$1::[$3]}
+;
+
+gen_affect : PRIMEDVAR EQ arithm_expr   {
+  let vname = get_varname_of_primedvarname $1 in
+  let vinfo = get_vinfo vname in
+  CntAffect(vinfo,$3)
+}
+
+/*| primed_express EQ IDENT LBRACE arithm_expr_list RBRACE  
+ {
+   CntCall($3,Some([$1]),$5)
+ }*/
+
+| primed_var_list EQ IDENT LBRACE arithm_expr_list RBRACE 
+ {CntCall($3,Some($1),$5)}
 | IDENT LBRACE arithm_expr_list RBRACE  {CntCall($1,None,$3)}
 
 pressburg_bool : BTRUE { CntBTrue }
@@ -203,10 +226,26 @@ pressburg_bool : BTRUE { CntBTrue }
 
 primed_express : PRIMEDVAR %prec PRIMEDEXPR { 
   let varname = get_varname_of_primedvarname $1 in
-  let vinfo = Nts_int.get_varinfo Parse_machine.ntsinstance (Some((!Parse_machine.current_cautomaton).nts_automata_name)) varname in
-  match vinfo with
-      Some(v) -> v
-    | None -> raise (UnboundVarName ( varname ))
+  Format.printf "Primed var string is %s \n %!" $1;
+  Format.printf "Primed var has name %s \n %! " varname ;
+
+  Format.printf "Looking for var name %s in the current cautomaton whose name is [%s] \n %!" varname !Parse_machine.current_cautomaton.nts_automata_name  ;
+
+  try
+    let vinfo = Nts_int.get_varinfo_by_optcautomaton Parse_machine.ntsinstance (Some(!Parse_machine.current_cautomaton)) varname in
+    match vinfo with
+	Some(v) -> v
+      | None -> raise (UnboundVarName ( varname ))
+  with
+      (Nts_functor.No_such_counter_automata_in_nts_system(a,b))->
+	begin
+	  Format.printf ("Current context cautomata has the following variables \n");
+	  Format.printf ("Input vars : %s \n") (pprint_inputvars !Parse_machine.current_cautomaton );
+	  Format.printf ("Output vars : %s \n") (pprint_outputvars !Parse_machine.current_cautomaton );
+	  Format.printf ("Local vars : %s \n") (pprint_localvars !Parse_machine.current_cautomaton  );
+	  raise  ( No_such_counter_automata_in_nts_system(a,b) )
+	end
+
 }
 ;
 
@@ -218,8 +257,9 @@ arithm_expr : INT { let  cst = Big_int.big_int_of_int $1 in
 		   CntCst(cst)}
 
 | IDENT { let vname = $1 in
-	  let vinfo = Nts_int.get_varinfo Parse_machine.ntsinstance 
-	    (Some(!Parse_machine.current_cautomaton).nts_automata_name) 
+	  let vinfo = Nts_int.get_varinfo_by_optcautomaton 
+	    Parse_machine.ntsinstance 
+	    (Some(!Parse_machine.current_cautomaton)) 
 	    vname in
 	  let var =
 	    match vinfo with
@@ -228,6 +268,7 @@ arithm_expr : INT { let  cst = Big_int.big_int_of_int $1 in
 	  in
 	  CntVar(var)
 	}
+
 | LBRACE arithm_expr RBRACE {$2}
 | MINUS arithm_expr %prec UMINUS { CntUnMin($2) }
 | arithm_expr PLUS arithm_expr { CntSum($1,$3) }
@@ -244,12 +285,7 @@ havocise : HAVOC LBRACE ident_list RBRACE {
 }
 ;
 
-affect : PRIMEDVAR EQ arithm_expr %prec AFFRULERED {
-  let vname = get_varname_of_primedvarname $1 in
-  let vinfo = get_vinfo vname in
-  CntAffect(vinfo,$3)
-}
-;
+
 
 
 

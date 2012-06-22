@@ -2,6 +2,7 @@ open Nts_types
 open Hashtbl
 
 exception UnboundVarName of string 
+exception No_such_counter_automata_in_nts_system of string * string 
 
 module type NTS_PARAM =
   sig
@@ -59,8 +60,10 @@ sig
   val add_nts_int_vars_to_nts_system : nts_system -> string list -> unit 
   val add_nts_real_vars_to_nts_system : nts_system -> string list -> unit 
   (* string option check in a subsystem; string var name *)
-  val get_varinfo : nts_system -> string option -> string -> nts_var option 
+  val get_varinfo_by_optname : nts_system -> string option -> string -> nts_var option 
 
+  val get_varinfo_by_optcautomaton : nts_system -> nts_automaton option ->string -> nts_var option
+ 
   val add_cautomata_to_nts : nts_automaton -> nts_system -> unit
   
   (*One must be sure that any binding name->cautomaton in an nts is
@@ -85,6 +88,11 @@ sig
     nts_automaton ->
     control -> control -> Nts_types.cnt_trans_label list list option
   
+
+  val pprint_inputvars : nts_automaton  -> string
+  val pprint_outputvars : nts_automaton  -> string 
+  val pprint_localvars : nts_automaton  -> string
+
   val pprint_to_nts : nts_automaton -> string
   val pprint_nts : nts_system -> string 
 end

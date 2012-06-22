@@ -69,7 +69,7 @@ let primed_var = (identifier quote)
   | ";" {SEMICOLON}
   | "," {COMMA}
   | "->" {ARROW}
-  | "=" {EQUAL}
+  | "=" {EQ}
   | "'" {PRIME}
   | "and" {BAND}
   | "&&" {BAND}
@@ -77,6 +77,11 @@ let primed_var = (identifier quote)
   | "||" {BOR}
   | "not" {BNOT}
   | "!" {BNOT}
+  | number {
+    let num =  int_of_string( 
+    Lexing.lexeme lexbuf) in
+    INT(num)
+  }
   | identifier  { 
     KWD._KWD_or_IDENT (Lexing.lexeme lexbuf)
   }
