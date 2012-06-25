@@ -87,15 +87,18 @@ module Parse_machine
 
 %nonassoc PRIMEVARLIST 
 %nonassoc PRIMEDEXPR EQ LBRACK RBRACK
+%nonassoc PRESSEVAL
 
 %nonassoc UMINUS 
-%nonassoc NTS_TRANS
+
 
 
 %left BOR
 %left PLUS MINUS 
 %left TIMES DIV MOD BAND
 %right BNOT 
+
+%nonassoc NTS_TRANS
 %start ntldescr
 %%
 
@@ -172,6 +175,14 @@ cautomaton_decl_sections :
   Nts_int.add_transition !Parse_machine.current_cautomaton control_org control_dest transit
 }  
 
+
+/* | IDENT  ARROW IDENT LBRACK nts_trans RBRACK {
+  let control_org = control_of_id_param $1 in
+  let control_dest= control_of_id_param $3 in
+  let transit = ($5::[]) in
+  Nts_int.add_transition !Parse_machine.current_cautomaton control_org control_dest transit
+}*/ 
+
 | IDENT ARROW IDENT LBRACK  RBRACK {
   let control_org = control_of_id_param $1 in
   let control_dest= control_of_id_param $3 in
@@ -182,16 +193,28 @@ cautomaton_decl_sections :
 ;
 
 
-nts_trans_split : nts_trans BAND nts_trans_split { $1 :: $3}
-| nts_trans {[$1]}
+/*nts_trans_split : nts_trans BAND nts_trans_split { $1 :: $3} 
+| nts_trans BAND nts_trans {$1 :: [$3]}*/
+
+nts_trans_split : pressburg_tree_guards BAND gen_affect {$1 :: $3 :: []}
 
 
-nts_trans :  pressburg_bool %prec NTS_TRANS {CntGuard ( $1 )}
+| havocise {$1 :: []}
+| gen_affect BAND havocise  {$1 :: $3::[]}
+| pressburg_atomic_bool BAND gen_affect {$1 :: $3:: []}
+| pressburg_atomic_bool BAND havocise {$1 :: $3 ::[]}
+| pressburg_tree_guards BAND havocise {$1 :: $3 ::[]}
+| pressburg_atomic_bool BAND gen_affect {$1 :: $3 :: []}
+| pressburg_tree_guards BAND gen_affect {$1 :: $3 :: []}
+| pressburg_tree_guards BAND gen_affect {$1 :: $3 :: []}
+| pressburg_atomic_bool BAND gen_affect BAND havocise {$1::$3::$5::[]}
+| pressburg_tree_guards BAND gen_affect BAND havocise {$1::$3::$5::[]}
+
+/*
+nts_trans :  pressburg_tree_guards %prec NTS_TRANS { $1 }
 | gen_affect {$1}
 | havocise {$1}
-
-
-
+*/
 
 primed_var_list : primed_express COMMA primed_var_list %prec PRIMEVARLIST {$1::$3}
 | primed_express COMMA primed_express {$1::[$3]}
@@ -208,20 +231,68 @@ gen_affect : PRIMEDVAR EQ arithm_expr   {
    CntCall($3,Some([$1]),$5)
  }*/
 
-| primed_var_list EQ IDENT LBRACE arithm_expr_list RBRACE 
- {CntCall($3,Some($1),$5)}
+| primed_var_list EQ IDENT LBRACE arithm_expr_list RBRACE {
+  CntCall($3,Some($1),$5)
+}
 | IDENT LBRACE arithm_expr_list RBRACE  {CntCall($1,None,$3)}
+;
 
-pressburg_bool : BTRUE { CntBTrue }
-| BFALSE {CntBFalse}
-| pressburg_bool BOR pressburg_bool  {CntBOr ( $1 , $3)}
-| pressburg_bool BAND pressburg_bool {CntBAnd ( $1 , $3)}
-| BNOT pressburg_bool {CntNot($2)}
-| arithm_expr GT arithm_expr {CntBool(CntGt,$1,$3)}
-| arithm_expr LT arithm_expr {CntBool(CntLt,$1,$3)}
-| arithm_expr GEQ arithm_expr {CntBool(CntGeq,$1,$3)}
-| arithm_expr LEQ arithm_expr {CntBool(CntLeq,$1,$3)}
-| arithm_expr EQ arithm_expr {CntBool(CntEq,$1,$3)}
+
+pressburg_tree_guards : LBRACE pressburg_atomic_bool RBRACE 
+  {$2}
+| LBRACE pressburg_tree_guards RBRACE {$2}
+
+| pressburg_atomic_bool BAND pressburg_atomic_bool {
+  match $1,$3 with
+      CntGuard(a),CntGuard(b) -> CntGuard(CntBAnd(a,b))
+}
+
+| pressburg_tree_guards BAND  pressburg_atomic_bool {
+  match $1,$3 with
+      CntGuard(a),CntGuard(b) -> CntGuard(CntBAnd(a,b))
+}
+
+| pressburg_atomic_bool BAND  pressburg_tree_guards {
+  match $1,$3 with
+      CntGuard(a),CntGuard(b) -> CntGuard(CntBAnd(a,b))
+}
+
+
+| pressburg_atomic_bool BOR pressburg_atomic_bool {
+  match $1,$3 with
+      CntGuard(a),CntGuard(b) -> CntGuard(CntBOr(a,b))
+}  
+
+
+| pressburg_tree_guards BOR  pressburg_atomic_bool {
+  match $1,$3 with
+      CntGuard(a),CntGuard(b) -> CntGuard(CntBAnd(a,b))
+}
+
+
+|  pressburg_atomic_bool BOR pressburg_tree_guards {
+  match $1,$3 with
+      CntGuard(a),CntGuard(b) -> CntGuard(CntBAnd(a,b))
+}
+
+|  BNOT pressburg_tree_guards {
+  match $2 with
+  CntGuard(a) -> CntGuard(CntNot(a))
+} 
+|  BNOT pressburg_atomic_bool {
+  match $2 with
+  CntGuard(a) -> CntGuard(CntNot(a))
+}
+
+
+pressburg_atomic_bool : BTRUE { CntGuard(CntBTrue) } 
+| BFALSE {CntGuard(CntBFalse)} %prec PRESSEVAL
+
+| arithm_expr GT arithm_expr {CntGuard(CntBool(CntGt,$1,$3))} 
+| arithm_expr LT arithm_expr {CntGuard(CntBool(CntLt,$1,$3))} 
+| arithm_expr GEQ arithm_expr {CntGuard(CntBool(CntGeq,$1,$3))} 
+| arithm_expr LEQ arithm_expr {CntGuard(CntBool(CntLeq,$1,$3))} 
+| arithm_expr EQ arithm_expr {CntGuard(CntBool(CntEq,$1,$3))} 
 ;
 
 primed_express : PRIMEDVAR %prec PRIMEDEXPR { 
@@ -282,6 +353,11 @@ arithm_expr : INT { let  cst = Big_int.big_int_of_int $1 in
 havocise : HAVOC LBRACE ident_list RBRACE {
   let ntvarlist = List.map get_vinfo $3 in 
   CntHavoc(ntvarlist)
+}
+
+|  HAVOC LBRACE  RBRACE {
+  
+  CntHavoc([])
 }
 ;
 
