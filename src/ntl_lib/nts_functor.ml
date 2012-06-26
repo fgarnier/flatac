@@ -80,7 +80,7 @@ struct
       {
 	mutable nts_system_name : string;
 	mutable nts_global_vars : nts_var list;
-        nts_automata : ( string , nts_automaton ) Hashtbl.t;
+        nts_automata : ( string , nts_automaton Pervasives.ref) Hashtbl.t;
       }
 
   (*Need not appear in the API*)
@@ -180,7 +180,7 @@ struct
      
 
   let add_cautomata_to_nts c nts_sys =
-    Hashtbl.add nts_sys.nts_automata (c.nts_automata_name) c
+    Hashtbl.add nts_sys.nts_automata (!c).nts_automata_name c
 
   let control_of_id_param p =
     Nts_State (p)
@@ -202,44 +202,44 @@ struct
 	let former_name = c.nts_automata_name in
 	c.nts_automata_name <- name;
 	Hashtbl.remove nts_sys.nts_automata former_name;
-	Hashtbl.add nts_sys.nts_automata c.nts_automata_name c
+	Hashtbl.add nts_sys.nts_automata c.nts_automata_name ( ref c )
       end
 	
   let add_globvar_to_nts_system  gvar nts_sys =
     nts_sys.nts_global_vars <- gvar::(nts_sys.nts_global_vars) 
  
-  let add_inputvar_left  (c : nts_automaton)  ( v : nts_var) =
-    c.input_vars <- (v::c.input_vars)
+  let add_inputvar_left  (c : nts_automaton ref)  ( v : nts_var) =
+    !c.input_vars <- (v::!c.input_vars)
     
   let add_outputvar_left c v =
-    c.output_vars <- (v::c.output_vars)
+    !c.output_vars <- (v::!c.output_vars)
 
   let add_localvar_left c v =
-     c.local_vars <- (v::c.local_vars)
+     !c.local_vars <- (v::!c.local_vars)
      
   let add_init_state cautomata (s : control ) =
-    if not (Hashtbl.mem cautomata.init_states s)
-    then Hashtbl.add cautomata.init_states s ()
+    if not (Hashtbl.mem (!cautomata).init_states s)
+    then Hashtbl.add (!cautomata).init_states s ()
     else ()
 
   let add_error_state cautomata (s : control ) =
-    if not (Hashtbl.mem cautomata.error_states s)
-    then Hashtbl.add cautomata.error_states s ()
+    if not (Hashtbl.mem (!cautomata).error_states s)
+    then Hashtbl.add (!cautomata).error_states s ()
     else ()
       
   let add_final_state cautomata (s : control ) =
-    if not (Hashtbl.mem cautomata.final_states s)
-    then Hashtbl.add cautomata.final_states s ()
+    if not (Hashtbl.mem (!cautomata).final_states s)
+    then Hashtbl.add (!cautomata).final_states s ()
     else ()
 
   (**I dont check the unicity of s1->l->s2 transition.
      should I ?
   *)
       
-  let add_transition (cautomata : nts_automaton) 
+  let add_transition (cautomata : nts_automaton ref) 
       ( orig : control ) (dest : control) ( lab : cnt_trans_label list) =
     
-    let master_rel = cautomata.transitions in
+    let master_rel = (!cautomata).transitions in
     if Hashtbl.mem master_rel orig then
       begin
 	let orig_binding = Hashtbl.find master_rel orig
@@ -297,9 +297,9 @@ struct
 	      try
 		let c = Hashtbl.find nts_sys.nts_automata cname 
 		in
-		List.iter (search_varname_iterator vname) c.input_vars;
-		List.iter (search_varname_iterator vname) c.output_vars;
-		List.iter (search_varname_iterator vname) c.local_vars;
+		List.iter (search_varname_iterator vname) !c.input_vars;
+		List.iter (search_varname_iterator vname) !c.output_vars;
+		List.iter (search_varname_iterator vname) !c.local_vars;
 		(*If found, the raised exception of type Found_var is
 		handled in the topmost try ... with block.*)
 	
@@ -510,12 +510,12 @@ struct
 
 
   let pprint_all_cautomata cautomata_table =
-    let pprint_automata_folder _ cautomaton prev_str =
+    let pprint_automata_folder cname cautomaton prev_str =
       match prev_str with
-	  "" -> pprint_to_nts cautomaton 
+	  "" -> cname^":"^ (pprint_to_nts !cautomaton) 
 	| _ ->
 	  begin
-	    let ret_str = prev_str ^"\n"^(pprint_to_nts cautomaton)
+	    let ret_str = prev_str ^"\n"^cname^":"^(pprint_to_nts !cautomaton)
 	    in ret_str
 	  end
     in

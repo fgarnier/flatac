@@ -24,27 +24,27 @@ module Parse_machine
   end
 
   (* *)
-  let add_input_vars_iterator (vsort : varsort) (c : nts_automaton) s =
+  let add_input_vars_iterator (vsort : varsort) (c : nts_automaton ref) s =
     match vsort with 
 	Int ->
-	  c.input_vars <- (c.input_vars@(NtsIVar(s)::[]))
+	  (!c).input_vars <- ((!c).input_vars@(NtsIVar(s)::[]))
       | Real -> 
-	  c.input_vars <- (c.input_vars@(NtsRVar(s)::[]))
+	  (!c).input_vars <- ((!c).input_vars@(NtsRVar(s)::[]))
       (* One need to define Nat implementation*)
   
-  let add_output_vars_iterator (vsort : varsort) (c : nts_automaton) s =
+  let add_output_vars_iterator (vsort : varsort) (c : nts_automaton ref) s =
     match vsort with 
 	Int ->
-	  c.output_vars <- c.output_vars@(NtsIVar(s)::[])
+	  (!c).output_vars <- (!c).output_vars@(NtsIVar(s)::[])
       | Real -> 
-	c.output_vars <- c.output_vars@(NtsRVar(s)::[])
+	(!c).output_vars <- (!c).output_vars@(NtsRVar(s)::[])
 
-  let add_local_vars_iterator (vsort : varsort) (c : nts_automaton) s =
+  let add_local_vars_iterator (vsort : varsort) (c : nts_automaton ref) s =
     match vsort with 
 	Int ->
-	  c.local_vars <- c.local_vars@(NtsIVar(s)::[])
+	  (!c).local_vars <- (!c).local_vars@(NtsIVar(s)::[])
       | Real -> 
-	c.local_vars <- c.local_vars@(NtsRVar(s)::[])
+	(!c).local_vars <- (!c).local_vars@(NtsRVar(s)::[])
 
 
   let get_varname_of_primedvarname pvname =
@@ -118,61 +118,68 @@ gvars_decl : ident_list INTDECL SEMICOLON { Nts_int.add_nts_int_vars_to_nts_syst
 | ident_list REALDECL SEMICOLON { Nts_int.add_nts_real_vars_to_nts_system Parse_machine.ntsinstance $1 } 
 ;
 
-decl_sequence :  gvars_decl decl_sequence {}
-| IDENT LBRACK cautomaton_decl RBRACK decl_sequence { 
-  Parse_machine.current_cautomaton :=  ( Nts_int.create_nts_automaton $1);
-  Format.printf "!!!!!##### Creating a new counter automaton %s \n" $1;
-  Nts_int.add_cautomata_to_nts  !Parse_machine.current_cautomaton Parse_machine.ntsinstance
-}
-
+decl_sequence : decl_automata decl_sequence {}
+| decl_automata {}
 | EOF {}
 ;
 
 
-/* 
-cautomaton_decl_sequence : cautomaton_decl cautomaton_decl_sequence {}
-| cautomaton_decl {} */
+decl_automata :  IDENT LBRACK cautomaton_decl RBRACK { 
+  Parse_machine.current_cautomaton :=  ( Nts_int.create_nts_automaton $1);
+  Format.printf "!!!!!##### Creating a new counter automaton %s \n" $1;
+  Nts_int.add_cautomata_to_nts  Parse_machine.current_cautomaton Parse_machine.ntsinstance;
+  Format.printf "DEBUG :%s\n" (pprint_to_nts !Parse_machine.current_cautomaton);
+ Format.printf "Debug : Transitions in Parsem_machine.current_cautomaton  are :%s \n" (Nts_int.pprint_transitions "" !Parse_machine.current_cautomaton )
+}
+
+;
+
 
 cautomaton_decl : cautomaton_decl_sections cautomaton_decl {}
-| cautomaton_decl_sections {}
+| cautomaton_decl_sections {Format.printf "End of an automaton declaration \n"}
 
 cautomaton_decl_sections :
  INPUTVARLIST ident_list COLON INTDECL SEMICOLON {
-  List.iter (  add_input_vars_iterator Int !Parse_machine.current_cautomaton) $2  }
+  List.iter (  add_input_vars_iterator Int Parse_machine.current_cautomaton) $2 ; Format.printf "Adding inpuvariables : %s \n" (pprint_inputvars !Parse_machine.current_cautomaton) }
 | INPUTVARLIST ident_list COLON REALDECL SEMICOLON {
-  List.iter (  add_input_vars_iterator Real !Parse_machine.current_cautomaton) $2  }
+  List.iter (  add_input_vars_iterator Real Parse_machine.current_cautomaton) $2  }
 | OUTPUTVARLIST ident_list COLON INTDECL SEMICOLON {
-  List.iter (  add_output_vars_iterator Int !Parse_machine.current_cautomaton) $2  }
+  List.iter (  add_output_vars_iterator Int Parse_machine.current_cautomaton) $2  }
 | OUTPUTVARLIST ident_list COLON REALDECL SEMICOLON {
-  List.iter (  add_output_vars_iterator Real !Parse_machine.current_cautomaton) $2  }
+  List.iter (  add_output_vars_iterator Real Parse_machine.current_cautomaton) $2  }
 | ident_list COLON INTDECL SEMICOLON {
-  List.iter (  add_local_vars_iterator Int !Parse_machine.current_cautomaton) $1  }
+  List.iter (  add_local_vars_iterator Int Parse_machine.current_cautomaton) $1  }
 | ident_list COLON REALDECL SEMICOLON {
-  List.iter (  add_local_vars_iterator Real !Parse_machine.current_cautomaton) $1  }
+  List.iter (  add_local_vars_iterator Real Parse_machine.current_cautomaton) $1  }
 
 | INITSTATE ident_list SEMICOLON  {
   List.iter ( fun s -> 
-		add_init_state !Parse_machine.current_cautomaton (Nts_int.control_of_id_param s)  
-	    ) $2
+		add_init_state Parse_machine.current_cautomaton (Nts_int.control_of_id_param s)  
+	    ) $2;
+
+  Format.printf "Adds an initial state \n"
   }
 
 | FINALSTATE ident_list SEMICOLON {
     List.iter ( fun s -> 
-		  add_final_state !Parse_machine.current_cautomaton (Nts_int.control_of_id_param s)  
-	      ) $2
+		  add_final_state Parse_machine.current_cautomaton (Nts_int.control_of_id_param s)  
+	      ) $2;
+  Format.printf "Adds a final state \n"
 
 }
 | ERRORSTATE ident_list SEMICOLON {
     List.iter ( fun s -> 
-		  add_final_state !Parse_machine.current_cautomaton (Nts_int.control_of_id_param s)  
-	      ) $2
+		  add_final_state Parse_machine.current_cautomaton (Nts_int.control_of_id_param s)  
+	      ) $2;
+
+    Format.printf "Adds an error state \n"
 }
 
 | IDENT ARROW IDENT LBRACK nts_trans_split RBRACK {
   let control_org = control_of_id_param $1 in
   let control_dest= control_of_id_param $3 in
   let transit = $5 in
-  Nts_int.add_transition !Parse_machine.current_cautomaton control_org control_dest transit
+  Nts_int.add_transition Parse_machine.current_cautomaton control_org control_dest transit; Format.printf "Adding a transition  "
 }  
 
 
@@ -180,14 +187,15 @@ cautomaton_decl_sections :
   let control_org = control_of_id_param $1 in
   let control_dest= control_of_id_param $3 in
   let transit = ($5::[]) in
-  Nts_int.add_transition !Parse_machine.current_cautomaton control_org control_dest transit
+  Nts_int.add_transition Parse_machine.current_cautomaton control_org control_dest transit
 }*/ 
 
 | IDENT ARROW IDENT LBRACK  RBRACK {
   let control_org = control_of_id_param $1 in
   let control_dest= control_of_id_param $3 in
   let transit = [] in
-  Nts_int.add_transition !Parse_machine.current_cautomaton control_org control_dest transit
+  Nts_int.add_transition Parse_machine.current_cautomaton control_org control_dest transit;
+  Format.printf "Add an empty transition \n"
 }  
 
 ;
