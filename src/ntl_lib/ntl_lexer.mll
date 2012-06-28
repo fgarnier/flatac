@@ -70,6 +70,7 @@ let primed_var = (identifier quote)
   | "," {COMMA}
   | "->" {ARROW}
   | "=" {EQ}
+  | "!=" {NEQ}
   | "'" {PRIME}
   | "and" {BAND}
   | "&&" {BAND}

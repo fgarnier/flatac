@@ -144,7 +144,7 @@ let get_vinfo vname =
 %type <Ntsint.Nts_int.nts_system> ntldescr 
 %type <Nts_types.cnt_arithm_exp> arithm_expr
 
-%token TIMES PLUS MINUS UMINUS DIV MOD LT GT MOD EQ LEQ GEQ LBRACE
+%token TIMES PLUS MINUS UMINUS DIV MOD LT GT MOD EQ NEQ LEQ GEQ LBRACE
 %token RBRACE LBRACK RBRACK COLON SEMICOLON COMMA ARROW
 %token  PRIME BTRUE BFALSE BAND BOR BNOT EOF
 %token NTSDECL INTDECL NATDECL REALDECL INITSTATE FINALSTATE ERRORSTATE
@@ -479,6 +479,7 @@ pressburg_atomic_bool : BTRUE { CntGuard(CntBTrue) }
 | arithm_expr GEQ arithm_expr {CntGuard(CntBool(CntGeq,$1,$3))} 
 | arithm_expr LEQ arithm_expr {CntGuard(CntBool(CntLeq,$1,$3))} 
 | arithm_expr EQ arithm_expr {CntGuard(CntBool(CntEq,$1,$3))} 
+| arithm_expr NEQ arithm_expr {CntGuard(CntBool(CntNeq,$1,$3))}
 ;
 
 primed_express : PRIMEDVAR %prec PRIMEDEXPR { 
