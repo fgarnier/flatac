@@ -389,11 +389,11 @@ struct
      let elem_left = ref 0 in
       let pprint_folder id () prescript =
 	if !elem_left <= 1 then
-	  prescript^(Format.sprintf "s%s" ( pprint_control id ))
+	  prescript^(Format.sprintf "%s" ( pprint_control id ))
 	else
 	  begin
 	    elem_left := !elem_left-1;
-	    prescript^(Format.sprintf "s%s," ( pprint_control id ))
+	    prescript^(Format.sprintf "%s," ( pprint_control id ))
 	  end
       in
       elem_left := (Hashtbl.length c.init_states);
@@ -408,11 +408,11 @@ struct
     let elem_left = ref 0 in
     let pprint_folder id () prescript =
       if !elem_left <= 1 then
-	prescript^(Format.sprintf "s%s" ( pprint_control id ))
+	prescript^(Format.sprintf "%s" ( pprint_control id ))
       else
 	begin
 	  elem_left := !elem_left-1;
-	  prescript^(Format.sprintf "s%s," ( pprint_control id ))
+	  prescript^(Format.sprintf "%s," ( pprint_control id ))
 	end
     in
       elem_left := (Hashtbl.length c.final_states);
@@ -427,11 +427,11 @@ struct
     let elem_left = ref 0 in
     let pprint_folder id () prescript =
       if !elem_left <= 1 then
-	prescript^(Format.sprintf "s%s" ( pprint_control id ))
+	prescript^(Format.sprintf "%s" ( pprint_control id ))
       else
 	begin
 	  elem_left := !elem_left-1;
-	  prescript^(Format.sprintf "s%s," ( pprint_control id ))
+	  prescript^(Format.sprintf "%s," ( pprint_control id ))
 	end
     in
       elem_left := (Hashtbl.length c.error_states);
@@ -455,7 +455,7 @@ struct
 	  begin
 	   (* let label = Nts.rewrite_ndet_assignation label in *)
 	    let label = Nts.havocise label in
-	    let post_script = Format.sprintf "%s \n s%s->s%s { %s }" prescript ( pprint_control origin)  ( pprint_control dest) 
+	    let post_script = Format.sprintf "%s \n %s->%s { %s }" prescript ( pprint_control origin)  ( pprint_control dest) 
 	      (pretty_label label)
 	    in 
 	      post_script
@@ -467,9 +467,9 @@ struct
 	    let (pre,post) = Nts.split_guard_call_transition label in
 	       let pre= Nts.havocise_label pre in
 	       let post = Nts.havocise_label post in
-	       let post_script = Format.sprintf "%s \n s%s->sinter%d { %s }" prescript   ( pprint_control origin) ( !intermediate_sid)
+	       let post_script = Format.sprintf "%s \n %s->sinter%d { %s }" prescript   ( pprint_control origin) ( !intermediate_sid)
 		 (pretty_label pre) in
-	       let post_script=Format.sprintf "%s \n sinter%d->s%s { %s }" post_script ( !intermediate_sid)  ( pprint_control dest) 
+	       let post_script=Format.sprintf "%s \n sinter%d-> %s { %s }" post_script ( !intermediate_sid)  ( pprint_control dest) 
 		 (pretty_label post) in
 	       intermediate_sid:=!intermediate_sid + 1;
 	       post_script
@@ -518,10 +518,10 @@ struct
   let pprint_all_cautomata cautomata_table =
     let pprint_automata_folder cname cautomaton prev_str =
       match prev_str with
-	  "" -> cname^":"^ (pprint_to_nts cautomaton) 
+	  "" ->  (pprint_to_nts cautomaton) 
 	| _ ->
 	  begin
-	    let ret_str = prev_str ^"\n"^cname^":"^(pprint_to_nts cautomaton)
+	    let ret_str = prev_str ^"\n"^(pprint_to_nts cautomaton)
 	    in ret_str
 	  end
     in

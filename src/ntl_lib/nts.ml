@@ -611,33 +611,56 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
  (* this method is used to compute the set of counter variables who are
  assigned a new value*)
   let havocise (trans_label_list : cnt_trans_label list) =
+
+    let var_with_same_name vref vlistelem =
+      let vref_name = nts_pprint_nts_var vref in
+      let vlisteleme = nts_pprint_nts_var vlistelem in
+      if (String.compare vref_name vlisteleme) = 0 
+      then true
+      else false
+    in
+    let var_with_same_name_in_list vref vlist =
+      List.exists ( fun s -> var_with_same_name vref s) vlist
+    in
+    let new_vars_in_left_list_compare_to_right_list vlistl vlistr =
+      let fresh_vars_folder fresh_vars_list ref_var =
+	if not ( var_with_same_name_in_list ref_var (fresh_vars_list@vlistr))
+	then ref_var::fresh_vars_list
+	else fresh_vars_list in
+      List.fold_left fresh_vars_folder [] vlistl
+    in
     let not_havoc label =
       match label with
 	  CntHavoc(_) -> false
-	(*| CntAffect(_,CntNdet)-> false*)
-	(*| CntGuard( CntBool(_,CntNdetVar("__if_ndet_cond__"),_)) -> false*)
+	
 	| _ -> true
     in
     let modified_vars (var_list : Nts_types.nts_var list) 
 	(trans_label : cnt_trans_label) =
       match trans_label with
 
-
-	(* Elimination
-	   de toutes les variables
-	   de test à valeurs non déterministes.
-	   Cas le plus général,
-	   ?? plus grand point fixe ??
-	   Pourrait certainement se
-	   raffiner.
-	*)
-
 	(*| CntGuard( CntBool(_,CntNdetVar("__if_ndet_cond__"),_))
 	  -> (NtsIVar("__if_ndet_cond__"))::var_list*)
 
-	| CntAffect(nvar,_) -> nvar::var_list
-	| CntCall(_,Some(nvar_list),_) -> nvar_list@var_list
-	| CntHavoc (nvlist) -> nvlist@var_list
+	| CntAffect(nvar,_) -> 
+	  begin 
+	    if not ( var_with_same_name_in_list nvar var_list)
+	    then nvar::var_list
+	    else var_list
+	  end
+	| CntCall(_,Some(nvar_list),_) ->
+	  begin
+	    let fresh_var_list = new_vars_in_left_list_compare_to_right_list 
+	      nvar_list var_list in
+	    fresh_var_list@var_list
+	  end
+	| CntHavoc (nvlist) ->
+	  begin
+	    let fresh_var_list =
+	      new_vars_in_left_list_compare_to_right_list 
+		nvlist var_list in 
+	    fresh_var_list@var_list
+	  end
 	| CntGuard(CntBool(_,CntNdetVar("__ndet_cond__"),_))
 	|  CntGuard(CntNot(CntBool(_,CntNdetVar("__ndet_cond__"),_)))
 	    ->
