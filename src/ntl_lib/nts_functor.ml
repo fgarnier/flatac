@@ -38,7 +38,7 @@ module type NTS_PARAM =
   sig
     type t         (*Type for key id of control states: e.g : int, string*)
     type anot_type (*Type for anotations*)
-    val make_anot : 'a -> anot_type
+    val anot_parser : unit -> anot_type
     val pprint_keyid : t -> string 
     val pprint_anot : anot_type -> string (*Types for pprinting anotations*)
   end
@@ -66,22 +66,24 @@ struct
       {
 	mutable nts_automata_name : string; 
 	mutable anot : anotations;
-	states : (control , unit ) Hashtbl.t;
+	(*states : (control , unit ) Hashtbl.t;*)
 	init_states : (control , unit ) Hashtbl.t;
 	final_states : (control , unit ) Hashtbl.t;
 	error_states : (control , unit ) Hashtbl.t;
-	mutable input_vars : nts_var list; (*Variable ordering is important*)
-	mutable output_vars : nts_var list;
-	mutable local_vars : nts_var list;
+	input_vars : nts_var list; (*Variable ordering is important*)
+        output_vars : nts_var list;
+        local_vars : nts_var list;
 	transitions : (control, (control , cnt_trans_label list ) Hashtbl.t) Hashtbl.t ;
       }
 
   type nts_system = 
       {
-	mutable nts_system_name : string;
-	mutable nts_global_vars : nts_var list;
-        nts_automata : ( string , nts_automaton Pervasives.ref) Hashtbl.t;
+        nts_system_name : string;
+        nts_global_vars : nts_var list;
+        nts_automata : ( string , nts_automaton ) Hashtbl.t;
       }
+	
+  let anot_parser = (fun s -> Nts_Anot((Param.anot_parser s)))
 
   (*Need not appear in the API*)
   let get_cautomata_names_of_nts nts_sys =
@@ -131,23 +133,23 @@ struct
     List.exists (is_taken vname ) ntsys.nts_global_vars
 	  
 
-
+(*
   let create_nts_system name =
     {
       nts_system_name = name;
       nts_global_vars = [];
       nts_automata = Hashtbl.create size_hash;
     }
-
-  let add_nts_int_vars_to_nts_system nts_sys 
+*)
+ (* let add_nts_int_vars_to_nts_system nts_sys 
       (vnames : string list) =
     List.iter (fun s -> begin
       if (check_var_name_availability_in_ntsystem s nts_sys)
 	then	
 	nts_sys.nts_global_vars <- (NtsIVar(s)::nts_sys.nts_global_vars)
       end			
-      ) vnames
-      
+      ) vnames*)
+  (*    
   let add_nts_real_vars_to_nts_system nts_sys
       (vnames : string list ) =
     List.iter (fun s -> begin
@@ -156,8 +158,8 @@ struct
 	nts_sys.nts_global_vars <- (NtsRVar(s)::nts_sys.nts_global_vars)
       end		
       ) vnames
-
-
+  *)
+(*
   let create_nts_automaton name = 
     let anot_i = Param.make_anot () in
     let states_i = Hashtbl.create size_hash in
@@ -177,18 +179,20 @@ struct
 	local_vars = [];
 	transitions=transition_i;
       }
-     
+*)   
 
-  let add_cautomata_to_nts c nts_sys =
+
+(*  let add_cautomata_to_nts c nts_sys =
     Hashtbl.add nts_sys.nts_automata (!c).nts_automata_name c
-
+*)
   let control_of_id_param p =
     Nts_State (p)
 
-  let rename_nts_system nts_sys name =
+  (*let rename_nts_system nts_sys name =
     nts_sys.nts_system_name <- name
-
-  let rename_nts_automaton c nts_sys name =
+  *)
+  
+(*let rename_nts_automaton c nts_sys name =
     if not( Hashtbl.mem nts_sys.nts_automata c.nts_automata_name)
     then 
       begin
@@ -204,8 +208,9 @@ struct
 	Hashtbl.remove nts_sys.nts_automata former_name;
 	Hashtbl.add nts_sys.nts_automata c.nts_automata_name ( ref c )
       end
-	
-  let add_globvar_to_nts_system  gvar nts_sys =
+*)	
+  
+(*let add_globvar_to_nts_system  gvar nts_sys =
     nts_sys.nts_global_vars <- gvar::(nts_sys.nts_global_vars) 
  
   let add_inputvar_left  (c : nts_automaton ref)  ( v : nts_var) =
@@ -231,11 +236,12 @@ struct
     if not (Hashtbl.mem (!cautomata).final_states s)
     then Hashtbl.add (!cautomata).final_states s ()
     else ()
+*)
 
   (**I dont check the unicity of s1->l->s2 transition.
      should I ?
   *)
-      
+(*      
   let add_transition (cautomata : nts_automaton ref) 
       ( orig : control ) (dest : control) ( lab : cnt_trans_label list) =
     
@@ -252,7 +258,7 @@ struct
 	  Hashtbl.add orig_binding dest lab;
 	  Hashtbl.add master_rel orig orig_binding
       end
-
+*)
 
   (**Returns the collection of transitions betwenn sorg and sdests
      The result has type cnt_translabel list list
@@ -297,9 +303,9 @@ struct
 	      try
 		let c = Hashtbl.find nts_sys.nts_automata cname 
 		in
-		List.iter (search_varname_iterator vname) !c.input_vars;
-		List.iter (search_varname_iterator vname) !c.output_vars;
-		List.iter (search_varname_iterator vname) !c.local_vars;
+		List.iter (search_varname_iterator vname) c.input_vars;
+		List.iter (search_varname_iterator vname) c.output_vars;
+		List.iter (search_varname_iterator vname) c.local_vars;
 		(*If found, the raised exception of type Found_var is
 		handled in the topmost try ... with block.*)
 	
@@ -512,10 +518,10 @@ struct
   let pprint_all_cautomata cautomata_table =
     let pprint_automata_folder cname cautomaton prev_str =
       match prev_str with
-	  "" -> cname^":"^ (pprint_to_nts !cautomaton) 
+	  "" -> cname^":"^ (pprint_to_nts cautomaton) 
 	| _ ->
 	  begin
-	    let ret_str = prev_str ^"\n"^cname^":"^(pprint_to_nts !cautomaton)
+	    let ret_str = prev_str ^"\n"^cname^":"^(pprint_to_nts cautomaton)
 	    in ret_str
 	  end
     in
