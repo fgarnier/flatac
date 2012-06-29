@@ -116,24 +116,48 @@ let trans_hashtbl_of_trans_list tlist =
   in
   List.iter build_iterator tlist; ret_hash
 
-(*
-let get_vinfo vname =
-  let vinfo = Nts_int.get_varinfo_by_optcautomaton Parse_machine.ntsinstance (Some(!Parse_machine.current_cautomaton)) vname in
-  match vinfo with
-      None -> 
-	begin
-	  (*raise (UnBoundVariable (vname, (loc_of_pos lexbuf) ))*)
-	  Format.printf ("Current context cautomata has the following variables \n");
-	  Format.printf ("Input vars : %s \n") (pprint_inputvars !Parse_machine.current_cautomaton );
-	  Format.printf ("Output vars : %s \n") (pprint_outputvars !Parse_machine.current_cautomaton );
-	  Format.printf ("Local vars : %s \n") (pprint_localvars !Parse_machine.current_cautomaton  );
-	  raise (UnBoundVariable (vname, None ))
-	end
-      | Some(v) ->
-	v (* The nts var is here*)
+ 
+ (* 
+We rebuild the transitions using the list provided by
+ nts_trans_split_prec rule, as one need a contextual analysis
+to properly type which AND are boolean conjuction or separators
+between guards, havocs and funcalls.
+*)
 
-*)	  
+let rebuild_trans_guards nts_trans_split_prec_list =
+  let nts_guards_of_parsed_info (cnt_curr_bool, bool_stack ) parsed_elem =
+    match parsed_elem with
+	`Trans_new_guard -> 
+	  begin
+	    match bool_stack with
+		None -> (CntBTrue,Some(cnt_curr_bool))
+	      | Some(prev_bool) -> (CntBTrue, Some(CntBOr(cnt_curr_bool,prev_bool)))
+	  end
+      | `Trans_tree_bool(parsed_bool) -> 
+	let curr_bool = CntBAnd(cnt_curr_bool,parsed_bool) in
+	(curr_bool, bool_stack )
+      | `Trans_atom_bool(parsed_bool) -> 
+	let curr_bool = CntBAnd(cnt_curr_bool,parsed_bool) in
+	(curr_bool, bool_stack )
+      | _ -> (cnt_curr_bool, bool_stack ) 
+  in
+  let (c,s) =
+    List.fold_left nts_guards_of_parsed_info (CntBTrue, None) nts_trans_split_prec_list in
+  match s with 
+      None -> CntGuard(c)
+    | Some(stack) -> CntGuard(CntBOr(c,stack))
 
+
+let rebuild_non_guard_trans list_res = 
+  let non_guard_folder lres parsed_elem =
+    match parsed_elem with
+	`Trans_gen_affect(p)
+      | `Trans_havoc (p) -> lres@(p::[])
+      | _ -> lres
+  in
+  List.fold_left non_guard_folder [] list_res
+      
+      
 %}
 
 
@@ -216,7 +240,6 @@ List.map (fun s-> NtsRVar(s)) $1
 ;
 
 decl_sequence : decl_automata decl_sequence {$1::$2}
-/*| decl_automata {$1}*/
 | EOF {[]}
 ;
 
@@ -319,82 +342,51 @@ cautomaton_state :  INITSTATE ident_list SEMICOLON  {
 
 
 
+nts_trans_elem : BOR { `Trans_new_guard } /* Marks a new disjoint guard*/
+| LBRACE pressburg_atomic_bool RBRACE { `Trans_atom_bool($2) }
+| LBRACE pressburg_tree_guards RBRACE { `Trans_tree_bool($2) }
+| pressburg_atomic_bool { `Trans_atom_bool($1) }
+| gen_affect {`Trans_gen_affect($1)}
+| havocise {`Trans_havoc ($1)}
 
-/* cautomaton_decl_sections :
- INPUTVARLIST ident_list COLON INTDECL SEMICOLON {
-  List.iter (  add_input_vars_iterator Int Parse_machine.current_cautomaton) $2 ; Format.printf "Adding inpuvariables : %s \n" (pprint_inputvars !Parse_machine.current_cautomaton) }
-| INPUTVARLIST ident_list COLON REALDECL SEMICOLON {
-  List.iter (  add_input_vars_iterator Real Parse_machine.current_cautomaton) $2  }
-| OUTPUTVARLIST ident_list COLON INTDECL SEMICOLON {
-  List.iter (  add_output_vars_iterator Int Parse_machine.current_cautomaton) $2  }
-| OUTPUTVARLIST ident_list COLON REALDECL SEMICOLON {
-  List.iter (  add_output_vars_iterator Real Parse_machine.current_cautomaton) $2  }
-| ident_list COLON INTDECL SEMICOLON {
-  List.iter (  add_local_vars_iterator Int Parse_machine.current_cautomaton) $1  }
-| ident_list COLON REALDECL SEMICOLON {
-  List.iter (  add_local_vars_iterator Real Parse_machine.current_cautomaton) $1  }
 
-| INITSTATE ident_list SEMICOLON  {
-  List.iter ( fun s -> 
-		add_init_state Parse_machine.current_cautomaton (Nts_int.control_of_id_param s)  
-	    ) $2;
+nts_trans_split_prec :  nts_trans_elem BOR nts_trans_split_prec 
+{
+$1 :: `Trans_new_guard :: $3
+}
+| nts_trans_elem BAND nts_trans_split_prec { $1 :: $3 }
+| nts_trans_elem { $1 :: [] }
+;
 
-  Format.printf "Adds an initial state \n"
-  }
 
-| FINALSTATE ident_list SEMICOLON {
-    List.iter ( fun s -> 
-		  add_final_state Parse_machine.current_cautomaton (Nts_int.control_of_id_param s)  
-	      ) $2;
-  Format.printf "Adds a final state \n"
+nts_trans_split : nts_trans_split_prec {
+  let list_res = $1 in
+  let guard = rebuild_trans_guards list_res in
+  let affects_n_havocs = rebuild_non_guard_trans list_res in
+  guard::affects_n_havocs
 
 }
-| ERRORSTATE ident_list SEMICOLON {
-    List.iter ( fun s -> 
-		  add_final_state Parse_machine.current_cautomaton (Nts_int.control_of_id_param s)  
-	      ) $2;
-
-    Format.printf "Adds an error state \n"
-}
-
-| IDENT ARROW IDENT LBRACK nts_trans_split RBRACK {
-  let control_org = control_of_id_param $1 in
-  let control_dest= control_of_id_param $3 in
-  let transit = $5 in
-  (control_org,control_dest, transit)
-}  
-
-
-/* | IDENT  ARROW IDENT LBRACK nts_trans RBRACK {
-  let control_org = control_of_id_param $1 in
-  let control_dest= control_of_id_param $3 in
-  let transit = ($5::[]) in
-  Nts_int.add_transition Parse_machine.current_cautomaton control_org control_dest transit
-}*/ 
 
 /*
-| IDENT ARROW IDENT LBRACK  RBRACK {
-  let control_org = control_of_id_param $1 in
-  let control_dest= control_of_id_param $3 in
-  let transit = [] in
- 
-  Format.printf "Add an empty transition \n"
-}  
-
+nts_trans_split : havocise {$1 :: []}
+| gen_affect {$1 :: []}
+| pressburg_atomic_bool {$1 :: []}
+| pressburg_tree_guards {$1 :: []}
+| gen_affect BAND nts_trans_split { $1 :: $3 }
+| pressburg_atomic_bool BAND nts_trans_split { $1 :: $3 }
+| pressburg_tree_guards BAND nts_trans_split { $1 :: $3 }
 ;
 */
 
 
-
-nts_trans_split : havocise {$1 :: []}
-| gen_affect BAND havocise  {$1 :: $3::[]}
+/*| gen_affect BAND havocise  {$1 :: $3::[]}
 | pressburg_atomic_bool BAND gen_affect {$1 :: $3:: []}
 | pressburg_atomic_bool BAND havocise {$1 :: $3 ::[]}
 | pressburg_tree_guards BAND havocise {$1 :: $3 ::[]}
 | pressburg_tree_guards BAND gen_affect {$1 :: $3 :: []}
 | pressburg_atomic_bool BAND gen_affect BAND havocise {$1::$3::$5::[]}
 | pressburg_tree_guards BAND gen_affect BAND havocise {$1::$3::$5::[]}
-
+*/
 
 
 primed_var_list : primed_express COMMA primed_var_list %prec PRIMEVARLIST {$1::$3}
@@ -412,10 +404,7 @@ gen_affect : PRIMEDVAR EQ arithm_expr   {
   CntAffect(vinfo,$3)
 }
 
-/*| primed_express EQ IDENT LBRACE arithm_expr_list RBRACE  
- {
-   CntCall($3,Some([$1]),$5)
- }*/
+
 
 | primed_var_list EQ IDENT LBRACE arithm_expr_list RBRACE {
   CntCall($3,Some($1),$5)
@@ -429,57 +418,76 @@ pressburg_tree_guards : LBRACE pressburg_atomic_bool RBRACE
 | LBRACE pressburg_tree_guards RBRACE {$2}
 
 | pressburg_atomic_bool BAND pressburg_atomic_bool {
-  match $1,$3 with
-      CntGuard(a),CntGuard(b) -> CntGuard(CntBAnd(a,b))
+  CntBAnd($1,$3)
+(*match $1,$3 with
+      CntGuard(a),CntGuard(b) -> CntGuard(CntBAnd(a,b))*)
+
 }
 
 | pressburg_tree_guards BAND  pressburg_atomic_bool {
-  match $1,$3 with
+  CntBAnd($1,$3)
+(* match $1,$3 with
       CntGuard(a),CntGuard(b) -> CntGuard(CntBAnd(a,b))
+ *)
 }
 
 | pressburg_atomic_bool BAND  pressburg_tree_guards {
-  match $1,$3 with
+   CntBAnd($1,$3)
+  (*match $1,$3 with
       CntGuard(a),CntGuard(b) -> CntGuard(CntBAnd(a,b))
+  *)
 }
 
 
 | pressburg_atomic_bool BOR pressburg_atomic_bool {
-  match $1,$3 with
+   CntBAnd($1,$3)
+(*match $1,$3 with
       CntGuard(a),CntGuard(b) -> CntGuard(CntBOr(a,b))
+  *)
 }  
 
 
 | pressburg_tree_guards BOR  pressburg_atomic_bool {
-  match $1,$3 with
+  CntBAnd($1,$3)
+
+(*match $1,$3 with
       CntGuard(a),CntGuard(b) -> CntGuard(CntBAnd(a,b))
+  *)
 }
 
 
 |  pressburg_atomic_bool BOR pressburg_tree_guards {
-  match $1,$3 with
+  CntBOr($1,$3)
+  
+(*match $1,$3 with
       CntGuard(a),CntGuard(b) -> CntGuard(CntBAnd(a,b))
+  *)
 }
 
 |  BNOT pressburg_tree_guards {
-  match $2 with
-  CntGuard(a) -> CntGuard(CntNot(a))
+  CntNot($2)
+  (*match $2 with
+  CntGuard(a) -> CntGuard(CntNot(a))*)
 } 
+
 |  BNOT pressburg_atomic_bool {
-  match $2 with
+  CntNot($2)
+
+(*match $2 with
   CntGuard(a) -> CntGuard(CntNot(a))
+  *)
 }
 
 
-pressburg_atomic_bool : BTRUE { CntGuard(CntBTrue) } 
-| BFALSE {CntGuard(CntBFalse)} %prec PRESSEVAL
+pressburg_atomic_bool : BTRUE { CntBTrue } 
+| BFALSE {CntBFalse} %prec PRESSEVAL
 
-| arithm_expr GT arithm_expr {CntGuard(CntBool(CntGt,$1,$3))} 
-| arithm_expr LT arithm_expr {CntGuard(CntBool(CntLt,$1,$3))} 
-| arithm_expr GEQ arithm_expr {CntGuard(CntBool(CntGeq,$1,$3))} 
-| arithm_expr LEQ arithm_expr {CntGuard(CntBool(CntLeq,$1,$3))} 
-| arithm_expr EQ arithm_expr {CntGuard(CntBool(CntEq,$1,$3))} 
-| arithm_expr NEQ arithm_expr {CntGuard(CntBool(CntNeq,$1,$3))}
+| arithm_expr GT arithm_expr {CntBool(CntGt,$1,$3)} 
+| arithm_expr LT arithm_expr {CntBool(CntLt,$1,$3)} 
+| arithm_expr GEQ arithm_expr {CntBool(CntGeq,$1,$3)} 
+| arithm_expr LEQ arithm_expr {CntBool(CntLeq,$1,$3)} 
+| arithm_expr EQ arithm_expr {CntBool(CntEq,$1,$3)} 
+| arithm_expr NEQ arithm_expr {CntBool(CntNeq,$1,$3)}
 ;
 
 primed_express : PRIMEDVAR %prec PRIMEDEXPR { 
@@ -487,22 +495,7 @@ primed_express : PRIMEDVAR %prec PRIMEDEXPR {
   Format.printf "Primed var string is %s \n %!" $1;
   Format.printf "Primed var has name %s \n %! " varname ;
   NtsMiscType(varname)
- (*
-  try
-    let vinfo = Nts_int.get_varinfo_by_optcautomaton Parse_machine.ntsinstance (Some(!Parse_machine.current_cautomaton)) varname in
-    match vinfo with
-	Some(v) -> v
-      | None -> raise (UnboundVarName ( varname ))
-  with
-      (Nts_functor.No_such_counter_automata_in_nts_system(a,b))->
-	begin
-	  Format.printf ("Current context cautomata has the following variables \n");
-	  Format.printf ("Input vars : %s \n") (pprint_inputvars !Parse_machine.current_cautomaton );
-	  Format.printf ("Output vars : %s \n") (pprint_outputvars !Parse_machine.current_cautomaton );
-	  Format.printf ("Local vars : %s \n") (pprint_localvars !Parse_machine.current_cautomaton  );
-	  raise  ( No_such_counter_automata_in_nts_system(a,b) )
-	end
- *)
+ 
 }
 ;
 
@@ -514,15 +507,6 @@ arithm_expr : INT { let  cst = Big_int.big_int_of_int $1 in
 		   CntCst(cst)}
 
 | IDENT { let vname = $1 in
-	  (*let vinfo = Nts_int.get_varinfo_by_optcautomaton 
-	    Parse_machine.ntsinstance 
-	    (Some(!Parse_machine.current_cautomaton)) 
-	    vname in
-	  let var =
-	    match vinfo with
-		Some(v) -> v
-	      | None ->  raise (UnboundVarName ( vname ))
-	  in*)
 	  CntVar(NtsMiscType(vname))
 	}
 
