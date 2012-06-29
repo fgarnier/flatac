@@ -406,8 +406,11 @@ gen_affect : PRIMEDVAR EQ arithm_expr   {
 
 
 
-| primed_var_list EQ IDENT LBRACE arithm_expr_list RBRACE {
-  CntCall($3,Some($1),$5)
+| LBRACE primed_var_list RBRACE EQ IDENT LBRACE arithm_expr_list RBRACE {
+  CntCall($5,Some($2),$7)
+}
+| LBRACE primed_var_list RBRACE EQ IDENT LBRACE RBRACE {
+  CntCall($5,Some($2),[])
 }
 | IDENT LBRACE arithm_expr_list RBRACE  {CntCall($1,None,$3)}
 ;
