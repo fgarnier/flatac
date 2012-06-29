@@ -78,7 +78,7 @@ let primed_var = (identifier quote)
   | "||" {BOR}
   | "not" {BNOT}
   | "!" {BNOT}
-  | number {
+  | intval {
     let num =  int_of_string( 
     Lexing.lexeme lexbuf) in
     INT(num)
