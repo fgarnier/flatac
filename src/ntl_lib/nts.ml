@@ -336,7 +336,7 @@ let rec cnt_pprint_arithm_exp ( exp : cnt_arithm_exp ) =
 (*********************************************************************************************) 
 (**** Simplification of CntBool expression : Elimination of tautologies, or false  bool expressions *)
 
- let nts_simplify_bottom_top (e : cnt_bool ) = 
+ let simplify_bottom_top (e : cnt_bool ) = 
     match e with
       | CntBAnd(CntBFalse,_) -> CntBFalse
       | CntBAnd(_,CntBFalse) -> CntBFalse

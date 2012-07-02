@@ -326,7 +326,7 @@ let boolean_relation r =
 	
       | _ -> e
 
-
+(*
  let nts_simplify_bottom_top (e : cnt_bool ) = 
     match e with
       | CntBAnd(CntBFalse,_) -> CntBFalse
@@ -378,6 +378,7 @@ let boolean_relation r =
 	
       | _ -> e
      
+	*)
 
       (*| CntBAnd(CntBTrue,a) -> simplify_cnt_boolexp a
       | CntBAnd(a,CntBTrue) -> simplify_cnt_boilexp a
