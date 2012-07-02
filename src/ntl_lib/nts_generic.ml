@@ -8,6 +8,18 @@ let nts_pprint_genvar =
   | (v,NtsUnPrimed) -> (nts_pprint_nts_var v)
   
 
+let pprint_ntsgen_var_list l =
+  let rec pprint_nts_var_list_fold str l =
+    match str, l with 
+	(_,[]) -> str
+      | ("",(h::l')) -> pprint_nts_var_list_fold (nts_pprint_genvar h) l'
+      | (_,(h::l')) -> pprint_nts_var_list_fold (str^","^(nts_pprint_genvar h)) l' 
+  in
+  (pprint_nts_var_list_fold "" l)
+
+
+
+
 let rec size_genrel_arithm_deeper_than 
     (barihtm : nts_genrel_arithm ) (depth : int ) =
 
@@ -407,3 +419,6 @@ let nts_pprint_gen_trans_label (l : cnt_trans_label ) =
   match l with
       CntCall
   
+
+
+
