@@ -14,16 +14,7 @@
 		 Nts_functor"*)
   
   
-  
-
- (* module Parse_machine  
-    = 
-  struct
-    let ntsinstance = (Ntsint.Nts_int.create_nts_system "")
-    let current_cautomaton = ref (Ntsint.Nts_int.create_nts_automaton "")
-  end
- *)
-  (* *)
+ 
     
   type vloctype = Cautomaton_local 
 		  | Cautomaton_input 
@@ -378,26 +369,6 @@ nts_trans_split : nts_trans_split_prec {
 
 }
 
-/*
-nts_trans_split : havocise {$1 :: []}
-| gen_affect {$1 :: []}
-| pressburg_atomic_bool {$1 :: []}
-| pressburg_tree_guards {$1 :: []}
-| gen_affect BAND nts_trans_split { $1 :: $3 }
-| pressburg_atomic_bool BAND nts_trans_split { $1 :: $3 }
-| pressburg_tree_guards BAND nts_trans_split { $1 :: $3 }
-;
-*/
-
-
-/*| gen_affect BAND havocise  {$1 :: $3::[]}
-| pressburg_atomic_bool BAND gen_affect {$1 :: $3:: []}
-| pressburg_atomic_bool BAND havocise {$1 :: $3 ::[]}
-| pressburg_tree_guards BAND havocise {$1 :: $3 ::[]}
-| pressburg_tree_guards BAND gen_affect {$1 :: $3 :: []}
-| pressburg_atomic_bool BAND gen_affect BAND havocise {$1::$3::$5::[]}
-| pressburg_tree_guards BAND gen_affect BAND havocise {$1::$3::$5::[]}
-*/
 
 
 primed_var_list : primed_express COMMA primed_var_list %prec PRIMEVARLIST {$1::$3}
@@ -433,70 +404,47 @@ pressburg_tree_guards : LBRACE pressburg_atomic_bool RBRACE
 
 | pressburg_atomic_bool BAND pressburg_atomic_bool {
   CntBAnd($1,$3)
-(*match $1,$3 with
-      CntGuard(a),CntGuard(b) -> CntGuard(CntBAnd(a,b))*)
 
 }
 
 | pressburg_tree_guards BAND pressburg_tree_guards {
   CntBAnd($1,$3)
-(*match $1,$3 with
-      CntGuard(a),CntGuard(b) -> CntGuard(CntBAnd(a,b))*)
-
 }
 
 | pressburg_tree_guards BAND  pressburg_atomic_bool {
   CntBAnd($1,$3)
-(* match $1,$3 with
-      CntGuard(a),CntGuard(b) -> CntGuard(CntBAnd(a,b))
- *)
 }
 
 | pressburg_atomic_bool BAND  pressburg_tree_guards {
    CntBAnd($1,$3)
-  (*match $1,$3 with
-      CntGuard(a),CntGuard(b) -> CntGuard(CntBAnd(a,b))
-  *)
+  
 }
 
 
 | pressburg_atomic_bool BOR pressburg_atomic_bool {
    CntBAnd($1,$3)
-(*match $1,$3 with
-      CntGuard(a),CntGuard(b) -> CntGuard(CntBOr(a,b))
-  *)
 }  
 
 
 | pressburg_tree_guards BOR  pressburg_atomic_bool {
   CntBAnd($1,$3)
 
-(*match $1,$3 with
-      CntGuard(a),CntGuard(b) -> CntGuard(CntBAnd(a,b))
-  *)
 }
 
 
 |  pressburg_atomic_bool BOR pressburg_tree_guards {
   CntBOr($1,$3)
-  
-(*match $1,$3 with
-      CntGuard(a),CntGuard(b) -> CntGuard(CntBAnd(a,b))
-  *)
+
 }
 
 |  BNOT pressburg_tree_guards {
   CntNot($2)
-  (*match $2 with
-  CntGuard(a) -> CntGuard(CntNot(a))*)
+  
 } 
 
 |  BNOT pressburg_atomic_bool {
   CntNot($2)
 
-(*match $2 with
-  CntGuard(a) -> CntGuard(CntNot(a))
-  *)
 }
 
 
