@@ -51,7 +51,7 @@ let rec nts_pprint_nts_typeinfo_var ( x :nts_var) =
       NtsIVar( vname ) -> vname^" :int "
     (*| NtsBVar( vname ) ->  vname^":  bool"*)
     | NtsRVar ( vname ) ->vname^" :real "
-    | NtsMiscType ( vname ) ->vname^" :non scalar"
+    | NtsMiscType ( vname ) ->vname^" : No defined type"
    (* | NtsArray ( name, size , base_type) -> "Tab : "^vname^"["^(Format.printf "%d" size)^"] "^(nts_pprint_nts_typeinfo_var base_type )*)
 
 
@@ -202,11 +202,11 @@ let rec size_arithmexp_deeper_than  (exp : cnt_arithm_exp ) (deepness : int ) =
     | CntDiv ( eg ,  ed ) -> 
       (size_arithmexp_deeper_than eg deepness' ) || (size_arithmexp_deeper_than ed deepness' )
 
-let rec size_boolexp_deeper_than  (bexp : cnt_bool ) (deepness : int ) =
-  if deepness <= 0 then
+let rec size_boolexp_deeper_than  (bexp : cnt_bool ) (depth : int ) =
+  if depth <= 0 then
     true
   else
-    let deep' = deepness - 1 in
+    let deep' = depth - 1 in
     match bexp with
 	CntBTrue -> false
       | CntBFalse -> false
@@ -336,9 +336,7 @@ let rec cnt_pprint_arithm_exp ( exp : cnt_arithm_exp ) =
 (*********************************************************************************************) 
 (**** Simplification of CntBool expression : Elimination of tautologies, or false  bool expressions *)
 
-
-
-  let simplify_bottom_top (e : cnt_bool ) = 
+ let nts_simplify_bottom_top (e : cnt_bool ) = 
     match e with
       | CntBAnd(CntBFalse,_) -> CntBFalse
       | CntBAnd(_,CntBFalse) -> CntBFalse
@@ -412,6 +410,7 @@ be equal CntBFalse.
       | _ -> false
 
 
+  
 
   let static_check_if_translist_unsat ( l : cnt_trans_label list) =
     let decide_folder unsat_previous current_label =

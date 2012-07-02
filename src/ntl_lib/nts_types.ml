@@ -52,12 +52,24 @@ type cnt_binop = CntEq
 		 | CntLt
 		 | CntGt
 		 | CntGeq
-		 
+
+type cnt_gen_arithm_binop = CntGenSum
+			    | CntGenMinus
+			    | CntGenProd
+			    | CntGenDiv
+			    | CntGenMod
+
+type cnt_gen_arithm_unop = CntGenUMinus
+
+type cnt_gen_bool_binop = CntGenBAnd 
+			  | CntGenBOr
+ 			 
+
 type cnt_arithm_exp = CntCst of Big_int.big_int
 		      | CntNdet
 		      | CntNdetVar of string (* non deterministic value *)
 		      | CntSymCst of string
-		      | CntVar of nts_var 
+		      | CntVar of nts_var
 		      | CntMinus of cnt_arithm_exp * cnt_arithm_exp
 		      | CntSum of cnt_arithm_exp * cnt_arithm_exp
 		      | CntProd of cnt_arithm_exp * cnt_arithm_exp
@@ -72,23 +84,13 @@ type cnt_genrel_arithm_exp = CntGenCst of Big_int.big_int
 			     | CntGenNdetVar of string (* non deterministic value *)
 			     | CntGenSymCst of string
 			     | CntGenVar of nts_genrel_var
-			     | CntGenMinus of cnt_genrel_arithm_exp 
-			       * cnt_genrel_arithm_exp
-			     
-			     | CntGenSum of  cnt_genrel_arithm_exp  
-			       * cnt_genrel_arithm_exp
-				 
-			     | CntGenProd of  cnt_genrel_arithm_exp 
-			       * cnt_genrel_arithm_exp
-				 
-			     | CntGenMod of  cnt_genrel_arithm_exp 
-			       * cnt_genrel_arithm_exp
-		      
-			     | CntGenUnMin of  cnt_genrel_arithm_exp
 
-			     | CntGenDiv of  cnt_genrel_arithm_exp 
-			       * cnt_genrel_arithm_exp
-			    
+			     | CntGenArithmBOp of cnt_arithm_exp *
+				 cnt_genrel_arithm_exp * cnt_genrel_arithm_exp
+				 		      
+			     | CntGenArithUOp of cnt_gen_arithm_unop *
+				 cnt_genrel_arithm_exp
+		    
 			     | CntGenInvalidExp
 
 
@@ -115,11 +117,11 @@ type cnt_bool = CntBool of cnt_binop *  cnt_arithm_exp * cnt_arithm_exp
 
 type nts_gen_relation = 
     CntGenRel of cnt_binop * cnt_genrel_arithm_exp  * cnt_genrel_arithm_exp
+  | CntGenRelComp of cnt_gen_bool_binop * nts_gen_relation * nts_gen_relation
   | CntGenNot of nts_gen_relation
   | CntGenTrue
   | CntGenFalse
-  | CntGenAnd of  cnt_genrel_arithm_exp * cnt_genrel_arithm_exp
-  | CntGenOr of cnt_genrel_arithm_exp * cnt_genrel_arithm_exp
+  
 
 
 type cnt_trans_label = CntGuard of cnt_bool
