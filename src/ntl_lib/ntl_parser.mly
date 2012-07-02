@@ -131,15 +131,21 @@ let rebuild_trans_guards nts_trans_split_prec_list =
 	  begin
 	    match bool_stack with
 		None -> (CntBTrue,Some(cnt_curr_bool))
-	      | Some(prev_bool) -> (CntBTrue, Some(CntBOr(cnt_curr_bool,prev_bool)))
+	      | Some(prev_bool) -> 
+		(CntBTrue, Some(CntBOr(cnt_curr_bool,prev_bool)))
 	  end
       | `Trans_tree_bool(parsed_bool) -> 
 	let curr_bool = CntBAnd(cnt_curr_bool,parsed_bool) in
-	(curr_bool, bool_stack )
+	(curr_bool,bool_stack )
       | `Trans_atom_bool(parsed_bool) -> 
 	let curr_bool = CntBAnd(cnt_curr_bool,parsed_bool) in
-	(curr_bool, bool_stack )
-      | _ -> (cnt_curr_bool, bool_stack ) 
+	(curr_bool,bool_stack )
+      | `Trans_atom_neg(parsed_bool) ->
+	let curr_bool = CntBAnd(cnt_curr_bool,CntNot(parsed_bool))
+	in
+	(curr_bool,bool_stack )
+
+      | _ -> (cnt_curr_bool,bool_stack ) 
   in
   let (c,s) =
     List.fold_left nts_guards_of_parsed_info (CntBTrue, None) nts_trans_split_prec_list in
@@ -342,7 +348,12 @@ cautomaton_state :  INITSTATE ident_list SEMICOLON  {
 
 
 
-nts_trans_elem : BOR { `Trans_new_guard } /* Marks a new disjoint guard*/
+nts_trans_elem :/* BNOT {`Trans_neg_of_guard} */  /* Negation until the
+*/ 
+| BNOT pressburg_atomic_bool {`Trans_atom_neg($2)}
+| BOR { `Trans_new_guard } /* Marks a new disjoint guard*/
+| BNOT LBRACE pressburg_atomic_bool  RBRACE {`Trans_atom_neg($3)}
+| BNOT LBRACE pressburg_tree_guards  RBRACE {`Trans_atom_neg($3)}
 | LBRACE pressburg_atomic_bool RBRACE { `Trans_atom_bool($2) }
 | LBRACE pressburg_tree_guards RBRACE { `Trans_tree_bool($2) }
 | pressburg_atomic_bool { `Trans_atom_bool($1) }
@@ -427,6 +438,13 @@ pressburg_tree_guards : LBRACE pressburg_atomic_bool RBRACE
 
 }
 
+| pressburg_tree_guards BAND pressburg_tree_guards {
+  CntBAnd($1,$3)
+(*match $1,$3 with
+      CntGuard(a),CntGuard(b) -> CntGuard(CntBAnd(a,b))*)
+
+}
+
 | pressburg_tree_guards BAND  pressburg_atomic_bool {
   CntBAnd($1,$3)
 (* match $1,$3 with
@@ -505,6 +523,7 @@ primed_express : PRIMEDVAR %prec PRIMEDEXPR {
  
 arithm_expr_list : arithm_expr {$1::[]}
 | arithm_expr COMMA arithm_expr_list {$1::$3} 
+;
 
 arithm_expr : INT { let  cst = Big_int.big_int_of_int $1 in 
 		   CntCst(cst)}
