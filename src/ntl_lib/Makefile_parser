@@ -7,8 +7,9 @@ GENSOURCE := ntl_parser.ml ntl_parser.mli ntl_lexer.ml
 
 CFLAGS = -g -annot -c
 INTERFACES = ntl_parser.mli
-OBJECTS = nts_types.cmo nts.cmo nts_functor.cmo ntsint.cmo \
-	ntl_lexer.cmo parsing_error.cmo ntl_parser.cmo parse_n_print.cmo 
+OBJECTS = nts_types.cmo nts.cmo nts_generic.cmo nts_functor.cmo ntsint.cmo \
+	ntl_lexer.cmo parsing_error.cmo \
+	ntl_parser.cmo parse_n_print.cmo 
 
 LIBNUM = nums.cma # Contains Big_int module   
 INTERFACES = $(OBJECTS:.cmo=.cmi)

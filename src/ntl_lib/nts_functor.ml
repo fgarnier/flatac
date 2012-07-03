@@ -1,35 +1,34 @@
 open Nts_types
 open Hashtbl
-
+open Nts_generic
 
 
 
 exception Var_name_already_used
-exception Found_var of nts_var
+exception Found_genvar of nts_genrel_var
 exception No_such_counter_automata_in_nts_system of string * string 
 exception UnboundVarName of string 
 
-let pprint_trans_list_foldleft (s : string ) ( trans : cnt_trans_label ) =
+let pprint_trans_list_foldleft (s : string ) ( trans : nts_trans_label ) =
   match (s,trans) with 
-    | ("",CntGuard(guard))-> 
-      let s_guard = Nts.simplify_cnt_boolexp guard in
-      (*let s_guard = guard in*)
+    | ("",CntGenGuard(guard))-> 
+      let s_guard = Nts_generic.simplify_gen_rel guard in
       begin
 	match s_guard with 
-	    CntBTrue -> ""
-	  | _ -> Nts.cnt_pprint_boolexp s_guard
+	    CntGenTrue -> ""
+	  | _ -> Nts_generic.nts_pprint_genrel s_guard
       end
     | ("",_) ->
-      (Nts.cnt_pprint_translabel trans )
-    | (_,CntGuard(guard)) -> 
-      let s_guard = Nts.simplify_cnt_boolexp guard in
+      (Nts_generic.nts_pprint_gen_trans_label trans )
+    | (_,CntGenGuard(guard)) -> 
+      let s_guard = Nts_generic.simplify_gen_rel guard in
       begin
 	match s_guard with 
-	    CntBTrue -> s
-	  | _ -> s^ " and "^(Nts.cnt_pprint_boolexp s_guard) 
+	    CntGenTrue -> s
+	  | _ -> s^ " and "^(Nts_generic.nts_pprint_genrel s_guard) 
       end
 	
-    | (_,_) -> s^" and "^(Nts.cnt_pprint_translabel trans )
+    | (_,_) -> s^" and "^(Nts_generic.nts_pprint_gen_trans_label trans )
   
 
 
@@ -70,16 +69,16 @@ struct
 	init_states : (control , unit ) Hashtbl.t;
 	final_states : (control , unit ) Hashtbl.t;
 	error_states : (control , unit ) Hashtbl.t;
-	input_vars : nts_var list; (*Variable ordering is important*)
-        output_vars : nts_var list;
-        local_vars : nts_var list;
-	transitions : (control, (control , cnt_trans_label list ) Hashtbl.t) Hashtbl.t ;
+	input_vars : nts_genrel_var list; (*Variable ordering is important*)
+        output_vars : nts_genrel_var list;
+        local_vars : nts_genrel_var list;
+	transitions : (control, (control , nts_trans_label list ) Hashtbl.t) Hashtbl.t ;
       }
 
   type nts_system = 
       {
         nts_system_name : string;
-        nts_global_vars : nts_var list;
+        nts_global_vars : nts_genrel_var list;
         nts_automata : ( string , nts_automaton ) Hashtbl.t;
       }
 	
@@ -94,7 +93,7 @@ struct
     in
     (Hashtbl.fold key_name_folder  nts_sys.nts_automata "")
 
-
+(*
   (* Check whether a variable name is a global_var*)	
   let check_var_name_availability_in_cautomaton  vname ntsys c  =
     let is_taken vname var =
@@ -123,7 +122,7 @@ struct
   let check_var_name_availability_in_ntsystem  vname ntsys  =
     let is_taken vname var =
       match var with
-	  NtsIVar(vn)|NtsRVar(vn)
+	  NtsGenVar(NtsIVar(vn),_)|NtsGenVar(NtsRVar(vn),_)
 	    -> 
 		  if (String.compare vn vname == 0)
 		  then true
@@ -133,132 +132,14 @@ struct
     List.exists (is_taken vname ) ntsys.nts_global_vars
 	  
 
-(*
-  let create_nts_system name =
-    {
-      nts_system_name = name;
-      nts_global_vars = [];
-      nts_automata = Hashtbl.create size_hash;
-    }
 *)
- (* let add_nts_int_vars_to_nts_system nts_sys 
-      (vnames : string list) =
-    List.iter (fun s -> begin
-      if (check_var_name_availability_in_ntsystem s nts_sys)
-	then	
-	nts_sys.nts_global_vars <- (NtsIVar(s)::nts_sys.nts_global_vars)
-      end			
-      ) vnames*)
-  (*    
-  let add_nts_real_vars_to_nts_system nts_sys
-      (vnames : string list ) =
-    List.iter (fun s -> begin
-      if (check_var_name_availability_in_ntsystem s nts_sys)
-	then	
-	nts_sys.nts_global_vars <- (NtsRVar(s)::nts_sys.nts_global_vars)
-      end		
-      ) vnames
-  *)
-(*
-  let create_nts_automaton name = 
-    let anot_i = Param.make_anot () in
-    let states_i = Hashtbl.create size_hash in
-    let final_states_i = Hashtbl.create size_hash in
-    let init_states_i = Hashtbl.create size_hash in
-    let error_states_i = Hashtbl.create size_hash in
-    let transition_i = Hashtbl.create size_hash in
-      {
-	nts_automata_name = name;
-	anot = Nts_Anot(anot_i);
-	states = states_i;
-	init_states = init_states_i;
-	final_states = final_states_i;
-	error_states = error_states_i;
-	input_vars = [];
-	output_vars = [];
-	local_vars = [];
-	transitions=transition_i;
-      }
-*)   
 
 
-(*  let add_cautomata_to_nts c nts_sys =
-    Hashtbl.add nts_sys.nts_automata (!c).nts_automata_name c
-*)
+
   let control_of_id_param p =
     Nts_State (p)
 
-  (*let rename_nts_system nts_sys name =
-    nts_sys.nts_system_name <- name
-  *)
-  
-(*let rename_nts_automaton c nts_sys name =
-    if not( Hashtbl.mem nts_sys.nts_automata c.nts_automata_name)
-    then 
-      begin
-	let cautomaton_names =  get_cautomata_names_of_nts nts_sys in
-	let except =  No_such_counter_automata_in_nts_system 
-	  (name, cautomaton_names) in
-	raise except
-      end
-    else
-      begin
-	let former_name = c.nts_automata_name in
-	c.nts_automata_name <- name;
-	Hashtbl.remove nts_sys.nts_automata former_name;
-	Hashtbl.add nts_sys.nts_automata c.nts_automata_name ( ref c )
-      end
-*)	
-  
-(*let add_globvar_to_nts_system  gvar nts_sys =
-    nts_sys.nts_global_vars <- gvar::(nts_sys.nts_global_vars) 
  
-  let add_inputvar_left  (c : nts_automaton ref)  ( v : nts_var) =
-    !c.input_vars <- (v::!c.input_vars)
-    
-  let add_outputvar_left c v =
-    !c.output_vars <- (v::!c.output_vars)
-
-  let add_localvar_left c v =
-     !c.local_vars <- (v::!c.local_vars)
-     
-  let add_init_state cautomata (s : control ) =
-    if not (Hashtbl.mem (!cautomata).init_states s)
-    then Hashtbl.add (!cautomata).init_states s ()
-    else ()
-
-  let add_error_state cautomata (s : control ) =
-    if not (Hashtbl.mem (!cautomata).error_states s)
-    then Hashtbl.add (!cautomata).error_states s ()
-    else ()
-      
-  let add_final_state cautomata (s : control ) =
-    if not (Hashtbl.mem (!cautomata).final_states s)
-    then Hashtbl.add (!cautomata).final_states s ()
-    else ()
-*)
-
-  (**I dont check the unicity of s1->l->s2 transition.
-     should I ?
-  *)
-(*      
-  let add_transition (cautomata : nts_automaton ref) 
-      ( orig : control ) (dest : control) ( lab : cnt_trans_label list) =
-    
-    let master_rel = (!cautomata).transitions in
-    if Hashtbl.mem master_rel orig then
-      begin
-	let orig_binding = Hashtbl.find master_rel orig
-	in 
-	Hashtbl.add orig_binding dest lab
-      end
-    else
-      begin
-	let orig_binding = Hashtbl.create size_hash in
-	  Hashtbl.add orig_binding dest lab;
-	  Hashtbl.add master_rel orig orig_binding
-      end
-*)
 
   (**Returns the collection of transitions betwenn sorg and sdests
      The result has type cnt_translabel list list
@@ -290,9 +171,9 @@ struct
   let get_varinfo_by_optname nts_sys  (cname : string option) (vname : string) =
     let search_varname_iterator vname ntvar =
       match ntvar with
-	| NtsIVar(name) | NtsRVar(name) ->
+	| NtsGenVar(NtsIVar(name),_) | NtsGenVar(NtsRVar(name),_) ->
 	  if (String.compare name vname )==0 then
-	    raise (Found_var(ntvar))
+	    raise (Found_genvar(ntvar))
 	  else ()
     in
     try
@@ -323,15 +204,15 @@ struct
 	    end
 	| None -> None
     with 
-	Found_var v -> Some(v)
+	Found_genvar v -> Some(v)
 
 
   let get_varinfo_by_optcautomaton nts_sys  (cautomatopt : nts_automaton option) (vname : string) =
     let search_varname_iterator vname ntvar =
       match ntvar with
-	| NtsIVar(name) | NtsRVar(name) ->
+	| NtsGenVar(NtsIVar(name),_) | NtsGenVar(NtsRVar(name),_) ->
 	  if (String.compare name vname )==0 then
-	    raise (Found_var(ntvar))
+	    raise (Found_genvar(ntvar))
 	  else ()
     in
     try
@@ -360,23 +241,24 @@ struct
 	    end
 	| None -> None
     with 
-	Found_var v -> Some(v)
+	Found_genvar v -> Some(v)
 
 
 
 
   let pprint_inputvars cautomata = 
-     Nts.pprint_typeinfo_nts_var_list cautomata.input_vars
-       
+     Nts_generic.pprint_typeinfo_nts_genvar_list cautomata.input_vars
+      
   let pprint_outputvars cautomata =
-    Nts.pprint_typeinfo_nts_var_list cautomata.output_vars
+    Nts_generic.pprint_typeinfo_nts_genvar_list cautomata.output_vars
 
   let pprint_localvars cautomata =
-    Nts.pprint_typeinfo_nts_var_list cautomata.local_vars
+    Nts_generic.pprint_typeinfo_nts_genvar_list cautomata.local_vars
     
   let pretty_label tlist =
-    let  str = List.fold_left pprint_trans_list_foldleft "" tlist in
-      str
+    Nts_generic.nts_pprint_gen_trans_label_list tlist
+    (*let  str = List.fold_left pprint_trans_list_foldleft "" tlist in
+      str*)
   
 
 
@@ -443,18 +325,46 @@ struct
 	""
 
 
+
+	  
+  let pprint_transitions (prescript :string) (cautomata : nts_automaton )=
+    let dest_table_print_folder ( origin : control ) (dest : control ) label 
+	(prescript : string ) =
+      if (Nts_generic.static_check_if_gen_translist_unsat label) 
+      then prescript 
+      else
+	begin
+	  (* let label = Nts.rewrite_ndet_assignation label in *)
+	  (*let label = Nts.havocise label in*)
+	  let post_script = Format.sprintf "%s \n %s->%s { %s }" prescript ( pprint_control origin)  ( pprint_control dest) 
+	    (pretty_label label)
+	  in 
+	  post_script
+	end	       
+    in
+    let origin_table_print_folder (origin : control ) table_dest 
+	(pre_script :  string ) =
+      Hashtbl.fold (dest_table_print_folder origin) table_dest pre_script
+    in
+    Hashtbl.fold origin_table_print_folder cautomata.transitions prescript
+      
+
+
+
+
+(*
   let pprint_transitions (prescript :string) (cautomata : nts_automaton )=
     let intermediate_sid = ref 0 in
     let dest_table_print_folder ( origin : control ) (dest : control ) label 
 	(prescript : string ) =
-      if (Nts.static_check_if_translist_unsat label) 
+      if (Nts_generic.static_check_if_translist_unsat label) 
       then prescript 
       else
-	if not (Nts.need_split_transition label) 
+	if not (Nts_generic.need_split_transition label) 
 	then
 	  begin
 	   (* let label = Nts.rewrite_ndet_assignation label in *)
-	    let label = Nts.havocise label in
+	    (*let label = Nts.havocise label in*)
 	    let post_script = Format.sprintf "%s \n %s->%s { %s }" prescript ( pprint_control origin)  ( pprint_control dest) 
 	      (pretty_label label)
 	    in 
@@ -482,7 +392,7 @@ struct
       in
       Hashtbl.fold origin_table_print_folder cautomata.transitions prescript
 
-
+*)
   let pprint_to_nts cautomata = 
       (* let current_ecfg_node = Hashtbl.get vertex current_vertex_id in *)
       let res_string = cautomata.nts_automata_name^"{\n" in
@@ -532,7 +442,7 @@ struct
     let ret_string =  Format.sprintf "nts %s { \n"
       nt_system.nts_system_name in 
     let ret_string = ret_string^(
-      Nts.pprint_typeinfo_nts_var_list nt_system.nts_global_vars 
+      Nts_generic.pprint_typeinfo_nts_genvar_list nt_system.nts_global_vars 
     )^"\n" 
     in
     let all_automata = pprint_all_cautomata  nt_system.nts_automata

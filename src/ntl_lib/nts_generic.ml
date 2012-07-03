@@ -19,7 +19,19 @@ let pprint_ntsgen_var_list l =
   (pprint_nts_var_list_fold "" l)
 
 
-
+let rec nts_pprint_nts_typeinfo_genvar ( x : nts_genrel_var) =
+  match x with 
+      NtsGenVar(NtsIVar( vname ),_) -> vname^" :int "
+    | NtsGenVar(NtsRVar ( vname ),_) ->vname^" :real "
+    | NtsGenVar(NtsMiscType ( vname ),_) ->vname^" : No defined type"
+    | NtsGenVar(NtsINdetVar vname, _) ->vname^" :nondet int" 
+      
+      
+let pprint_typeinfo_nts_genvar_list l =
+  let pprint_lfold res var =
+    res^(nts_pprint_nts_typeinfo_genvar var)^";"
+  in
+  List.fold_left pprint_lfold  "" l
 
 
 
@@ -447,3 +459,17 @@ let nts_pprint_gen_trans_label ( tlabel : nts_trans_label ) =
 	    end
       end
 	
+
+
+
+let nts_pprint_gen_trans_label_list ( tlabellist : nts_trans_label list ) =
+  let folder_of_the_day s tlabel =
+    match s with
+	"" -> nts_pprint_gen_trans_label tlabel
+      | _ -> s^" and "^( nts_pprint_gen_trans_label tlabel)
+  in
+  List.fold_left folder_of_the_day "" tlabellist
+
+
+
+

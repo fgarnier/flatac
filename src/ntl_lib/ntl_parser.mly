@@ -30,9 +30,9 @@
 let build_local_var_list_mapper (vsort : varsort ) vloctype  s =
     match vsort with 
 	Int ->
-	  (NtsIVar(s),vloctype)
+	  (NtsGenVar(NtsIVar(s),NtsUnPrimed),vloctype)
       | Real -> 
-	(NtsRVar(s),vloctype)
+	(NtsGenVar(NtsRVar(s),NtsUnPrimed),vloctype)
 	  
 let build_cautomata_states_mapper (state_type : stateloctype ) s =
   let sin = Nts_int.control_of_id_param s in
@@ -121,28 +121,28 @@ let rebuild_trans_guards nts_trans_split_prec_list =
 	`Trans_new_guard -> 
 	  begin
 	    match bool_stack with
-		None -> (CntBTrue,Some(cnt_curr_bool))
+		None -> (CntGenTrue,Some(cnt_curr_bool))
 	      | Some(prev_bool) -> 
-		(CntBTrue, Some(CntBOr(cnt_curr_bool,prev_bool)))
+		(CntGenTrue, Some(CntGenRelComp(CntGenBOr,cnt_curr_bool,prev_bool)))
 	  end
       | `Trans_tree_bool(parsed_bool) -> 
-	let curr_bool = CntBAnd(cnt_curr_bool,parsed_bool) in
+	let curr_bool = CntGenRelComp(CntGenBAnd,cnt_curr_bool,parsed_bool) in
 	(curr_bool,bool_stack )
       | `Trans_atom_bool(parsed_bool) -> 
-	let curr_bool = CntBAnd(cnt_curr_bool,parsed_bool) in
+	let curr_bool = CntGenRelComp(CntGenBAnd,cnt_curr_bool,parsed_bool) in
 	(curr_bool,bool_stack )
       | `Trans_atom_neg(parsed_bool) ->
-	let curr_bool = CntBAnd(cnt_curr_bool,CntNot(parsed_bool))
+	let curr_bool = CntGenRelComp(CntGenBAnd,cnt_curr_bool,CntGenNot(parsed_bool))
 	in
 	(curr_bool,bool_stack )
 
       | _ -> (cnt_curr_bool,bool_stack ) 
   in
   let (c,s) =
-    List.fold_left nts_guards_of_parsed_info (CntBTrue, None) nts_trans_split_prec_list in
+    List.fold_left nts_guards_of_parsed_info (CntGenTrue, None) nts_trans_split_prec_list in
   match s with 
-      None -> CntGuard(c)
-    | Some(stack) -> CntGuard(CntBOr(c,stack))
+      None -> CntGenGuard(c)
+    | Some(stack) -> CntGenGuard(CntGenRelComp(CntGenBOr,c,stack))
 
 
 let rebuild_non_guard_trans list_res = 
@@ -163,7 +163,7 @@ let rebuild_non_guard_trans list_res =
 %token <float> REAL
 %token <string> PRIMEDVAR 
 %type <Ntsint.Nts_int.nts_system> ntldescr 
-%type <Nts_types.cnt_arithm_exp> arithm_expr
+%type <Nts_types.nts_genrel_arithm_exp> arithm_expr
 
 %token TIMES PLUS MINUS UMINUS DIV MOD LT GT MOD EQ NEQ LEQ GEQ LBRACE
 %token RBRACE LBRACK RBRACK COLON SEMICOLON COMMA ARROW
@@ -227,12 +227,11 @@ gvars_list_decl : gvars_decl gvars_list_decl {$1 @ $2}
 ;
 
 gvars_decl : ident_list INTDECL SEMICOLON { 
-  List.map (fun s-> NtsIVar(s)) $1
+  List.map (fun s-> NtsGenVar(NtsIVar(s),NtsUnPrimed)) $1
 }
 
 | ident_list REALDECL SEMICOLON {
-List.map (fun s-> NtsRVar(s)) $1 
-
+List.map (fun s->NtsGenVar( NtsRVar(s),NtsUnPrimed)) $1 
 } 
 ;
 
@@ -377,24 +376,26 @@ primed_var_list : primed_express COMMA primed_var_list %prec PRIMEVARLIST {$1::$
 
 gen_affect : PRIMEDVAR EQ arithm_expr   {
   let vname = get_varname_of_primedvarname $1 in
-  let vinfo = (*get_vinfo*) NtsMiscType(vname) in (* We need to
-						  get the type of the
-						  variable a posteriori
-						     --Sementical verification
-						     phase
-						  *)
-  CntAffect(vinfo,$3)
+  let vinfo = (*get_vinfo*) NtsGenVar(NtsMiscType(vname),NtsPrimed) 
+  in 
+  (* We need to
+     get the type of the
+     variable a posteriori
+     --Sementical verification
+     phase
+  *)
+  CntGenGuard(CntGenRel(CntEq,CntGenVar(vinfo),$3))
 }
 
 
 
 | LBRACE primed_var_list RBRACE EQ IDENT LBRACE arithm_expr_list RBRACE {
-  CntCall($5,Some($2),$7)
+  CntGenCall($5,Some($2),$7)
 }
 | LBRACE primed_var_list RBRACE EQ IDENT LBRACE RBRACE {
-  CntCall($5,Some($2),[])
+  CntGenCall($5,Some($2),[])
 }
-| IDENT LBRACE arithm_expr_list RBRACE  {CntCall($1,None,$3)}
+| IDENT LBRACE arithm_expr_list RBRACE  {CntGenCall($1,None,$3)}
 ;
 
 
@@ -403,67 +404,66 @@ pressburg_tree_guards : LBRACE pressburg_atomic_bool RBRACE
 | LBRACE pressburg_tree_guards RBRACE {$2}
 
 | pressburg_atomic_bool BAND pressburg_atomic_bool {
-  CntBAnd($1,$3)
-
+  CntGenRelComp(CntGenBAnd,$1,$3)
 }
 
 | pressburg_tree_guards BAND pressburg_tree_guards {
-  CntBAnd($1,$3)
+  CntGenRelComp(CntGenBAnd,$1,$3)
 }
 
 | pressburg_tree_guards BAND  pressburg_atomic_bool {
-  CntBAnd($1,$3)
+  CntGenRelComp(CntGenBAnd,$1,$3)
 }
 
 | pressburg_atomic_bool BAND  pressburg_tree_guards {
-   CntBAnd($1,$3)
+   CntGenRelComp(CntGenBAnd,$1,$3)
   
 }
 
 
 | pressburg_atomic_bool BOR pressburg_atomic_bool {
-   CntBAnd($1,$3)
+   CntGenRelComp(CntGenBAnd,$1,$3)
 }  
 
 
 | pressburg_tree_guards BOR  pressburg_atomic_bool {
-  CntBAnd($1,$3)
+  CntGenRelComp(CntGenBAnd,$1,$3)
 
 }
 
 
 |  pressburg_atomic_bool BOR pressburg_tree_guards {
-  CntBOr($1,$3)
+  CntGenRelComp(CntGenBOr,$1,$3)
 
 }
 
 |  BNOT pressburg_tree_guards {
-  CntNot($2)
+  CntGenNot($2)
   
 } 
 
 |  BNOT pressburg_atomic_bool {
-  CntNot($2)
+  CntGenNot($2)
 
 }
 
 
-pressburg_atomic_bool : BTRUE { CntBTrue } 
-| BFALSE {CntBFalse} %prec PRESSEVAL
+pressburg_atomic_bool : BTRUE { CntGenTrue } 
+| BFALSE {CntGenFalse} %prec PRESSEVAL
 
-| arithm_expr GT arithm_expr {CntBool(CntGt,$1,$3)} 
-| arithm_expr LT arithm_expr {CntBool(CntLt,$1,$3)} 
-| arithm_expr GEQ arithm_expr {CntBool(CntGeq,$1,$3)} 
-| arithm_expr LEQ arithm_expr {CntBool(CntLeq,$1,$3)} 
-| arithm_expr EQ arithm_expr {CntBool(CntEq,$1,$3)} 
-| arithm_expr NEQ arithm_expr {CntBool(CntNeq,$1,$3)}
+| arithm_expr GT arithm_expr {CntGenRel(CntGt,$1,$3)} 
+| arithm_expr LT arithm_expr {CntGenRel(CntLt,$1,$3)} 
+| arithm_expr GEQ arithm_expr {CntGenRel(CntGeq,$1,$3)} 
+| arithm_expr LEQ arithm_expr {CntGenRel(CntLeq,$1,$3)} 
+| arithm_expr EQ arithm_expr {CntGenRel(CntEq,$1,$3)} 
+| arithm_expr NEQ arithm_expr {CntGenRel(CntNeq,$1,$3)}
 ;
 
 primed_express : PRIMEDVAR %prec PRIMEDEXPR { 
   let varname = get_varname_of_primedvarname $1 in
   Format.printf "Primed var string is %s \n %!" $1;
   Format.printf "Primed var has name %s \n %! " varname ;
-  NtsMiscType(varname)
+  NtsGenVar(NtsMiscType(varname),NtsPrimed)
  
 }
 ;
@@ -474,30 +474,33 @@ arithm_expr_list : arithm_expr {$1::[]}
 ;
 
 arithm_expr : INT { let  cst = Big_int.big_int_of_int $1 in 
-		   CntCst(cst)}
+		   CntGenCst(cst)}
 
 | IDENT { let vname = $1 in
-	  CntVar(NtsMiscType(vname))
+	  CntGenVar(NtsGenVar(NtsMiscType(vname),NtsUnPrimed))
 	}
 
+| primed_express {
+  CntGenVar($1)
+}
 | LBRACE arithm_expr RBRACE {$2}
-| MINUS arithm_expr %prec UMINUS { CntUnMin($2) }
-| arithm_expr PLUS arithm_expr { CntSum($1,$3) }
-| arithm_expr MINUS arithm_expr { CntMinus($1,$3) }
-| arithm_expr DIV arithm_expr { CntDiv($1,$3) }
-| arithm_expr MOD arithm_expr { CntMod($1,$3) }
-| arithm_expr TIMES arithm_expr { CntProd($1,$3) }
+| MINUS arithm_expr %prec UMINUS { CntGenArithmUOp(CntGenUMinus,$2) }
+| arithm_expr PLUS arithm_expr { CntGenArithmBOp(CntGenSum,$1,$3) }
+| arithm_expr MINUS arithm_expr {CntGenArithmBOp( CntGenMinus,$1,$3) }
+| arithm_expr DIV arithm_expr {CntGenArithmBOp( CntGenDiv,$1,$3) }
+| arithm_expr MOD arithm_expr {CntGenArithmBOp( CntGenMod,$1,$3) }
+| arithm_expr TIMES arithm_expr { CntGenArithmBOp( CntGenProd,$1,$3) }
 ;
 
 
 havocise : HAVOC LBRACE ident_list RBRACE {
-  let ntvarlist = (*List.map get_vinfo $3*) List.map (fun s -> NtsMiscType(s)) $3 in 
-  CntHavoc(ntvarlist)
+  let ntvarlist = (*List.map get_vinfo $3*) List.map (fun s -> NtsGenVar(NtsMiscType(s),NtsUnPrimed)) $3 in 
+  CntGenHavoc(ntvarlist)
 }
 
 |  HAVOC LBRACE  RBRACE {
   
-  CntHavoc([])
+  CntGenHavoc([])
 }
 ;
 

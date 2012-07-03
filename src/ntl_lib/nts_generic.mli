@@ -1,6 +1,8 @@
 exception Found_a_primed_var
 val nts_pprint_genvar : Nts_types.nts_genrel_var -> string
 val pprint_ntsgen_var_list : Nts_types.nts_genrel_var list -> string
+val nts_pprint_nts_typeinfo_genvar : Nts_types.nts_genrel_var -> string
+val pprint_typeinfo_nts_genvar_list : Nts_types.nts_genrel_var list -> string
 val size_genrel_arithm_deeper_than :
   Nts_types.nts_genrel_arithm_exp -> int -> bool
 val size_genrel_deeper_than : Nts_types.nts_gen_relation -> int -> bool
@@ -22,3 +24,5 @@ val static_check_if_gen_relation_false : Nts_types.nts_gen_relation -> bool
 val static_check_if_gen_translist_unsat :
   Nts_types.nts_trans_label list -> bool
 val nts_pprint_gen_trans_label : Nts_types.nts_trans_label -> string
+val nts_pprint_gen_trans_label_list :
+  Nts_types.nts_trans_label list -> string
