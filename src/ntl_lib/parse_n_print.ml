@@ -2,6 +2,7 @@ open Lexing
 open Ntl_lexer
 open Ntl_parser
 open Ntsint
+open Nts_generic
 
 
 

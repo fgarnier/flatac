@@ -38,7 +38,7 @@ type nts_var = NtsIVar of string (*Integer type variable*)
 	       
 
 type nts_primed_type = NtsPrimed
-		       | NtsUnprimed
+		       | NtsUnPrimed
 
 
 (* Variables in the general relations : Primed or unprimed nts vars*)
@@ -53,15 +53,15 @@ type cnt_binop = CntEq
 		 | CntGt
 		 | CntGeq
 
-type cnt_gen_arithm_binop = CntGenSum
+type nts_gen_arithm_binop = CntGenSum
 			    | CntGenMinus
 			    | CntGenProd
 			    | CntGenDiv
 			    | CntGenMod
 
-type cnt_gen_arithm_unop = CntGenUMinus
+type nts_gen_arithm_unop = CntGenUMinus
 
-type cnt_gen_bool_binop = CntGenBAnd 
+type nts_gen_bool_binop = CntGenBAnd 
 			  | CntGenBOr
  			 
 
@@ -79,17 +79,17 @@ type cnt_arithm_exp = CntCst of Big_int.big_int
 		      | CntInvalidExp
 
 
-type cnt_genrel_arithm_exp = CntGenCst of Big_int.big_int
+type nts_genrel_arithm_exp = CntGenCst of Big_int.big_int
 			     | CntGenNdet
 			     | CntGenNdetVar of string (* non deterministic value *)
 			     | CntGenSymCst of string
 			     | CntGenVar of nts_genrel_var
 
-			     | CntGenArithmBOp of cnt_arithm_exp *
-				 cnt_genrel_arithm_exp * cnt_genrel_arithm_exp
+			     | CntGenArithmBOp of nts_gen_arithm_binop *
+				 nts_genrel_arithm_exp * nts_genrel_arithm_exp
 				 		      
-			     | CntGenArithUOp of cnt_gen_arithm_unop *
-				 cnt_genrel_arithm_exp
+			     | CntGenArithmUOp of nts_gen_arithm_unop *
+				 nts_genrel_arithm_exp
 		    
 			     | CntGenInvalidExp
 
@@ -116,14 +116,14 @@ type cnt_bool = CntBool of cnt_binop *  cnt_arithm_exp * cnt_arithm_exp
 
 
 type nts_gen_relation = 
-    CntGenRel of cnt_binop * cnt_genrel_arithm_exp  * cnt_genrel_arithm_exp
-  | CntGenRelComp of cnt_gen_bool_binop * nts_gen_relation * nts_gen_relation
+    CntGenRel of cnt_binop * nts_genrel_arithm_exp  * nts_genrel_arithm_exp
+  | CntGenRelComp of nts_gen_bool_binop * nts_gen_relation * nts_gen_relation
   | CntGenNot of nts_gen_relation
   | CntGenTrue
   | CntGenFalse
   
 
-
+(* Deprecated type cnt_trans_label *)
 type cnt_trans_label = CntGuard of cnt_bool
 		       | CntGuardIf of cnt_bool (* We shall be able to 
 						make the distinction between
@@ -140,4 +140,18 @@ type cnt_trans_label = CntGuard of cnt_bool
 						 See NTL documentation.
 					       *)
 		       | CntGenGuard of nts_gen_relation
+
+
+
+
+(* Generic type definition for NTS lib transitions  *)
+type nts_trans_label = CntGenGuard of nts_gen_relation
 		       
+		       | CntGenCall of string * nts_genrel_var list option * nts_genrel_arithm_exp list
+		      
+		       
+		       | CntGenHavoc of nts_genrel_var list (* The value of the listed 
+						 variables are not copied.
+						 See NTL documentation.
+					       *)
+		             

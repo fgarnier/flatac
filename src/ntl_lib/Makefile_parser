@@ -15,7 +15,7 @@ INTERFACES = $(OBJECTS:.cmo=.cmi)
 TEST = parse_n_print
  
 clean : 
-	rm -f *.cmo *.cmi $(GENSOURCE)
+	rm -f *.cmo *.cmi *.annot parse_n_print $(GENSOURCE)
 
 all : .depend $(INTERFACES) $(OBJECTS) $(TEST)
 
