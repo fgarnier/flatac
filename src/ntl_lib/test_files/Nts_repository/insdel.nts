@@ -1,0 +1,44 @@
+nts insdel;
+
+main {
+   c1,c,c0,aux,z : int;
+   initial h_1;
+   error h_error;
+   h_1 -> h_2 { aux'=z && havoc(aux) } 
+   h_2 -> h_3 { havoc() } 
+   h_3 -> h_4 { havoc() } 
+   h_4 -> h_5 { c'=0 && havoc(c) } 
+   h_5 -> h_6 { havoc() } 
+   h_5 -> h_7 { havoc() } 
+   h_6 -> h_8 { havoc() } 
+   h_7 -> h_9 { havoc() } 
+   h_8 -> h_10 { havoc() } 
+   h_10 -> h_error { aux<=z-1 && havoc() } 
+   h_10 -> h_error { aux>=z+1 && havoc() } 
+   h_8 -> h_11 { havoc() } 
+   h_9 -> h_12 { c0'=1 && havoc(c0) } 
+   h_11 -> h_13 { havoc() } 
+   h_12 -> h_14 { c0'=1 && havoc(c0) } 
+   h_14 -> h_15 { havoc() } 
+   h_13 -> h_error { havoc() } 
+   h_16 -> h_17 { havoc() } 
+   h_15 -> h_16 { c'=c+1 && havoc(c) } 
+   h_17 -> h_19 { havoc() } 
+   h_16 -> h_18 { havoc() } 
+   h_19 -> h_21 { havoc() } 
+   h_18 -> h_20 { havoc() } 
+   h_21 -> h_error { c0<=aux-z-1 && havoc() } 
+   h_21 -> h_error { c0>=aux-z+1 && havoc() } 
+   h_20 -> h_23 { c1'=1 && havoc(c1) } 
+   h_19 -> h_22 { havoc() } 
+   h_23 -> h_25 { c1'=1 && havoc(c1) } 
+   h_22 -> h_24 { havoc() } 
+   h_24 -> h_27 { c0=1 && havoc() } 
+   h_24 -> h_26 { c1'=c0-1 && c0'=1 && c0>=2 && havoc(c0,c1) } 
+   h_26 -> h_29 { c'=c-1 && havoc(c) } 
+   h_29 -> h_19 { z'=z && c0'=c1 && havoc(c0,z) } 
+   h_25 -> h_28 { c1'=c1+c0 && havoc(c1) } 
+   h_28 -> h_15 { z'=z && c0'=c1 && havoc(c0,z) } 
+   h_27 -> h_30 { c'=c-1 && havoc(c) } 
+   h_30 -> h_8 { z'=z && havoc(z) } 
+}
