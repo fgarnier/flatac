@@ -442,7 +442,7 @@ struct
       nt_system.nts_system_name in 
     let ret_string = ret_string^(
       Nts_generic.pprint_typeinfo_nts_genvar_list nt_system.nts_global_vars 
-    )^"\n" 
+    )^";\n" 
     in
     let all_automata = pprint_all_cautomata  nt_system.nts_automata
     in

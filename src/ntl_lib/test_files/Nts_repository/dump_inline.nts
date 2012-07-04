@@ -1,5 +1,5 @@
 nts inline ; 
-s : int
+s : int;
 f{
 in a : int;
 
