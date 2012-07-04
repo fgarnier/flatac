@@ -26,15 +26,52 @@ let rec nts_pprint_nts_typeinfo_genvar ( x : nts_genrel_var) =
     | NtsGenVar(NtsMiscType ( vname ),_) ->vname^" : No defined type"
     | NtsGenVar(NtsINdetVar vname, _) ->vname^" :nondet int" 
       
+
+let is_int_var v =
+  match v with 
+      NtsGenVar(NtsIVar( vname ),_)-> true
+    |_ -> false
       
+let is_real_var v =
+  match v with
+    NtsGenVar(NtsRVar( vname ),_)-> true
+    |_ -> false
+      
+
+ 
+      
+let concat_if_first_arg_nonzero s1 s2 =
+  if String.length s1 != 0
+  then s1^s2
+  else ""
+	
+let concat_comma_both_arg_non_empty s1 s2 =
+  if String.length s1 != 0 then
+    begin
+      if  String.length s2 != 0 then
+	s1^","^s2
+      else
+	s1
+    end
+  else
+    s2
+      
+(*let pprint_typeinfo_int_nts_var_list l =
+  let int_var_list = List.filter ( is_int_var) l in
+  pprint_ntsgen_var_list int_var_list
+*)
+  
 let pprint_typeinfo_nts_genvar_list l =
-  let pprint_lfold res var =
-    res^(nts_pprint_nts_typeinfo_genvar var)^";"
-  in
-  List.fold_left pprint_lfold  "" l
-
-
-
+  let int_var_list = List.filter ( is_int_var) l in
+  let real_var_list =  List.filter ( is_real_var) l in
+  let pp_of_list_of_int = 
+    concat_if_first_arg_nonzero (pprint_ntsgen_var_list int_var_list) " : int" in
+  let pp_of_list_of_real = 
+    concat_if_first_arg_nonzero (pprint_ntsgen_var_list real_var_list) " : real" in
+  concat_comma_both_arg_non_empty pp_of_list_of_int pp_of_list_of_real
+    
+    
+   
 
 let rec size_genrel_arithm_deeper_than 
     (barithm : nts_genrel_arithm_exp ) (depth : int ) =

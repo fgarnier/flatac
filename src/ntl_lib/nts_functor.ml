@@ -403,14 +403,13 @@ struct
       )
       in
       let pprint_loc = pprint_localvars cautomata in
-      let res_string=res_string^"\n"^Nts.concat_if_first_arg_nonzero pprint_loc " : int ;\n" in
+      let res_string=res_string^"\n"^Nts.concat_if_first_arg_nonzero pprint_loc ";\n" in
     
       
       let ret_vars = pprint_outputvars cautomata in
-      Format.printf "Outvars are : %s \n" ret_vars;
       let res_string =  (
 	if String.length ret_vars > 0 
-	then res_string^"\n"^ret_vars^"\n"
+	then res_string^"out "^ret_vars^";\n"
 	else
 	  res_string
       ) 
@@ -439,7 +438,7 @@ struct
 
 
   let pprint_nts nt_system =
-    let ret_string =  Format.sprintf "nts %s { \n"
+    let ret_string =  Format.sprintf "nts %s ; \n"
       nt_system.nts_system_name in 
     let ret_string = ret_string^(
       Nts_generic.pprint_typeinfo_nts_genvar_list nt_system.nts_global_vars 
@@ -447,7 +446,7 @@ struct
     in
     let all_automata = pprint_all_cautomata  nt_system.nts_automata
     in
-    ret_string^all_automata^"\n } \n"
+    ret_string^all_automata^"\n"
     
    
     
