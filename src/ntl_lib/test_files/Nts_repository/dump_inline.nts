@@ -1,0 +1,35 @@
+nts inline ; 
+s : int
+f{
+in a : int;
+
+c : int;
+out b : int;
+initial s0;
+final s3;
+ 
+ s0->s1 { c' = 5 and havoc(c) } 
+ s1->s2 { (b')=g(a) and havoc(b) } 
+ s2->s3 { b' = b+5 and havoc(b) }
+}
+g{
+in a : int;
+
+out b : int;
+initial s0;
+final s1;
+ 
+ s0->s1 { b' = a+5 and havoc(b) }
+}
+main{
+
+x : int;
+initial s0;
+
+error se; 
+ s0->s1 { x' = 0 and s' = 5 and havoc(x,s) } 
+ s1->s2 { (x')=f(s) and havoc(x) } 
+ s2->se { x = 10 and havoc() }
+}
+
+ 

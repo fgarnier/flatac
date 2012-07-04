@@ -170,13 +170,15 @@ let rebuild_non_guard_trans list_res =
 %type <Nts_types.nts_genrel_arithm_exp> arithm_expr
 
 %token TIMES PLUS MINUS UMINUS DIV MOD LT GT MOD EQ NEQ LEQ GEQ LBRACE
-%token RBRACE LBRACK RBRACK COLON SEMICOLON COMMA ARROW
+%token RBRACE LBRACK RBRACK OBRACK CBRACK COLON SEMICOLON COMMA ARROW
 %token  PRIME BTRUE BFALSE BAND BOR BNOT EOF
 %token NTSDECL INTDECL NATDECL REALDECL INITSTATE FINALSTATE ERRORSTATE
 %token INPUTVARLIST OUTPUTVARLIST LOCALVARLIST HAVOC
+%token EXISTS FORALL IMPLY EQUIV LRARROW
 
 %nonassoc PRIMEVARLIST 
-%nonassoc PRIMEDEXPR EQ LBRACK RBRACK
+%nonassoc PRIMEDEXPR 
+%nonassoc EQ LBRACK RBRACK
 %nonassoc PRESSEVAL
 %nonassoc UMINUS 
 
@@ -193,7 +195,27 @@ let rebuild_non_guard_trans list_res =
 
 
 
-ntldescr : NTSDECL IDENT SEMICOLON decl_sequence { 
+ntldescr : NTSDECL IDENT SEMICOLON gvars_list_decl decl_sequence {
+  
+  { 
+    nts_system_name = $2 ;
+    nts_global_vars = $4 ;
+    nts_automata = cautomata_hashtbl_of_cautomata_list $5 ;
+  }
+}
+
+/*NTSDECL IDENT SEMICOLON gvars_decl decl_sequence {
+  
+  { 
+    nts_system_name = $2 ;
+    nts_global_vars = $4 ;
+    nts_automata = cautomata_hashtbl_of_cautomata_list $5 ;
+  }
+}*/
+
+
+
+| NTSDECL IDENT SEMICOLON decl_sequence { 
   let nts_name = $2 in
   {
     nts_system_name = nts_name;
@@ -203,38 +225,21 @@ ntldescr : NTSDECL IDENT SEMICOLON decl_sequence {
   }
 }
  
-|  NTSDECL IDENT SEMICOLON gvars_decl decl_sequence {
-  
-  { 
-    nts_system_name = $2 ;
-    nts_global_vars = $4 ;
-    nts_automata = cautomata_hashtbl_of_cautomata_list $5 ;
-  }
-}
-
-|  NTSDECL IDENT SEMICOLON gvars_list_decl decl_sequence {
-  
-  { 
-    nts_system_name = $2 ;
-    nts_global_vars = $4 ;
-    nts_automata = cautomata_hashtbl_of_cautomata_list $5 ;
-  }
-}
-
 ;
 
 ident_list : IDENT {[$1]}
 | IDENT COMMA ident_list {$1::$3}
 ;
 
-gvars_list_decl : gvars_decl gvars_list_decl {$1 @ $2}
+gvars_list_decl : gvars_decl COMMA gvars_list_decl {$1 @ $3}
+| gvars_decl SEMICOLON {$1}
 ;
 
-gvars_decl : ident_list INTDECL SEMICOLON { 
+gvars_decl : ident_list COLON INTDECL { 
   List.map (fun s-> NtsGenVar(NtsIVar(s),NtsUnPrimed)) $1
 }
 
-| ident_list REALDECL SEMICOLON {
+| ident_list COLON REALDECL  {
 List.map (fun s->NtsGenVar( NtsRVar(s),NtsUnPrimed)) $1 
 } 
 ;
@@ -378,7 +383,16 @@ primed_var_list : primed_express COMMA primed_var_list %prec PRIMEVARLIST {$1::$
 | primed_express COMMA primed_express {$1::[$3]}
 ;
 
-gen_affect : PRIMEDVAR EQ arithm_expr   {
+gen_affect : PRIMEDVAR EQ IDENT  LBRACE arithm_expr_list RBRACE {
+  let vname = get_varname_of_primedvarname $1 in
+  let vinfolist =  NtsGenVar(NtsMiscType(vname),NtsPrimed)::[] 
+  in 
+  CntGenCall($3,Some(vinfolist),$5)
+
+}
+
+
+| PRIMEDVAR EQ arithm_expr   {
   let vname = get_varname_of_primedvarname $1 in
   let vinfo = (*get_vinfo*) NtsGenVar(NtsMiscType(vname),NtsPrimed) 
   in 
@@ -390,7 +404,6 @@ gen_affect : PRIMEDVAR EQ arithm_expr   {
   *)
   CntGenGuard(CntGenRel(CntEq,CntGenVar(vinfo),$3))
 }
-
 
 
 | LBRACE primed_var_list RBRACE EQ IDENT LBRACE arithm_expr_list RBRACE {

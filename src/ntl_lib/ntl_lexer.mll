@@ -28,6 +28,10 @@
   register_kwd "true" BTRUE;;
   register_kwd "false" BFALSE;;
   register_kwd "havoc" HAVOC;;
+  register_kwd "exists" EXISTS;;
+  register_kwd "forall" FORALL;;
+  register_kwd "imply" IMPLY;;
+  register_kwd "equiv" EQUIV;;
  
   
   
@@ -66,8 +70,11 @@ let primed_var = (identifier quote)
   | "{" {LBRACK}
   | "}" {RBRACK}
   | ":" {COLON}
+  | "[" {OBRACK}
+  | "]" {CBRACK}
   | ";" {SEMICOLON}
   | "," {COMMA}
+  | "<->" {LRARROW}
   | "->" {ARROW}
   | "=" {EQ}
   | "!=" {NEQ}
