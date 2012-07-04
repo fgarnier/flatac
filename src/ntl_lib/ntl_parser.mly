@@ -204,14 +204,6 @@ ntldescr : NTSDECL IDENT SEMICOLON gvars_list_decl decl_sequence {
   }
 }
 
-/*NTSDECL IDENT SEMICOLON gvars_decl decl_sequence {
-  
-  { 
-    nts_system_name = $2 ;
-    nts_global_vars = $4 ;
-    nts_automata = cautomata_hashtbl_of_cautomata_list $5 ;
-  }
-}*/
 
 
 
@@ -316,6 +308,23 @@ transitions :  IDENT ARROW IDENT LBRACK  RBRACK {
   let control_dest= control_of_id_param $3 in
   let transit = $5 in
   (control_org, control_dest, transit)
+}
+
+| IDENT COLON IDENT ARROW IDENT LBRACK nts_trans_split RBRACK {
+  let control_org = control_of_id_param $3 in
+  let control_dest= control_of_id_param $5 in
+  let transit = $7 in
+  (control_org, control_dest, transit )
+ 
+
+
+}
+
+| IDENT COLON IDENT ARROW IDENT LBRACK  RBRACK {
+  let control_org = control_of_id_param $3 in
+  let control_dest= control_of_id_param $5 in
+  let transit = [] in
+  (control_org, control_dest, transit )
 }
 ;  
   
