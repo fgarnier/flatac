@@ -439,10 +439,20 @@ struct
 
   let pprint_nts nt_system =
     let ret_string =  Format.sprintf "nts %s ; \n"
-      nt_system.nts_system_name in 
-    let ret_string = ret_string^(
+      nt_system.nts_system_name 
+    in 
+    let gvars_pprint =
       Nts_generic.pprint_typeinfo_nts_genvar_list nt_system.nts_global_vars 
-    )^";\n" 
+    in
+    let gvars_pprint = 
+      (
+      if String.length gvars_pprint > 0
+      then gvars_pprint^";\n"
+      else
+	""
+      )
+    in
+    let ret_string= ret_string^gvars_pprint
     in
     let all_automata = pprint_all_cautomata  nt_system.nts_automata
     in

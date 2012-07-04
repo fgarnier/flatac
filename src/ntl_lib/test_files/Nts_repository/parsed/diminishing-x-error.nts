@@ -1,0 +1,14 @@
+nts succrunning;
+
+main {
+  x,b,y : int;
+  initial q0;
+  error qe;
+  q0 ->  q1 { x' = 100 && y' = 0 && havoc(b,x,y) }
+  q1 ->  q2 { x > 0 && havoc() }
+  q2 ->  q2 { b != 0 &&  x' = x / 2 &&  havoc(b,x) }
+  q2 ->  q3 { b = 0 &&  havoc() }
+  q3 ->  q1 { x' = x - 1 && y' = y + 2 && havoc(x,y) }
+  q1 ->  q4 { x <= 0 && havoc() }
+  q4 ->  qe { y % 2 = 0 && x = 0 && havoc() }
+}
