@@ -321,7 +321,6 @@ let boolean_relation r =
       | CntGenNot(CntGenNot(a)) -> a
       | CntGenRelComp(CntGenBOr,_,CntGenTrue) -> CntGenTrue
       | CntGenRelComp(CntGenBOr,CntGenTrue,_) -> CntGenTrue
-      | CntGenRelComp(CntGenBAnd,CntGenFalse,CntGenFalse) -> CntGenFalse
       | CntGenNot(CntGenRel(CntEq,a,b)) -> (CntGenRel(CntNeq,a,b))
       | CntGenNot(CntGenRel(CntNeq,a,b)) -> (CntGenRel(CntEq,a,b))
       | CntGenNot(CntGenRel(CntLt,a,b)) -> (CntGenRel(CntGeq,a,b))
@@ -440,7 +439,7 @@ let nts_pprint_gen_trans_label ( tlabel : nts_trans_label ) =
     | CntGenHavoc(ntslist ) ->
       begin
 	let strl = pprint_ntsgen_var_list ntslist in
-	Format.sprintf "Havoc(%s)" strl
+	Format.sprintf "havoc(%s)" strl
       end
 	
     | CntGenCall(nts_sys_name,lvals_opt_varlist,param_list) ->
@@ -460,13 +459,33 @@ let nts_pprint_gen_trans_label ( tlabel : nts_trans_label ) =
       end
 	
 
+(*Is the guard a single true ? *)
+let is_label_true t =
+  match t with
+      CntGenGuard(CntGenTrue) -> true
+    | _ -> false
+      
 
 
 let nts_pprint_gen_trans_label_list ( tlabellist : nts_trans_label list ) =
   let folder_of_the_day s tlabel =
     match s with
-	"" -> nts_pprint_gen_trans_label tlabel
-      | _ -> s^" and "^( nts_pprint_gen_trans_label tlabel)
+	"" ->
+	  begin
+	    if  not ( is_label_true tlabel )
+	     then
+	      nts_pprint_gen_trans_label tlabel
+	    else
+	      ""
+	  end
+      | _ ->
+	begin
+	  if  not ( is_label_true tlabel ) 
+	  then
+	    s^" and "^( nts_pprint_gen_trans_label tlabel)
+	  else 
+	    s
+	end
   in
   List.fold_left folder_of_the_day "" tlabellist
 

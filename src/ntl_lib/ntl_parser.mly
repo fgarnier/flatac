@@ -141,8 +141,12 @@ let rebuild_trans_guards nts_trans_split_prec_list =
   let (c,s) =
     List.fold_left nts_guards_of_parsed_info (CntGenTrue, None) nts_trans_split_prec_list in
   match s with 
-      None -> CntGenGuard(c)
-    | Some(stack) -> CntGenGuard(CntGenRelComp(CntGenBOr,c,stack))
+      None -> let c = Nts_generic.simplify_gen_rel c 
+	      in CntGenGuard(c)
+    | Some(stack) -> 
+      let res_rel = CntGenRelComp(CntGenBOr,c,stack) in
+      let res_rel = Nts_generic.simplify_gen_rel res_rel in
+      CntGenGuard(res_rel)
 
 
 let rebuild_non_guard_trans list_res = 
@@ -404,6 +408,7 @@ pressburg_tree_guards : LBRACE pressburg_atomic_bool RBRACE
 | LBRACE pressburg_tree_guards RBRACE {$2}
 
 | pressburg_atomic_bool BAND pressburg_atomic_bool {
+ 
   CntGenRelComp(CntGenBAnd,$1,$3)
 }
 
