@@ -57,6 +57,7 @@ let primed_var = (identifier quote)
   | ['\n'] {Lexing.new_line lexbuf; token lexbuf}
   | [' ' '\t' '\r' '\000'] {token lexbuf}
   | "*" {TIMES}
+  | "." {DOT}
   | "+" {PLUS}
   | "-" {MINUS}
   | "/" {DIV}

@@ -17,6 +17,9 @@ exception Not_an_if_then_else_condition_guard
 
 (* That type describes **)
 
+type nts_quantifier = NtsExists
+		      | NtsForall
+
 type nts_base_types = NtsIntType
 		      | NtsRealType
 		      | NtsBool
@@ -121,7 +124,7 @@ type nts_gen_relation =
   | CntGenNot of nts_gen_relation
   | CntGenTrue
   | CntGenFalse
-  
+  | CntQVarsGenRel of nts_genrel_var list * nts_quantifier * nts_gen_relation   
 
 (* Deprecated type cnt_trans_label *)
 type cnt_trans_label = CntGuard of cnt_bool

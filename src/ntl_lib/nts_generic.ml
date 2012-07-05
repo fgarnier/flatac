@@ -18,6 +18,10 @@ let pprint_ntsgen_var_list l =
   in
   (pprint_nts_var_list_fold "" l)
 
+let pprint_nts_quantifier  q =
+  match q with 
+      NtsExists -> "exists"
+    | NtsForall -> "forall"
 
 let rec nts_pprint_nts_typeinfo_genvar ( x : nts_genrel_var) =
   match x with 
@@ -71,7 +75,9 @@ let pprint_typeinfo_nts_genvar_list l =
   concat_comma_both_arg_non_empty pp_of_list_of_int pp_of_list_of_real
     
     
-   
+  
+
+
 
 let rec size_genrel_arithm_deeper_than 
     (barithm : nts_genrel_arithm_exp ) (depth : int ) =
@@ -316,6 +322,13 @@ let rec nts_pprint_genrel (bexp : nts_gen_relation ) =
 	  | CntLt -> expg^" < "^expd
 	  | CntGt -> expg^" > "^expd
 	  | CntGeq -> expg^" >= "^expd
+      end
+    | CntQVarsGenRel (vlist,quantifier, subformula) ->
+      begin
+	let qvars_list_print =  pprint_typeinfo_nts_genvar_list vlist in
+	let q_print = pprint_nts_quantifier quantifier in
+	let pprint_sformula = nts_pprint_genrel subformula in
+	Format.sprintf "%s %s . %s" q_print qvars_list_print pprint_sformula
       end
 	
 

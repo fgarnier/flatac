@@ -135,7 +135,9 @@ let rebuild_trans_guards nts_trans_split_prec_list =
 	let curr_bool = CntGenRelComp(CntGenBAnd,cnt_curr_bool,CntGenNot(parsed_bool))
 	in
 	(curr_bool,bool_stack )
-
+      | `Qformula(parse_bool) ->
+	let curr_bool = CntGenRelComp(CntGenBAnd,cnt_curr_bool,parsed_bool) in
+	(curr_bool,bool_stack )
       | _ -> (cnt_curr_bool,bool_stack ) 
   in
   let (c,s) =
@@ -174,7 +176,7 @@ let rebuild_non_guard_trans list_res =
 %token  PRIME BTRUE BFALSE BAND BOR BNOT EOF
 %token NTSDECL INTDECL NATDECL REALDECL INITSTATE FINALSTATE ERRORSTATE
 %token INPUTVARLIST OUTPUTVARLIST LOCALVARLIST HAVOC
-%token EXISTS FORALL IMPLY EQUIV LRARROW
+%token EXISTS FORALL IMPLY EQUIV LRARROW DOT
 
 %nonassoc PRIMEVARLIST 
 %nonassoc PRIMEDEXPR 
@@ -367,6 +369,46 @@ nts_trans_elem :/* BNOT {`Trans_neg_of_guard} */  /* Negation until the
 | pressburg_atomic_bool { `Trans_atom_bool($1) }
 | gen_affect {`Trans_gen_affect($1)}
 | havocise {`Trans_havoc ($1)}
+| qformula {`Qformula($1)}
+| LBRACE qformula RBRACE {`Qformula($2)}
+
+
+qformula : EXISTS ident_list COLON INTDECL DOT pressburg_atomic_bool {
+  let var_list = List.map (fun s -> NtsGenVar(NtsIVar(s),NtsPrimed)) $2
+  in 
+  CntQVarsGenRel(var_list,NtsExists,$6)
+ } 
+
+| EXISTS ident_list COLON INTDECL DOT LBRACE pressburg_tree_guards RBRACE {
+  let var_list = List.map (fun s -> NtsGenVar(NtsIVar(s),NtsPrimed)) $2
+  in 
+  CntQVarsGenRel(var_list,NtsExists,$7)
+ }
+
+| EXISTS ident_list COLON INTDECL DOT LBRACE qformula RBRACE {
+  let var_list = List.map (fun s -> NtsGenVar(NtsIVar(s),NtsPrimed)) $2
+  in 
+  CntQVarsGenRel(var_list,NtsExists,$7)
+ }
+  
+|  FORALL ident_list COLON INTDECL DOT pressburg_atomic_bool {
+  let var_list = List.map (fun s -> NtsGenVar(NtsIVar(s),NtsPrimed)) $2
+  in 
+  CntQVarsGenRel(var_list,NtsExists,$6)
+ } 
+
+| FORALL ident_list COLON INTDECL DOT LBRACE pressburg_tree_guards RBRACE {
+  let var_list = List.map (fun s -> NtsGenVar(NtsIVar(s),NtsPrimed)) $2
+  in 
+  CntQVarsGenRel(var_list,NtsExists,$7)
+ }
+
+| FORALL ident_list COLON INTDECL DOT LBRACE qformula RBRACE {
+  let var_list = List.map (fun s -> NtsGenVar(NtsIVar(s),NtsPrimed)) $2
+  in 
+  CntQVarsGenRel(var_list,NtsExists,$7)
+}
+
 
 
 nts_trans_split_prec :  nts_trans_elem BOR nts_trans_split_prec 
