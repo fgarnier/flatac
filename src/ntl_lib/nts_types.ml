@@ -22,8 +22,8 @@ type nts_quantifier = NtsExists
 
 type nts_base_types = NtsIntType
 		      | NtsRealType
-		      | NtsBool
-		      
+		      | NtsBoolType
+		      | NtsNatType
 
 (*type nts_array =  NtsArray of string * int * nts_base_types
 		  |  NtsMDimArray of string * int * nts_array  
@@ -36,9 +36,9 @@ This type definition allows to encode multi dimentional arrays.
 type nts_var = NtsIVar of string (*Integer type variable*)
 	       | NtsINdetVar of string
 	       | NtsRVar of string (*Real valued variable*)
-	       (*| NtsBVar of String (*Boolean variable*)*)
+	       | NtsBVar of string (*Boolean variable*)
 	       | NtsMiscType of string (* Unresolved type*)
-	       
+	       | NtsNVar of string (* Natural integer typed variables*)
 
 type nts_primed_type = NtsPrimed
 		       | NtsUnPrimed

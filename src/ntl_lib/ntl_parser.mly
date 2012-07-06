@@ -7,7 +7,7 @@
   
 
   exception UnBoundVariable of string * Parsing_error.loc option
-  type varsort = Nat | Int | Real 
+  type varsort = Nat | Int | Real | Bool
 
   open Ntsint (* This module contains the definition of the moduel
 	      Nts_int, which is an "instance of the functor 

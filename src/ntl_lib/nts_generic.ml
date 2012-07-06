@@ -33,15 +33,19 @@ let rec nts_pprint_nts_typeinfo_genvar ( x : nts_genrel_var) =
 
 let is_int_var v =
   match v with 
-      NtsGenVar(NtsIVar( vname ),_)-> true
+      NtsGenVar(NtsIVar( _ ),_)-> true
     |_ -> false
       
 let is_real_var v =
   match v with
-    NtsGenVar(NtsRVar( vname ),_)-> true
+    NtsGenVar(NtsRVar( _ ),_)-> true
     |_ -> false
       
 
+let is_nat_var v =
+  match v with
+      NtsGenVar(NtsNVar(_),_) -> true
+    | _ -> false
  
       
 let concat_if_first_arg_nonzero s1 s2 =
@@ -68,12 +72,17 @@ let concat_comma_both_arg_non_empty s1 s2 =
 let pprint_typeinfo_nts_genvar_list l =
   let int_var_list = List.filter ( is_int_var) l in
   let real_var_list =  List.filter ( is_real_var) l in
+  let nat_var_list = List.filter ( is_nat_var ) l in
   let pp_of_list_of_int = 
     concat_if_first_arg_nonzero (pprint_ntsgen_var_list int_var_list) " : int" in
   let pp_of_list_of_real = 
     concat_if_first_arg_nonzero (pprint_ntsgen_var_list real_var_list) " : real" in
-  concat_comma_both_arg_non_empty pp_of_list_of_int pp_of_list_of_real
-    
+  let pp_of_list_of_nat =
+    concat_if_first_arg_nonzero (pprint_ntsgen_var_list nat_var_list) " : nat" in
+  let ret = concat_comma_both_arg_non_empty pp_of_list_of_int pp_of_list_of_real
+  in  concat_comma_both_arg_non_empty ret pp_of_list_of_nat
+  
+  
     
   
 

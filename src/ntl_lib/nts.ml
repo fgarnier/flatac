@@ -40,9 +40,8 @@ let negate_cntbool_shallow ( b : cnt_bool) =
 
 let nts_pprint_nts_var (x : nts_var ) = 
   match x with 
-      NtsIVar( vname ) -> vname
-    | NtsRVar ( vname ) -> vname
-    | NtsMiscType ( vname ) -> vname
+      NtsIVar( vname ) | NtsRVar ( vname ) | NtsMiscType ( vname ) 
+    | NtsNVar (vname) | NtsBVar (vname) -> vname
   (*  | NtsArray (vname,size,_) -> Format.printf "%s[%d]" vname size*)
 
 
