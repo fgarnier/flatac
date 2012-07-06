@@ -19,6 +19,7 @@
   register_kwd "nts" NTSDECL;;
   register_kwd "int" INTDECL;;
   register_kwd "nat" NATDECL;;
+  register_kwd "bool" BOOLDECL;;
   register_kwd "real" REALDECL;;
   register_kwd "initial" INITSTATE;;
   register_kwd "final" FINALSTATE;;

@@ -27,12 +27,9 @@
 
 
 
-let build_local_var_list_mapper (vsort : varsort ) vloctype  s =
-    match vsort with 
-	Int ->
-	  (NtsGenVar(NtsIVar(s),NtsUnPrimed),vloctype)
-      | Real -> 
-	(NtsGenVar(NtsRVar(s),NtsUnPrimed),vloctype)
+let build_local_var_list_mapper vloctype  s =
+  (s,vloctype)
+      
 	  
 let build_cautomata_states_mapper (state_type : stateloctype ) s =
   let sin = Nts_int.control_of_id_param s in
@@ -174,9 +171,9 @@ let rebuild_non_guard_trans list_res =
 %token TIMES PLUS MINUS UMINUS DIV MOD LT GT MOD EQ NEQ LEQ GEQ LBRACE
 %token RBRACE LBRACK RBRACK OBRACK CBRACK COLON SEMICOLON COMMA ARROW
 %token  PRIME BTRUE BFALSE BAND BOR BNOT EOF
-%token NTSDECL INTDECL NATDECL REALDECL INITSTATE FINALSTATE ERRORSTATE
+%token NTSDECL INTDECL NATDECL REALDECL BOOLDECL INITSTATE FINALSTATE ERRORSTATE
 %token INPUTVARLIST OUTPUTVARLIST LOCALVARLIST HAVOC
-%token EXISTS FORALL IMPLY EQUIV LRARROW DOT
+%token EXISTS FORALL IMPLY EQUIV LRARROW DOT 
 
 %nonassoc PRIMEVARLIST 
 %nonassoc PRIMEDEXPR 
@@ -236,6 +233,14 @@ gvars_decl : ident_list COLON INTDECL {
 | ident_list COLON REALDECL  {
 List.map (fun s->NtsGenVar( NtsRVar(s),NtsUnPrimed)) $1 
 } 
+
+| ident_list COLON NATDECL {
+List.map  (fun s->NtsGenVar( NtsNVar(s),NtsUnPrimed)) $1 
+}
+
+| ident_list COLON BOOLDECL {
+List.map  (fun s->NtsGenVar( NtsBVar(s),NtsUnPrimed)) $1 
+}
 ;
 
 decl_sequence : decl_automata decl_sequence {$1::$2}
@@ -269,28 +274,38 @@ decl_automata : IDENT LBRACK vars_automaton states_list transitions_list RBRACK
   
 }
 
-vars_automaton : vars_loc vars_automaton { $1 @ $2 }
+vars_automaton : vars_loc  vars_automaton { $1 @ $2 }
 | vars_loc {$1}
 ;
 
-vars_loc : INPUTVARLIST ident_list COLON INTDECL SEMICOLON  {
-  List.map (  build_local_var_list_mapper Int Cautomaton_input) $2  }
+vars_loc : INPUTVARLIST typed_id_list_list SEMICOLON  {
+  List.map (  build_local_var_list_mapper  Cautomaton_input) $2  }
 
-| INPUTVARLIST ident_list COLON REALDECL SEMICOLON {
-  List.map ( build_local_var_list_mapper Real Cautomaton_input ) $2  }
+| OUTPUTVARLIST typed_id_list_list  SEMICOLON {
+  List.map ( build_local_var_list_mapper  Cautomaton_output) $2  }
 
-| OUTPUTVARLIST ident_list COLON INTDECL SEMICOLON {
-  List.map ( build_local_var_list_mapper Int Cautomaton_output) $2  }
+| typed_id_list_list SEMICOLON {
+  List.map ( build_local_var_list_mapper  Cautomaton_local ) $1  }
 
-| OUTPUTVARLIST ident_list COLON REALDECL SEMICOLON {
-  List.map ( build_local_var_list_mapper Real Cautomaton_output) $2 } 
 
-| ident_list COLON INTDECL SEMICOLON {
-  List.map ( build_local_var_list_mapper Int Cautomaton_local ) $1  }
+;
 
-| ident_list COLON REALDECL SEMICOLON {
-  List.map ( build_local_var_list_mapper Real Cautomaton_local ) $1  }
 
+typed_id_list_list : typed_id_list COMMA typed_id_list_list {$1 @ $3} 
+| typed_id_list {$1}
+
+typed_id_list : ident_list COLON INTDECL {
+List.map (fun s -> NtsGenVar(NtsIVar(s),NtsUnPrimed)) $1
+}
+| ident_list COLON NATDECL{
+List.map (fun s -> NtsGenVar(NtsNVar(s),NtsUnPrimed)) $1
+}
+| ident_list COLON REALDECL{
+List.map (fun s -> NtsGenVar(NtsRVar(s),NtsUnPrimed)) $1
+}
+| ident_list COLON BOOLDECL{
+List.map (fun s -> NtsGenVar(NtsBVar(s),NtsUnPrimed)) $1
+}
 ;
 
 transitions_list : transitions transitions_list {$1::$2}
