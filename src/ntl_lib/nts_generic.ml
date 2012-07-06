@@ -114,7 +114,7 @@ let rec size_genrel_deeper_than  (bexp : nts_gen_relation ) (depth : int ) =
       | CntGenRelComp(_ , eg ,  ed ) ->
 	(size_genrel_deeper_than eg deep' ) || (size_genrel_deeper_than ed deep' )
       | CntGenRel ( _ , _ , _ ) -> false   
-
+      |  CntQVarsGenRel(_,_,exp') -> size_genrel_deeper_than exp' deep'
 
 
 let rec nts_pprint_genrel_arithm_exp ( exp : nts_genrel_arithm_exp ) =

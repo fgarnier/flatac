@@ -135,7 +135,7 @@ let rebuild_trans_guards nts_trans_split_prec_list =
 	let curr_bool = CntGenRelComp(CntGenBAnd,cnt_curr_bool,CntGenNot(parsed_bool))
 	in
 	(curr_bool,bool_stack )
-      | `Qformula(parse_bool) ->
+      | `Qformula(parsed_bool) ->
 	let curr_bool = CntGenRelComp(CntGenBAnd,cnt_curr_bool,parsed_bool) in
 	(curr_bool,bool_stack )
       | _ -> (cnt_curr_bool,bool_stack ) 
