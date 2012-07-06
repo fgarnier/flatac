@@ -394,19 +394,19 @@ qformula : EXISTS ident_list COLON INTDECL DOT pressburg_atomic_bool {
 |  FORALL ident_list COLON INTDECL DOT pressburg_atomic_bool {
   let var_list = List.map (fun s -> NtsGenVar(NtsIVar(s),NtsUnPrimed)) $2
   in 
-  CntQVarsGenRel(var_list,NtsExists,$6)
+  CntQVarsGenRel(var_list,NtsForall,$6)
  } 
 
 | FORALL ident_list COLON INTDECL DOT LBRACE pressburg_tree_guards RBRACE {
   let var_list = List.map (fun s -> NtsGenVar(NtsIVar(s),NtsUnPrimed)) $2
   in 
-  CntQVarsGenRel(var_list,NtsExists,$7)
+  CntQVarsGenRel(var_list,NtsForall,$7)
  }
 
 | FORALL ident_list COLON INTDECL DOT LBRACE qformula RBRACE {
   let var_list = List.map (fun s -> NtsGenVar(NtsIVar(s),NtsUnPrimed)) $2
   in 
-  CntQVarsGenRel(var_list,NtsExists,$7)
+  CntQVarsGenRel(var_list,NtsForall,$7)
 }
 
 
@@ -471,10 +471,13 @@ pressburg_tree_guards : LBRACE pressburg_atomic_bool RBRACE
   {$2}
 | LBRACE pressburg_tree_guards RBRACE {$2}
 
+| LBRACE qformula RBRACE {$2}
+
 | pressburg_atomic_bool BAND pressburg_atomic_bool {
  
   CntGenRelComp(CntGenBAnd,$1,$3)
 }
+
 
 | pressburg_tree_guards BAND pressburg_tree_guards {
   CntGenRelComp(CntGenBAnd,$1,$3)
@@ -488,6 +491,25 @@ pressburg_tree_guards : LBRACE pressburg_atomic_bool RBRACE
    CntGenRelComp(CntGenBAnd,$1,$3)
   
 }
+
+
+| qformula BAND  pressburg_tree_guards {
+  CntGenRelComp(CntGenBAnd,$1,$3)
+}
+
+| qformula BAND pressburg_atomic_bool {
+ CntGenRelComp(CntGenBAnd,$1,$3)
+}
+
+
+|  pressburg_tree_guards BAND qformula {
+  CntGenRelComp(CntGenBAnd,$1,$3)
+}
+
+|  pressburg_atomic_bool BAND qformula {
+ CntGenRelComp(CntGenBAnd,$1,$3)
+}
+
 
 
 | pressburg_atomic_bool BOR pressburg_atomic_bool {
@@ -505,6 +527,26 @@ pressburg_tree_guards : LBRACE pressburg_atomic_bool RBRACE
   CntGenRelComp(CntGenBOr,$1,$3)
 
 }
+
+
+| qformula BOR  pressburg_tree_guards {
+  CntGenRelComp(CntGenBOr,$1,$3)
+}
+
+| qformula BOR pressburg_atomic_bool {
+ CntGenRelComp(CntGenBOr,$1,$3)
+}
+
+
+|  pressburg_tree_guards BOR qformula {
+  CntGenRelComp(CntGenBOr,$1,$3)
+}
+
+|  pressburg_atomic_bool BOR qformula {
+ CntGenRelComp(CntGenBOr,$1,$3)
+}
+
+
 
 |  BNOT pressburg_tree_guards {
   CntGenNot($2)
