@@ -374,37 +374,37 @@ nts_trans_elem :/* BNOT {`Trans_neg_of_guard} */  /* Negation until the
 
 
 qformula : EXISTS ident_list COLON INTDECL DOT pressburg_atomic_bool {
-  let var_list = List.map (fun s -> NtsGenVar(NtsIVar(s),NtsPrimed)) $2
+  let var_list = List.map (fun s -> NtsGenVar(NtsIVar(s),NtsUnPrimed)) $2
   in 
   CntQVarsGenRel(var_list,NtsExists,$6)
  } 
 
 | EXISTS ident_list COLON INTDECL DOT LBRACE pressburg_tree_guards RBRACE {
-  let var_list = List.map (fun s -> NtsGenVar(NtsIVar(s),NtsPrimed)) $2
+  let var_list = List.map (fun s -> NtsGenVar(NtsIVar(s),NtsUnPrimed)) $2
   in 
   CntQVarsGenRel(var_list,NtsExists,$7)
  }
 
 | EXISTS ident_list COLON INTDECL DOT LBRACE qformula RBRACE {
-  let var_list = List.map (fun s -> NtsGenVar(NtsIVar(s),NtsPrimed)) $2
+  let var_list = List.map (fun s -> NtsGenVar(NtsIVar(s),NtsUnPrimed)) $2
   in 
   CntQVarsGenRel(var_list,NtsExists,$7)
  }
   
 |  FORALL ident_list COLON INTDECL DOT pressburg_atomic_bool {
-  let var_list = List.map (fun s -> NtsGenVar(NtsIVar(s),NtsPrimed)) $2
+  let var_list = List.map (fun s -> NtsGenVar(NtsIVar(s),NtsUnPrimed)) $2
   in 
   CntQVarsGenRel(var_list,NtsExists,$6)
  } 
 
 | FORALL ident_list COLON INTDECL DOT LBRACE pressburg_tree_guards RBRACE {
-  let var_list = List.map (fun s -> NtsGenVar(NtsIVar(s),NtsPrimed)) $2
+  let var_list = List.map (fun s -> NtsGenVar(NtsIVar(s),NtsUnPrimed)) $2
   in 
   CntQVarsGenRel(var_list,NtsExists,$7)
  }
 
 | FORALL ident_list COLON INTDECL DOT LBRACE qformula RBRACE {
-  let var_list = List.map (fun s -> NtsGenVar(NtsIVar(s),NtsPrimed)) $2
+  let var_list = List.map (fun s -> NtsGenVar(NtsIVar(s),NtsUnPrimed)) $2
   in 
   CntQVarsGenRel(var_list,NtsExists,$7)
 }
