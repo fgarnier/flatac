@@ -88,7 +88,7 @@ let primed_var = (identifier quote)
   | "not" {BNOT}
   | "!" {BNOT}
   | intval {
-    let num =  int_of_string( 
+    let num =  Big_int.big_int_of_string( 
     Lexing.lexeme lexbuf) in
     INT(num)
   }

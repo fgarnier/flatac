@@ -161,7 +161,7 @@ let rebuild_non_guard_trans list_res =
 %}
 
 
-%token <int>  INT
+%token <Big_int.big_int>  INT
 %token <string> IDENT
 %token <float> REAL
 %token <string> PRIMEDVAR 
@@ -479,6 +479,8 @@ gen_affect : PRIMEDVAR EQ IDENT  LBRACE arithm_expr_list RBRACE {
   CntGenCall($5,Some($2),[])
 }
 | IDENT LBRACE arithm_expr_list RBRACE  {CntGenCall($1,None,$3)}
+| IDENT LBRACE RBRACE {CntGenCall($1,None,[])}
+
 ;
 
 
@@ -599,7 +601,7 @@ arithm_expr_list : arithm_expr {$1::[]}
 | arithm_expr COMMA arithm_expr_list {$1::$3} 
 ;
 
-arithm_expr : INT { let  cst = Big_int.big_int_of_int $1 in 
+arithm_expr : INT { let  cst =  $1 in 
 		   CntGenCst(cst)}
 
 | IDENT { let vname = $1 in
