@@ -3,7 +3,9 @@
 
 #FLATAC_ROOT := flatac 
 TYPES_INCLUDES := ${FRAMA_C_INCLUDES} 
-GENSOURCE := ntl_parser.ml ntl_parser.mli ntl_lexer.ml
+GENSOURCE := ntl_parser.ml ntl_parser.mli ntl_lexer.ml 
+SOURCE_FILES := nts_types.ml nts.ml nts_functor.ml ntsint.ml nts_generic.ml\
+	     parsing_error.ml
 
 CFLAGS = -g -annot -c
 INTERFACES = ntl_parser.mli
@@ -16,16 +18,17 @@ INTERFACES = $(OBJECTS:.cmo=.cmi)
 TEST = parse_n_print
  
 clean : 
-	rm -f *.cmo *.cmi *.annot parse_n_print $(GENSOURCE)
+	rm -f *.cmo *.cmi *.cma *.annot parse_n_print $(GENSOURCE)
 
 all : .depend $(INTERFACES) $(OBJECTS) $(TEST)
+	ocamlc -o ocaml_ntl.cma -a $(OBJECTS)
 
 %.cmo : %.ml
-	@echo  "Compilation de"  $<
+	@echo  "Compiling"  $<
 	@ocamlc ${CFLAGS}  $< -o $@ ${TYPES_INCLUDES}
 
 %.cmi : %.mli
-	@echo  "Compilation de l'interface " $<
+	@echo  "Compiling interface " $<
 	@ocamlc ${CFLAGS}  $< -o $@ $(TYPES_INCLUDES)
 
 ntl_lexer.cmi : ntl_parser.mli
@@ -47,7 +50,7 @@ parse_n_print : parse_n_print.ml $(OBJECTS)
 
 include .depend
 
-.depend: $(GENSOURCE) 
+.depend: $(GENSOURCE)  
 	ocamldep *.ml *.mli > .depend
 
 

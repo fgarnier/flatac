@@ -93,46 +93,6 @@ struct
     in
     (Hashtbl.fold key_name_folder  nts_sys.nts_automata "")
 
-(*
-  (* Check whether a variable name is a global_var*)	
-  let check_var_name_availability_in_cautomaton  vname ntsys c  =
-    let is_taken vname var =
-      match var with
-	  NtsIVar(vn) | NtsRVar(vn)
-	    -> if (String.compare vn vname == 0)
-	      then true
-	      else
-		false
-    in
-    let res =
-      List.exists  (is_taken vname) c.input_vars in
-    let res =
-      (res &&
-	 List.exists  (is_taken vname) c.output_vars) in
-    let res = ( res &&
-		  List.exists (is_taken vname) c.local_vars )  
-      
-    in
-    (
-      res && 
-	List.exists (is_taken vname ) ntsys.nts_global_vars
-    )
-      
-      
-  let check_var_name_availability_in_ntsystem  vname ntsys  =
-    let is_taken vname var =
-      match var with
-	  NtsGenVar(NtsIVar(vn),_)|NtsGenVar(NtsRVar(vn),_)
-	    -> 
-		  if (String.compare vn vname == 0)
-		  then true
-		  else
-		    false
-    in
-    List.exists (is_taken vname ) ntsys.nts_global_vars
-	  
-
-*)
 
 
 
@@ -257,9 +217,7 @@ struct
     
   let pretty_label tlist =
     Nts_generic.nts_pprint_gen_trans_label_list tlist
-    (*let  str = List.fold_left pprint_trans_list_foldleft "" tlist in
-      str*)
-  
+   
 
 
 
@@ -352,47 +310,7 @@ struct
 
 
 
-(*
-  let pprint_transitions (prescript :string) (cautomata : nts_automaton )=
-    let intermediate_sid = ref 0 in
-    let dest_table_print_folder ( origin : control ) (dest : control ) label 
-	(prescript : string ) =
-      if (Nts_generic.static_check_if_translist_unsat label) 
-      then prescript 
-      else
-	if not (Nts_generic.need_split_transition label) 
-	then
-	  begin
-	   (* let label = Nts.rewrite_ndet_assignation label in *)
-	    (*let label = Nts.havocise label in*)
-	    let post_script = Format.sprintf "%s \n %s->%s { %s }" prescript ( pprint_control origin)  ( pprint_control dest) 
-	      (pretty_label label)
-	    in 
-	      post_script
-	  end
-	       
-	else
-	  begin
-	    (*let label =  Nts.rewrite_ndet_assignation label in*)
-	    let (pre,post) = Nts.split_guard_call_transition label in
-	       let pre= Nts.havocise_label pre in
-	       let post = Nts.havocise_label post in
-	       let post_script = Format.sprintf "%s \n %s->sinter%d { %s }" prescript   ( pprint_control origin) ( !intermediate_sid)
-		 (pretty_label pre) in
-	       let post_script=Format.sprintf "%s \n sinter%d-> %s { %s }" post_script ( !intermediate_sid)  ( pprint_control dest) 
-		 (pretty_label post) in
-	       intermediate_sid:=!intermediate_sid + 1;
-	       post_script
-	     end 
 
-      in
-      let origin_table_print_folder (origin : control ) table_dest 
-	  (pre_script :  string ) =
-	Hashtbl.fold (dest_table_print_folder origin) table_dest pre_script
-      in
-      Hashtbl.fold origin_table_print_folder cautomata.transitions prescript
-
-*)
   let pprint_to_nts cautomata = 
       (* let current_ecfg_node = Hashtbl.get vertex current_vertex_id in *)
       let res_string = cautomata.nts_automata_name^"{\n" in
