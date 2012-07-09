@@ -1,3 +1,17 @@
+(**
+
+Generic interface for numerical transitions systems.
+
+(C) Verimag 2012
+
+For questions and/or remarks :
+
+ Write to florent dot garnier at imag dot fr
+
+
+*)
+
+
 open Nts_types
 open Hashtbl
 open Lexing 
@@ -79,7 +93,6 @@ sig
 
   val pprint_to_nts : nts_automaton -> string
   val pprint_nts : nts_system -> string 
-  
     (* Here for debuging purposes. Shall be removed for release
     versions*)
   val pprint_transitions : string -> nts_automaton -> string
