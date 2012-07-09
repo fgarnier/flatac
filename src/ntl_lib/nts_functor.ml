@@ -38,7 +38,8 @@ module type NTS_PARAM =
     type t         (*Type for key id of control states: e.g : int, string*)
     type anot_type (*Type for anotations*)
     val anot_parser : unit -> anot_type
-    val pprint_keyid : t -> string 
+    val pprint_keyid : t -> string
+    val compare_keyid : t -> t -> int
     val pprint_anot : anot_type -> string (*Types for pprinting anotations*)
   end
 
@@ -223,9 +224,57 @@ struct
 
 
 
+  let pprint_states_list l =
+    let lfolder pre elem =
+      match pre with
+	  "" -> pprint_control elem
+	| _ -> pre^","^(pprint_control elem)
+    in
+    List.fold_left lfolder "" l  
+
+  let list_of_hastbl_states t =
+    let lfolder var () l =
+      var::l
+    in
+    let state_list =  Hashtbl.fold lfolder t [] in
+    let sorted_state_list =
+      List.sort 
+	( fun s t -> 
+	  begin
+	    match s,t with 
+		Nts_State(s),Nts_State(t) -> Param.compare_keyid s t
+	  end 
+	) state_list
+    in
+    sorted_state_list
+      
+  let pprint_initial_states c =
+    let c_list = list_of_hastbl_states c.init_states in
+    let ret_candidate = pprint_states_list  c_list in
+    match ret_candidate 
+    with
+	"" -> ""
+      | _ -> "initial "^ret_candidate^";"
+	
+  let pprint_final_states c =
+    let c_list = list_of_hastbl_states c.final_states in
+    let ret_candidate = pprint_states_list c_list in
+    match ret_candidate 
+    with
+	"" -> ""
+      | _ -> "final "^ret_candidate^";"	
+
+  let pprint_error_states c =
+    let c_list = list_of_hastbl_states c.error_states in
+    let ret_candidate = pprint_states_list c_list in
+    match ret_candidate 
+    with
+	"" -> ""
+      | _ -> "error "^ret_candidate^";"	
 
   (* The function below need not appear in the interface file*)
-  let pprint_initial_states c =
+(*  
+let pprint_initial_states c =
      let elem_left = ref 0 in
       let pprint_folder id () prescript =
 	if !elem_left <= 1 then
@@ -282,7 +331,7 @@ struct
       else
 	""
 
-
+*)
 
 	  
   let pprint_transitions (prescript :string) (cautomata : nts_automaton )=
@@ -309,6 +358,59 @@ struct
 
 
 
+ 
+
+  (** This function aims at printing all the transitions in a fixed 
+      order, using the lexicographical order on the couples of orig and
+destination states.*)
+
+  let pprint_transitions_lexico_sorted (prescript :string) (cautomata : nts_automaton ) =
+    let lex_control c d =
+      match c, d with 
+	  ((Nts_State(g),Nts_State(d)),(Nts_State(l),Nts_State(r))) 
+	  ->
+	    begin
+	      let cmpare =  Param.compare_keyid g l in 
+	      if cmpare = 0 
+	      then 
+		begin
+		  Param.compare_keyid d r
+		end 
+	      else 
+		cmpare
+	    end
+    in
+    let dest_table_to_list_folder ( origin : control ) (dest : control ) 
+	label dest_list =
+      (origin,dest,label)::dest_list 
+    in
+    let dest_orig_list_to_list_folder (origin : control ) dest_table  
+	dest_list =
+      let inner_list = Hashtbl.fold  ( dest_table_to_list_folder origin) dest_table [] 
+      in
+      inner_list@dest_list
+    in
+    
+    let pprint_list_folder prepprint (origin,dest,label)  = 
+      let post_script = Format.sprintf "%s \n %s->%s { %s }" prepprint ( pprint_control origin)  ( pprint_control dest) 
+	(pretty_label label)
+      in 
+      post_script
+    in
+    let flat_list = 
+      (Hashtbl.fold dest_orig_list_to_list_folder cautomata.transitions []) 
+    in
+    let sorted_list  =  List.sort 
+      ( fun (g,d,_) (l,r,_) -> 
+	lex_control (g,d) (l,r) 
+      ) 
+      flat_list 
+    in
+    prescript^(List.fold_left pprint_list_folder "" sorted_list) 
+      
+      
+
+    
 
 
   let pprint_to_nts cautomata = 
@@ -335,11 +437,36 @@ struct
       let res_string = res_string^((pprint_initial_states cautomata))^"\n"  in
       let res_string = res_string^((pprint_final_states cautomata))^"\n" in
       let res_string = res_string^((pprint_error_states cautomata)) in
-      let res_string = res_string^((pprint_transitions "" cautomata))
+     (* let res_string = res_string^((pprint_transitions "" cautomata))*)
+      let res_string = (pprint_transitions_lexico_sorted res_string cautomata )
       in
       let res_string = res_string^"\n}" in
       res_string
 
+
+(** This function prints all the automata of an nts w.r.t. the lexicographical
+ordering on their name. *)
+
+ let pprint_automata_lexico_sorted ( cautomata_table : 
+					(string, nts_automaton ) Hashtbl.t ) =
+    
+    let pprint_folder prev_str (_,cautomaton) =
+      match prev_str with
+	   "" ->  (pprint_to_nts cautomaton) 
+	| _ ->
+	  begin
+	    let ret_str = prev_str ^"\n"^(pprint_to_nts cautomaton)
+	    in ret_str
+	  end
+    in
+    let extract_list_folder a_name automat l  =
+      (a_name,automat)::l in
+
+    let ret_list =  Hashtbl.fold extract_list_folder cautomata_table []   in
+    let ret_list = List.sort (fun (a,_) (b,_) -> String.compare a b) 
+      ret_list in
+    (List.fold_left pprint_folder "" ret_list)
+      
 
 
   let pprint_all_cautomata cautomata_table =
@@ -372,7 +499,10 @@ struct
     in
     let ret_string= ret_string^gvars_pprint
     in
+    (*
     let all_automata = pprint_all_cautomata  nt_system.nts_automata
+    *)
+    let all_automata = pprint_automata_lexico_sorted nt_system.nts_automata
     in
     ret_string^all_automata^"\n"
     

@@ -31,6 +31,7 @@ module type NTS_PARAM =
 	instance*)
       
     val pprint_keyid : t -> string (*Types for pprinting anotations*)
+    val compare_keyid : t-> t -> int (* comparision function for keyid*)
     val pprint_anot : anot_type -> string
   end 
 

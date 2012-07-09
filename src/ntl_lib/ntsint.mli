@@ -4,6 +4,7 @@ module P :
     type anot_type = unit
     val anot_parser : unit -> unit
     val pprint_keyid : 'a -> 'a
+    val compare_keyid : String.t -> String.t -> int
     val pprint_anot : 'a -> string
   end
 module Nts_int :
