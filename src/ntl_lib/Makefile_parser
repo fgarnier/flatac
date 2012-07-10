@@ -1,11 +1,14 @@
-#include ../Makefile.conf
 #
 
-#FLATAC_ROOT := flatac 
+
 TYPES_INCLUDES := ${FRAMA_C_INCLUDES} 
 GENSOURCE := ntl_parser.ml ntl_parser.mli ntl_lexer.ml 
 SOURCE_FILES := nts_types.ml nts.ml nts_functor.ml ntsint.ml nts_generic.ml\
 	     parsing_error.ml
+
+OCAMLDOC := ocamldoc
+DOCEXPORTDIR := ./api
+DOCFLAGS := -html -d $(DOCEXPORTDIR) *.ml *.mli
 
 CFLAGS = -g -annot -c
 INTERFACES = ntl_parser.mli
@@ -16,6 +19,7 @@ OBJECTS = nts_types.cmo nts.cmo nts_generic.cmo nts_functor.cmo ntsint.cmo \
 LIBNUM = nums.cma # Contains Big_int module   
 INTERFACES = $(OBJECTS:.cmo=.cmi)
 TEST = parse_n_print
+
  
 clean : 
 	rm -f *.cmo *.cmi *.cma *.annot parse_n_print $(GENSOURCE)
@@ -57,6 +61,8 @@ fixpointvalid :
 	@echo "Fixpoint test for parse_n_print"
 	@python test_passes.py
 
-
+docgen : $(OBJECTS)
+	@echo "Generating API"
+	@$(OCAMLDOC) $(DOCFLAGS) 
 
 
