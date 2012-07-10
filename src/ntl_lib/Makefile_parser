@@ -20,8 +20,8 @@ TEST = parse_n_print
 clean : 
 	rm -f *.cmo *.cmi *.cma *.annot parse_n_print $(GENSOURCE)
 
-all : .depend $(INTERFACES) $(OBJECTS) $(TEST)
-#	ocamlc -o ocaml_ntl.cma -a $(OBJECTS)
+all : .depend $(INTERFACES) $(OBJECTS) $(TEST) fixpointvalid
+	@echo "Build successfull"
 
 %.cmo : %.ml
 	@echo  "Compiling"  $<
@@ -52,6 +52,10 @@ include .depend
 
 .depend: $(GENSOURCE)  
 	ocamldep *.ml *.mli > .depend
+
+fixpointvalid :
+	@echo "Fixpoint test for parse_n_print"
+	@python test_passes.py
 
 
 
