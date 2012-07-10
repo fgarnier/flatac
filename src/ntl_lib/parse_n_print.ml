@@ -29,8 +29,10 @@ let _ =
 		end
 	)
       in
-      Format.printf "I opened the file %s \n %!" filename;
-      let dump_name = "dump_"^filename in
+      (*Format.printf "I opened the file %s \n %!" filename;*)
+      let base_file_name = Filename.basename filename in
+      let dir_name = Filename.dirname filename in
+      let dump_name = dir_name^"/"^base_file_name^"_dump" in
       let dump_file_descr = ( 
 	  try
 	    ( open_out dump_name )
@@ -42,14 +44,14 @@ let _ =
 		end
 	)
       in
-      Format.printf "I created the file %s \n %!" dump_name;
+      (*Format.printf "I created the file %s \n %!" dump_name;*)
       let buf = Lexing.from_channel input_channel in
       let nt_system = Ntl_parser.ntldescr Ntl_lexer.token buf in
-      let out_put_reparsed = Nts_int.pprint_nts nt_system in
-      Format.printf "%s \n %!" out_put_reparsed;
+      let output_reparsed = Nts_int.pprint_nts nt_system in
+      (*Format.printf "%s \n %!" output_reparsed;*)
       let dump_channel = Format.formatter_of_out_channel dump_file_descr 
       in
-      Format.fprintf dump_channel "%s\n %!" out_put_reparsed;
+      Format.fprintf dump_channel "%s\n %!" output_reparsed;
       close_out dump_file_descr;
     end
    

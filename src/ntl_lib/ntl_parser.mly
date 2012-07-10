@@ -252,7 +252,7 @@ decl_sequence : decl_automata decl_sequence {$1::$2}
 
 decl_automata : IDENT LBRACK vars_automaton states_list transitions_list RBRACK
 {
-  Format.printf "!!!!!##### Creating a new counter automaton %s \n" $1;
+  (*Format.printf "!!!!!##### Creating a new counter automaton %s \n" $1;*)
   let cautomata_name = $1 in
   let varlocs = $3 in
   let trans_list = $5 in
@@ -351,20 +351,20 @@ states_list  : cautomaton_state states_list {$1 @ $2}
 ;
 
 cautomaton_state :  INITSTATE ident_list SEMICOLON  {
-  Format.printf "Adds an initial state \n"; 
+  (*Format.printf "Adds an initial state \n";*) 
   List.map (build_cautomata_states_mapper Cautomaton_start 
 	    ) $2 
   
   }
 
 | FINALSTATE ident_list SEMICOLON {
-  Format.printf "Adds a final state \n";
+  (*Format.printf "Adds a final state \n";*)
   List.map ( build_cautomata_states_mapper Cautomaton_final
   ) $2
 }
 
 | ERRORSTATE ident_list SEMICOLON {
-  Format.printf "Adds an error state \n";
+  (*Format.printf "Adds an error state \n";*)
   List.map ( build_cautomata_states_mapper Cautomaton_error  
   ) $2
     
@@ -602,8 +602,8 @@ pressburg_atomic_bool : BTRUE { CntGenTrue }
 
 primed_express : PRIMEDVAR %prec PRIMEDEXPR { 
   let varname = get_varname_of_primedvarname $1 in
-  Format.printf "Primed var string is %s \n %!" $1;
-  Format.printf "Primed var has name %s \n %! " varname ;
+  (*Format.printf "Primed var string is %s \n %!" $1;
+  Format.printf "Primed var has name %s \n %! " varname ;*)
   NtsGenVar(NtsMiscType(varname),NtsPrimed)
  
 }
