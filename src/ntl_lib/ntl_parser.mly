@@ -471,6 +471,19 @@ gen_affect : PRIMEDVAR EQ IDENT  LBRACE arithm_expr_list RBRACE {
   CntGenGuard(CntGenRel(CntEq,CntGenVar(vinfo),$3))
 }
 
+| LBRACE PRIMEDVAR RBRACE EQ IDENT LBRACE arithm_expr_list RBRACE {
+  let vname = get_varname_of_primedvarname $2 in
+  let vinfolist =  NtsGenVar(NtsMiscType(vname),NtsPrimed)::[] 
+  in 
+  CntGenCall($5,Some(vinfolist),$7)
+}
+
+| LBRACE PRIMEDVAR RBRACE EQ IDENT LBRACE  RBRACE {
+  let vname = get_varname_of_primedvarname $2 in
+  let vinfolist =  NtsGenVar(NtsMiscType(vname),NtsPrimed)::[] 
+  in 
+  CntGenCall($5,Some(vinfolist),[])
+}
 
 | LBRACE primed_var_list RBRACE EQ IDENT LBRACE arithm_expr_list RBRACE {
   CntGenCall($5,Some($2),$7)
