@@ -7,6 +7,11 @@ open Nts_generic
 
 
   
+let name_of_file pathname name =
+  match pathname with
+      "" -> name
+    | _ -> pathname^"/"^name
+
 
 
 let _ = 
@@ -30,7 +35,9 @@ let _ =
 	)
       in
       Format.printf "I opened the file %s \n %!" filename;
-      let dump_name = "dump_"^filename in
+      let bname = Filename.basename filename in
+      let pathname = Filename.dirname filename in
+      let dump_name = name_of_file pathname ("dump_"^bname) in
       let dump_file_descr = ( 
 	  try
 	    ( open_out dump_name )
@@ -46,7 +53,7 @@ let _ =
       let buf = Lexing.from_channel input_channel in
       let nt_system = Ntl_parser.ntldescr Ntl_lexer.token buf in
       let out_put_reparsed = Nts_int.pprint_nts nt_system in
-      Format.printf "%s \n %!" out_put_reparsed;
+      (*Format.printf "%s \n %!" out_put_reparsed;*)
       let dump_channel = Format.formatter_of_out_channel dump_file_descr 
       in
       Format.fprintf dump_channel "%s\n %!" out_put_reparsed;

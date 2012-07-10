@@ -337,7 +337,7 @@ let rec nts_pprint_genrel (bexp : nts_gen_relation ) =
 	let qvars_list_print =  pprint_typeinfo_nts_genvar_list vlist in
 	let q_print = pprint_nts_quantifier quantifier in
 	let pprint_sformula = nts_pprint_genrel subformula in
-	Format.sprintf "%s %s . %s" q_print qvars_list_print pprint_sformula
+	Format.sprintf "%s %s . (%s)" q_print qvars_list_print pprint_sformula
       end
 	
 
