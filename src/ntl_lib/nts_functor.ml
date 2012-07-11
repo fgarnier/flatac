@@ -272,66 +272,7 @@ struct
 	"" -> ""
       | _ -> "error "^ret_candidate^";"	
 
-  (* The function below need not appear in the interface file*)
-(*  
-let pprint_initial_states c =
-     let elem_left = ref 0 in
-      let pprint_folder id () prescript =
-	if !elem_left <= 1 then
-	  prescript^(Format.sprintf "%s" ( pprint_control id ))
-	else
-	  begin
-	    elem_left := !elem_left-1;
-	    prescript^(Format.sprintf "%s," ( pprint_control id ))
-	  end
-      in
-      elem_left := (Hashtbl.length c.init_states);
-	if !elem_left >0 then
-	  let retstring = Hashtbl.fold pprint_folder c.init_states ""
-	  in
-	    "initial "^retstring^";"
-	else
-	  ""
-
-  let pprint_final_states c =
-    let elem_left = ref 0 in
-    let pprint_folder id () prescript =
-      if !elem_left <= 1 then
-	prescript^(Format.sprintf "%s" ( pprint_control id ))
-      else
-	begin
-	  elem_left := !elem_left-1;
-	  prescript^(Format.sprintf "%s," ( pprint_control id ))
-	end
-    in
-      elem_left := (Hashtbl.length c.final_states);
-      if !elem_left >0 then
-	let retstring = Hashtbl.fold pprint_folder c.final_states ""
-	in
-	  "final "^retstring^";"
-      else
-	""
-	    
-  let pprint_error_states c =
-    let elem_left = ref 0 in
-    let pprint_folder id () prescript =
-      if !elem_left <= 1 then
-	prescript^(Format.sprintf "%s" ( pprint_control id ))
-      else
-	begin
-	  elem_left := !elem_left-1;
-	  prescript^(Format.sprintf "%s," ( pprint_control id ))
-	end
-    in
-      elem_left := (Hashtbl.length c.error_states);
-      if !elem_left >0 then
-	let retstring = Hashtbl.fold pprint_folder c.error_states ""
-	in
-	  "error "^retstring^";"
-      else
-	""
-
-*)
+ 
 
 	  
   let pprint_transitions (prescript :string) (cautomata : nts_automaton )=

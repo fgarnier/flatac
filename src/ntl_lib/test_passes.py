@@ -10,7 +10,8 @@
 # 
 # 
 
-import re, sys, subprocess, os
+import re, sys, subprocess, os, glob
+from glob import glob
 
 class bcolors:
     HEADER = '\033[95m'
@@ -78,6 +79,17 @@ def check_each_dir(dir_list):
     return failed_test
 
 
+
+def clean_dirs_of_dump_files(dir_list):
+    for dir_entry in dir_list:
+        files_names = dir_entry+'/*_dump'
+        files_sched_for_deletion = glob(files_names)
+        if files_sched != None :
+            for f in files_sched :
+                print( bcolors.OKBLUE+'[CLEANING]'+'removing {}'.format(f))
+                os.remove(f)
+        
+    
 def print_failed_list(flist):
     if len(flist) > 0 :
         for elem in flist:
