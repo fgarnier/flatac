@@ -19,13 +19,18 @@ OBJECTS = nts_types.cmo nts.cmo nts_generic.cmo nts_functor.cmo ntsint.cmo \
 LIBNUM = nums.cma # Contains Big_int module   
 INTERFACES = $(OBJECTS:.cmo=.cmi)
 TEST = parse_n_print
-
+DIST_TAR_NAME = ocaml_ntlib.tgz
  
 clean : 
 	rm -f *.cmo *.cmi *.cma *.annot parse_n_print $(GENSOURCE)
 
 all : .depend $(INTERFACES) $(OBJECTS) $(TEST) fixpointvalid
 	@echo "Build successfull"
+
+dist : all clean
+	@echo "Building distribution tarball"
+	cd .. && echo `pwd` && tar czvf $(DIST_TAR_NAME) ntl_lib/ && cd ntl_lib/
+	cp ../$(DIST_TAR_NAME) ./
 
 %.cmo : %.ml
 	@echo  "Compiling"  $<
