@@ -36,8 +36,10 @@ def fix_point_detection(dir_name,root_filename):
     nts_gen_file=dir_name+"/"+root_filename+".nts_dump"
     nts_second_pass_file=dir_name+"/"+root_filename+".nts_dump_dump"
     try:
+        """
         print 'Calling parse_n_print upon {0} '.format(nts_file)
         print 'Calling parse_n_print upon {0} '.format(nts_gen_file)
+        """
         subprocess.check_call(['./parse_n_print',nts_file])
         subprocess.check_call(['./parse_n_print',nts_gen_file])
         
@@ -47,11 +49,11 @@ def fix_point_detection(dir_name,root_filename):
         return failure_collection
     try:
         subprocess.check_call(["cmp",nts_gen_file,nts_second_pass_file])
-        print bcolors.OKGREEN+"[PASSED]"+bcolors.ENDC+": {0} \n".format(nts_file)
+        print bcolors.OKGREEN+"[PASSED]"+bcolors.ENDC+"Fix point test on file : {0} succeeded.".format(nts_file)
         return []
     
     except subprocess.CalledProcessError as errno:
-        print bcolors.FAIL+"[FAILED]"+bcolors.ENDC+"Call to {0} returned {1}".format(nts_file,errno)
+        print bcolors.FAIL+"[FAILED] There are some differences between the output of the first pass and the output of the second pass."+bcolors.ENDC+"Call to {0} returned {1}".format(nts_file,errno)
         failure_collection.append(nts_file)
         return failure_collection
     
