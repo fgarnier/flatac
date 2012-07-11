@@ -1,0 +1,55 @@
+nts flipflop ; 
+flipflop{
+
+q,data : int;
+initial s_init;
+
+error bad; 
+ s0->s1 { q' = q and data' = data } 
+ s0->s2 { q' = q and data' = data } 
+ s0->s3 { q' = data and data' = data } 
+ s0->s4 { data' = 0 and q' = 0 } 
+ s0->s6 { data' = 0 and q' = 0 } 
+ s1->s0 { q' = q and data' = data } 
+ s1->s2 { q' = q and data' = data } 
+ s1->s3 { q' = q and data' = data } 
+ s1->s5 { data' = 0 and q' = 0 } 
+ s1->s7 { data' = 0 and q' = 0 } 
+ s2->s0 { q' = q and data' = data } 
+ s2->s1 { q' = data and data' = data } 
+ s2->s3 { q' = data and data' = data } 
+ s2->s4 { data' = 0 and q' = 0 } 
+ s2->s6 { data' = 0 and q' = 0 } 
+ s3->s0 { q' = q and data' = data } 
+ s3->s1 { q' = q and data' = data } 
+ s3->s2 { q' = q and data' = data } 
+ s3->s5 { data' = 0 and q' = 0 } 
+ s3->s7 { data' = 0 and q' = 0 } 
+ s4->s0 { q' = q and data' = data } 
+ s4->s2 { q' = q and data' = data } 
+ s4->s5 { data' = 0 and q' = 0 } 
+ s4->s6 { data' = 0 and q' = 0 } 
+ s4->s7 { data' = 0 and q' = 0 } 
+ s4->bad { q != 0 and q' = q and data' = data } 
+ s5->s1 { q' = q and data' = data } 
+ s5->s3 { q' = q and data' = data } 
+ s5->s4 { data' = 0 and q' = 0 } 
+ s5->s6 { q' = 0 and data' = 0 } 
+ s5->s7 { data' = 0 and q' = 0 } 
+ s5->bad { q != 0 and q' = q and data' = data } 
+ s6->s0 { q' = q and data' = data } 
+ s6->s2 { q' = q and data' = data } 
+ s6->s4 { data' = 0 and q' = 0 } 
+ s6->s5 { data' = 0 and q' = 0 } 
+ s6->s7 { data' = 0 and q' = 0 } 
+ s6->bad { q != 0 and q' = q and data' = data } 
+ s_init->s4 { q' = 0 and data' = 0 } 
+ s7->s1 { q' = q and data' = data } 
+ s7->s3 { q' = q and data' = data } 
+ s7->s4 { data' = 0 and q' = 0 } 
+ s7->s5 { data' = 0 and q' = 0 } 
+ s7->s6 { data' = 0 and q' = 0 } 
+ s7->bad { q != 0 and q' = q and data' = data }
+}
+
+ 
