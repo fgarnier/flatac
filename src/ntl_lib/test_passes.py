@@ -45,12 +45,12 @@ def fix_point_detection(dir_name,root_filename):
         subprocess.check_call(['./parse_n_print',nts_gen_file])
         
     except subprocess.CalledProcessError as errcode:    
-        print bcolors.FAIL+"[FAILED]"+bcolors.ENDC+"Call to {0} returned {1}".format(nts_file,errcode)
+        print bcolors.FAIL+"[FAILED] "+bcolors.ENDC+"Call to {0} returned {1}".format(nts_file,errcode)
         failure_collection.append(nts_file)
         return failure_collection
     try:
         subprocess.check_call(["cmp",nts_gen_file,nts_second_pass_file])
-        print bcolors.OKGREEN+"[PASSED]"+bcolors.ENDC+"Fix point test on file : {0} succeeded.".format(nts_file)
+        print bcolors.OKGREEN+"[PASSED] "+bcolors.ENDC+"Fix point test on file : {0} succeeded.".format(nts_file)
         return []
     
     except subprocess.CalledProcessError as errno:
@@ -82,11 +82,12 @@ def check_each_dir(dir_list):
 
 def clean_dirs_of_dump_files(dir_list):
     for dir_entry in dir_list:
-        files_names = dir_entry+'/*_dump'
+        print  bcolors.OKBLUE+'[CLEANING] '+bcolors.ENDC+'Entering {0}'.format(dir_entry)
+        files_names = dir_entry.rstrip('\r\n')+'/*_dump'
         files_sched_for_deletion = glob(files_names)
-        if files_sched != None :
-            for f in files_sched :
-                print( bcolors.OKBLUE+'[CLEANING]'+'removing {}'.format(f))
+        if files_sched_for_deletion != None :
+            for f in files_sched_for_deletion :
+                print( bcolors.OKBLUE+'[CLEANING] '+bcolors.ENDC+'removing {0}'.format(f))
                 os.remove(f)
         
     
@@ -103,8 +104,10 @@ def runtests(test_dirs):
         file_obj = open(test_dirs,'r')
         dir_list = file_obj.readlines()
         failed_test=check_each_dir(dir_list)
-        print_failed_list(failed_test)
         if len(failed_test) == 0 :
+            print bcolors.OKGREEN+'[ALL TEST PASSED] '+bcolors.ENDC
+            print bcolors.OKBLUE+'[CLEANUP OF TESTDIRS] '+bcolors.ENDC
+            clean_dirs_of_dump_files(dir_list)
             print bcolors.OKGREEN+'[ALL TEST PASSED]'+bcolors.ENDC
             return True
         else :
