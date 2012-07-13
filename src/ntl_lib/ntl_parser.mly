@@ -193,7 +193,15 @@ let rebuild_non_guard_trans list_res =
 %%
 
 
-
+ntldescr : NTSDECL IDENT SEMICOLON gvars_decl decl_sequence {
+  
+  { 
+    nts_system_name = $2 ;
+    nts_global_vars = $4 ;
+    nts_automata = cautomata_hashtbl_of_cautomata_list $5
+ ;
+  }
+}
 ntldescr : NTSDECL IDENT SEMICOLON gvars_list_decl decl_sequence {
   
   { 
@@ -202,6 +210,8 @@ ntldescr : NTSDECL IDENT SEMICOLON gvars_list_decl decl_sequence {
     nts_automata = cautomata_hashtbl_of_cautomata_list $5 ;
   }
 }
+
+
 
 
 
@@ -222,23 +232,26 @@ ident_list : IDENT {[$1]}
 | IDENT COMMA ident_list {$1::$3}
 ;
 
-gvars_list_decl : gvars_decl COMMA gvars_list_decl {$1 @ $3}
-| gvars_decl SEMICOLON {$1}
+gvars_list_decl :  gvars_decl {$1} 
+| gvars_decl  gvars_list_decl {$1 @ $2}
 ;
+/*
 
-gvars_decl : ident_list COLON INTDECL { 
+;*/
+
+gvars_decl : ident_list COLON INTDECL SEMICOLON { 
   List.map (fun s-> NtsGenVar(NtsIVar(s),NtsUnPrimed)) $1
 }
 
-| ident_list COLON REALDECL  {
+| ident_list COLON REALDECL SEMICOLON {
 List.map (fun s->NtsGenVar( NtsRVar(s),NtsUnPrimed)) $1 
 } 
 
-| ident_list COLON NATDECL {
+| ident_list COLON NATDECL SEMICOLON {
 List.map  (fun s->NtsGenVar( NtsNVar(s),NtsUnPrimed)) $1 
 }
 
-| ident_list COLON BOOLDECL {
+| ident_list COLON BOOLDECL SEMICOLON {
 List.map  (fun s->NtsGenVar( NtsBVar(s),NtsUnPrimed)) $1 
 }
 ;

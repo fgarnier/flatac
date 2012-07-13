@@ -55,6 +55,7 @@ let identifier = ( '_' | uletter | lletter)+ ( uletter | lletter | '_' | number 
 let primed_var = (identifier quote)
     
  rule token = parse
+  | "/*" { comments 0 lexbuf }
   | ['\n'] {Lexing.new_line lexbuf; token lexbuf}
   | [' ' '\t' '\r' '\000'] {token lexbuf}
   | "*" {TIMES}
@@ -87,6 +88,8 @@ let primed_var = (identifier quote)
   | "||" {BOR}
   | "not" {BNOT}
   | "!" {BNOT}
+  | "//" {comment_line lexbuf}
+
   | intval {
     let num =  Big_int.big_int_of_string( 
     Lexing.lexeme lexbuf) in
@@ -101,6 +104,38 @@ let primed_var = (identifier quote)
     let error_msg = Lexing.lexeme lexbuf in 
     raise (UndefinedLexem(error_msg))
   }
+ 
+ and comments level = parse
+   | "*/" {
+     if level = 0 then token lexbuf
+     else comments (level-1) lexbuf
+   }
+   | "/*" {
+     comments (level+1) lexbuf
+   }
+   | "\n" {
+     Lexing.new_line lexbuf;comments level lexbuf
+   }
+   | _ {
+     comments level lexbuf
+   }
+   | eof {
+     begin
+       Format.printf " EOF reached within unclosed comments %d \n" (level+1);
+       exit 1
+     end
+   }
+
+ and comment_line  = parse
+   | ['\n'] {
+     token lexbuf
+   }
+ 
+   | _ {
+     comment_line lexbuf
+   }
+
+
 
 
 {

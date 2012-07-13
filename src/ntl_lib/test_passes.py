@@ -41,8 +41,8 @@ def fix_point_detection(dir_name,root_filename):
         print 'Calling parse_n_print upon {0} '.format(nts_file)
         print 'Calling parse_n_print upon {0} '.format(nts_gen_file)
         """
-        subprocess.check_call(['./parse_n_print',nts_file])
-        subprocess.check_call(['./parse_n_print',nts_gen_file])
+        subprocess.check_call(['./xparse_n_print',nts_file])
+        subprocess.check_call(['./xparse_n_print',nts_gen_file])
         
     except subprocess.CalledProcessError as errcode:    
         print bcolors.FAIL+"[FAILED] "+bcolors.ENDC+"Call to {0} returned {1}".format(nts_file,errcode)

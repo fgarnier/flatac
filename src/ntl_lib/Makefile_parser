@@ -16,16 +16,22 @@ OBJECTS = nts_types.cmo nts.cmo nts_generic.cmo nts_functor.cmo ntsint.cmo \
 	ntl_lexer.cmo parsing_error.cmo \
 	ntl_parser.cmo parse_n_print.cmo 
 
-LIBNUM = nums.cma # Contains Big_int module   
+XOBJECTS = nts_types.cmx nts.cmx nts_generic.cmx nts_functor.cmx ntsint.cmx \
+	ntl_lexer.cmx parsing_error.cmx \
+	ntl_parser.cmx parse_n_print.cmx 
+
+LIBNUM = nums.cma # Contains Big_int module
+LIBXNUM = nums.cmxa
+   
 INTERFACES = $(OBJECTS:.cmo=.cmi)
 TEST = parse_n_print
 DATE = `eval date +%Y%m%d`
 DIST_TAR_NAME = ocaml_ntlib$(DATE).tgz
  
 clean : 
-	rm -f *.cmo *.cmi *.cma *.annot parse_n_print $(GENSOURCE)
+	rm -f *.cmo *.o *.cmx *.cmxa *.cmi *.cma *.annot parse_n_print $(GENSOURCE)
 
-all : .depend $(INTERFACES) $(OBJECTS) $(TEST) fixpointvalid
+all : .depend $(INTERFACES) $(OBJECTS) $(XOBJECTS) $(TEST) fixpointvalid
 	@echo "Build successfull"
 
 dist : all clean
@@ -42,6 +48,10 @@ dist : all clean
 	@echo  "Compiling interface " $<
 	@ocamlc ${CFLAGS}  $< -o $@ $(TYPES_INCLUDES)
 
+%.cmx : %.ml
+	@echo  "OPT Compiling"  $<
+	@ocamlopt ${CFLAGS}  $< -o $@ ${TYPES_INCLUDES}
+
 ntl_lexer.cmi : ntl_parser.mli
 
 ntl_parser.mli : ntl_parser.ml
@@ -55,9 +65,10 @@ ntl_lexer.ml : ntl_lexer.mll
 	@echo  "Generating Lexer" $<
 	@ocamllex $<
 
-parse_n_print : parse_n_print.ml $(OBJECTS)
+parse_n_print : parse_n_print.ml $(OBJECTS) $(XOBJECTS)
 	@echo "Compiling parse_n_print test"
 	ocamlc -g -o parse_n_print $(LIBNUM) $(OBJECTS)
+	ocamlopt -g -o xparse_n_print  $(LIBXNUM) $(XOBJECTS)
 
 include .depend
 
