@@ -157,7 +157,38 @@ let rebuild_non_guard_trans list_res =
   in
   List.fold_left non_guard_folder [] list_res
       
+
+
+
+let rebuild_top_level_infos nts_name toplevel_list =
+  let rebuild_left_folder nts_param header_list_elem =
+    match header_list_elem with
+	`Decl_gvars(vlist) -> 
+	  {
+	    nts_system_name = nts_param.nts_system_name;
+	    nts_global_vars = vlist@nts_param.nts_global_vars;
+	    nts_automata = nts_param.nts_automata;
+	  }
       
+      | `Decl_seq(nts_collection) ->
+	  begin
+	    {
+	      nts_system_name = nts_param.nts_system_name;
+	      nts_global_vars = nts_param.nts_global_vars;
+	      nts_automata = nts_collection;
+	    }
+	  end
+  in
+  let nts_init = 
+    { 
+      nts_system_name = nts_name ; 
+      nts_global_vars = [] ; 
+      nts_automata = Hashtbl.create 1; 
+    } 
+  in
+    List.fold_left rebuild_left_folder nts_init toplevel_list
+
+
 %}
 
 
@@ -192,16 +223,7 @@ let rebuild_non_guard_trans list_res =
 %start ntldescr
 %%
 
-
-ntldescr : NTSDECL IDENT SEMICOLON gvars_decl decl_sequence {
-  
-  { 
-    nts_system_name = $2 ;
-    nts_global_vars = $4 ;
-    nts_automata = cautomata_hashtbl_of_cautomata_list $5
- ;
-  }
-}
+/*
 ntldescr : NTSDECL IDENT SEMICOLON gvars_list_decl decl_sequence {
   
   { 
@@ -210,10 +232,22 @@ ntldescr : NTSDECL IDENT SEMICOLON gvars_list_decl decl_sequence {
     nts_automata = cautomata_hashtbl_of_cautomata_list $5 ;
   }
 }
+*/
 
+ntldescr :  NTSDECL IDENT SEMICOLON comma_sep_header_list {
+  let nts_name = $2 in
+  rebuild_top_level_infos nts_name $4 
+}
 
+| NTSDECL IDENT SEMICOLON gvars_decl SEMICOLON decl_sequence { 
+  let nts_name = $2 in
+  {
+    nts_system_name = nts_name;
+    nts_global_vars = $4 ;
+    nts_automata = cautomata_hashtbl_of_cautomata_list $6 
 
-
+  }
+}
 
 
 | NTSDECL IDENT SEMICOLON decl_sequence { 
@@ -228,18 +262,25 @@ ntldescr : NTSDECL IDENT SEMICOLON gvars_list_decl decl_sequence {
  
 ;
 
+
+comma_sep_header_list : gvars_decl SEMICOLON decl_sequence {
+  let nts_automata = cautomata_hashtbl_of_cautomata_list $3 in
+  `Decl_gvars($1)::`Decl_seq(nts_automata)::[]
+}
+| gvars_decl SEMICOLON comma_sep_header_list {
+    `Decl_gvars($1)::$3
+  }
+;
+
 ident_list : IDENT {[$1]}
 | IDENT COMMA ident_list {$1::$3}
 ;
 
-gvars_list_decl :  gvars_decl {$1} 
-| gvars_decl  gvars_list_decl {$1 @ $2}
+gvars_list_decl : gvars_decl SEMICOLON gvars_list_decl {$1 @ $3}
+| gvars_decl SEMICOLON {$1}
 ;
-/*
 
-;*/
-
-gvars_decl : ident_list COLON INTDECL SEMICOLON { 
+gvars_decl : ident_list COLON INTDECL  { 
   List.map (fun s-> NtsGenVar(NtsIVar(s),NtsUnPrimed)) $1
 }
 
