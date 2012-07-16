@@ -512,6 +512,14 @@ gen_affect : PRIMEDVAR EQ IDENT  LBRACE arithm_expr_list RBRACE {
 }
 
 
+| PRIMEDVAR EQ IDENT  LBRACE  RBRACE {
+  let vname = get_varname_of_primedvarname $1 in
+  let vinfolist =  NtsGenVar(NtsMiscType(vname),NtsPrimed)::[] 
+  in 
+  CntGenCall($3,Some(vinfolist),[])
+
+}
+
 | PRIMEDVAR EQ arithm_expr   {
   let vname = get_varname_of_primedvarname $1 in
   let vinfo = (*get_vinfo*) NtsGenVar(NtsMiscType(vname),NtsPrimed) 
@@ -595,14 +603,13 @@ pressburg_tree_guards : LBRACE pressburg_atomic_bool RBRACE
 }
 
 
-
 | pressburg_atomic_bool BOR pressburg_atomic_bool {
-   CntGenRelComp(CntGenBAnd,$1,$3)
+   CntGenRelComp(CntGenBOr,$1,$3)
 }  
 
 
 | pressburg_tree_guards BOR  pressburg_atomic_bool {
-  CntGenRelComp(CntGenBAnd,$1,$3)
+  CntGenRelComp(CntGenBOr,$1,$3)
 
 }
 
@@ -612,6 +619,10 @@ pressburg_tree_guards : LBRACE pressburg_atomic_bool RBRACE
 
 }
 
+
+| pressburg_tree_guards BOR pressburg_tree_guards {
+  CntGenRelComp(CntGenBOr,$1,$3)
+}
 
 | qformula BOR  pressburg_tree_guards {
   CntGenRelComp(CntGenBOr,$1,$3)
