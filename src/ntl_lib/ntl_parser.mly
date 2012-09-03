@@ -234,12 +234,9 @@ ntldescr : NTSDECL IDENT SEMICOLON gvars_list_decl decl_sequence {
 }
 */
 
-ntldescr :  NTSDECL IDENT SEMICOLON comma_sep_header_list {
-  let nts_name = $2 in
-  rebuild_top_level_infos nts_name $4 
-}
+ntldescr : 
 
-| NTSDECL IDENT SEMICOLON gvars_decl SEMICOLON decl_sequence { 
+/* NTSDECL IDENT SEMICOLON gvars_decl SEMICOLON decl_sequence { 
   let nts_name = $2 in
   {
     nts_system_name = nts_name;
@@ -247,7 +244,14 @@ ntldescr :  NTSDECL IDENT SEMICOLON comma_sep_header_list {
     nts_automata = cautomata_hashtbl_of_cautomata_list $6 
 
   }
+}*/
+
+| NTSDECL IDENT SEMICOLON comma_sep_header_list {
+  let nts_name = $2 in
+  rebuild_top_level_infos nts_name $4 
 }
+
+
 
 
 | NTSDECL IDENT SEMICOLON decl_sequence { 
@@ -387,8 +391,6 @@ transitions :  IDENT ARROW IDENT LBRACK  RBRACK {
   let transit = $7 in
   (control_org, control_dest, transit )
  
-
-
 }
 
 | IDENT COLON IDENT ARROW IDENT LBRACK  RBRACK {

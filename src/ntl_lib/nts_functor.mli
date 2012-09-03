@@ -97,5 +97,9 @@ sig
     (* Here for debuging purposes. Shall be removed for release
     versions*)
   val pprint_transitions : string -> nts_automaton -> string
+  
+  (** Compute the set of one step predecessors of all control states*)
+  val compute_pred_relation : nts_automaton -> 
+    (control, (control , unit) Hashtbl.t ) Hashtbl.t
 end
 
