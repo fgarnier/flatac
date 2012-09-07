@@ -621,11 +621,13 @@ ordering on their name. *)
        Updates the lindex and bindex with the newly created control 
        blocks.
     *)
+    
+
     let sequentialize_branching control_state_org 
 	control_state_dest nts_label block_list =
-   
-      let 
-      
+
+      let  
+	  
       let successor_table = 
       Hashtbl.find control_state cautomaton.transitions in
       
