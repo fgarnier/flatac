@@ -1,0 +1,24 @@
+nts overflow ; 
+main{
+
+m,a : int;
+initial init_p;
+
+error bad; 
+ init_p->s1 { m > 1 and m' = m and a' = 0 } 
+ s1->s2 { a' = a and m' = m } 
+ s1->s3 { a' = 0 and m' = m } 
+ s2->bad { a = m and a' = a and m' = m } 
+ s2->s1 { a' = 0 and m' = m } 
+ s2->s4 { a != m-1 and a' = a+1 and m' = m } 
+ s2->s4 { a = m-1 and a' = 0 and m' = m } 
+ s2->s4 { a != m-1 and a = m-1 and a' = a+1 and a' = 0 and m' = m } 
+ s3->bad { a < m } 
+ s3->s1 { a' = 0 and m' = m } 
+ s3->s4 { a' = a and m' = m } 
+ s4->bad { a = m and a' = a and m' = m } 
+ s4->s2 { a' = a and m' = m } 
+ s4->s3 { a' = 0 and m' = m }
+}
+
+ 

@@ -1,0 +1,116 @@
+nts pgm ; 
+MF_b0_b_eq_0__1,MI_b0_b_eq_0__1,MF_b0_b_eq_0__0,MI_b0_b_eq_0__0,CNT_cpost_h1,CNT_cpost_h2,main_without_err,PC2,cmain : int;
+main{
+
+b0_b_eq_0,res,nxt_b0_b_eq_0 : int;
+initial si;
+final sf;
+error se; 
+ eventloop->s3 { CNT_cpost_h1 >= 1 and CNT_cpost_h1' = CNT_cpost_h1-1 and havoc(CNT_cpost_h1) } 
+ eventloop->s6 { CNT_cpost_h2 >= 1 and CNT_cpost_h2' = CNT_cpost_h2-1 and havoc(CNT_cpost_h2) } 
+ eventloop->sf { CNT_cpost_h1 = 0 and CNT_cpost_h2 = 0 and havoc() } 
+ s0->s1 { nxt_b0_b_eq_0' >= 0 and nxt_b0_b_eq_0' <=  1 and main_without_err' = main_without_err+1 and MI_b0_b_eq_0__1' = b0_b_eq_0 and MF_b0_b_eq_0__1' = nxt_b0_b_eq_0' and havoc(main_without_err,MI_b0_b_eq_0__1,MF_b0_b_eq_0__1,nxt_b0_b_eq_0) } 
+ s1->s2_1 { (res')=traverse_main_without_err_1() and havoc(res) } 
+ s2_1->eventloop { res = 1 and res' = 0 and b0_b_eq_0' = nxt_b0_b_eq_0 and havoc(res,b0_b_eq_0) } 
+ s2_5->eventloop { b0_b_eq_0' = nxt_b0_b_eq_0 and havoc(b0_b_eq_0) } 
+ s3->s5 { nxt_b0_b_eq_0' >= 0 and nxt_b0_b_eq_0' <=  1 and MI_b0_b_eq_0__1' = b0_b_eq_0 and MF_b0_b_eq_0__1' = nxt_b0_b_eq_0' and havoc(MI_b0_b_eq_0__1,MF_b0_b_eq_0__1,nxt_b0_b_eq_0) } 
+ s5->s2_5 { (res')=traverse_cpost_h1_without_err_1() and havoc(res) } 
+ s6->s7 { nxt_b0_b_eq_0' >= 0 and nxt_b0_b_eq_0' <=  1 and MI_b0_b_eq_0__1' = b0_b_eq_0 and MF_b0_b_eq_0__1' = nxt_b0_b_eq_0' and havoc(MI_b0_b_eq_0__1,MF_b0_b_eq_0__1,nxt_b0_b_eq_0) } 
+ s7->se_7 { (res')=traverse_cpost_h2_with_err_1() and havoc(res) } 
+ se_7->se { res = 1 and res' = 0 and b0_b_eq_0' = nxt_b0_b_eq_0 and havoc(res,b0_b_eq_0) } 
+ si->s0 { b0_b_eq_0' >= 0 and b0_b_eq_0' <=  1 and main_without_err' = 0 and PC2' = 0 and cmain' = 0 and CNT_cpost_h1' = 0 and CNT_cpost_h2' = 0 and havoc(b0_b_eq_0,main_without_err,PC2,cmain,CNT_cpost_h1,CNT_cpost_h2) }
+}
+traverse_cpost_h1_without_err_0{
+
+res : int;
+out done : int;
+initial p2;
+final sf;
+ 
+ p0->p1 { CNT_cpost_h1' = CNT_cpost_h1+1 and havoc(CNT_cpost_h1) } 
+ p1->p3 { CNT_cpost_h2' = CNT_cpost_h2+1 and havoc(CNT_cpost_h2) } 
+ p2->p0 { MI_b0_b_eq_0__0 = 1 and havoc() } 
+ p2->p3 { MI_b0_b_eq_0__0 = 0 and havoc() } 
+ p3->sf { MI_b0_b_eq_0__0 = MF_b0_b_eq_0__0 and done' = 1 and havoc(done) }
+}
+traverse_cpost_h1_without_err_1{
+
+res : int;
+out done : int;
+initial p2;
+final sf;
+ 
+ p0->p1 { CNT_cpost_h1' = CNT_cpost_h1+1 and havoc(CNT_cpost_h1) } 
+ p1->p3 { CNT_cpost_h2' = CNT_cpost_h2+1 and havoc(CNT_cpost_h2) } 
+ p2->p0 { MI_b0_b_eq_0__1 = 1 and havoc() } 
+ p2->p3 { MI_b0_b_eq_0__1 = 0 and havoc() } 
+ p3->sf { MI_b0_b_eq_0__1 = MF_b0_b_eq_0__1 and done' = 1 and havoc(done) }
+}
+traverse_cpost_h2_with_err_0{
+
+res : int;
+out done : int;
+initial p2;
+final sf;
+ 
+ p0->sf { MI_b0_b_eq_0__0 = MF_b0_b_eq_0__0 and done' = 1 and havoc(done) } 
+ p1->p0 { 1 = 1 and havoc() } 
+ p1->sf { 1 = 1 and MI_b0_b_eq_0__0 = MF_b0_b_eq_0__0 and done' = 1 and havoc(done) } 
+ p2->p1 { MI_b0_b_eq_0__0' = 0 and havoc(MI_b0_b_eq_0__0) }
+}
+traverse_cpost_h2_with_err_1{
+
+res : int;
+out done : int;
+initial p2;
+final sf;
+ 
+ p0->sf { MI_b0_b_eq_0__1 = MF_b0_b_eq_0__1 and done' = 1 and havoc(done) } 
+ p1->p0 { 1 = 1 and havoc() } 
+ p1->sf { 1 = 1 and MI_b0_b_eq_0__1 = MF_b0_b_eq_0__1 and done' = 1 and havoc(done) } 
+ p2->p1 { MI_b0_b_eq_0__1' = 0 and havoc(MI_b0_b_eq_0__1) }
+}
+traverse_main_without_err_0{
+
+res : int;
+out done : int;
+initial si;
+final sf;
+ 
+ p0->p1 { CNT_cpost_h1' = CNT_cpost_h1+1 and havoc(CNT_cpost_h1) } 
+ p1->sf { MI_b0_b_eq_0__0 = MF_b0_b_eq_0__0 and done' = 1 and havoc(done) } 
+ p2->sf { MI_b0_b_eq_0__0 = MF_b0_b_eq_0__0 and PC2' = PC2-1 and done' = 1 and havoc(PC2,done) } 
+ p3->p0 { MI_b0_b_eq_0__0' = 1 and cmain' = cmain-1 and havoc(MI_b0_b_eq_0__0,cmain) } 
+ p4->p4_0 { (0 >= 1 and MI_b0_b_eq_0__0' >= 0) and MI_b0_b_eq_0__0' <=  1 and MF_b0_b_eq_0__0' = MF_b0_b_eq_0__0 and MF_b0_b_eq_0__0' = MI_b0_b_eq_0__0' and main_without_err' = main_without_err-1 and PC2' = PC2+1 and havoc(MF_b0_b_eq_0__0,MF_b0_b_eq_0__0,MI_b0_b_eq_0__0,main_without_err,PC2) } 
+ p4->p4_1 { (0 >= 1 and MF_b0_b_eq_0__0' >= 0) and MF_b0_b_eq_0__0' <=  1 and MI_b0_b_eq_0__0' = MI_b0_b_eq_0__0 and MI_b0_b_eq_0__0' = MF_b0_b_eq_0__0' and main_without_err' = main_without_err-1 and cmain' = cmain+1 and havoc(MI_b0_b_eq_0__0,MI_b0_b_eq_0__0,MF_b0_b_eq_0__0,main_without_err,cmain) } 
+ p4_0->si4_0 { res' = 1 and havoc(res) } 
+ p4_1->si4_1 { res' = 1 and havoc(res) } 
+ si->p2 { PC2 >= 1 and havoc() } 
+ si->p3 { cmain >= 1 and havoc() } 
+ si->p4 { main_without_err >= 1 and havoc() } 
+ si4_0->p3 { res = 1 and res' = 0 and cmain' = cmain+1 and havoc(res,cmain) } 
+ si4_1->p2 { res = 1 and res' = 0 and PC2' = PC2+1 and havoc(res,PC2) }
+}
+traverse_main_without_err_1{
+
+res : int;
+out done : int;
+initial si;
+final sf;
+ 
+ p0->p1 { CNT_cpost_h1' = CNT_cpost_h1+1 and havoc(CNT_cpost_h1) } 
+ p1->sf { MI_b0_b_eq_0__1 = MF_b0_b_eq_0__1 and done' = 1 and havoc(done) } 
+ p2->sf { MI_b0_b_eq_0__1 = MF_b0_b_eq_0__1 and PC2' = PC2-1 and done' = 1 and havoc(PC2,done) } 
+ p3->p0 { MI_b0_b_eq_0__1' = 1 and cmain' = cmain-1 and havoc(MI_b0_b_eq_0__1,cmain) } 
+ p4->p4_0 { (1 >= 1 and MI_b0_b_eq_0__0' >= 0) and MI_b0_b_eq_0__0' <=  1 and MF_b0_b_eq_0__0' = MF_b0_b_eq_0__1 and MF_b0_b_eq_0__1' = MI_b0_b_eq_0__0' and main_without_err' = main_without_err-1 and PC2' = PC2+1 and havoc(MF_b0_b_eq_0__0,MF_b0_b_eq_0__1,MI_b0_b_eq_0__0,main_without_err,PC2) } 
+ p4->p4_1 { (1 >= 1 and MF_b0_b_eq_0__0' >= 0) and MF_b0_b_eq_0__0' <=  1 and MI_b0_b_eq_0__0' = MI_b0_b_eq_0__1 and MI_b0_b_eq_0__1' = MF_b0_b_eq_0__0' and main_without_err' = main_without_err-1 and cmain' = cmain+1 and havoc(MI_b0_b_eq_0__0,MI_b0_b_eq_0__1,MF_b0_b_eq_0__0,main_without_err,cmain) } 
+ p4_0->si4_0 { (res')=traverse_main_without_err_0() and havoc(res) } 
+ p4_1->si4_1 { (res')=traverse_main_without_err_0() and havoc(res) } 
+ si->p2 { PC2 >= 1 and havoc() } 
+ si->p3 { cmain >= 1 and havoc() } 
+ si->p4 { main_without_err >= 1 and havoc() } 
+ si4_0->p3 { res = 1 and res' = 0 and cmain' = cmain+1 and havoc(res,cmain) } 
+ si4_1->p2 { res = 1 and res' = 0 and PC2' = PC2+1 and havoc(res,PC2) }
+}
+
+ 

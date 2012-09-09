@@ -1,0 +1,73 @@
+nts substring ; 
+NonDetInt{
+
+out ndet,validity_ndet_ : int;
+initial sinit;
+final s1;
+ 
+ s0->s1 { havoc() } 
+ sinit->s0 { havoc(ndet,validity_ndet_) }
+}
+__VERIFIER_nondet_int{
+
+out ndet,validity_ndet_ : int;
+initial sinit;
+final s1;
+ 
+ s0->s1 { havoc() } 
+ sinit->s0 { havoc(ndet,validity_ndet_) }
+}
+__assert_fail{
+in a,b,c,d,e,f,g,h : int;
+
+initial sinit;
+
+error s0; 
+ sinit->s0 { havoc() }
+}
+main{
+
+mid_4_base,mid_4_size,mid_3_base,mid_3_size,mid_2_base,mid_2_size,mid_1_base,mid_1_size,__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retres_,validity__from_,validity__i_,validity__j_,validity__k_,validity__tmp_,validity__to_,validity__x_,validity__z_,__if_ndet_cond__,_ndet_arg_0,__retres,tmp,k,j,i,to,from : int;
+out ret_val_,validity__ret_val__ : int;
+initial sinit;
+final s35;
+error s1,s19,s22,s25,s27,s29,s3,s31,s33,s5,s7,s9; 
+ s0->sinter0 { __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__) } 
+ s10->s11 { havoc() } 
+ s11->s12 { havoc() } 
+ s12->s13 { havoc() } 
+ s13->s14 { __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__) } 
+ s13->s14 { __if_ndet_cond__ != 0 and havoc() } 
+ s13->s14 { __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__) } 
+ s13->s15 { __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__) } 
+ s13->s15 { __if_ndet_cond__ != 0 and havoc() } 
+ s13->s15 { __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__) } 
+ s14->s16 { __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__) } 
+ s14->s17 { __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__) } 
+ s15->s18 { havoc() } 
+ s16->s19 { __if_ndet_cond__ != 0 and havoc() } 
+ s16->s20 { __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__) } 
+ s17->s18 { havoc() } 
+ s18->s21 { havoc() } 
+ s2->sinter1 { __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__) } 
+ s20->s23 { __if_ndet_cond__ = 0 and i' = i+1 and havoc(__if_ndet_cond__,i) } 
+ s21->s24 { __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__) } 
+ s21->s26 { __if_ndet_cond__ = 0 and __if_ndet_cond__ = 0 and tmp' = 0 and havoc(__if_ndet_cond__,tmp) } 
+ s23->s28 { __if_ndet_cond__ = 0 and j' = j+1 and havoc(__if_ndet_cond__,j) } 
+ s24->s30 { __if_ndet_cond__ = 0 and __if_ndet_cond__ = 0 and tmp' = 1 and havoc(__if_ndet_cond__,tmp) } 
+ s24->s32 { __if_ndet_cond__ = 0 and __if_ndet_cond__ = 0 and tmp' = 0 and havoc(__if_ndet_cond__,tmp) } 
+ s26->s34 { __if_ndet_cond__ = 0 and __retres' = 1 and havoc(__if_ndet_cond__,__retres) } 
+ s28->s12 { havoc() } 
+ s30->s34 { __if_ndet_cond__ = 0 and __retres' = 1 and havoc(__if_ndet_cond__,__retres) } 
+ s32->s34 { __if_ndet_cond__ = 0 and __retres' = 1 and havoc(__if_ndet_cond__,__retres) } 
+ s34->s35 { ret_val_' = __retres and havoc(ret_val_) } 
+ s4->sinter2 { __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__) } 
+ s6->s8 { __if_ndet_cond__ = 0 and i' = from and havoc(__if_ndet_cond__,i) } 
+ s8->s10 { __if_ndet_cond__ = 0 and j' = 0 and havoc(__if_ndet_cond__,j) } 
+ sinit->s0 { mid_4_size' = 201*1 and mid_1_size' = 101*1 and mid_2_size' = 201*1 and mid_3_size' = 101*1 } 
+ sinter0->s2 { (from',validity__from_')=NonDetInt() and havoc(from,validity__from_) } 
+ sinter1->s4 { (to',validity__to_')=NonDetInt() and havoc(to,validity__to_) } 
+ sinter2->s6 { (k',validity__k_')=NonDetInt() and havoc(k,validity__k_) }
+}
+
+ 

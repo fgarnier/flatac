@@ -1,0 +1,26 @@
+nts cruel;
+ 
+main{
+tmp,y,x : int;
+initial s1;
+error se; 
+ s1->s2 { x'=0 and havoc(x) } 
+ s2->s3 { y'=0 and havoc(y) }
+ s3->s4 { havoc(tmp) }
+ s4->s5 { tmp != 0 and havoc() }
+ s4->s7 { tmp = 0 and havoc() }
+ s5->s6 { x'=x+1 and havoc(x) }
+ s6->s3 { y'=y+1 and havoc(y) }
+ s7->s8 { x > 0 and havoc() }
+ s7->s10 { x <=  0 and havoc() } 
+ s8->s9 { x'=x-1 and havoc(x) }
+ s9->s7 { y'=y-1 and havoc(y) }
+ s10->se { y != 0 and havoc() }
+ s10->s11 { y = 0 and havoc() }
+ s11->s12 { x' = 1 and havoc(x,tmp)}
+ s12->s13 { tmp >= 0 and havoc() }
+ s13->s14 { x' = 2 * x and havoc(x) }
+ s14->s12 { havoc(tmp) }
+ s12->s15 { tmp < 0 and havoc() }
+ s15->se { x < 0 and havoc() } 
+}

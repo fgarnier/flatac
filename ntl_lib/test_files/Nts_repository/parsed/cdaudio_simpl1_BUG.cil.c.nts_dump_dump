@@ -1,0 +1,1727 @@
+nts cdaudio_simpl1_BUG ; 
+DeviceUsageTypePaging,KernelMode,Suspended,Executive,pirp,myStatus,routine,customIrp,setEventCalled,lowerDriverReturn,compRegistered,compFptr,pended,IPC,MPR3,MPR1,SKIP2,SKIP1,DC,NP,UNLOADED,s : int;
+AG_SetStatusAndReturn{
+in deviceExtension__TargetDeviceObject,validity__deviceExtension__TargetDeviceObject_,Irp,validity__Irp_,status,validity__status_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____cil_tmp4_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,__cil_tmp4 : int;
+out ret_val_,validity__ret_val__ : int;
+initial sinit;
+final s10;
+error s2,s6,s8; 
+ s0->s1 { havoc() } 
+ s1->s3 { __cil_tmp4' = status and havoc(__cil_tmp4) } 
+ s3->s4 { havoc() } 
+ s4->s5 { havoc() } 
+ s5->s7 { myStatus' = status and havoc(myStatus) } 
+ s7->sinter0 { havoc() } 
+ s9->s10 { ret_val_' = status and havoc(ret_val_) } 
+ sinit->s0 {  } 
+ sinter0->s9 { IofCompleteRequest(Irp,-1,0,1) and havoc() }
+}
+CdAudio435DeviceControl{
+in Irp,validity__Irp_,DeviceObject,validity__DeviceObject_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity__Irp__IoStatus__Information_,validity__SubQPtr_,validity__SubQPtr___0_,validity__Toc_,validity__TrackData__0_,validity____cil_tmp100_,validity____cil_tmp101_,validity____cil_tmp102_,validity____cil_tmp103_,validity____cil_tmp104_,validity____cil_tmp105_,validity____cil_tmp106_,validity____cil_tmp107_,validity____cil_tmp109_,validity____cil_tmp111_,validity____cil_tmp112_,validity____cil_tmp113_,validity____cil_tmp114_,validity____cil_tmp115_,validity____cil_tmp116_,validity____cil_tmp35_,validity____cil_tmp36_,validity____cil_tmp37_,validity____cil_tmp38_,validity____cil_tmp39_,validity____cil_tmp40_,validity____cil_tmp41_,validity____cil_tmp42_,validity____cil_tmp43_,validity____cil_tmp44_,validity____cil_tmp45_,validity____cil_tmp46_,validity____cil_tmp47_,validity____cil_tmp48_,validity____cil_tmp49_,validity____cil_tmp50_,validity____cil_tmp51_,validity____cil_tmp52_,validity____cil_tmp53_,validity____cil_tmp54_,validity____cil_tmp55_,validity____cil_tmp56_,validity____cil_tmp57_,validity____cil_tmp58_,validity____cil_tmp59_,validity____cil_tmp60_,validity____cil_tmp61_,validity____cil_tmp62_,validity____cil_tmp63_,validity____cil_tmp64_,validity____cil_tmp65_,validity____cil_tmp66_,validity____cil_tmp67_,validity____cil_tmp68_,validity____cil_tmp69_,validity____cil_tmp70_,validity____cil_tmp71_,validity____cil_tmp72_,validity____cil_tmp73_,validity____cil_tmp74_,validity____cil_tmp75_,validity____cil_tmp76_,validity____cil_tmp77_,validity____cil_tmp78_,validity____cil_tmp79_,validity____cil_tmp80_,validity____cil_tmp81_,validity____cil_tmp82_,validity____cil_tmp83_,validity____cil_tmp84_,validity____cil_tmp85_,validity____cil_tmp86_,validity____cil_tmp87_,validity____cil_tmp88_,validity____cil_tmp89_,validity____cil_tmp90_,validity____cil_tmp91_,validity____cil_tmp92_,validity____cil_tmp93_,validity____cil_tmp95_,validity____cil_tmp96_,validity____cil_tmp97_,validity____cil_tmp98_,validity____cil_tmp99_,validity____retres_,validity__bytesTransfered_,validity__cdaudioDataOut__FirstTrack_,validity__cdaudioDataOut__LastTrack_,validity__currentIrpStack__Parameters__DeviceIoControl__InputBufferLength_,validity__currentIrpStack__Parameters__DeviceIoControl__IoControlCode_,validity__currentIrpStack__Parameters__DeviceIoControl__OutputBufferLength_,validity__deviceExtension_,validity__deviceExtension__Paused_,validity__deviceExtension__PlayActive_,validity__i_,validity__sizeof__CDROM_PLAY_AUDIO_MSF_,validity__sizeof__CDROM_SEEK_AUDIO_MSF_,validity__sizeof__CDROM_TOC_,validity__sizeof__SUB_Q_CHANNEL_DATA_,validity__sizeof__SUB_Q_CURRENT_POSITION_,validity__srb_,validity__srb__CdbLength_,validity__srb__TimeOutValue_,validity__status_,validity__tmp_,validity__tmp___0_,validity__tmp___1_,validity__tmp___2_,validity__tracksInBuffer_,validity__tracksOnCd_,validity__tracksToReturn_,validity__userPtr__Format_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_4,_ndet_arg_3,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,__retres,__cil_tmp116,__cil_tmp115,__cil_tmp114,__cil_tmp113,__cil_tmp112,__cil_tmp111,__cil_tmp109,__cil_tmp107,__cil_tmp106,__cil_tmp105,__cil_tmp104,__cil_tmp103,__cil_tmp102,__cil_tmp101,__cil_tmp100,__cil_tmp99,__cil_tmp98,__cil_tmp97,__cil_tmp96,__cil_tmp95,__cil_tmp93,__cil_tmp92,__cil_tmp91,__cil_tmp90,__cil_tmp89,__cil_tmp88,__cil_tmp87,__cil_tmp86,__cil_tmp85,__cil_tmp84,__cil_tmp83,__cil_tmp82,__cil_tmp81,__cil_tmp80,__cil_tmp79,__cil_tmp78,__cil_tmp77,__cil_tmp76,__cil_tmp75,__cil_tmp74,__cil_tmp73,__cil_tmp72,__cil_tmp71,__cil_tmp70,__cil_tmp69,__cil_tmp68,__cil_tmp67,__cil_tmp66,__cil_tmp65,__cil_tmp64,__cil_tmp63,__cil_tmp62,__cil_tmp61,__cil_tmp60,__cil_tmp59,__cil_tmp58,__cil_tmp57,__cil_tmp56,__cil_tmp55,__cil_tmp54,__cil_tmp53,__cil_tmp52,__cil_tmp51,__cil_tmp50,__cil_tmp49,__cil_tmp48,__cil_tmp47,__cil_tmp46,__cil_tmp45,__cil_tmp44,__cil_tmp43,__cil_tmp42,__cil_tmp41,__cil_tmp40,__cil_tmp39,__cil_tmp38,__cil_tmp37,__cil_tmp36,__cil_tmp35,tmp___2,tmp___1,tmp___0,SubQPtr___0,userPtr__Format,SubQPtr,tracksInBuffer,tracksOnCd,tracksToReturn,tmp,Toc,bytesTransfered,i,status,srb,deviceExtension,sizeof__SUB_Q_CURRENT_POSITION,sizeof__SUB_Q_CHANNEL_DATA,deviceExtension__PlayActive,deviceExtension__Paused,sizeof__CDROM_SEEK_AUDIO_MSF,sizeof__CDROM_PLAY_AUDIO_MSF,cdaudioDataOut__FirstTrack,cdaudioDataOut__LastTrack,sizeof__CDROM_TOC,srb__CdbLength,srb__TimeOutValue,Irp__IoStatus__Information,TrackData__0,currentIrpStack__Parameters__DeviceIoControl__InputBufferLength,currentIrpStack__Parameters__DeviceIoControl__OutputBufferLength,currentIrpStack__Parameters__DeviceIoControl__IoControlCode : int;
+out ret_val_,validity__ret_val__ : int;
+initial sinit;
+final s106;
+error s10,s101,s104,s107,s112,s114,s116,s118,s120,s122,s124,s126,s13,s130,s132,s134,s137,s139,s142,s144,s146,s149,s153,s155,s157,s159,s16,s162,s164,s168,s170,s175,s178,s18,s180,s182,s185,s187,s191,s193,s195,s199,s2,s201,s205,s208,s21,s210,s213,s215,s217,s220,s222,s224,s227,s23,s231,s233,s237,s240,s243,s246,s249,s25,s251,s254,s258,s260,s263,s265,s269,s27,s271,s273,s275,s277,s282,s284,s286,s289,s292,s294,s296,s301,s303,s306,s308,s310,s312,s314,s319,s322,s325,s327,s33,s330,s332,s337,s339,s342,s344,s348,s350,s353,s355,s357,s360,s362,s366,s368,s37,s370,s373,s376,s380,s382,s388,s390,s393,s395,s398,s4,s40,s401,s404,s406,s409,s411,s413,s415,s417,s419,s42,s424,s426,s428,s430,s432,s436,s438,s440,s443,s445,s447,s449,s452,s455,s457,s46,s461,s464,s467,s471,s473,s475,s477,s479,s48,s484,s486,s488,s490,s492,s496,s498,s500,s502,s504,s51,s511,s513,s516,s518,s522,s524,s526,s528,s53,s531,s533,s537,s540,s542,s544,s56,s6,s60,s62,s64,s66,s69,s71,s73,s75,s77,s81,s84,s86,s90,s93,s95,s97,s99; 
+ s0->s1 { havoc() } 
+ s1->s3 { __cil_tmp35' = 16384 and havoc(__cil_tmp35) } 
+ s100->s109 { havoc() } 
+ s102->s110 { havoc() } 
+ s103->s111 { havoc() } 
+ s105->s113 { __cil_tmp50' = 131072 and havoc(__cil_tmp50) } 
+ s108->s115 { __retres' = status and havoc(__retres) } 
+ s109->s117 { __cil_tmp95 != -1073741764 and __cil_tmp96' = status and havoc(__cil_tmp96) } 
+ s109->s119 { __cil_tmp95 = -1073741764 and status' = 0 and havoc(status) } 
+ s11->s14 { __cil_tmp39' = 16384 and havoc(__cil_tmp39) } 
+ s110->s121 { currentIrpStack__Parameters__DeviceIoControl__OutputBufferLength > sizeof__CDROM_TOC and bytesTransfered' = sizeof__CDROM_TOC and havoc(bytesTransfered) } 
+ s110->s123 { currentIrpStack__Parameters__DeviceIoControl__OutputBufferLength <=  sizeof__CDROM_TOC and bytesTransfered' = currentIrpStack__Parameters__DeviceIoControl__OutputBufferLength and havoc(bytesTransfered) } 
+ s111->s125 { __cil_tmp99' = 8 and havoc(__cil_tmp99) } 
+ s113->s127 { __cil_tmp51' = 147456 and havoc(__cil_tmp51) } 
+ s115->s128 { havoc() } 
+ s117->s129 { havoc() } 
+ s119->s110 { havoc() } 
+ s12->s15 { havoc() } 
+ s121->s131 { __cil_tmp98' = cdaudioDataOut__LastTrack-cdaudioDataOut__FirstTrack and havoc(__cil_tmp98) } 
+ s123->s131 { __cil_tmp98' = cdaudioDataOut__LastTrack-cdaudioDataOut__FirstTrack and havoc(__cil_tmp98) } 
+ s125->s133 { __cil_tmp100' = 16384 and havoc(__cil_tmp100) } 
+ s127->s135 { __cil_tmp52' = 147460 and havoc(__cil_tmp52) } 
+ s128->s106 { ret_val_' = __retres and havoc(ret_val_) } 
+ s129->s110 { __cil_tmp96 = -1073741764 and havoc() } 
+ s129->s136 { __cil_tmp96 != -1073741764 and havoc() } 
+ s131->s138 { tracksOnCd' = __cil_tmp98+1 and havoc(tracksOnCd) } 
+ s133->s140 { __cil_tmp101' = 131072 and havoc(__cil_tmp101) } 
+ s135->s141 { havoc() } 
+ s136->s143 { __cil_tmp97' = status and havoc(__cil_tmp97) } 
+ s138->s145 { tracksInBuffer' = currentIrpStack__Parameters__DeviceIoControl__OutputBufferLength-TrackData__0 and havoc(tracksInBuffer) } 
+ s14->s17 { __cil_tmp40' = 131072 and havoc(__cil_tmp40) } 
+ s140->s147 { __cil_tmp102' = 147456 and havoc(__cil_tmp102) } 
+ s141->s148 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp52 and havoc() } 
+ s141->s150 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp52 and __cil_tmp53' = 12 and havoc(__cil_tmp53) } 
+ s143->s151 { havoc() } 
+ s145->s152 { havoc() } 
+ s147->s154 { __cil_tmp103' = 147464 and havoc(__cil_tmp103) } 
+ s148->s156 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s15->s19 { currentIrpStack__Parameters__DeviceIoControl__OutputBufferLength < TrackData__0 and status' = -1073741789 and havoc(status) } 
+ s15->s20 { currentIrpStack__Parameters__DeviceIoControl__OutputBufferLength >= TrackData__0 and havoc() } 
+ s150->s158 { __cil_tmp54' = 16384 and havoc(__cil_tmp54) } 
+ s151->s160 { __cil_tmp97 = -2147483626 and Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s151->s161 { __cil_tmp97 != -2147483626 and havoc() } 
+ s152->s163 { tracksInBuffer < tracksOnCd and tracksToReturn' = tracksInBuffer and havoc(tracksToReturn) } 
+ s152->s165 { tracksInBuffer >= tracksOnCd and tracksToReturn' = tracksOnCd and havoc(tracksToReturn) } 
+ s154->s166 { havoc() } 
+ s156->s167 { havoc() } 
+ s158->s169 { __cil_tmp55' = 131072 and havoc(__cil_tmp55) } 
+ s160->s161 { havoc() } 
+ s161->s171 { myStatus' = status and havoc(myStatus) } 
+ s163->s172 { havoc() } 
+ s165->s172 { havoc() } 
+ s166->s173 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp103 and havoc() } 
+ s166->s174 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp103 and havoc() } 
+ s167->s176 { currentIrpStack__Parameters__DeviceIoControl__InputBufferLength < sizeof__CDROM_SEEK_AUDIO_MSF and status' = -1073741820 and havoc(status) } 
+ s167->s177 { currentIrpStack__Parameters__DeviceIoControl__InputBufferLength >= sizeof__CDROM_SEEK_AUDIO_MSF and havoc() } 
+ s169->s179 { __cil_tmp56' = 147456 and havoc(__cil_tmp56) } 
+ s17->s22 { __cil_tmp41' = 147456 and havoc(__cil_tmp41) } 
+ s171->sinter24 { havoc() } 
+ s172->s183 { tracksInBuffer > tracksOnCd and i' = i+1 and havoc(i) } 
+ s172->s184 { tracksInBuffer <=  tracksOnCd and havoc() } 
+ s173->s186 { __cil_tmp104' = status and havoc(__cil_tmp104) } 
+ s174->s188 { currentIrpStack__Parameters__DeviceIoControl__InputBufferLength < sizeof__CDROM_PLAY_AUDIO_MSF and status' = -1073741820 and havoc(status) } 
+ s174->s189 { currentIrpStack__Parameters__DeviceIoControl__InputBufferLength >= sizeof__CDROM_PLAY_AUDIO_MSF and havoc() } 
+ s176->s190 { havoc() } 
+ s177->s192 { srb__CdbLength' = 10 and havoc(srb__CdbLength) } 
+ s179->s194 { __cil_tmp57' = 147468 and havoc(__cil_tmp57) } 
+ s181->s196 { __retres' = status and havoc(__retres) } 
+ s183->s184 { havoc() } 
+ s184->s32 { havoc() } 
+ s186->s197 { havoc() } 
+ s188->s198 { havoc() } 
+ s189->s200 { srb__CdbLength' = 10 and havoc(srb__CdbLength) } 
+ s19->s24 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s190->s32 { havoc() } 
+ s192->s202 { srb__TimeOutValue' = 10 and havoc(srb__TimeOutValue) } 
+ s194->s203 { havoc() } 
+ s196->s204 { havoc() } 
+ s197->s206 { __cil_tmp104 = -2147483626 and Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s197->s207 { __cil_tmp104 != -2147483626 and havoc() } 
+ s198->s32 { havoc() } 
+ s20->sinter4 { havoc() } 
+ s200->s209 { srb__TimeOutValue' = 10 and havoc(srb__TimeOutValue) } 
+ s202->sinter0 { havoc() } 
+ s203->s212 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp57 and havoc() } 
+ s203->s214 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp57 and __cil_tmp58' = 16 and havoc(__cil_tmp58) } 
+ s204->s106 { ret_val_' = __retres and havoc(ret_val_) } 
+ s206->s207 { havoc() } 
+ s207->s216 { myStatus' = status and havoc(myStatus) } 
+ s209->sinter2 { havoc() } 
+ s211->s219 { havoc() } 
+ s212->s221 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s214->s223 { __cil_tmp59' = 16384 and havoc(__cil_tmp59) } 
+ s216->sinter5 { havoc() } 
+ s218->s226 { havoc() } 
+ s219->s228 { status < 0 and __cil_tmp105' = status and havoc(__cil_tmp105) } 
+ s219->s229 { status >= 0 and havoc() } 
+ s22->s28 { __cil_tmp42' = 147480 and havoc(__cil_tmp42) } 
+ s221->s230 { havoc() } 
+ s223->s232 { __cil_tmp60' = 131072 and havoc(__cil_tmp60) } 
+ s225->s234 { __retres' = status and havoc(__retres) } 
+ s226->s235 { havoc() } 
+ s228->s236 { havoc() } 
+ s229->s32 { havoc() } 
+ s230->s238 { SubQPtr = 0 and status' = -1073741670 and havoc(status) } 
+ s230->s239 { SubQPtr != 0 and havoc() } 
+ s232->s241 { __cil_tmp61' = 147456 and havoc(__cil_tmp61) } 
+ s234->s242 { havoc() } 
+ s235->s32 { havoc() } 
+ s236->s229 { __cil_tmp105 != -1073741808 and havoc() } 
+ s236->s244 { __cil_tmp105 = -1073741808 and status' = -1073741803 and havoc(status) } 
+ s238->s245 { havoc() } 
+ s239->s247 { deviceExtension__Paused = 1 and status' = 0 and havoc(status) } 
+ s239->s248 { deviceExtension__Paused != 1 and havoc() } 
+ s24->s29 { havoc() } 
+ s241->s250 { __cil_tmp62' = 147472 and havoc(__cil_tmp62) } 
+ s242->s106 { ret_val_' = __retres and havoc(ret_val_) } 
+ s244->s229 { havoc() } 
+ s245->s252 { __cil_tmp106' = status and havoc(__cil_tmp106) } 
+ s247->s253 { havoc() } 
+ s248->s255 { srb__CdbLength' = 10 and havoc(srb__CdbLength) } 
+ s250->s256 { havoc() } 
+ s252->s257 { havoc() } 
+ s253->s259 { __cil_tmp107' = status and havoc(__cil_tmp107) } 
+ s255->s261 { srb__TimeOutValue' = 10 and havoc(srb__TimeOutValue) } 
+ s256->s262 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp62 and havoc() } 
+ s256->s264 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp62 and __cil_tmp63' = 44 and havoc(__cil_tmp63) } 
+ s257->s266 { __cil_tmp106 = -2147483626 and Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s257->s267 { __cil_tmp106 != -2147483626 and havoc() } 
+ s259->s268 { havoc() } 
+ s26->s30 { havoc() } 
+ s261->sinter10 { havoc() } 
+ s262->s272 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s264->s274 { __cil_tmp64' = 16384 and havoc(__cil_tmp64) } 
+ s266->s267 { havoc() } 
+ s267->s276 { myStatus' = status and havoc(myStatus) } 
+ s268->s278 { __cil_tmp107 = -2147483626 and Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s268->s279 { __cil_tmp107 != -2147483626 and havoc() } 
+ s270->s280 { havoc() } 
+ s272->s281 { havoc() } 
+ s274->s283 { __cil_tmp65' = 131072 and havoc(__cil_tmp65) } 
+ s276->sinter12 { havoc() } 
+ s278->s279 { havoc() } 
+ s279->s287 { myStatus' = status and havoc(myStatus) } 
+ s28->s31 { havoc() } 
+ s280->s288 { havoc() } 
+ s281->s290 { deviceExtension__Paused = 0 and status' = -1073741823 and havoc(status) } 
+ s281->s291 { deviceExtension__Paused != 0 and havoc() } 
+ s283->s293 { __cil_tmp66' = 147456 and havoc(__cil_tmp66) } 
+ s285->s295 { __retres' = status and havoc(__retres) } 
+ s287->sinter14 { havoc() } 
+ s288->s298 { status < 0 and havoc() } 
+ s288->s299 { status >= 0 and havoc() } 
+ s29->s32 { havoc() } 
+ s290->s300 { havoc() } 
+ s291->s302 { srb__CdbLength' = 10 and havoc(srb__CdbLength) } 
+ s293->s304 { __cil_tmp67' = 147500 and havoc(__cil_tmp67) } 
+ s295->s305 { havoc() } 
+ s297->s307 { __retres' = status and havoc(__retres) } 
+ s298->s309 { __cil_tmp109' = status and havoc(__cil_tmp109) } 
+ s299->s311 { srb__CdbLength' = 10 and havoc(srb__CdbLength) } 
+ s3->s5 { __cil_tmp36' = 131072 and havoc(__cil_tmp36) } 
+ s30->s34 { tmp != 0 and status' = -2147483631 and havoc(status) } 
+ s30->s35 { tmp = 0 and havoc() } 
+ s300->s313 { __cil_tmp112' = status and havoc(__cil_tmp112) } 
+ s302->s315 { srb__TimeOutValue' = 10 and havoc(srb__TimeOutValue) } 
+ s304->s316 { havoc() } 
+ s305->s106 { ret_val_' = __retres and havoc(ret_val_) } 
+ s307->s317 { havoc() } 
+ s309->s318 { havoc() } 
+ s31->s36 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp42 and havoc() } 
+ s31->s38 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp42 and __cil_tmp43' = 8 and havoc(__cil_tmp43) } 
+ s311->s320 { srb__TimeOutValue' = 10 and havoc(srb__TimeOutValue) } 
+ s313->s321 { havoc() } 
+ s315->sinter18 { havoc() } 
+ s316->s324 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp67 and havoc() } 
+ s316->s326 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp67 and __cil_tmp68' = 2056 and havoc(__cil_tmp68) } 
+ s317->s106 { ret_val_' = __retres and havoc(ret_val_) } 
+ s318->s328 { __cil_tmp109 = -2147483626 and Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s318->s329 { __cil_tmp109 != -2147483626 and havoc() } 
+ s32->s39 { havoc() } 
+ s320->sinter19 { havoc() } 
+ s321->s333 { __cil_tmp112 = -2147483626 and Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s321->s334 { __cil_tmp112 != -2147483626 and havoc() } 
+ s323->s335 { havoc() } 
+ s324->s336 { havoc() } 
+ s326->s338 { __cil_tmp69' = 16384 and havoc(__cil_tmp69) } 
+ s328->s329 { havoc() } 
+ s329->s340 { myStatus' = status and havoc(myStatus) } 
+ s331->s341 { havoc() } 
+ s333->s334 { havoc() } 
+ s334->s343 { myStatus' = status and havoc(myStatus) } 
+ s335->s345 { status >= 0 and deviceExtension__PlayActive' = 1 and havoc(deviceExtension__PlayActive) } 
+ s335->s346 { status < 0 and havoc() } 
+ s336->s347 { havoc() } 
+ s338->s349 { __cil_tmp70' = 131072 and havoc(__cil_tmp70) } 
+ s34->s41 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s340->sinter21 { havoc() } 
+ s341->s352 { havoc() } 
+ s343->sinter22 { havoc() } 
+ s345->s356 { deviceExtension__Paused' = 0 and havoc(deviceExtension__Paused) } 
+ s346->s32 { havoc() } 
+ s347->s358 { currentIrpStack__Parameters__DeviceIoControl__OutputBufferLength < sizeof__SUB_Q_CURRENT_POSITION and status' = -1073741789 and havoc(status) } 
+ s347->s359 { currentIrpStack__Parameters__DeviceIoControl__OutputBufferLength >= sizeof__SUB_Q_CURRENT_POSITION and havoc() } 
+ s349->s361 { __cil_tmp71' = 147456 and havoc(__cil_tmp71) } 
+ s35->s43 { Toc = 0 and status' = -1073741670 and havoc(status) } 
+ s35->s44 { Toc != 0 and havoc() } 
+ s351->s363 { __retres' = status and havoc(__retres) } 
+ s352->s364 { status < 0 and havoc() } 
+ s352->s365 { status >= 0 and havoc() } 
+ s354->s367 { __retres' = status and havoc(__retres) } 
+ s356->s346 { havoc() } 
+ s358->s369 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s359->s371 { SubQPtr___0 = 0 and status' = -1073741670 and havoc(status) } 
+ s359->s372 { SubQPtr___0 != 0 and havoc() } 
+ s36->s45 { havoc() } 
+ s361->s374 { __cil_tmp72' = 149512 and havoc(__cil_tmp72) } 
+ s363->s375 { havoc() } 
+ s364->s377 { __cil_tmp111' = status and havoc(__cil_tmp111) } 
+ s365->s32 { havoc() } 
+ s367->s378 { havoc() } 
+ s369->s379 { havoc() } 
+ s371->s381 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s372->s383 { userPtr__Format != 1 and status' = -1073741823 and havoc(status) } 
+ s372->s384 { userPtr__Format = 1 and havoc() } 
+ s374->s385 { havoc() } 
+ s375->s106 { ret_val_' = __retres and havoc(ret_val_) } 
+ s377->s386 { havoc() } 
+ s378->s106 { ret_val_' = __retres and havoc(ret_val_) } 
+ s379->s32 { havoc() } 
+ s38->s47 { __cil_tmp44' = 16384 and havoc(__cil_tmp44) } 
+ s381->s387 { havoc() } 
+ s383->s389 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s384->s391 { srb__CdbLength' = 10 and havoc(srb__CdbLength) } 
+ s385->s392 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp72 and havoc() } 
+ s385->s394 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp72 and __cil_tmp73' = 52 and havoc(__cil_tmp73) } 
+ s386->s396 { __cil_tmp111 = -2147483626 and Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s386->s397 { __cil_tmp111 != -2147483626 and havoc() } 
+ s387->s399 { __cil_tmp113' = status and havoc(__cil_tmp113) } 
+ s389->s400 { havoc() } 
+ s39->s49 { __cil_tmp116' = status and havoc(__cil_tmp116) } 
+ s391->s402 { srb__TimeOutValue' = 10 and havoc(srb__TimeOutValue) } 
+ s392->s403 { havoc() } 
+ s394->s405 { __cil_tmp74' = 16384 and havoc(__cil_tmp74) } 
+ s396->s397 { havoc() } 
+ s397->s407 { myStatus' = status and havoc(myStatus) } 
+ s399->s408 { havoc() } 
+ s400->s410 { __cil_tmp114' = status and havoc(__cil_tmp114) } 
+ s402->sinter1 { havoc() } 
+ s403->s414 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s405->s416 { __cil_tmp75' = 131072 and havoc(__cil_tmp75) } 
+ s407->sinter3 { havoc() } 
+ s408->s420 { __cil_tmp113 = -2147483626 and Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s408->s421 { __cil_tmp113 != -2147483626 and havoc() } 
+ s41->s50 { havoc() } 
+ s410->s422 { havoc() } 
+ s412->s423 { havoc() } 
+ s414->s425 { srb__CdbLength' = 10 and havoc(srb__CdbLength) } 
+ s416->s427 { __cil_tmp76' = 147456 and havoc(__cil_tmp76) } 
+ s418->s429 { __retres' = status and havoc(__retres) } 
+ s420->s421 { havoc() } 
+ s421->s431 { myStatus' = status and havoc(myStatus) } 
+ s422->s433 { __cil_tmp114 = -2147483626 and Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s422->s434 { __cil_tmp114 != -2147483626 and havoc() } 
+ s423->s435 { status >= 0 and havoc() } 
+ s423->s437 { status < 0 and Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s425->s439 { srb__TimeOutValue' = 10 and havoc(srb__TimeOutValue) } 
+ s427->s441 { __cil_tmp77' = 147508 and havoc(__cil_tmp77) } 
+ s429->s442 { havoc() } 
+ s43->s52 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s431->sinter6 { havoc() } 
+ s433->s434 { havoc() } 
+ s434->s446 { myStatus' = status and havoc(myStatus) } 
+ s435->s448 { deviceExtension__Paused = 1 and deviceExtension__PlayActive' = 0 and havoc(deviceExtension__PlayActive) } 
+ s435->s450 { deviceExtension__Paused != 1 and Irp__IoStatus__Information' = sizeof__SUB_Q_CURRENT_POSITION and havoc(Irp__IoStatus__Information) } 
+ s437->s451 { havoc() } 
+ s439->sinter7 { havoc() } 
+ s44->s54 { srb__TimeOutValue' = 10 and havoc(srb__TimeOutValue) } 
+ s441->s454 { havoc() } 
+ s442->s106 { ret_val_' = __retres and havoc(ret_val_) } 
+ s444->s456 { __retres' = status and havoc(__retres) } 
+ s446->sinter8 { havoc() } 
+ s448->s450 { Irp__IoStatus__Information' = sizeof__SUB_Q_CURRENT_POSITION and havoc(Irp__IoStatus__Information) } 
+ s45->s55 { havoc() } 
+ s450->s451 { havoc() } 
+ s451->s32 { havoc() } 
+ s453->s459 { havoc() } 
+ s454->s460 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp77 and havoc() } 
+ s454->s462 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp77 and __cil_tmp78' = 20 and havoc(__cil_tmp78) } 
+ s456->s463 { havoc() } 
+ s458->s465 { __retres' = status and havoc(__retres) } 
+ s459->s32 { havoc() } 
+ s460->s466 { havoc() } 
+ s462->s468 { __cil_tmp79' = 16384 and havoc(__cil_tmp79) } 
+ s463->s106 { ret_val_' = __retres and havoc(ret_val_) } 
+ s465->s469 { havoc() } 
+ s466->s470 { havoc() } 
+ s468->s472 { __cil_tmp80' = 131072 and havoc(__cil_tmp80) } 
+ s469->s106 { ret_val_' = __retres and havoc(ret_val_) } 
+ s47->s57 { __cil_tmp45' = 131072 and havoc(__cil_tmp45) } 
+ s470->s474 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s472->s476 { __cil_tmp81' = 147456 and havoc(__cil_tmp81) } 
+ s474->s478 { status' = -1073741808 and havoc(status) } 
+ s476->s480 { __cil_tmp82' = 147476 and havoc(__cil_tmp82) } 
+ s478->s481 { havoc() } 
+ s480->s482 { havoc() } 
+ s481->s32 { havoc() } 
+ s482->s483 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp82 and havoc() } 
+ s482->s485 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp82 and __cil_tmp83' = 40 and havoc(__cil_tmp83) } 
+ s483->s470 { havoc() } 
+ s485->s487 { __cil_tmp84' = 16384 and havoc(__cil_tmp84) } 
+ s487->s489 { __cil_tmp85' = 131072 and havoc(__cil_tmp85) } 
+ s489->s491 { __cil_tmp86' = 147456 and havoc(__cil_tmp86) } 
+ s49->s58 { havoc() } 
+ s491->s493 { __cil_tmp87' = 147496 and havoc(__cil_tmp87) } 
+ s493->s494 { havoc() } 
+ s494->s495 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp87 and havoc() } 
+ s494->s497 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp87 and __cil_tmp88' = 2048 and havoc(__cil_tmp88) } 
+ s495->s474 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s497->s499 { __cil_tmp89' = 16384 and havoc(__cil_tmp89) } 
+ s499->s501 { __cil_tmp90' = 131072 and havoc(__cil_tmp90) } 
+ s5->s7 { __cil_tmp37' = 147456 and havoc(__cil_tmp37) } 
+ s50->s32 { havoc() } 
+ s501->s503 { __cil_tmp91' = 147456 and havoc(__cil_tmp91) } 
+ s503->s505 { __cil_tmp92' = 149504 and havoc(__cil_tmp92) } 
+ s505->s506 { havoc() } 
+ s506->s507 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp92 and havoc() } 
+ s506->s508 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp92 and havoc() } 
+ s507->s509 { havoc() } 
+ s508->s510 { havoc() } 
+ s509->sinter16 { havoc() } 
+ s510->sinter17 { havoc() } 
+ s512->s515 { havoc() } 
+ s514->s517 { __retres' = tmp___2 and havoc(__retres) } 
+ s515->s519 { tmp___1 = 1 and deviceExtension__PlayActive' = 1 and havoc(deviceExtension__PlayActive) } 
+ s515->s520 { tmp___1 != 1 and havoc() } 
+ s517->s521 { havoc() } 
+ s519->s523 { status' = 0 and havoc(status) } 
+ s52->s59 { havoc() } 
+ s520->s525 { deviceExtension__PlayActive' = 0 and havoc(deviceExtension__PlayActive) } 
+ s521->s106 { ret_val_' = __retres and havoc(ret_val_) } 
+ s523->s527 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s525->sinter20 { havoc() } 
+ s527->s530 { havoc() } 
+ s529->s532 { __retres' = tmp___0 and havoc(__retres) } 
+ s530->s534 { __cil_tmp115' = status and havoc(__cil_tmp115) } 
+ s532->s535 { havoc() } 
+ s534->s536 { havoc() } 
+ s535->s106 { ret_val_' = __retres and havoc(ret_val_) } 
+ s536->s538 { __cil_tmp115 = -2147483626 and Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s536->s539 { __cil_tmp115 != -2147483626 and havoc() } 
+ s538->s539 { havoc() } 
+ s539->s541 { myStatus' = status and havoc(myStatus) } 
+ s54->s61 { srb__CdbLength' = 10 and havoc(srb__CdbLength) } 
+ s541->sinter23 { havoc() } 
+ s543->s545 { __retres' = status and havoc(__retres) } 
+ s545->s546 { havoc() } 
+ s546->s106 { ret_val_' = __retres and havoc(ret_val_) } 
+ s55->s63 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s57->s65 { __cil_tmp46' = 147456 and havoc(__cil_tmp46) } 
+ s58->s67 { __cil_tmp116 = -2147483626 and Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s58->s68 { __cil_tmp116 != -2147483626 and havoc() } 
+ s59->s70 { __cil_tmp93' = status and havoc(__cil_tmp93) } 
+ s61->sinter9 { havoc() } 
+ s63->s74 { srb__CdbLength' = 10 and havoc(srb__CdbLength) } 
+ s65->s76 { __cil_tmp47' = 147464 and havoc(__cil_tmp47) } 
+ s67->s68 { havoc() } 
+ s68->s78 { myStatus' = status and havoc(myStatus) } 
+ s7->s8 { havoc() } 
+ s70->s79 { havoc() } 
+ s72->s80 { havoc() } 
+ s74->s82 { srb__TimeOutValue' = 10 and havoc(srb__TimeOutValue) } 
+ s76->s83 { havoc() } 
+ s78->sinter11 { havoc() } 
+ s79->s87 { __cil_tmp93 = -2147483626 and Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s79->s88 { __cil_tmp93 != -2147483626 and havoc() } 
+ s8->s11 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp37 and __cil_tmp38' = 24 and havoc(__cil_tmp38) } 
+ s8->s9 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp37 and havoc() } 
+ s80->s89 { havoc() } 
+ s82->sinter13 { havoc() } 
+ s83->s92 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp47 and havoc() } 
+ s83->s94 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp47 and __cil_tmp48' = 4 and havoc(__cil_tmp48) } 
+ s85->s96 { __retres' = status and havoc(__retres) } 
+ s87->s88 { havoc() } 
+ s88->s98 { myStatus' = status and havoc(myStatus) } 
+ s89->s100 { status < 0 and __cil_tmp95' = status and havoc(__cil_tmp95) } 
+ s89->s102 { status >= 0 and status' = 0 and havoc(status) } 
+ s9->s12 { havoc() } 
+ s91->s103 { havoc() } 
+ s92->s55 { havoc() } 
+ s94->s105 { __cil_tmp49' = 16384 and havoc(__cil_tmp49) } 
+ s96->s106 { ret_val_' = __retres and havoc(ret_val_) } 
+ s98->sinter15 { havoc() } 
+ sinit->s0 {  } 
+ sinter0->s211 { (status',validity__status_')=SendSrbSynchronous(deviceExtension,0,srb,0,0,1,0,1) and havoc(status,validity__status_) } 
+ sinter1->s412 { (status',validity__status_')=SendSrbSynchronous(deviceExtension,0,srb,0,SubQPtr___0,0,sizeof__SUB_Q_CHANNEL_DATA,0) and havoc(status,validity__status_) } 
+ sinter10->s270 { (status',validity__status_')=SendSrbSynchronous(deviceExtension,0,srb,0,SubQPtr,0,sizeof__SUB_Q_CHANNEL_DATA,0) and havoc(status,validity__status_) } 
+ sinter11->s85 { IofCompleteRequest(Irp,-1,0,1) and havoc() } 
+ sinter12->s285 { IofCompleteRequest(Irp,-1,0,1) and havoc() } 
+ sinter13->s91 { (status',validity__status_')=SendSrbSynchronous(deviceExtension,0,srb,0,0,1,0,1) and havoc(status,validity__status_) } 
+ sinter14->s297 { IofCompleteRequest(Irp,-1,0,1) and havoc() } 
+ sinter15->s108 { IofCompleteRequest(Irp,-1,0,1) and havoc() } 
+ sinter16->s512 { (tmp___1',validity__tmp___1_')=CdAudioIsPlayActive(DeviceObject,-1) and havoc(tmp___1,validity__tmp___1_) } 
+ sinter17->s514 { (tmp___2',validity__tmp___2_')=CdAudioSendToNextDriver(DeviceObject,-1,Irp,-1) and havoc(tmp___2,validity__tmp___2_) } 
+ sinter18->s323 { (status',validity__status_')=SendSrbSynchronous(deviceExtension,0,srb,0,0,1,0,1) and havoc(status,validity__status_) } 
+ sinter19->s331 { (status',validity__status_')=SendSrbSynchronous(deviceExtension,0,srb,0,0,1,0,1) and havoc(status,validity__status_) } 
+ sinter2->s218 { (status',validity__status_')=SendSrbSynchronous(deviceExtension,0,srb,0,0,1,0,1) and havoc(status,validity__status_) } 
+ sinter20->s529 { (tmp___0',validity__tmp___0_')=CdAudioSendToNextDriver(DeviceObject,-1,Irp,-1) and havoc(tmp___0,validity__tmp___0_) } 
+ sinter21->s351 { IofCompleteRequest(Irp,-1,0,1) and havoc() } 
+ sinter22->s354 { IofCompleteRequest(Irp,-1,0,1) and havoc() } 
+ sinter23->s543 { IofCompleteRequest(Irp,-1,0,1) and havoc() } 
+ sinter24->s181 { IofCompleteRequest(Irp,-1,0,1) and havoc() } 
+ sinter3->s418 { IofCompleteRequest(Irp,-1,0,1) and havoc() } 
+ sinter4->s26 { (tmp',validity__tmp_')=CdAudioIsPlayActive(DeviceObject,-1) and havoc(tmp,validity__tmp_) } 
+ sinter5->s225 { IofCompleteRequest(Irp,-1,0,1) and havoc() } 
+ sinter6->s444 { IofCompleteRequest(Irp,-1,0,1) and havoc() } 
+ sinter7->s453 { (status',validity__status_')=SendSrbSynchronous(deviceExtension,0,srb,0,0,1,0,1) and havoc(status,validity__status_) } 
+ sinter8->s458 { IofCompleteRequest(Irp,-1,0,1) and havoc() } 
+ sinter9->s72 { (status',validity__status_')=SendSrbSynchronous(deviceExtension,0,srb,0,Toc,0,sizeof__CDROM_TOC,0) and havoc(status,validity__status_) }
+}
+CdAudio535DeviceControl{
+in Irp,validity__Irp_,DeviceObject,validity__DeviceObject_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity__DeviceObject__DeviceExtension_,validity__Irp__AssociatedIrp__SystemBuffer_,validity__Irp__IoStatus__Information_,validity__Irp__Tail__Overlay__CurrentStackLocation_,validity__SubQPtr_,validity__Toc_,validity____cil_tmp100_,validity____cil_tmp101_,validity____cil_tmp102_,validity____cil_tmp103_,validity____cil_tmp104_,validity____cil_tmp105_,validity____cil_tmp107_,validity____cil_tmp108_,validity____cil_tmp109_,validity____cil_tmp58_,validity____cil_tmp59_,validity____cil_tmp60_,validity____cil_tmp61_,validity____cil_tmp62_,validity____cil_tmp63_,validity____cil_tmp64_,validity____cil_tmp65_,validity____cil_tmp66_,validity____cil_tmp67_,validity____cil_tmp68_,validity____cil_tmp69_,validity____cil_tmp70_,validity____cil_tmp71_,validity____cil_tmp72_,validity____cil_tmp73_,validity____cil_tmp74_,validity____cil_tmp75_,validity____cil_tmp76_,validity____cil_tmp77_,validity____cil_tmp78_,validity____cil_tmp79_,validity____cil_tmp80_,validity____cil_tmp81_,validity____cil_tmp82_,validity____cil_tmp83_,validity____cil_tmp84_,validity____cil_tmp85_,validity____cil_tmp86_,validity____cil_tmp87_,validity____cil_tmp88_,validity____cil_tmp89_,validity____cil_tmp90_,validity____cil_tmp91_,validity____cil_tmp92_,validity____cil_tmp93_,validity____cil_tmp94_,validity____cil_tmp95_,validity____cil_tmp96_,validity____cil_tmp97_,validity____cil_tmp98_,validity____cil_tmp99_,validity____retres_,validity__bytesTransfered_,validity__cdaudioDataOut_,validity__cdaudioDataOut__FirstTrack_,validity__cdaudioDataOut__LastTrack_,validity__cdb_,validity__cdb__CDB10__OperationCode_,validity__cdb__PLAY_AUDIO_MSF__OperationCode_,validity__currentIrpStack_,validity__currentIrpStack__Parameters__DeviceIoControl__InputBufferLength_,validity__currentIrpStack__Parameters__DeviceIoControl__IoControlCode_,validity__currentIrpStack__Parameters__DeviceIoControl__OutputBufferLength_,validity__deviceExtension_,validity__deviceExtension__TargetDeviceObject_,validity__i_,validity__inputBuffer_,validity__inputBuffer__EndingF_,validity__inputBuffer__EndingM_,validity__inputBuffer__EndingS_,validity__inputBuffer__StartingF_,validity__inputBuffer__StartingM_,validity__inputBuffer__StartingS_,validity__inputBuffer___0_,validity__lastSession_,validity__lastSession__LogicalBlockAddress_,validity__sizeof__CDROM_PLAY_AUDIO_MSF_,validity__sizeof__CDROM_SEEK_AUDIO_MSF_,validity__sizeof__CDROM_TOC_,validity__sizeof__READ_CAPACITY_DATA_,validity__sizeof__SUB_Q_CURRENT_POSITION_,validity__srb_,validity__srb__Cdb_,validity__srb__CdbLength_,validity__srb__TimeOutValue_,validity__status_,validity__tmp_,validity__tmp___0_,validity__tmp___1_,validity__tmp___2_,validity__tmp___3_,validity__tmp___4_,validity__tmp___5_,validity__tmp___6_,validity__tmp___7_,validity__tmp___8_,validity__tracksInBuffer_,validity__tracksOnCd_,validity__tracksToReturn_,validity__userPtr_,validity__userPtr__Format_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_4,_ndet_arg_3,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,__retres,__cil_tmp109,__cil_tmp108,__cil_tmp107,__cil_tmp105,__cil_tmp104,__cil_tmp103,__cil_tmp102,__cil_tmp101,__cil_tmp100,__cil_tmp99,__cil_tmp98,__cil_tmp97,__cil_tmp96,__cil_tmp95,__cil_tmp94,__cil_tmp93,__cil_tmp92,__cil_tmp91,__cil_tmp90,__cil_tmp89,__cil_tmp88,__cil_tmp87,__cil_tmp86,__cil_tmp85,__cil_tmp84,__cil_tmp83,__cil_tmp82,__cil_tmp81,__cil_tmp80,__cil_tmp79,__cil_tmp78,__cil_tmp77,__cil_tmp76,__cil_tmp75,__cil_tmp74,__cil_tmp73,__cil_tmp72,__cil_tmp71,__cil_tmp70,__cil_tmp69,__cil_tmp68,__cil_tmp67,__cil_tmp66,__cil_tmp65,__cil_tmp64,__cil_tmp63,__cil_tmp62,__cil_tmp61,__cil_tmp60,__cil_tmp59,__cil_tmp58,tmp___8,tmp___7,inputBuffer___0,inputBuffer,tmp___6,tmp___5,SubQPtr,userPtr,tracksInBuffer,tracksOnCd,tracksToReturn,tmp___4,tmp___3,tmp___2,tmp___1,tmp___0,tmp,Toc,bytesTransfered,i,status,cdb,lastSession,srb,cdaudioDataOut,deviceExtension,currentIrpStack,sizeof__CDROM_SEEK_AUDIO_MSF,cdb__PLAY_AUDIO_MSF__OperationCode,inputBuffer__EndingF,inputBuffer__StartingF,inputBuffer__EndingS,inputBuffer__StartingS,inputBuffer__EndingM,inputBuffer__StartingM,sizeof__CDROM_PLAY_AUDIO_MSF,userPtr__Format,sizeof__SUB_Q_CURRENT_POSITION,sizeof__CDROM_TOC,cdaudioDataOut__LastTrack,cdaudioDataOut__FirstTrack,lastSession__LogicalBlockAddress,sizeof__READ_CAPACITY_DATA,srb__TimeOutValue,cdb__CDB10__OperationCode,srb__CdbLength,currentIrpStack__Parameters__DeviceIoControl__InputBufferLength,currentIrpStack__Parameters__DeviceIoControl__OutputBufferLength,Irp__IoStatus__Information,currentIrpStack__Parameters__DeviceIoControl__IoControlCode,srb__Cdb,Irp__AssociatedIrp__SystemBuffer,deviceExtension__TargetDeviceObject,DeviceObject__DeviceExtension,Irp__Tail__Overlay__CurrentStackLocation : int;
+out ret_val_,validity__ret_val__ : int;
+initial sinit;
+final s98;
+error s1,s10,s101,s105,s107,s111,s113,s116,s119,s12,s121,s123,s125,s128,s130,s132,s134,s136,s138,s14,s142,s144,s147,s151,s156,s159,s16,s162,s165,s167,s169,s172,s175,s178,s18,s180,s182,s184,s186,s188,s191,s195,s197,s199,s201,s203,s205,s209,s213,s215,s217,s22,s220,s222,s224,s227,s229,s231,s239,s242,s245,s247,s249,s25,s252,s254,s256,s259,s261,s263,s265,s27,s270,s274,s277,s280,s283,s286,s288,s29,s291,s294,s296,s299,s3,s301,s304,s306,s308,s313,s316,s319,s321,s323,s325,s327,s33,s332,s334,s336,s338,s340,s344,s346,s348,s350,s352,s359,s361,s363,s37,s39,s41,s45,s48,s5,s53,s57,s59,s61,s64,s67,s69,s7,s71,s73,s75,s77,s79,s81,s86,s88,s90,s92,s96; 
+ s0->s2 { currentIrpStack' = Irp__Tail__Overlay__CurrentStackLocation and havoc(currentIrpStack) } 
+ s100->s109 { havoc() } 
+ s102->s110 { havoc() } 
+ s103->s112 { status' = -1073741670 and havoc(status) } 
+ s104->s114 { srb__TimeOutValue' = 10 and havoc(srb__TimeOutValue) } 
+ s106->s115 { havoc() } 
+ s108->s117 { __cil_tmp73' = 131072 and havoc(__cil_tmp73) } 
+ s109->s118 { status < 0 and havoc() } 
+ s109->s120 { status >= 0 and status' = 0 and havoc(status) } 
+ s11->s13 { __cil_tmp59' = 16384 and havoc(__cil_tmp59) } 
+ s110->s55 { havoc() } 
+ s112->s122 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s114->s124 { srb__CdbLength' = 10 and havoc(srb__CdbLength) } 
+ s115->s126 { currentIrpStack__Parameters__DeviceIoControl__OutputBufferLength < sizeof__SUB_Q_CURRENT_POSITION and status' = -1073741789 and havoc(status) } 
+ s115->s127 { currentIrpStack__Parameters__DeviceIoControl__OutputBufferLength >= sizeof__SUB_Q_CURRENT_POSITION and havoc() } 
+ s117->s129 { __cil_tmp74' = 147456 and havoc(__cil_tmp74) } 
+ s118->s131 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s120->s133 { Irp__IoStatus__Information' = bytesTransfered and havoc(Irp__IoStatus__Information) } 
+ s122->sinter9 { havoc() } 
+ s124->sinter10 { havoc() } 
+ s126->s139 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s127->s140 { SubQPtr = 0 and havoc() } 
+ s127->s141 { SubQPtr != 0 and havoc() } 
+ s129->s143 { __cil_tmp75' = 147480 and havoc(__cil_tmp75) } 
+ s13->s15 { __cil_tmp60' = 131072 and havoc(__cil_tmp60) } 
+ s131->sinter11 { havoc() } 
+ s133->s146 { havoc() } 
+ s135->s148 { __retres' = tmp___3 and havoc(__retres) } 
+ s137->s149 { havoc() } 
+ s139->s150 { havoc() } 
+ s140->s152 { status' = -1073741670 and havoc(status) } 
+ s141->s153 { userPtr__Format != 1 and havoc() } 
+ s141->s154 { userPtr__Format = 1 and havoc() } 
+ s143->s155 { havoc() } 
+ s145->s157 { __retres' = tmp___1 and havoc(__retres) } 
+ s146->s158 { lastSession__LogicalBlockAddress = 0 and havoc() } 
+ s146->s160 { lastSession__LogicalBlockAddress != 0 and cdaudioDataOut__FirstTrack' = 1 and havoc(cdaudioDataOut__FirstTrack) } 
+ s148->s161 { havoc() } 
+ s149->s163 { status >= 0 and __cil_tmp107' = status and havoc(__cil_tmp107) } 
+ s149->s164 { status < 0 and havoc() } 
+ s15->s17 { __cil_tmp61' = 147456 and havoc(__cil_tmp61) } 
+ s150->s55 { havoc() } 
+ s152->s166 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s153->s168 { status' = -1073741823 and havoc(status) } 
+ s154->s170 { srb__CdbLength' = 10 and havoc(srb__CdbLength) } 
+ s155->s171 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp75 and havoc() } 
+ s155->s173 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp75 and __cil_tmp76' = 4 and havoc(__cil_tmp76) } 
+ s157->s174 { havoc() } 
+ s158->s55 { havoc() } 
+ s160->s176 { cdaudioDataOut__LastTrack' = 2 and havoc(cdaudioDataOut__LastTrack) } 
+ s161->s98 { ret_val_' = __retres and havoc(ret_val_) } 
+ s163->s177 { havoc() } 
+ s164->s179 { __cil_tmp108' = status and havoc(__cil_tmp108) } 
+ s166->sinter14 { havoc() } 
+ s168->s183 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s17->s19 { __cil_tmp62' = 147512 and havoc(__cil_tmp62) } 
+ s170->s185 { srb__TimeOutValue' = 10 and havoc(srb__TimeOutValue) } 
+ s171->s187 { inputBuffer' = Irp__AssociatedIrp__SystemBuffer and havoc(inputBuffer) } 
+ s173->s189 { __cil_tmp77' = 16384 and havoc(__cil_tmp77) } 
+ s174->s98 { ret_val_' = __retres and havoc(ret_val_) } 
+ s176->s190 { havoc() } 
+ s177->s192 { __cil_tmp107 != -1073741764 and status' = 0 and havoc(status) } 
+ s177->s193 { __cil_tmp107 = -1073741764 and havoc() } 
+ s179->s194 { havoc() } 
+ s181->s196 { __retres' = tmp___5 and havoc(__retres) } 
+ s183->sinter15 { havoc() } 
+ s185->sinter16 { havoc() } 
+ s187->s202 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s189->s204 { __cil_tmp78' = 131072 and havoc(__cil_tmp78) } 
+ s19->s20 { havoc() } 
+ s190->s55 { havoc() } 
+ s192->s206 { __cil_tmp109' = cdaudioDataOut__LastTrack-cdaudioDataOut__FirstTrack and havoc(__cil_tmp109) } 
+ s193->s164 { havoc() } 
+ s194->s206 { __cil_tmp108 = -1073741764 and __cil_tmp109' = cdaudioDataOut__LastTrack-cdaudioDataOut__FirstTrack and havoc(__cil_tmp109) } 
+ s194->s207 { __cil_tmp108 != -1073741764 and havoc() } 
+ s196->s208 { havoc() } 
+ s198->s210 { __retres' = tmp___6 and havoc(__retres) } 
+ s2->s4 { deviceExtension' = DeviceObject__DeviceExtension and havoc(deviceExtension) } 
+ s20->s21 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp62 and havoc() } 
+ s20->s23 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp62 and __cil_tmp63' = 16384 and havoc(__cil_tmp63) } 
+ s200->s211 { havoc() } 
+ s202->s212 { havoc() } 
+ s204->s214 { __cil_tmp79' = 147456 and havoc(__cil_tmp79) } 
+ s206->s216 { tracksOnCd' = __cil_tmp109+1 and havoc(tracksOnCd) } 
+ s207->s218 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s208->s98 { ret_val_' = __retres and havoc(ret_val_) } 
+ s21->s24 { havoc() } 
+ s210->s219 { havoc() } 
+ s211->s221 { status >= 0 and Irp__IoStatus__Information' = sizeof__SUB_Q_CURRENT_POSITION and havoc(Irp__IoStatus__Information) } 
+ s211->s223 { status < 0 and Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s212->s225 { currentIrpStack__Parameters__DeviceIoControl__InputBufferLength < sizeof__CDROM_PLAY_AUDIO_MSF and status' = -1073741820 and havoc(status) } 
+ s212->s226 { currentIrpStack__Parameters__DeviceIoControl__InputBufferLength >= sizeof__CDROM_PLAY_AUDIO_MSF and havoc() } 
+ s214->s228 { __cil_tmp80' = 147460 and havoc(__cil_tmp80) } 
+ s216->s230 { tracksInBuffer' = currentIrpStack__Parameters__DeviceIoControl__OutputBufferLength and havoc(tracksInBuffer) } 
+ s218->sinter0 { havoc() } 
+ s219->s98 { ret_val_' = __retres and havoc(ret_val_) } 
+ s221->s233 { havoc() } 
+ s223->s233 { havoc() } 
+ s225->s234 { havoc() } 
+ s226->s235 { inputBuffer__StartingM = inputBuffer__EndingM and havoc() } 
+ s226->s236 { inputBuffer__StartingM != inputBuffer__EndingM and havoc() } 
+ s228->s237 { havoc() } 
+ s23->s26 { __cil_tmp64' = 131072 and havoc(__cil_tmp64) } 
+ s230->s238 { havoc() } 
+ s232->s240 { __retres' = tmp___4 and havoc(__retres) } 
+ s233->s55 { havoc() } 
+ s234->s55 { havoc() } 
+ s235->s236 { inputBuffer__StartingS != inputBuffer__EndingS and havoc() } 
+ s235->s241 { inputBuffer__StartingS = inputBuffer__EndingS and havoc() } 
+ s236->s243 { srb__CdbLength' = 10 and havoc(srb__CdbLength) } 
+ s237->s244 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp80 and havoc() } 
+ s237->s246 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp80 and __cil_tmp81' = 2056 and havoc(__cil_tmp81) } 
+ s238->s248 { tracksInBuffer < tracksOnCd and tracksToReturn' = tracksInBuffer and havoc(tracksToReturn) } 
+ s238->s250 { tracksInBuffer >= tracksOnCd and tracksToReturn' = tracksOnCd and havoc(tracksToReturn) } 
+ s24->sinter1 { havoc() } 
+ s240->s251 { havoc() } 
+ s241->s236 { havoc() } 
+ s243->s253 { srb__TimeOutValue' = 10 and havoc(srb__TimeOutValue) } 
+ s244->s255 { inputBuffer___0' = Irp__AssociatedIrp__SystemBuffer and havoc(inputBuffer___0) } 
+ s246->s257 { __cil_tmp82' = 16384 and havoc(__cil_tmp82) } 
+ s248->s258 { havoc() } 
+ s250->s258 { havoc() } 
+ s251->s98 { ret_val_' = __retres and havoc(ret_val_) } 
+ s253->sinter2 { havoc() } 
+ s255->s262 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s257->s264 { __cil_tmp83' = 131072 and havoc(__cil_tmp83) } 
+ s258->s266 { tracksInBuffer > tracksOnCd and i' = i+1 and havoc(i) } 
+ s258->s267 { tracksInBuffer <=  tracksOnCd and havoc() } 
+ s26->s30 { __cil_tmp65' = 147456 and havoc(__cil_tmp65) } 
+ s260->s268 { havoc() } 
+ s262->s269 { havoc() } 
+ s264->s271 { __cil_tmp84' = 147456 and havoc(__cil_tmp84) } 
+ s266->s267 { havoc() } 
+ s267->s55 { havoc() } 
+ s268->s272 { status >= 0 and havoc() } 
+ s268->s273 { status < 0 and havoc() } 
+ s269->s275 { currentIrpStack__Parameters__DeviceIoControl__InputBufferLength < sizeof__CDROM_SEEK_AUDIO_MSF and status' = -1073741820 and havoc(status) } 
+ s269->s276 { currentIrpStack__Parameters__DeviceIoControl__InputBufferLength >= sizeof__CDROM_SEEK_AUDIO_MSF and havoc() } 
+ s271->s278 { __cil_tmp85' = 149512 and havoc(__cil_tmp85) } 
+ s272->s273 { havoc() } 
+ s273->s55 { havoc() } 
+ s275->s279 { havoc() } 
+ s276->s281 { srb__CdbLength' = 10 and havoc(srb__CdbLength) } 
+ s278->s282 { havoc() } 
+ s279->s55 { havoc() } 
+ s28->s31 { havoc() } 
+ s281->s284 { srb__TimeOutValue' = 10 and havoc(srb__TimeOutValue) } 
+ s282->s285 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp85 and havoc() } 
+ s282->s287 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp85 and __cil_tmp86' = 52 and havoc(__cil_tmp86) } 
+ s284->sinter7 { havoc() } 
+ s285->s290 { havoc() } 
+ s287->s292 { __cil_tmp87' = 16384 and havoc(__cil_tmp87) } 
+ s289->s293 { havoc() } 
+ s290->s295 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s292->s297 { __cil_tmp88' = 131072 and havoc(__cil_tmp88) } 
+ s293->s298 { havoc() } 
+ s295->s300 { srb__CdbLength' = 10 and havoc(srb__CdbLength) } 
+ s297->s302 { __cil_tmp89' = 147456 and havoc(__cil_tmp89) } 
+ s298->s303 { havoc() } 
+ s30->s32 { havoc() } 
+ s300->s305 { srb__TimeOutValue' = 10 and havoc(srb__TimeOutValue) } 
+ s302->s307 { __cil_tmp90' = 147508 and havoc(__cil_tmp90) } 
+ s303->s55 { havoc() } 
+ s305->sinter8 { havoc() } 
+ s307->s310 { havoc() } 
+ s309->s311 { havoc() } 
+ s31->s34 { tmp != 0 and status' = -2147483631 and havoc(status) } 
+ s31->s35 { tmp = 0 and havoc() } 
+ s310->s312 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp90 and havoc() } 
+ s310->s314 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp90 and __cil_tmp91' = 20 and havoc(__cil_tmp91) } 
+ s311->s55 { havoc() } 
+ s312->s315 { havoc() } 
+ s314->s317 { __cil_tmp92' = 16384 and havoc(__cil_tmp92) } 
+ s315->s318 { havoc() } 
+ s317->s320 { __cil_tmp93' = 131072 and havoc(__cil_tmp93) } 
+ s318->s322 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s32->s36 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp65 and havoc() } 
+ s32->s38 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp65 and __cil_tmp66' = 44 and havoc(__cil_tmp66) } 
+ s320->s324 { __cil_tmp94' = 147456 and havoc(__cil_tmp94) } 
+ s322->s326 { status' = -1073741808 and havoc(status) } 
+ s324->s328 { __cil_tmp95' = 147476 and havoc(__cil_tmp95) } 
+ s326->s329 { havoc() } 
+ s328->s330 { havoc() } 
+ s329->s55 { havoc() } 
+ s330->s331 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp95 and havoc() } 
+ s330->s333 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp95 and __cil_tmp96' = 40 and havoc(__cil_tmp96) } 
+ s331->s318 { havoc() } 
+ s333->s335 { __cil_tmp97' = 16384 and havoc(__cil_tmp97) } 
+ s335->s337 { __cil_tmp98' = 131072 and havoc(__cil_tmp98) } 
+ s337->s339 { __cil_tmp99' = 147456 and havoc(__cil_tmp99) } 
+ s339->s341 { __cil_tmp100' = 147496 and havoc(__cil_tmp100) } 
+ s34->s40 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s341->s342 { havoc() } 
+ s342->s343 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp100 and havoc() } 
+ s342->s345 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp100 and __cil_tmp101' = 2048 and havoc(__cil_tmp101) } 
+ s343->s322 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s345->s347 { __cil_tmp102' = 16384 and havoc(__cil_tmp102) } 
+ s347->s349 { __cil_tmp103' = 131072 and havoc(__cil_tmp103) } 
+ s349->s351 { __cil_tmp104' = 147456 and havoc(__cil_tmp104) } 
+ s35->s42 { currentIrpStack__Parameters__DeviceIoControl__OutputBufferLength != 0 and status' = -1073741789 and havoc(status) } 
+ s35->s43 { currentIrpStack__Parameters__DeviceIoControl__OutputBufferLength = 0 and havoc() } 
+ s351->s353 { __cil_tmp105' = 149504 and havoc(__cil_tmp105) } 
+ s353->s354 { havoc() } 
+ s354->s355 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp105 and havoc() } 
+ s354->s356 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp105 and havoc() } 
+ s355->s357 { havoc() } 
+ s356->s358 { havoc() } 
+ s357->sinter12 { havoc() } 
+ s358->sinter13 { havoc() } 
+ s36->s44 { havoc() } 
+ s360->s358 { havoc() } 
+ s362->s364 { __retres' = tmp___7 and havoc(__retres) } 
+ s364->s365 { havoc() } 
+ s365->s98 { ret_val_' = __retres and havoc(ret_val_) } 
+ s38->s46 { __cil_tmp67' = 16384 and havoc(__cil_tmp67) } 
+ s4->s6 { cdaudioDataOut' = Irp__AssociatedIrp__SystemBuffer and havoc(cdaudioDataOut) } 
+ s40->s47 { havoc() } 
+ s42->s49 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s43->s50 { lastSession = 0 and havoc() } 
+ s43->s51 { lastSession != 0 and havoc() } 
+ s44->s52 { havoc() } 
+ s46->s54 { __cil_tmp68' = 131072 and havoc(__cil_tmp68) } 
+ s47->s55 { havoc() } 
+ s49->s56 { havoc() } 
+ s50->s58 { status' = -1073741670 and havoc(status) } 
+ s51->s60 { srb__CdbLength' = 10 and havoc(srb__CdbLength) } 
+ s52->s62 { currentIrpStack__Parameters__DeviceIoControl__OutputBufferLength != 0 and status' = -1073741789 and havoc(status) } 
+ s52->s63 { currentIrpStack__Parameters__DeviceIoControl__OutputBufferLength = 0 and havoc() } 
+ s54->s65 { __cil_tmp69' = 147456 and havoc(__cil_tmp69) } 
+ s55->s66 { havoc() } 
+ s56->s55 { havoc() } 
+ s58->s68 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s6->s8 { cdb' = srb__Cdb and havoc(cdb) } 
+ s60->s70 { cdb__CDB10__OperationCode' = 38 and havoc(cdb__CDB10__OperationCode) } 
+ s62->s72 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s63->sinter3 { havoc() } 
+ s65->s76 { __cil_tmp70' = 147500 and havoc(__cil_tmp70) } 
+ s66->sinter4 { havoc() } 
+ s68->sinter5 { havoc() } 
+ s70->s82 { srb__TimeOutValue' = 10 and havoc(srb__TimeOutValue) } 
+ s72->s83 { havoc() } 
+ s74->s84 { havoc() } 
+ s76->s85 { havoc() } 
+ s78->s87 { __retres' = tmp___8 and havoc(__retres) } 
+ s8->s9 { havoc() } 
+ s80->s89 { __retres' = tmp___0 and havoc(__retres) } 
+ s82->sinter6 { havoc() } 
+ s83->s55 { havoc() } 
+ s84->s93 { tmp___2 != 0 and status' = -2147483631 and havoc(status) } 
+ s84->s94 { tmp___2 = 0 and havoc() } 
+ s85->s95 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp70 and havoc() } 
+ s85->s97 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp70 and __cil_tmp71' = 24 and havoc(__cil_tmp71) } 
+ s87->s98 { ret_val_' = __retres and havoc(ret_val_) } 
+ s89->s99 { havoc() } 
+ s9->s11 { __cil_tmp58' = 56 and havoc(__cil_tmp58) } 
+ s91->s100 { havoc() } 
+ s93->s102 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s94->s103 { Toc = 0 and havoc() } 
+ s94->s104 { Toc != 0 and havoc() } 
+ s95->s106 { userPtr' = Irp__AssociatedIrp__SystemBuffer and havoc(userPtr) } 
+ s97->s108 { __cil_tmp72' = 16384 and havoc(__cil_tmp72) } 
+ s99->s98 { ret_val_' = __retres and havoc(ret_val_) } 
+ sinit->s0 {  } 
+ sinter0->s232 { (tmp___4',validity__tmp___4_')=AG_SetStatusAndReturn(status,0,Irp,-1,deviceExtension__TargetDeviceObject,0) and havoc(tmp___4,validity__tmp___4_) } 
+ sinter1->s28 { (tmp',validity__tmp_')=CdAudioIsPlayActive(DeviceObject,-1) and havoc(tmp,validity__tmp_) } 
+ sinter10->s137 { (status',validity__status_')=SendSrbSynchronous(deviceExtension,0,srb,0,Toc,0,sizeof__CDROM_TOC,0) and havoc(status,validity__status_) } 
+ sinter11->s145 { (tmp___1',validity__tmp___1_')=AG_SetStatusAndReturn(status,0,Irp,-1,deviceExtension__TargetDeviceObject,0) and havoc(tmp___1,validity__tmp___1_) } 
+ sinter12->s360 { (__nts__naffected_ret_val_',validity____nts__naffected_ret_val__')=CdAudioIsPlayActive(DeviceObject,-1) and havoc(__nts__naffected_ret_val_,validity____nts__naffected_ret_val__) } 
+ sinter13->s362 { (tmp___7',validity__tmp___7_')=CdAudioSendToNextDriver(DeviceObject,-1,Irp,-1) and havoc(tmp___7,validity__tmp___7_) } 
+ sinter14->s181 { (tmp___5',validity__tmp___5_')=AG_SetStatusAndReturn(status,1,Irp,-1,deviceExtension__TargetDeviceObject,0) and havoc(tmp___5,validity__tmp___5_) } 
+ sinter15->s198 { (tmp___6',validity__tmp___6_')=AG_SetStatusAndReturn(status,1,Irp,-1,deviceExtension__TargetDeviceObject,0) and havoc(tmp___6,validity__tmp___6_) } 
+ sinter16->s200 { (status',validity__status_')=SendSrbSynchronous(deviceExtension,0,srb,0,SubQPtr,0,sizeof__SUB_Q_CURRENT_POSITION,0) and havoc(status,validity__status_) } 
+ sinter2->s260 { (status',validity__status_')=SendSrbSynchronous(deviceExtension,0,srb,0,0,1,0,1) and havoc(status,validity__status_) } 
+ sinter3->s74 { (tmp___2',validity__tmp___2_')=CdAudioIsPlayActive(DeviceObject,-1) and havoc(tmp___2,validity__tmp___2_) } 
+ sinter4->s78 { (tmp___8',validity__tmp___8_')=AG_SetStatusAndReturn(status,1,Irp,-1,deviceExtension__TargetDeviceObject,0) and havoc(tmp___8,validity__tmp___8_) } 
+ sinter5->s80 { (tmp___0',validity__tmp___0_')=AG_SetStatusAndReturn(status,1,Irp,-1,deviceExtension__TargetDeviceObject,0) and havoc(tmp___0,validity__tmp___0_) } 
+ sinter6->s91 { (status',validity__status_')=SendSrbSynchronous(deviceExtension,0,srb,0,lastSession,0,sizeof__READ_CAPACITY_DATA,0) and havoc(status,validity__status_) } 
+ sinter7->s289 { (status',validity__status_')=SendSrbSynchronous(deviceExtension,0,srb,0,0,1,0,1) and havoc(status,validity__status_) } 
+ sinter8->s309 { (status',validity__status_')=SendSrbSynchronous(deviceExtension,0,srb,0,0,1,0,1) and havoc(status,validity__status_) } 
+ sinter9->s135 { (tmp___3',validity__tmp___3_')=AG_SetStatusAndReturn(status,1,Irp,-1,deviceExtension__TargetDeviceObject,0) and havoc(tmp___3,validity__tmp___3_) }
+}
+CdAudioAtapiDeviceControl{
+in Irp,validity__Irp_,DeviceObject,validity__DeviceObject_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity__Irp__IoStatus__Information_,validity__Irp__IoStatus__Status_,validity____cil_tmp13_,validity____cil_tmp14_,validity____cil_tmp15_,validity____cil_tmp16_,validity____cil_tmp17_,validity____retres_,validity__currentIrpStack__Parameters__DeviceIoControl__IoControlCode_,validity__deviceExtension_,validity__deviceExtension__PlayActive_,validity__srb_,validity__srb__CdbLength_,validity__srb__TimeOutValue_,validity__status_,validity__tmp_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_4,_ndet_arg_3,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,__retres,__cil_tmp17,__cil_tmp16,__cil_tmp15,__cil_tmp14,__cil_tmp13,tmp,srb,deviceExtension,status,Irp__IoStatus__Status,srb__TimeOutValue,srb__CdbLength,deviceExtension__PlayActive,Irp__IoStatus__Information,currentIrpStack__Parameters__DeviceIoControl__IoControlCode : int;
+out ret_val_,validity__ret_val__ : int;
+initial sinit;
+final s28;
+error s10,s15,s17,s19,s2,s21,s23,s26,s29,s35,s37,s39,s4,s41,s43,s45,s47,s49,s6,s8; 
+ s0->s1 { havoc() } 
+ s1->s3 { __cil_tmp13' = 8 and havoc(__cil_tmp13) } 
+ s11->s12 { havoc() } 
+ s12->s13 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp17 and havoc() } 
+ s12->s14 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp17 and havoc() } 
+ s13->s16 { Irp__IoStatus__Information' = 0 and havoc(Irp__IoStatus__Information) } 
+ s14->sinter0 { havoc() } 
+ s16->s20 { deviceExtension__PlayActive' = 0 and havoc(deviceExtension__PlayActive) } 
+ s18->s22 { __retres' = tmp and havoc(__retres) } 
+ s20->s24 { srb__CdbLength' = 12 and havoc(srb__CdbLength) } 
+ s22->s25 { havoc() } 
+ s24->s27 { srb__TimeOutValue' = 10 and havoc(srb__TimeOutValue) } 
+ s25->s28 { ret_val_' = __retres and havoc(ret_val_) } 
+ s27->sinter1 { havoc() } 
+ s3->s5 { __cil_tmp14' = 16384 and havoc(__cil_tmp14) } 
+ s30->s31 { havoc() } 
+ s31->s32 { havoc() } 
+ s32->s33 { status < 0 and havoc() } 
+ s32->s34 { status >= 0 and havoc() } 
+ s33->s36 { Irp__IoStatus__Status' = status and havoc(Irp__IoStatus__Status) } 
+ s34->s38 { Irp__IoStatus__Status' = status and havoc(Irp__IoStatus__Status) } 
+ s36->s40 { myStatus' = status and havoc(myStatus) } 
+ s38->s42 { myStatus' = status and havoc(myStatus) } 
+ s40->sinter2 { havoc() } 
+ s42->sinter3 { havoc() } 
+ s44->s48 { __retres' = status and havoc(__retres) } 
+ s46->s50 { __retres' = status and havoc(__retres) } 
+ s48->s51 { havoc() } 
+ s5->s7 { __cil_tmp15' = 131072 and havoc(__cil_tmp15) } 
+ s50->s28 { ret_val_' = __retres and havoc(ret_val_) } 
+ s51->s28 { ret_val_' = __retres and havoc(ret_val_) } 
+ s7->s9 { __cil_tmp16' = 147456 and havoc(__cil_tmp16) } 
+ s9->s11 { __cil_tmp17' = 147464 and havoc(__cil_tmp17) } 
+ sinit->s0 {  } 
+ sinter0->s18 { (tmp',validity__tmp_')=CdAudioSendToNextDriver(DeviceObject,-1,Irp,-1) and havoc(tmp,validity__tmp_) } 
+ sinter1->s30 { (status',validity__status_')=SendSrbSynchronous(deviceExtension,0,srb,0,0,1,0,1) and havoc(status,validity__status_) } 
+ sinter2->s44 { IofCompleteRequest(Irp,-1,0,1) and havoc() } 
+ sinter3->s46 { IofCompleteRequest(Irp,-1,0,1) and havoc() }
+}
+CdAudioDeviceControl{
+in Irp,validity__Irp_,DeviceObject,validity__DeviceObject_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity__deviceExtension__Active_,validity__status_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,status,deviceExtension__Active : int;
+out ret_val_,validity__ret_val__ : int;
+initial sinit;
+final s24;
+error s13,s20,s26,s28,s31,s7; 
+ s0->s1 { havoc() } 
+ s1->s2 { deviceExtension__Active = 2 and havoc() } 
+ s1->s3 { deviceExtension__Active != 2 and havoc() } 
+ s10->s15 { havoc() } 
+ s11->s16 { deviceExtension__Active = 7 and havoc() } 
+ s11->s17 { deviceExtension__Active != 7 and havoc() } 
+ s12->s18 { havoc() } 
+ s14->s19 { havoc() } 
+ s15->sinter2 { havoc() } 
+ s16->s22 { havoc() } 
+ s17->s23 { havoc() } 
+ s18->s24 { ret_val_' = status and havoc(ret_val_) } 
+ s19->s18 { havoc() } 
+ s2->s4 { havoc() } 
+ s21->s25 { havoc() } 
+ s22->sinter3 { havoc() } 
+ s23->s29 { deviceExtension__Active' = 0 and havoc(deviceExtension__Active) } 
+ s25->s18 { havoc() } 
+ s27->s30 { havoc() } 
+ s29->sinter4 { havoc() } 
+ s3->s5 { deviceExtension__Active = 3 and havoc() } 
+ s3->s6 { deviceExtension__Active != 3 and havoc() } 
+ s30->s18 { havoc() } 
+ s32->s24 { ret_val_' = status and havoc(ret_val_) } 
+ s4->sinter0 { havoc() } 
+ s5->s9 { havoc() } 
+ s6->s10 { deviceExtension__Active = 1 and havoc() } 
+ s6->s11 { deviceExtension__Active != 1 and havoc() } 
+ s8->s12 { havoc() } 
+ s9->sinter1 { havoc() } 
+ sinit->s0 {  } 
+ sinter0->s8 { (status',validity__status_')=CdAudio535DeviceControl(DeviceObject,-1,Irp,-1) and havoc(status,validity__status_) } 
+ sinter1->s14 { (status',validity__status_')=CdAudio435DeviceControl(DeviceObject,-1,Irp,-1) and havoc(status,validity__status_) } 
+ sinter2->s21 { (status',validity__status_')=CdAudioAtapiDeviceControl(DeviceObject,-1,Irp,-1) and havoc(status,validity__status_) } 
+ sinter3->s27 { (status',validity__status_')=CdAudioHPCdrDeviceControl(DeviceObject,-1,Irp,-1) and havoc(status,validity__status_) } 
+ sinter4->s32 { (status',validity__status_')=CdAudioSendToNextDriver(DeviceObject,-1,Irp,-1) and havoc(status,validity__status_) }
+}
+CdAudioForwardIrpSynchronous{
+in Irp,validity__Irp_,DeviceObject,validity__DeviceObject_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity__deviceExtension__TargetDeviceObject_,validity__event_,validity__irpSp__Control_,validity__status_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_5,_ndet_arg_4,_ndet_arg_3,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,irpSp__Control,status,event,deviceExtension__TargetDeviceObject : int;
+out ret_val_,validity__ret_val__ : int;
+initial sinit;
+final s21;
+error s10,s12,s14,s16,s19,s2,s22,s6,s8; 
+ s0->s1 { havoc() } 
+ s1->s4 { s = NP and havoc() } 
+ s1->sinter0 { s != NP and havoc() } 
+ s1->sinter1 { s != NP and havoc() } 
+ s11->sinter4 { havoc() } 
+ s13->s5 { havoc() } 
+ s15->s17 { status' = 259 and havoc(status) } 
+ s17->s18 { havoc() } 
+ s18->s21 { status = 0 and ret_val_' = status and havoc(ret_val_) } 
+ s18->sinter5 { status != 0 and havoc() } 
+ s20->s23 { status' = myStatus and havoc(status) } 
+ s23->s21 { ret_val_' = status and havoc(ret_val_) } 
+ s3->s5 { havoc() } 
+ s4->s9 { compRegistered = 0 and compRegistered' = 1 and havoc(compRegistered) } 
+ s4->sinter2 { compRegistered != 0 and havoc() } 
+ s4->sinter3 { compRegistered != 0 and havoc() } 
+ s5->s11 { irpSp__Control' = 224 and havoc(irpSp__Control) } 
+ s7->s5 { havoc() } 
+ s9->s13 { routine' = 1 and havoc(routine) } 
+ sinit->s0 {  } 
+ sinter0->s3 { errorFn() and havoc() } 
+ sinter1->s3 { errorFn() and havoc() } 
+ sinter2->s7 { errorFn() and havoc() } 
+ sinter3->s7 { errorFn() and havoc() } 
+ sinter4->s15 { (status',validity__status_')=IofCallDriver(deviceExtension__TargetDeviceObject,0,Irp,-1) and havoc(status,validity__status_) } 
+ sinter5->s20 { (__nts__naffected_ret_val_',validity____nts__naffected_ret_val__')=KeWaitForSingleObject(event,0,Executive,-1,KernelMode,-1,0,1,0,1) and havoc(__nts__naffected_ret_val_,validity____nts__naffected_ret_val__) }
+}
+CdAudioHPCdrDeviceControl{
+in Irp,validity__Irp_,DeviceObject,validity__DeviceObject_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____cil_tmp10_,validity____cil_tmp11_,validity____cil_tmp12_,validity____cil_tmp8_,validity____cil_tmp9_,validity____retres_,validity__currentIrpStack__Parameters__DeviceIoControl__IoControlCode_,validity__deviceExtension__TargetDeviceObject_,validity__irpSp__Control_,validity__tmp_,validity__tmp___0_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,__retres,__cil_tmp12,__cil_tmp11,__cil_tmp10,__cil_tmp9,__cil_tmp8,tmp___0,tmp,irpSp__Control,deviceExtension__TargetDeviceObject,currentIrpStack__Parameters__DeviceIoControl__IoControlCode : int;
+out ret_val_,validity__ret_val__ : int;
+initial sinit;
+final s34;
+error s10,s15,s18,s2,s21,s23,s25,s27,s29,s32,s35,s4,s6,s8; 
+ s0->s1 { havoc() } 
+ s1->s3 { __cil_tmp8' = 56 and havoc(__cil_tmp8) } 
+ s11->s12 { havoc() } 
+ s12->s13 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode = __cil_tmp12 and havoc() } 
+ s12->s14 { currentIrpStack__Parameters__DeviceIoControl__IoControlCode != __cil_tmp12 and havoc() } 
+ s13->s17 { s = NP and havoc() } 
+ s13->sinter0 { s != NP and havoc() } 
+ s13->sinter1 { s != NP and havoc() } 
+ s14->sinter2 { havoc() } 
+ s16->s20 { havoc() } 
+ s17->s24 { compRegistered = 0 and compRegistered' = 1 and havoc(compRegistered) } 
+ s17->sinter3 { compRegistered != 0 and havoc() } 
+ s17->sinter4 { compRegistered != 0 and havoc() } 
+ s19->s26 { __retres' = tmp___0 and havoc(__retres) } 
+ s20->s28 { irpSp__Control' = 224 and havoc(irpSp__Control) } 
+ s22->s20 { havoc() } 
+ s24->s30 { routine' = 0 and havoc(routine) } 
+ s26->s31 { havoc() } 
+ s28->sinter5 { havoc() } 
+ s3->s5 { __cil_tmp9' = 16384 and havoc(__cil_tmp9) } 
+ s30->s20 { havoc() } 
+ s31->s34 { ret_val_' = __retres and havoc(ret_val_) } 
+ s33->s36 { __retres' = tmp and havoc(__retres) } 
+ s36->s37 { havoc() } 
+ s37->s34 { ret_val_' = __retres and havoc(ret_val_) } 
+ s5->s7 { __cil_tmp10' = 131072 and havoc(__cil_tmp10) } 
+ s7->s9 { __cil_tmp11' = 147456 and havoc(__cil_tmp11) } 
+ s9->s11 { __cil_tmp12' = 147512 and havoc(__cil_tmp12) } 
+ sinit->s0 {  } 
+ sinter0->s16 { errorFn() and havoc() } 
+ sinter1->s16 { errorFn() and havoc() } 
+ sinter2->s19 { (tmp___0',validity__tmp___0_')=CdAudioSendToNextDriver(DeviceObject,-1,Irp,-1) and havoc(tmp___0,validity__tmp___0_) } 
+ sinter3->s22 { errorFn() and havoc() } 
+ sinter4->s22 { errorFn() and havoc() } 
+ sinter5->s33 { (tmp',validity__tmp_')=IofCallDriver(deviceExtension__TargetDeviceObject,0,Irp,-1) and havoc(tmp,validity__tmp_) }
+}
+CdAudioIsPlayActive{
+in DeviceObject,validity__DeviceObject_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____cil_tmp10_,validity____retres_,validity__currentBuffer_,validity__currentBuffer__Header__AudioStatus_,validity__deviceExtension__PlayActive_,validity__event_,validity__ioStatus__Status_,validity__irp_CdAudioIsPlayActive_,validity__returnValue_,validity__status_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_5,_ndet_arg_4,_ndet_arg_3,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,__retres,__cil_tmp10,returnValue,currentBuffer,status,event,irp_CdAudioIsPlayActive,currentBuffer__Header__AudioStatus,ioStatus__Status,deviceExtension__PlayActive : int;
+out ret_val_,validity__ret_val__ : int;
+initial sinit;
+final s9;
+error s11,s15,s18,s2,s21,s24,s28,s30,s32,s34,s6; 
+ s0->s1 { havoc() } 
+ s1->s3 { __if_ndet_cond__ = 0 and __retres' = 0 and havoc(__if_ndet_cond__,__retres) } 
+ s1->s4 { __if_ndet_cond__ != 0 and havoc(__if_ndet_cond__) } 
+ s10->s9 { ret_val_' = __retres and havoc(ret_val_) } 
+ s12->s14 { havoc() } 
+ s13->s16 { __cil_tmp10' = status and havoc(__cil_tmp10) } 
+ s14->s9 { ret_val_' = __retres and havoc(ret_val_) } 
+ s16->s17 { havoc() } 
+ s17->s20 { __cil_tmp10 != 259 and havoc() } 
+ s17->sinter0 { __cil_tmp10 = 259 and havoc() } 
+ s19->s22 { status' = ioStatus__Status and havoc(status) } 
+ s20->s23 { havoc() } 
+ s22->s20 { havoc() } 
+ s23->s25 { status < 0 and __retres' = 0 and havoc(__retres) } 
+ s23->s26 { status >= 0 and havoc() } 
+ s25->s27 { havoc() } 
+ s26->s29 { currentBuffer__Header__AudioStatus = 17 and returnValue' = 1 and havoc(returnValue) } 
+ s26->s31 { currentBuffer__Header__AudioStatus != 17 and returnValue' = 0 and havoc(returnValue) } 
+ s27->s9 { ret_val_' = __retres and havoc(ret_val_) } 
+ s29->s33 { __retres' = returnValue and havoc(__retres) } 
+ s3->s5 { havoc() } 
+ s31->s35 { deviceExtension__PlayActive' = 0 and havoc(deviceExtension__PlayActive) } 
+ s33->s9 { ret_val_' = __retres and havoc(ret_val_) } 
+ s35->s33 { __retres' = returnValue and havoc(__retres) } 
+ s4->s7 { currentBuffer = 0 and __retres' = 0 and havoc(__retres) } 
+ s4->s8 { currentBuffer != 0 and havoc() } 
+ s5->s9 { ret_val_' = __retres and havoc(ret_val_) } 
+ s7->s10 { havoc() } 
+ s8->s12 { irp_CdAudioIsPlayActive = 0 and __retres' = 0 and havoc(__retres) } 
+ s8->s13 { irp_CdAudioIsPlayActive != 0 and havoc() } 
+ sinit->s0 {  } 
+ sinter0->s19 { (__nts__naffected_ret_val_',validity____nts__naffected_ret_val__')=KeWaitForSingleObject(event,0,Suspended,-1,KernelMode,-1,0,1,0,1) and havoc(__nts__naffected_ret_val_,validity____nts__naffected_ret_val__) }
+}
+CdAudioPnp{
+in Irp,validity__Irp_,DeviceObject,validity__DeviceObject_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity__Irp__IoStatus__Status_,validity__Irp__Tail__Overlay__CurrentStackLocation_,validity____retres_,validity__deviceExtension__PagingPathCount_,validity__deviceExtension__PagingPathCountEvent_,validity__irpSp_,validity__irpSp__MinorFunction_,validity__irpSp__Parameters__UsageNotification__InPath_,validity__irpSp__Parameters__UsageNotification__Type_,validity__setPagable_,validity__status_,validity__tmp_,validity__tmp___0_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_5,_ndet_arg_4,_ndet_arg_3,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,__retres,tmp___0,tmp,setPagable,status,irpSp,deviceExtension__PagingPathCount,irpSp__Parameters__UsageNotification__InPath,deviceExtension__PagingPathCountEvent,irpSp__Parameters__UsageNotification__Type,Irp__IoStatus__Status,irpSp__MinorFunction,Irp__Tail__Overlay__CurrentStackLocation : int;
+out ret_val_,validity__ret_val__ : int;
+initial sinit;
+final s39;
+error s1,s11,s15,s18,s20,s24,s26,s28,s3,s30,s33,s35,s37,s48,s50,s56,s60,s62,s64; 
+ s0->s2 { irpSp' = Irp__Tail__Overlay__CurrentStackLocation and havoc(irpSp) } 
+ s10->s14 { havoc() } 
+ s12->s16 { Irp__IoStatus__Status' = status and havoc(Irp__IoStatus__Status) } 
+ s13->s17 { havoc() } 
+ s14->sinter1 { havoc() } 
+ s16->s21 { myStatus' = status and havoc(myStatus) } 
+ s17->s22 { irpSp__Parameters__UsageNotification__Type != DeviceUsageTypePaging and havoc() } 
+ s17->s23 { irpSp__Parameters__UsageNotification__Type = DeviceUsageTypePaging and havoc() } 
+ s19->s25 { __retres' = tmp___0 and havoc(__retres) } 
+ s2->s4 { status' = -1073741637 and havoc(status) } 
+ s21->sinter2 { havoc() } 
+ s22->sinter3 { havoc() } 
+ s23->sinter4 { havoc() } 
+ s25->s32 { havoc() } 
+ s27->s34 { __retres' = status and havoc(__retres) } 
+ s29->s36 { __retres' = tmp and havoc(__retres) } 
+ s31->s38 { setPagable' = 0 and havoc(setPagable) } 
+ s32->s39 { ret_val_' = __retres and havoc(ret_val_) } 
+ s34->s40 { havoc() } 
+ s36->s41 { havoc() } 
+ s38->s42 { havoc() } 
+ s4->s5 { havoc() } 
+ s40->s39 { ret_val_' = __retres and havoc(ret_val_) } 
+ s41->s39 { ret_val_' = __retres and havoc(ret_val_) } 
+ s42->s43 { irpSp__Parameters__UsageNotification__InPath != 0 and havoc() } 
+ s42->s44 { irpSp__Parameters__UsageNotification__InPath = 0 and havoc() } 
+ s43->s45 { deviceExtension__PagingPathCount != 1 and havoc() } 
+ s43->s46 { deviceExtension__PagingPathCount = 1 and havoc() } 
+ s44->s47 { havoc() } 
+ s45->s44 { havoc() } 
+ s46->sinter5 { havoc() } 
+ s47->s46 { status != status and havoc() } 
+ s47->s51 { status = status and setPagable' = 1 and havoc(setPagable) } 
+ s49->s52 { havoc() } 
+ s5->s6 { irpSp__MinorFunction = 0 and havoc() } 
+ s5->s7 { irpSp__MinorFunction != 0 and havoc() } 
+ s51->s46 { havoc() } 
+ s52->s53 { status >= 0 and havoc() } 
+ s52->s54 { status < 0 and havoc() } 
+ s53->s55 { havoc() } 
+ s54->s57 { setPagable = 1 and setPagable' = 0 and havoc(setPagable) } 
+ s54->s58 { setPagable != 1 and havoc() } 
+ s55->s58 { irpSp__Parameters__UsageNotification__InPath = 0 and havoc() } 
+ s55->s59 { irpSp__Parameters__UsageNotification__InPath != 0 and havoc() } 
+ s57->s58 { havoc() } 
+ s58->sinter6 { havoc() } 
+ s59->s58 { havoc() } 
+ s6->s8 { havoc() } 
+ s61->sinter7 { havoc() } 
+ s63->s65 { __retres' = status and havoc(__retres) } 
+ s65->s66 { havoc() } 
+ s66->s39 { ret_val_' = __retres and havoc(ret_val_) } 
+ s7->s10 { irpSp__MinorFunction != 22 and havoc() } 
+ s7->s9 { irpSp__MinorFunction = 22 and havoc() } 
+ s8->sinter0 { havoc() } 
+ s9->s13 { havoc() } 
+ sinit->s0 {  } 
+ sinter0->s12 { (status',validity__status_')=CdAudioStartDevice(DeviceObject,-1,Irp,-1) and havoc(status,validity__status_) } 
+ sinter1->s19 { (tmp___0',validity__tmp___0_')=CdAudioSendToNextDriver(DeviceObject,-1,Irp,-1) and havoc(tmp___0,validity__tmp___0_) } 
+ sinter2->s27 { IofCompleteRequest(Irp,-1,0,1) and havoc() } 
+ sinter3->s29 { (tmp',validity__tmp_')=CdAudioSendToNextDriver(DeviceObject,-1,Irp,-1) and havoc(tmp,validity__tmp_) } 
+ sinter4->s31 { (status',validity__status_')=KeWaitForSingleObject(deviceExtension__PagingPathCountEvent,0,Executive,-1,KernelMode,-1,0,1,0,1) and havoc(status,validity__status_) } 
+ sinter5->s49 { (status',validity__status_')=CdAudioForwardIrpSynchronous(DeviceObject,-1,Irp,-1) and havoc(status,validity__status_) } 
+ sinter6->s61 { (__nts__naffected_ret_val_',validity____nts__naffected_ret_val__')=KeSetEvent(deviceExtension__PagingPathCountEvent,0,0,1,0,1) and havoc(__nts__naffected_ret_val_,validity____nts__naffected_ret_val__) } 
+ sinter7->s63 { IofCompleteRequest(Irp,-1,0,1) and havoc() }
+}
+CdAudioPower{
+in Irp,validity__Irp_,DeviceObject,validity__DeviceObject_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity__Irp__CurrentLocation_,validity__Irp__Tail__Overlay__CurrentStackLocation_,validity__deviceExtension__TargetDeviceObject_,validity__tmp_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,tmp,deviceExtension__TargetDeviceObject,Irp__Tail__Overlay__CurrentStackLocation,Irp__CurrentLocation : int;
+out ret_val_,validity__ret_val__ : int;
+initial sinit;
+final s13;
+error s11,s2,s4,s7,s9; 
+ s0->s1 { havoc() } 
+ s1->s3 { s = NP and s' = SKIP1 and havoc(s) } 
+ s1->sinter0 { s != NP and havoc() } 
+ s1->sinter1 { s != NP and havoc() } 
+ s10->sinter2 { havoc() } 
+ s12->s13 { ret_val_' = tmp and havoc(ret_val_) } 
+ s3->s6 { havoc() } 
+ s5->s6 { havoc() } 
+ s6->s8 { Irp__CurrentLocation' = Irp__CurrentLocation+1 and havoc(Irp__CurrentLocation) } 
+ s8->s10 { Irp__Tail__Overlay__CurrentStackLocation' = Irp__Tail__Overlay__CurrentStackLocation+1 and havoc(Irp__Tail__Overlay__CurrentStackLocation) } 
+ sinit->s0 {  } 
+ sinter0->s5 { errorFn() and havoc() } 
+ sinter1->s5 { errorFn() and havoc() } 
+ sinter2->s12 { (tmp',validity__tmp_')=PoCallDriver(deviceExtension__TargetDeviceObject,0,Irp,-1) and havoc(tmp,validity__tmp_) }
+}
+CdAudioSendToNextDriver{
+in Irp,validity__Irp_,DeviceObject,validity__DeviceObject_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity__Irp__CurrentLocation_,validity__Irp__Tail__Overlay__CurrentStackLocation_,validity__deviceExtension__TargetDeviceObject_,validity__tmp_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,tmp,deviceExtension__TargetDeviceObject,Irp__Tail__Overlay__CurrentStackLocation,Irp__CurrentLocation : int;
+out ret_val_,validity__ret_val__ : int;
+initial sinit;
+final s13;
+error s11,s2,s4,s7,s9; 
+ s0->s1 { havoc() } 
+ s1->s3 { s = NP and s' = SKIP1 and havoc(s) } 
+ s1->sinter0 { s != NP and havoc() } 
+ s1->sinter1 { s != NP and havoc() } 
+ s10->sinter2 { havoc() } 
+ s12->s13 { ret_val_' = tmp and havoc(ret_val_) } 
+ s3->s6 { havoc() } 
+ s5->s6 { havoc() } 
+ s6->s8 { Irp__CurrentLocation' = Irp__CurrentLocation+1 and havoc(Irp__CurrentLocation) } 
+ s8->s10 { Irp__Tail__Overlay__CurrentStackLocation' = Irp__Tail__Overlay__CurrentStackLocation+1 and havoc(Irp__Tail__Overlay__CurrentStackLocation) } 
+ sinit->s0 {  } 
+ sinter0->s5 { errorFn() and havoc() } 
+ sinter1->s5 { errorFn() and havoc() } 
+ sinter2->s12 { (tmp',validity__tmp_')=IofCallDriver(deviceExtension__TargetDeviceObject,0,Irp,-1) and havoc(tmp,validity__tmp_) }
+}
+CdAudioSignalCompletion{
+in Event,validity__Event_,Irp,validity__Irp_,DeviceObject,validity__DeviceObject_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retres_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_3,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,__retres : int;
+out ret_val_,validity__ret_val__ : int;
+initial sinit;
+final s6;
+error s2,s4; 
+ s0->s1 { havoc() } 
+ s1->sinter0 { havoc() } 
+ s3->s5 { __retres' = -1073741802 and havoc(__retres) } 
+ s5->s6 { ret_val_' = __retres and havoc(ret_val_) } 
+ sinit->s0 {  } 
+ sinter0->s3 { (__nts__naffected_ret_val_',validity____nts__naffected_ret_val__')=KeSetEvent(Event,-1,0,1,0,1) and havoc(__nts__naffected_ret_val_,validity____nts__naffected_ret_val__) }
+}
+CdAudioStartDevice{
+in Irp,validity__Irp_,DeviceObject,validity__DeviceObject_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retres_,validity__attempt_,validity__cdb_,validity__deviceExtension_,validity__deviceExtension__Active_,validity__deviceParameterHandle_,validity__inquiryDataPtr_,validity__keyValue_,validity__srb_,validity__srb__Cdb_,validity__status_,validity__tmp_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_4,_ndet_arg_3,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,__retres,keyValue,deviceParameterHandle,tmp,attempt,inquiryDataPtr,cdb,srb__Cdb,srb,status,deviceExtension,deviceExtension__Active : int;
+out ret_val_,validity__ret_val__ : int;
+initial sinit;
+final s14;
+error s10,s12,s15,s18,s2,s22,s25,s27,s31,s37,s40,s46,s49,s57,s59,s6,s61,s63; 
+ s0->s1 { havoc() } 
+ s1->sinter0 { havoc() } 
+ s11->s16 { inquiryDataPtr' = 0 and havoc(inquiryDataPtr) } 
+ s13->s17 { havoc() } 
+ s16->s19 { attempt' = 0 and havoc(attempt) } 
+ s17->s20 { havoc() } 
+ s19->s21 { havoc() } 
+ s20->s23 { status < 0 and __retres' = 0 and havoc(__retres) } 
+ s20->s24 { status >= 0 and havoc() } 
+ s21->s26 { __if_ndet_cond__ = 0 and deviceExtension__Active' = 0 and havoc(__if_ndet_cond__,deviceExtension__Active) } 
+ s21->s28 { __if_ndet_cond__ != 0 and status' = -1073741823 and havoc(__if_ndet_cond__,status) } 
+ s23->s29 { havoc() } 
+ s24->s30 { havoc() } 
+ s26->s32 { __retres' = 0 and havoc(__retres) } 
+ s28->s33 { havoc() } 
+ s29->s14 { ret_val_' = __retres and havoc(ret_val_) } 
+ s3->s4 { havoc() } 
+ s30->s34 { havoc() } 
+ s32->s35 { havoc() } 
+ s33->s36 { havoc() } 
+ s34->sinter1 { havoc() } 
+ s35->s14 { ret_val_' = __retres and havoc(ret_val_) } 
+ s36->s39 { havoc() } 
+ s38->s41 { __retres' = 0 and havoc(__retres) } 
+ s39->s42 { havoc() } 
+ s4->s5 { havoc() } 
+ s41->s14 { ret_val_' = __retres and havoc(ret_val_) } 
+ s42->s43 { havoc() } 
+ s43->s44 { havoc() } 
+ s44->s45 { havoc() } 
+ s45->s47 { status < 0 and tmp' = attempt and havoc(tmp) } 
+ s45->s48 { status >= 0 and havoc() } 
+ s47->s50 { attempt' = attempt+1 and havoc(attempt) } 
+ s48->s51 { havoc() } 
+ s5->s7 { status < 0 and __retres' = status and havoc(__retres) } 
+ s5->s8 { status >= 0 and havoc() } 
+ s50->s52 { havoc() } 
+ s51->s53 { havoc() } 
+ s52->s54 { tmp >= 4 and havoc() } 
+ s52->s55 { tmp < 4 and havoc() } 
+ s53->s56 { havoc() } 
+ s54->s51 { havoc() } 
+ s55->sinter2 { havoc() } 
+ s56->s60 { status < 0 and deviceExtension__Active' = 0 and havoc(deviceExtension__Active) } 
+ s56->s62 { status >= 0 and deviceExtension__Active' = 0 and havoc(deviceExtension__Active) } 
+ s58->s39 { havoc() } 
+ s60->s64 { __retres' = 0 and havoc(__retres) } 
+ s62->s13 { keyValue' = deviceExtension__Active and havoc(keyValue) } 
+ s64->s65 { havoc() } 
+ s65->s14 { ret_val_' = __retres and havoc(ret_val_) } 
+ s7->s9 { havoc() } 
+ s8->s11 { deviceExtension__Active = 255 and cdb' = srb__Cdb and havoc(cdb) } 
+ s8->s13 { deviceExtension__Active != 255 and keyValue' = deviceExtension__Active and havoc(keyValue) } 
+ s9->s14 { ret_val_' = __retres and havoc(ret_val_) } 
+ sinit->s0 {  } 
+ sinter0->s3 { (status',validity__status_')=CdAudioForwardIrpSynchronous(DeviceObject,-1,Irp,-1) and havoc(status,validity__status_) } 
+ sinter1->s38 { (__nts__naffected_ret_val_',validity____nts__naffected_ret_val__')=ZwClose(deviceParameterHandle,0) and havoc(__nts__naffected_ret_val_,validity____nts__naffected_ret_val__) } 
+ sinter2->s58 { (status',validity__status_')=SendSrbSynchronous(deviceExtension,0,srb,0,inquiryDataPtr,1,36,1) and havoc(status,validity__status_) }
+}
+CdAudioUnload{
+in DriverObject,validity__DriverObject_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,__ndet_cond__,__if_ndet_cond__,_ndet_arg_0 : int;
+initial sinit;
+final s1;
+ 
+ s0->s1 { havoc() } 
+ sinit->s0 {  }
+}
+HPCdrCompletion{
+in Context,validity__Context_,Irp,validity__Irp_,DeviceObject,validity__DeviceObject_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity__Irp__AssociatedIrp__SystemBuffer_,validity__Irp__PendingReturned_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_1,_ndet_arg_0,Irp__AssociatedIrp__SystemBuffer,Irp__PendingReturned : int;
+out ret_val_,validity__ret_val__ : int;
+initial sinit;
+final s10;
+error s4,s6,s8; 
+ s0->s1 { havoc() } 
+ s1->s2 { Irp__PendingReturned != 0 and havoc() } 
+ s1->s3 { Irp__PendingReturned = 0 and havoc() } 
+ s2->s5 { pended = 0 and pended' = 1 and havoc(pended) } 
+ s2->sinter0 { pended != 0 and havoc() } 
+ s2->sinter1 { pended != 0 and havoc() } 
+ s3->s10 { myStatus < 0 and ret_val_' = myStatus and havoc(ret_val_) } 
+ s3->sinter2 { myStatus >= 0 and havoc() } 
+ s3->sinter3 { myStatus >= 0 and havoc() } 
+ s5->s3 { havoc() } 
+ s7->s3 { havoc() } 
+ s9->s10 { ret_val_' = myStatus and havoc(ret_val_) } 
+ sinit->s0 {  } 
+ sinter0->s7 { errorFn() and havoc() } 
+ sinter1->s7 { errorFn() and havoc() } 
+ sinter2->s9 { HpCdrProcessLastSession(Irp__AssociatedIrp__SystemBuffer,0) and havoc() } 
+ sinter3->s9 { HpCdrProcessLastSession(Irp__AssociatedIrp__SystemBuffer,0) and havoc() }
+}
+HpCdrProcessLastSession{
+in Toc,validity__Toc_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity__index_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_0,index : int;
+initial sinit;
+final s4;
+error s2; 
+ s0->s1 { havoc() } 
+ s1->s3 { index != 0 and index' = index-1 and havoc(index) } 
+ s1->s4 { index = 0 and havoc() } 
+ s3->s4 { havoc() } 
+ sinit->s0 {  }
+}
+IofCallDriver{
+in Irp,validity__Irp_,DeviceObject,validity__DeviceObject_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity__Irp__PendingReturned_,validity____cil_tmp8_,validity__compRetStatus_,validity__lcontext_,validity__returnVal2_,validity__tmp_ndt_4_,validity__tmp_ndt_5_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_3,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,tmp_ndt_5,tmp_ndt_4,__cil_tmp8,lcontext,compRetStatus,returnVal2,Irp__PendingReturned : int;
+out ret_val_,validity__ret_val__ : int;
+initial sinit;
+final s34;
+error s12,s16,s18,s22,s25,s29,s32,s35,s37,s39,s4,s41,s46,s48,s50,s53,s55,s7,s9; 
+ s0->s1 { havoc() } 
+ s1->s2 { compRegistered != 0 and havoc() } 
+ s1->s3 { compRegistered = 0 and havoc() } 
+ s10->s15 { havoc() } 
+ s11->s17 { __cil_tmp8' = compRetStatus and havoc(__cil_tmp8) } 
+ s13->s11 { havoc() } 
+ s14->s19 { s = NP and s' = IPC and havoc(s) } 
+ s14->s20 { s != NP and havoc() } 
+ s15->s21 { tmp_ndt_4 = 0 and havoc() } 
+ s15->sinter3 { tmp_ndt_4 != 0 and havoc() } 
+ s17->s24 { havoc() } 
+ s19->s26 { lowerDriverReturn' = returnVal2 and havoc(lowerDriverReturn) } 
+ s2->s6 { routine != 0 and havoc() } 
+ s2->sinter0 { routine = 0 and havoc() } 
+ s20->s27 { s = MPR1 and havoc() } 
+ s20->s28 { s != MPR1 and havoc() } 
+ s21->s30 { returnVal2' = 0 and havoc(returnVal2) } 
+ s23->s31 { havoc() } 
+ s24->s3 { __cil_tmp8 != -1073741802 and havoc() } 
+ s24->sinter4 { __cil_tmp8 = -1073741802 and havoc() } 
+ s24->sinter5 { __cil_tmp8 = -1073741802 and havoc() } 
+ s26->s34 { ret_val_' = returnVal2 and havoc(ret_val_) } 
+ s27->s36 { returnVal2 = 259 and s' = MPR3 and havoc(s) } 
+ s27->s38 { returnVal2 != 259 and s' = NP and havoc(s) } 
+ s28->s40 { s = SKIP1 and s' = SKIP2 and havoc(s) } 
+ s28->sinter6 { s != SKIP1 and havoc() } 
+ s28->sinter7 { s != SKIP1 and havoc() } 
+ s3->s8 { Irp__PendingReturned != 0 and returnVal2' = 259 and havoc(returnVal2) } 
+ s3->sinter1 { Irp__PendingReturned = 0 and havoc() } 
+ s30->s43 { havoc() } 
+ s31->s44 { tmp_ndt_5 = 1 and havoc() } 
+ s31->s45 { tmp_ndt_5 != 1 and havoc() } 
+ s33->s3 { havoc() } 
+ s36->s47 { lowerDriverReturn' = returnVal2 and havoc(lowerDriverReturn) } 
+ s38->s49 { lowerDriverReturn' = returnVal2 and havoc(lowerDriverReturn) } 
+ s40->s51 { lowerDriverReturn' = returnVal2 and havoc(lowerDriverReturn) } 
+ s42->s34 { ret_val_' = returnVal2 and havoc(ret_val_) } 
+ s43->s52 { havoc() } 
+ s44->s54 { returnVal2' = -1073741823 and havoc(returnVal2) } 
+ s45->s56 { returnVal2' = 259 and havoc(returnVal2) } 
+ s47->s34 { ret_val_' = returnVal2 and havoc(ret_val_) } 
+ s49->s34 { ret_val_' = returnVal2 and havoc(ret_val_) } 
+ s5->s11 { havoc() } 
+ s51->s34 { ret_val_' = returnVal2 and havoc(ret_val_) } 
+ s52->s14 { havoc() } 
+ s54->s57 { havoc() } 
+ s56->s58 { havoc() } 
+ s57->s52 { havoc() } 
+ s58->s52 { havoc() } 
+ s6->s11 { routine != 1 and havoc() } 
+ s6->sinter2 { routine = 1 and havoc() } 
+ s8->s14 { havoc() } 
+ sinit->s0 {  } 
+ sinter0->s5 { (compRetStatus',validity__compRetStatus_')=HPCdrCompletion(DeviceObject,-1,Irp,-1,lcontext,0) and havoc(compRetStatus,validity__compRetStatus_) } 
+ sinter1->s10 { (tmp_ndt_4',validity__tmp_ndt_4_')=__VERIFIER_nondet_int() and havoc(tmp_ndt_4,validity__tmp_ndt_4_) } 
+ sinter2->s13 { (compRetStatus',validity__compRetStatus_')=CdAudioSignalCompletion(DeviceObject,-1,Irp,-1,lcontext,0) and havoc(compRetStatus,validity__compRetStatus_) } 
+ sinter3->s23 { (tmp_ndt_5',validity__tmp_ndt_5_')=__VERIFIER_nondet_int() and havoc(tmp_ndt_5,validity__tmp_ndt_5_) } 
+ sinter4->s33 { stubMoreProcessingRequired() and havoc() } 
+ sinter5->s33 { stubMoreProcessingRequired() and havoc() } 
+ sinter6->s42 { errorFn() and havoc() } 
+ sinter7->s42 { errorFn() and havoc() }
+}
+IofCompleteRequest{
+in PriorityBoost,validity__PriorityBoost_,Irp,validity__Irp_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,__ndet_cond__,__if_ndet_cond__,_ndet_arg_0 : int;
+initial sinit;
+final s6;
+error s2,s4; 
+ s0->s1 { havoc() } 
+ s1->s3 { s = NP and s' = DC and havoc(s) } 
+ s1->sinter0 { s != NP and havoc() } 
+ s1->sinter1 { s != NP and havoc() } 
+ s3->s6 { havoc() } 
+ s5->s6 { havoc() } 
+ sinit->s0 {  } 
+ sinter0->s5 { errorFn() and havoc() } 
+ sinter1->s5 { errorFn() and havoc() }
+}
+KeSetEvent{
+in Wait,validity__Wait_,Increment,validity__Increment_,Event,validity__Event_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity__l_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_0,l : int;
+out ret_val_,validity__ret_val__ : int;
+initial sinit;
+final s3;
+error s1; 
+ s0->s2 { setEventCalled' = 1 and havoc(setEventCalled) } 
+ s2->s3 { ret_val_' = l and havoc(ret_val_) } 
+ sinit->s0 {  }
+}
+KeWaitForSingleObject{
+in Timeout,validity__Timeout_,Alertable,validity__Alertable_,WaitMode,validity__WaitMode_,WaitReason,validity__WaitReason_,Object,validity__Object_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retres_,validity__tmp_ndt_6_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_0,__retres,tmp_ndt_6 : int;
+out ret_val_,validity__ret_val__ : int;
+initial sinit;
+final s30;
+error s10,s13,s15,s17,s24,s26,s4,s8; 
+ s0->s1 { havoc() } 
+ s1->s2 { s = MPR3 and havoc() } 
+ s1->s3 { s != MPR3 and havoc() } 
+ s11->s16 { customIrp' = 0 and havoc(customIrp) } 
+ s12->sinter1 { s != MPR3 and havoc() } 
+ s12->sinter2 { s = MPR3 and havoc() } 
+ s12->sinter3 { s = MPR3 and havoc() } 
+ s14->s19 { havoc() } 
+ s16->sinter4 { havoc() } 
+ s18->sinter5 { havoc() } 
+ s19->s20 { tmp_ndt_6 = 0 and havoc() } 
+ s19->s21 { tmp_ndt_6 != 0 and havoc() } 
+ s2->s5 { setEventCalled = 1 and s' = NP and havoc(s) } 
+ s2->s6 { setEventCalled != 1 and havoc() } 
+ s20->s22 { havoc() } 
+ s21->s23 { havoc() } 
+ s22->s25 { __retres' = 0 and havoc(__retres) } 
+ s23->s27 { __retres' = -1073741823 and havoc(__retres) } 
+ s25->s28 { havoc() } 
+ s27->s29 { havoc() } 
+ s28->s30 { ret_val_' = __retres and havoc(ret_val_) } 
+ s29->s30 { ret_val_' = __retres and havoc(ret_val_) } 
+ s3->s7 { havoc() } 
+ s5->s9 { setEventCalled' = 0 and havoc(setEventCalled) } 
+ s6->s3 { havoc() } 
+ s7->s11 { customIrp = 1 and s' = NP and havoc(s) } 
+ s7->s12 { customIrp != 1 and havoc() } 
+ s9->sinter0 { havoc() } 
+ sinit->s0 {  } 
+ sinter0->s14 { (tmp_ndt_6',validity__tmp_ndt_6_')=__VERIFIER_nondet_int() and havoc(tmp_ndt_6,validity__tmp_ndt_6_) } 
+ sinter1->s14 { (tmp_ndt_6',validity__tmp_ndt_6_')=__VERIFIER_nondet_int() and havoc(tmp_ndt_6,validity__tmp_ndt_6_) } 
+ sinter2->s18 { errorFn() and havoc() } 
+ sinter3->s18 { errorFn() and havoc() } 
+ sinter4->s14 { (tmp_ndt_6',validity__tmp_ndt_6_')=__VERIFIER_nondet_int() and havoc(tmp_ndt_6,validity__tmp_ndt_6_) } 
+ sinter5->s14 { (tmp_ndt_6',validity__tmp_ndt_6_')=__VERIFIER_nondet_int() and havoc(tmp_ndt_6,validity__tmp_ndt_6_) }
+}
+NonDetInt{
+
+out ndet,validity_ndet_ : int;
+initial sinit;
+final s1;
+ 
+ s0->s1 { havoc() } 
+ sinit->s0 { havoc(ndet,validity_ndet_) }
+}
+PoCallDriver{
+in Irp,validity__Irp_,DeviceObject,validity__DeviceObject_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____cil_tmp7_,validity____cil_tmp8_,validity__compRetStatus_,validity__lcontext_,validity__returnVal_,validity__tmp_ndt_7_,validity__tmp_ndt_8_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_3,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,tmp_ndt_8,tmp_ndt_7,__cil_tmp8,__cil_tmp7,lcontext,returnVal,compRetStatus : int;
+out ret_val_,validity__ret_val__ : int;
+initial sinit;
+final s42;
+error s10,s13,s15,s17,s24,s27,s29,s3,s34,s37,s39,s44,s46,s48,s5,s50,s52,s54,s56; 
+ s0->s1 { havoc() } 
+ s1->s2 { compRegistered != 0 and havoc() } 
+ s1->sinter0 { compRegistered = 0 and havoc() } 
+ s11->s9 { havoc() } 
+ s12->s18 { returnVal' = 0 and havoc(returnVal) } 
+ s14->s19 { havoc() } 
+ s16->s20 { havoc() } 
+ s18->s21 { havoc() } 
+ s19->s22 { tmp_ndt_8 = 1 and havoc() } 
+ s19->s23 { tmp_ndt_8 != 1 and havoc() } 
+ s2->s7 { routine != 0 and havoc() } 
+ s2->sinter1 { routine = 0 and havoc() } 
+ s20->sinter4 { __cil_tmp7 != -1073741802 and havoc() } 
+ s20->sinter5 { __cil_tmp7 = -1073741802 and havoc() } 
+ s20->sinter6 { __cil_tmp7 = -1073741802 and havoc() } 
+ s21->s26 { havoc() } 
+ s22->s28 { returnVal' = -1073741823 and havoc(returnVal) } 
+ s23->s30 { returnVal' = 259 and havoc(returnVal) } 
+ s25->sinter7 { havoc() } 
+ s26->s31 { havoc() } 
+ s28->s32 { havoc() } 
+ s30->s33 { havoc() } 
+ s31->s35 { s = NP and s' = IPC and havoc(s) } 
+ s31->s36 { s != NP and havoc() } 
+ s32->s26 { havoc() } 
+ s33->s26 { havoc() } 
+ s35->s38 { lowerDriverReturn' = returnVal and havoc(lowerDriverReturn) } 
+ s36->s40 { s = MPR1 and __cil_tmp8' = returnVal and havoc(__cil_tmp8) } 
+ s36->s41 { s != MPR1 and havoc() } 
+ s38->s42 { ret_val_' = returnVal and havoc(ret_val_) } 
+ s4->s8 { havoc() } 
+ s40->s43 { havoc() } 
+ s41->s45 { s = SKIP1 and s' = SKIP2 and havoc(s) } 
+ s41->sinter8 { s != SKIP1 and havoc() } 
+ s41->sinter9 { s != SKIP1 and havoc() } 
+ s43->s49 { __cil_tmp8 = 259 and s' = MPR3 and havoc(s) } 
+ s43->s51 { __cil_tmp8 != 259 and s' = NP and havoc(s) } 
+ s45->s53 { lowerDriverReturn' = returnVal and havoc(lowerDriverReturn) } 
+ s47->s42 { ret_val_' = returnVal and havoc(ret_val_) } 
+ s49->s55 { lowerDriverReturn' = returnVal and havoc(lowerDriverReturn) } 
+ s51->s57 { lowerDriverReturn' = returnVal and havoc(lowerDriverReturn) } 
+ s53->s42 { ret_val_' = returnVal and havoc(ret_val_) } 
+ s55->s42 { ret_val_' = returnVal and havoc(ret_val_) } 
+ s57->s42 { ret_val_' = returnVal and havoc(ret_val_) } 
+ s6->s9 { havoc() } 
+ s7->s9 { routine != 1 and havoc() } 
+ s7->sinter2 { routine = 1 and havoc() } 
+ s8->s12 { tmp_ndt_7 = 0 and havoc() } 
+ s8->sinter3 { tmp_ndt_7 != 0 and havoc() } 
+ s9->s16 { __cil_tmp7' = compRetStatus and havoc(__cil_tmp7) } 
+ sinit->s0 {  } 
+ sinter0->s4 { (tmp_ndt_7',validity__tmp_ndt_7_')=__VERIFIER_nondet_int() and havoc(tmp_ndt_7,validity__tmp_ndt_7_) } 
+ sinter1->s6 { (compRetStatus',validity__compRetStatus_')=HPCdrCompletion(DeviceObject,-1,Irp,-1,lcontext,0) and havoc(compRetStatus,validity__compRetStatus_) } 
+ sinter2->s11 { (compRetStatus',validity__compRetStatus_')=CdAudioSignalCompletion(DeviceObject,-1,Irp,-1,lcontext,0) and havoc(compRetStatus,validity__compRetStatus_) } 
+ sinter3->s14 { (tmp_ndt_8',validity__tmp_ndt_8_')=__VERIFIER_nondet_int() and havoc(tmp_ndt_8,validity__tmp_ndt_8_) } 
+ sinter4->s4 { (tmp_ndt_7',validity__tmp_ndt_7_')=__VERIFIER_nondet_int() and havoc(tmp_ndt_7,validity__tmp_ndt_7_) } 
+ sinter5->s25 { stubMoreProcessingRequired() and havoc() } 
+ sinter6->s25 { stubMoreProcessingRequired() and havoc() } 
+ sinter7->s4 { (tmp_ndt_7',validity__tmp_ndt_7_')=__VERIFIER_nondet_int() and havoc(tmp_ndt_7,validity__tmp_ndt_7_) } 
+ sinter8->s47 { errorFn() and havoc() } 
+ sinter9->s47 { errorFn() and havoc() }
+}
+SendSrbSynchronous{
+in BufferLength,validity__BufferLength_,Buffer,validity__Buffer_,Srb,validity__Srb_,Extension,validity__Extension_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____cil_tmp10_,validity____cil_tmp11_,validity____cil_tmp12_,validity____cil_tmp13_,validity____cil_tmp14_,validity____cil_tmp15_,validity____cil_tmp16_,validity____cil_tmp17_,validity____cil_tmp18_,validity____retres_,validity__event_,validity__ioStatus__Status_,validity__ioctl_,validity__irp_,validity__status_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_5,_ndet_arg_4,_ndet_arg_3,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,__retres,__cil_tmp18,__cil_tmp17,__cil_tmp16,__cil_tmp15,__cil_tmp14,__cil_tmp13,__cil_tmp12,__cil_tmp11,__cil_tmp10,status,irp,event,ioctl,ioStatus__Status : int;
+out ret_val_,validity__ret_val__ : int;
+initial sinit;
+final s31;
+error s1,s10,s12,s14,s16,s18,s20,s22,s25,s29,s33,s35,s37,s4,s6,s8; 
+ s0->s2 { irp' = 0 and havoc(irp) } 
+ s11->s15 { __cil_tmp16' = 262144 and havoc(__cil_tmp16) } 
+ s13->s17 { __cil_tmp13' = 311296 and havoc(__cil_tmp13) } 
+ s15->s19 { __cil_tmp17' = 311296 and havoc(__cil_tmp17) } 
+ s17->s21 { ioctl' = 315412 and havoc(ioctl) } 
+ s19->s23 { ioctl' = 315396 and havoc(ioctl) } 
+ s2->s3 { havoc() } 
+ s21->s24 { havoc() } 
+ s23->s24 { havoc() } 
+ s24->s26 { __if_ndet_cond__ = 0 and __retres' = -1073741670 and havoc(__if_ndet_cond__,__retres) } 
+ s24->s27 { __if_ndet_cond__ != 0 and havoc(__if_ndet_cond__) } 
+ s26->s28 { havoc() } 
+ s27->s30 { __cil_tmp18' = status and havoc(__cil_tmp18) } 
+ s28->s31 { ret_val_' = __retres and havoc(ret_val_) } 
+ s3->s5 { Buffer != 0 and __cil_tmp10' = 4116 and havoc(__cil_tmp10) } 
+ s3->s7 { Buffer = 0 and __cil_tmp14' = 4100 and havoc(__cil_tmp14) } 
+ s30->s32 { havoc() } 
+ s32->s36 { __cil_tmp18 != 259 and __retres' = status and havoc(__retres) } 
+ s32->sinter0 { __cil_tmp18 = 259 and havoc() } 
+ s34->s38 { status' = ioStatus__Status and havoc(status) } 
+ s36->s31 { ret_val_' = __retres and havoc(ret_val_) } 
+ s38->s36 { __retres' = status and havoc(__retres) } 
+ s5->s9 { __cil_tmp11' = 49152 and havoc(__cil_tmp11) } 
+ s7->s11 { __cil_tmp15' = 49152 and havoc(__cil_tmp15) } 
+ s9->s13 { __cil_tmp12' = 262144 and havoc(__cil_tmp12) } 
+ sinit->s0 {  } 
+ sinter0->s34 { (__nts__naffected_ret_val_',validity____nts__naffected_ret_val__')=KeWaitForSingleObject(event,0,Executive,-1,KernelMode,-1,0,1,0,1) and havoc(__nts__naffected_ret_val_,validity____nts__naffected_ret_val__) }
+}
+ZwClose{
+in Handle,validity__Handle_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retres_,validity__tmp_ndt_9_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_0,__retres,tmp_ndt_9 : int;
+out ret_val_,validity__ret_val__ : int;
+initial sinit;
+final s14;
+error s1,s10,s8; 
+ s0->sinter0 { havoc() } 
+ s11->s13 { havoc() } 
+ s12->s14 { ret_val_' = __retres and havoc(ret_val_) } 
+ s13->s14 { ret_val_' = __retres and havoc(ret_val_) } 
+ s2->s3 { havoc() } 
+ s3->s4 { tmp_ndt_9 = 0 and havoc() } 
+ s3->s5 { tmp_ndt_9 != 0 and havoc() } 
+ s4->s6 { havoc() } 
+ s5->s7 { havoc() } 
+ s6->s9 { __retres' = 0 and havoc(__retres) } 
+ s7->s11 { __retres' = -1073741823 and havoc(__retres) } 
+ s9->s12 { havoc() } 
+ sinit->s0 {  } 
+ sinter0->s2 { (tmp_ndt_9',validity__tmp_ndt_9_')=__VERIFIER_nondet_int() and havoc(tmp_ndt_9,validity__tmp_ndt_9_) }
+}
+_BLAST_init{
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,__ndet_cond__,__if_ndet_cond__,_ndet_arg_0 : int;
+initial sinit;
+final s31;
+error s1,s11,s13,s15,s17,s19,s21,s23,s25,s27,s29,s3,s5,s7,s9; 
+ s0->s2 { UNLOADED' = 0 and havoc(UNLOADED) } 
+ s10->s12 { MPR1' = 5 and havoc(MPR1) } 
+ s12->s14 { MPR3' = 6 and havoc(MPR3) } 
+ s14->s16 { IPC' = 7 and havoc(IPC) } 
+ s16->s18 { s' = UNLOADED and havoc(s) } 
+ s18->s20 { pended' = 0 and havoc(pended) } 
+ s2->s4 { NP' = 1 and havoc(NP) } 
+ s20->s22 { compFptr' = 0 and havoc(compFptr) } 
+ s22->s24 { compRegistered' = 0 and havoc(compRegistered) } 
+ s24->s26 { lowerDriverReturn' = 0 and havoc(lowerDriverReturn) } 
+ s26->s28 { setEventCalled' = 0 and havoc(setEventCalled) } 
+ s28->s30 { customIrp' = 0 and havoc(customIrp) } 
+ s30->s31 { havoc() } 
+ s4->s6 { DC' = 2 and havoc(DC) } 
+ s6->s8 { SKIP1' = 3 and havoc(SKIP1) } 
+ s8->s10 { SKIP2' = 4 and havoc(SKIP2) } 
+ sinit->s0 {  }
+}
+__NdetValInRange{
+in lowerb,lbval,upperb,upbval : int;
+
+out ndval,ndvalid : int;
+initial sinit;
+final s1;
+ 
+ sinit->s1 { ndval' <=  upperb and ndval' >= lowerb and ndvalid' = 1 and havoc(ndval,ndvalid) }
+}
+__VERIFIER_nondet_int{
+
+out ndet,validity_ndet_ : int;
+initial sinit;
+final s1;
+ 
+ s0->s1 { havoc() } 
+ sinit->s0 { havoc(ndet,validity_ndet_) }
+}
+__assert_fail{
+in a,b,c,d,e,f,g,h : int;
+
+initial sinit;
+
+error s0; 
+ sinit->s0 { havoc() }
+}
+errorFn{
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,__ndet_cond__,__if_ndet_cond__,_ndet_arg_0 : int;
+initial sinit;
+final s3;
+ 
+ s0->s1 { havoc() } 
+ s1->s2 { havoc() } 
+ s2->s3 { havoc() } 
+ sinit->s0 {  }
+}
+main{
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retres_,validity__d_,validity__devobj_,validity__irp_,validity__irp_choice_,validity__pirp__IoStatus__Status_,validity__status_,validity__tmp_ndt_1_,validity__tmp_ndt_2_,validity__tmp_ndt_3_,validity__we_should_unload_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_2,_ndet_arg_1,_ndet_arg_0,__retres,tmp_ndt_3,tmp_ndt_2,tmp_ndt_1,devobj,irp_choice,we_should_unload,irp,status,d,pirp__IoStatus__Status : int;
+out ret_val_,validity__ret_val__ : int;
+initial sinit;
+final s72;
+error s10,s103,s105,s107,s109,s111,s115,s117,s12,s122,s126,s129,s135,s14,s143,s145,s147,s16,s18,s2,s20,s22,s24,s26,s28,s30,s32,s34,s36,s38,s4,s40,s42,s44,s46,s48,s51,s54,s58,s6,s60,s64,s66,s70,s73,s77,s8,s80,s83,s87,s93,s98; 
+ s0->s1 { havoc() } 
+ s1->s3 { s' = 0 and havoc(s) } 
+ s100->sinter2 { havoc() } 
+ s101->s67 { status != 259 and __retres' = status and havoc(__retres) } 
+ s101->sinter3 { status = 259 and havoc() } 
+ s101->sinter4 { status = 259 and havoc() } 
+ s102->s67 { status = lowerDriverReturn and __retres' = status and havoc(__retres) } 
+ s102->sinter5 { status != lowerDriverReturn and havoc() } 
+ s102->sinter6 { status != lowerDriverReturn and havoc() } 
+ s104->s67 { __retres' = status and havoc(__retres) } 
+ s106->s100 { havoc() } 
+ s108->s113 { havoc() } 
+ s11->s13 { SKIP2' = 0 and havoc(SKIP2) } 
+ s110->s67 { __retres' = status and havoc(__retres) } 
+ s112->s67 { __retres' = status and havoc(__retres) } 
+ s113->s114 { havoc() } 
+ s114->s116 { status < 0 and __retres' = -1 and havoc(__retres) } 
+ s114->sinter7 { status >= 0 and havoc() } 
+ s116->s119 { havoc() } 
+ s118->s120 { havoc() } 
+ s119->s72 { ret_val_' = __retres and havoc(ret_val_) } 
+ s120->s121 { tmp_ndt_1 = 2 and havoc() } 
+ s120->sinter8 { tmp_ndt_1 != 2 and havoc() } 
+ s121->s124 { havoc() } 
+ s123->s125 { havoc() } 
+ s124->sinter9 { havoc() } 
+ s125->s128 { tmp_ndt_2 = 3 and havoc() } 
+ s125->sinter10 { tmp_ndt_2 != 3 and havoc() } 
+ s127->s131 { havoc() } 
+ s128->s132 { havoc() } 
+ s13->s15 { MPR1' = 0 and havoc(MPR1) } 
+ s130->s133 { havoc() } 
+ s131->s134 { havoc() } 
+ s132->sinter11 { havoc() } 
+ s133->s137 { tmp_ndt_3 = 4 and havoc() } 
+ s133->s138 { tmp_ndt_3 != 4 and havoc() } 
+ s134->s139 { havoc() } 
+ s136->s140 { havoc() } 
+ s137->s141 { havoc() } 
+ s138->s142 { havoc() } 
+ s139->s53 { we_should_unload = 0 and havoc() } 
+ s139->sinter12 { we_should_unload != 0 and havoc() } 
+ s139->sinter13 { we_should_unload != 0 and havoc() } 
+ s140->s134 { havoc() } 
+ s141->sinter14 { havoc() } 
+ s142->s148 { __retres' = -1 and havoc(__retres) } 
+ s144->s53 { havoc() } 
+ s146->s149 { havoc() } 
+ s148->s150 { havoc() } 
+ s149->s134 { havoc() } 
+ s15->s17 { MPR3' = 0 and havoc(MPR3) } 
+ s150->s72 { ret_val_' = __retres and havoc(ret_val_) } 
+ s17->s19 { IPC' = 0 and havoc(IPC) } 
+ s19->s21 { pended' = 0 and havoc(pended) } 
+ s21->s23 { compFptr' = 0 and havoc(compFptr) } 
+ s23->s25 { compRegistered' = 0 and havoc(compRegistered) } 
+ s25->s27 { lowerDriverReturn' = 0 and havoc(lowerDriverReturn) } 
+ s27->s29 { setEventCalled' = 0 and havoc(setEventCalled) } 
+ s29->s31 { customIrp' = 0 and havoc(customIrp) } 
+ s3->s5 { UNLOADED' = 0 and havoc(UNLOADED) } 
+ s31->s33 { routine' = 0 and havoc(routine) } 
+ s33->s35 { myStatus' = 0 and havoc(myStatus) } 
+ s35->s37 { pirp' = 0 and havoc(pirp) } 
+ s37->s39 { Executive' = 0 and havoc(Executive) } 
+ s39->s41 { Suspended' = 5 and havoc(Suspended) } 
+ s41->s43 { KernelMode' = 0 and havoc(KernelMode) } 
+ s43->s45 { DeviceUsageTypePaging' = 1 and havoc(DeviceUsageTypePaging) } 
+ s45->s47 { pirp' = irp and havoc(pirp) } 
+ s47->sinter15 { havoc() } 
+ s49->s50 { havoc() } 
+ s5->s7 { NP' = 0 and havoc(NP) } 
+ s50->s52 { status >= 0 and s' = NP and havoc(s) } 
+ s50->s53 { status < 0 and havoc() } 
+ s52->s55 { customIrp' = 0 and havoc(customIrp) } 
+ s53->s56 { pended = 1 and havoc() } 
+ s53->s57 { pended != 1 and havoc() } 
+ s55->s59 { setEventCalled' = customIrp and havoc(setEventCalled) } 
+ s56->s61 { s = NP and s' = NP and havoc(s) } 
+ s56->s62 { s != NP and havoc() } 
+ s57->s63 { havoc() } 
+ s59->s65 { lowerDriverReturn' = setEventCalled and havoc(lowerDriverReturn) } 
+ s61->s67 { __retres' = status and havoc(__retres) } 
+ s62->s57 { havoc() } 
+ s63->s68 { pended = 1 and havoc() } 
+ s63->s69 { pended != 1 and havoc() } 
+ s65->s71 { compRegistered' = lowerDriverReturn and havoc(compRegistered) } 
+ s67->s72 { ret_val_' = __retres and havoc(ret_val_) } 
+ s68->s74 { s = MPR3 and s' = MPR3 and havoc(s) } 
+ s68->s75 { s != MPR3 and havoc() } 
+ s69->s76 { havoc() } 
+ s7->s9 { DC' = 0 and havoc(DC) } 
+ s71->s78 { compFptr' = compRegistered and havoc(compFptr) } 
+ s74->s67 { __retres' = status and havoc(__retres) } 
+ s75->s69 { havoc() } 
+ s76->s67 { s = UNLOADED and __retres' = status and havoc(__retres) } 
+ s76->s79 { s != UNLOADED and havoc() } 
+ s78->s81 { pended' = compFptr and havoc(pended) } 
+ s79->s67 { status = -1 and __retres' = status and havoc(__retres) } 
+ s79->s82 { status != -1 and havoc() } 
+ s81->s84 { pirp__IoStatus__Status' = 0 and havoc(pirp__IoStatus__Status) } 
+ s82->s85 { s != SKIP2 and havoc() } 
+ s82->s86 { s = SKIP2 and havoc() } 
+ s84->s88 { myStatus' = 0 and havoc(myStatus) } 
+ s85->s89 { s != IPC and havoc() } 
+ s85->s90 { s = IPC and havoc() } 
+ s86->s91 { havoc() } 
+ s88->s92 { havoc() } 
+ s89->s95 { s = DC and havoc() } 
+ s89->sinter16 { s != DC and havoc() } 
+ s89->sinter17 { s != DC and havoc() } 
+ s9->s11 { SKIP1' = 0 and havoc(SKIP1) } 
+ s90->s86 { havoc() } 
+ s91->s96 { pended != 1 and havoc() } 
+ s91->s97 { pended = 1 and havoc() } 
+ s92->s100 { irp_choice != 0 and havoc() } 
+ s92->s99 { irp_choice = 0 and pirp__IoStatus__Status' = -1073741637 and havoc(pirp__IoStatus__Status) } 
+ s94->s67 { __retres' = status and havoc(__retres) } 
+ s95->s86 { havoc() } 
+ s96->s101 { s = DC and havoc() } 
+ s96->s102 { s != DC and havoc() } 
+ s97->s67 { status = 259 and __retres' = status and havoc(__retres) } 
+ s97->sinter0 { status != 259 and havoc() } 
+ s97->sinter1 { status != 259 and havoc() } 
+ s99->s106 { myStatus' = -1073741637 and havoc(myStatus) } 
+ sinit->s0 {  } 
+ sinter0->s104 { errorFn() and havoc() } 
+ sinter1->s104 { errorFn() and havoc() } 
+ sinter10->s130 { (tmp_ndt_3',validity__tmp_ndt_3_')=__VERIFIER_nondet_int() and havoc(tmp_ndt_3,validity__tmp_ndt_3_) } 
+ sinter11->s136 { (status',validity__status_')=CdAudioPnp(devobj,0,pirp,0) and havoc(status,validity__status_) } 
+ sinter12->s144 { CdAudioUnload(d,0) and havoc() } 
+ sinter13->s144 { CdAudioUnload(d,0) and havoc() } 
+ sinter14->s146 { (status',validity__status_')=CdAudioPower(devobj,0,pirp,0) and havoc(status,validity__status_) } 
+ sinter15->s49 { _BLAST_init() and havoc() } 
+ sinter16->s94 { errorFn() and havoc() } 
+ sinter17->s94 { errorFn() and havoc() } 
+ sinter2->s108 { stub_driver_init() and havoc() } 
+ sinter3->s110 { errorFn() and havoc() } 
+ sinter4->s110 { errorFn() and havoc() } 
+ sinter5->s112 { errorFn() and havoc() } 
+ sinter6->s112 { errorFn() and havoc() } 
+ sinter7->s118 { (tmp_ndt_1',validity__tmp_ndt_1_')=__VERIFIER_nondet_int() and havoc(tmp_ndt_1,validity__tmp_ndt_1_) } 
+ sinter8->s123 { (tmp_ndt_2',validity__tmp_ndt_2_')=__VERIFIER_nondet_int() and havoc(tmp_ndt_2,validity__tmp_ndt_2_) } 
+ sinter9->s127 { (status',validity__status_')=CdAudioDeviceControl(devobj,0,pirp,0) and havoc(status,validity__status_) }
+}
+stubMoreProcessingRequired{
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,__ndet_cond__,__if_ndet_cond__,_ndet_arg_0 : int;
+initial sinit;
+final s6;
+error s2,s4; 
+ s0->s1 { havoc() } 
+ s1->s3 { s = NP and s' = MPR1 and havoc(s) } 
+ s1->sinter0 { s != NP and havoc() } 
+ s1->sinter1 { s != NP and havoc() } 
+ s3->s6 { havoc() } 
+ s5->s6 { havoc() } 
+ sinit->s0 {  } 
+ sinter0->s5 { errorFn() and havoc() } 
+ sinter1->s5 { errorFn() and havoc() }
+}
+stub_driver_init{
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,__ndet_cond__,__if_ndet_cond__,_ndet_arg_0 : int;
+initial sinit;
+final s15;
+error s1,s11,s13,s3,s5,s7,s9; 
+ s0->s2 { s' = NP and havoc(s) } 
+ s10->s12 { compFptr' = compRegistered and havoc(compFptr) } 
+ s12->s14 { pended' = compFptr and havoc(pended) } 
+ s14->s15 { havoc() } 
+ s2->s4 { customIrp' = 0 and havoc(customIrp) } 
+ s4->s6 { setEventCalled' = customIrp and havoc(setEventCalled) } 
+ s6->s8 { lowerDriverReturn' = setEventCalled and havoc(lowerDriverReturn) } 
+ s8->s10 { compRegistered' = lowerDriverReturn and havoc(compRegistered) } 
+ sinit->s0 {  }
+}
+
+ 

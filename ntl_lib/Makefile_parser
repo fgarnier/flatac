@@ -1,0 +1,86 @@
+#
+
+
+TYPES_INCLUDES := ${FRAMA_C_INCLUDES} 
+GENSOURCE := ntl_parser.ml ntl_parser.mli ntl_lexer.ml 
+SOURCE_FILES := nts_types.ml nts.ml nts_functor.ml ntsint.ml nts_generic.ml\
+	     parsing_error.ml
+
+OCAMLDOC := ocamldoc
+DOCEXPORTDIR := ./api
+DOCFLAGS := -html -d $(DOCEXPORTDIR) *.ml *.mli
+
+CFLAGS = -g -annot -c
+INTERFACES = ntl_parser.mli
+OBJECTS = nts_types.cmo nts.cmo nts_generic.cmo nts_functor.cmo ntsint.cmo \
+	ntl_lexer.cmo parsing_error.cmo \
+	ntl_parser.cmo parse_n_print.cmo 
+
+XOBJECTS = nts_types.cmx nts.cmx nts_generic.cmx nts_functor.cmx ntsint.cmx \
+	ntl_lexer.cmx parsing_error.cmx \
+	ntl_parser.cmx parse_n_print.cmx 
+
+LIBNUM = nums.cma # Contains Big_int module
+LIBXNUM = nums.cmxa
+   
+INTERFACES = $(OBJECTS:.cmo=.cmi)
+TEST = parse_n_print
+DATE = `eval date +%Y%m%d`
+DIST_TAR_NAME = ocaml_ntlib$(DATE).tgz
+ 
+clean : 
+	rm -f *.cmo *.o *.cmx *.cmxa *.cmi *.cma *.annot parse_n_print $(GENSOURCE)
+
+all : .depend $(INTERFACES) $(OBJECTS) $(XOBJECTS) $(TEST) fixpointvalid
+	@echo "Build successfull"
+
+dist : all clean
+	@echo "Building distribution tarball"
+	
+	cd .. && echo `pwd` && tar czvf $(DIST_TAR_NAME) ntl_lib/ && cd ntl_lib/
+	cp ../$(DIST_TAR_NAME) ./
+
+%.cmo : %.ml
+	@echo  "Compiling"  $<
+	@ocamlc ${CFLAGS}  $< -o $@ ${TYPES_INCLUDES}
+
+%.cmi : %.mli
+	@echo  "Compiling interface " $<
+	@ocamlc ${CFLAGS}  $< -o $@ $(TYPES_INCLUDES)
+
+%.cmx : %.ml
+	@echo  "OPT Compiling"  $<
+	@ocamlopt ${CFLAGS}  $< -o $@ ${TYPES_INCLUDES}
+
+ntl_lexer.cmi : ntl_parser.mli
+
+ntl_parser.mli : ntl_parser.ml
+
+
+ntl_parser.ml : ntl_parser.mly
+	@echo  "Generating Parser" $<
+	@ocamlyacc $<
+
+ntl_lexer.ml : ntl_lexer.mll
+	@echo  "Generating Lexer" $<
+	@ocamllex $<
+
+parse_n_print : parse_n_print.ml $(OBJECTS) $(XOBJECTS)
+	@echo "Compiling parse_n_print test"
+	ocamlc -g -o parse_n_print $(LIBNUM) $(OBJECTS)
+	ocamlopt -g -o xparse_n_print  $(LIBXNUM) $(XOBJECTS)
+
+include .depend
+
+.depend: $(GENSOURCE)  
+	ocamldep *.ml *.mli > .depend
+
+fixpointvalid :
+	@echo "Fixpoint test for parse_n_print"
+	@python test_passes.py
+
+docgen : $(OBJECTS)
+	@echo "Generating API"
+	@$(OCAMLDOC) $(DOCFLAGS) 
+
+

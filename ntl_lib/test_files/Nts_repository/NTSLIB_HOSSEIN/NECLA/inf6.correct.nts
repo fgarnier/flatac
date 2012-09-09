@@ -1,0 +1,44 @@
+/*
+Licensed under the MIT License.
+Copyright (C) 2012 EPFL (Switzerland) , Verimag (France).
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+nts Inf6;
+
+main {
+bs,a,as,v1,b,v0,status,flag : int;
+initial s1;
+error se;
+s17 -> s10 {((((((as' = 1) && (a = a')) && (bs = bs')) && (status = status')) && (flag = flag')) && (b = b'))}
+s3 -> s4 {(((status' = 0) && (a = a')) && (b = b'))}
+s21 -> s8 {((((((status' = 1) && (a = a')) && (bs = bs')) && (as = as')) && (flag = flag')) && (b = b'))}
+s1 -> s2 {(a' = v0)}
+s9 -> s16 {(((((((a > 0) && (a = a')) && (bs = bs')) && (as = as')) && (status = status')) && (flag = flag')) && (b = b'))}
+s9 -> s17 {((((((!(a > 0) && (a = a')) && (bs = bs')) && (as = as')) && (status = status')) && (flag = flag')) && (b = b'))}
+s16 -> s10 {((((((as' = 0) && (a = a')) && (bs = bs')) && (status = status')) && (flag = flag')) && (b = b'))}
+s2 -> s3 {((b' = v1) && (a = a'))}
+s20 -> s8 {((((((status' = 0) && (a = a')) && (bs = bs')) && (as = as')) && (flag = flag')) && (b = b'))}
+s8 -> s18 {(((((((status = 1) && (a = a')) && (bs = bs')) && (as = as')) && (status = status')) && (flag = flag')) && (b = b'))}
+s8 -> s19 {((((((!(status = 1) && (a = a')) && (bs = bs')) && (as = as')) && (status = status')) && (flag = flag')) && (b = b'))}
+s4 -> s5 {((((as' = 0) && (a = a')) && (b = b')) && (status = status'))}
+s11 -> s13 {(((((((bs = as) && (a = a')) && (bs = bs')) && (as = as')) && (status = status')) && (flag = flag')) && (b = b'))}
+s11 -> s12 {((((((!(bs = as) && (a = a')) && (bs = bs')) && (as = as')) && (status = status')) && (flag = flag')) && (b = b'))}
+s10 -> s14 {(((((((b > 0) && (a = a')) && (bs = bs')) && (as = as')) && (status = status')) && (flag = flag')) && (b = b'))}
+s10 -> s15 {((((((!(b > 0) && (a = a')) && (bs = bs')) && (as = as')) && (status = status')) && (flag = flag')) && (b = b'))}
+s14 -> s11 {((((((bs' = 0) && (a = a')) && (as = as')) && (status = status')) && (flag = flag')) && (b = b'))}
+s5 -> s6 {(((((bs' = 0) && (a = a')) && (b = b')) && (status = status')) && (as = as'))}
+s12 -> s0 {(((((((flag = 0) && (a = a')) && (bs = bs')) && (as = as')) && (status = status')) && (flag = flag')) && (b = b'))}
+s12 -> se {((((((!(flag = 0) && (a = a')) && (bs = bs')) && (as = as')) && (status = status')) && (flag = flag')) && (b = b'))}
+s6 -> s7 {((((((flag' = 0) && (a = a')) && (bs = bs')) && (as = as')) && (status = status')) && (b = b'))}
+s7 -> s20 {(((((((a > 0) && (a = a')) && (bs = bs')) && (as = as')) && (status = status')) && (flag = flag')) && (b = b'))}
+s7 -> s21 {((((((!(a > 0) && (a = a')) && (bs = bs')) && (as = as')) && (status = status')) && (flag = flag')) && (b = b'))}
+s19 -> s9 {(((((((b <= 0) && (a = a')) && (bs = bs')) && (as = as')) && (status = status')) && (flag = flag')) && (b = b'))}
+s18 -> s9 {(((((((b > 0) && (a = a')) && (bs = bs')) && (as = as')) && (status = status')) && (flag = flag')) && (b = b'))}
+s15 -> s11 {((((((bs' = 1) && (a = a')) && (as = as')) && (status = status')) && (flag = flag')) && (b = b'))}
+s13 -> s12 {((((((flag' = 1) && (a = a')) && (bs = bs')) && (as = as')) && (status = status')) && (b = b'))}
+}

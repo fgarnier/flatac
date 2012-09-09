@@ -1,0 +1,12 @@
+nts accelerate;
+ 
+main{
+x : int ;
+initial s0 ;
+error se; 
+  s0->s1 { x' = 0 and havoc(x)} 
+  s1->s2 { havoc()} 
+  s2->se { not (x < 100000 and x >= 0) and x' = x + 1 and havoc(x)} 
+  s2->s3 { (x < 100000 and x >= 0) and x' = x + 1 and havoc(x)} 
+  s3->s1 { havoc() }
+}

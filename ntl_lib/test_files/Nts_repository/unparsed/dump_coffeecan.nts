@@ -1,0 +1,15 @@
+nts coffee_can ; 
+main{
+
+b,w : int;
+initial s1;
+final s3;
+ 
+ s1->s2 { b = 0 and w = 1 and b' = b and w' = w } 
+ s1->s2 { (b >= 0 and w >= 0) and (exists k : int . 2*k = w) and b' = b and w' = w } 
+ s2->s2 { b >= 1 and w >= 1 and b' = b-1 and w' = w } 
+ s2->s2 { b >= 0 and w >= 2 and w' = w-2 and b' = b+1 } 
+ s2->s2 { b >= 2 and w >= 0 and b' = b-1 and w' = w }
+}
+
+ 

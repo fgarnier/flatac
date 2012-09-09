@@ -1,0 +1,177 @@
+nts pgm ; 
+MF_b0_sent_eq_recv__1,MF_b1_sent_plus_minusrecv_eq_1__1,MF_b2_sent_plus_minusrecv_eq_2__1,MI_b0_sent_eq_recv__1,MI_b1_sent_plus_minusrecv_eq_1__1,MI_b2_sent_plus_minusrecv_eq_2__1,MF_b0_sent_eq_recv__0,MF_b1_sent_plus_minusrecv_eq_1__0,MF_b2_sent_plus_minusrecv_eq_2__0,MI_b0_sent_eq_recv__0,MI_b1_sent_plus_minusrecv_eq_1__0,MI_b2_sent_plus_minusrecv_eq_2__0,CNT_cpost_wrpc,CNT_cpost_rpccall,main_without_err,PC2,cmain : int;
+main{
+
+b0_sent_eq_recv,b1_sent_plus_minusrecv_eq_1,b2_sent_plus_minusrecv_eq_2,res,nxt_b0_sent_eq_recv,nxt_b1_sent_plus_minusrecv_eq_1,nxt_b2_sent_plus_minusrecv_eq_2 : int;
+initial si;
+final sf;
+error se; 
+ eventloop->s3 { CNT_cpost_wrpc >= 1 and CNT_cpost_wrpc' = CNT_cpost_wrpc-1 and havoc(CNT_cpost_wrpc) } 
+ eventloop->s6 { CNT_cpost_rpccall >= 1 and CNT_cpost_rpccall' = CNT_cpost_rpccall-1 and havoc(CNT_cpost_rpccall) } 
+ eventloop->sf { CNT_cpost_wrpc = 0 and CNT_cpost_rpccall = 0 and havoc() } 
+ s0->s1 { ((((nxt_b0_sent_eq_recv' >= 0 and nxt_b0_sent_eq_recv' <=  1) and nxt_b1_sent_plus_minusrecv_eq_1' >= 0) and nxt_b1_sent_plus_minusrecv_eq_1' <=  1) and nxt_b2_sent_plus_minusrecv_eq_2' >= 0) and nxt_b2_sent_plus_minusrecv_eq_2' <=  1 and main_without_err' = main_without_err+1 and MI_b0_sent_eq_recv__1' = b0_sent_eq_recv and MF_b0_sent_eq_recv__1' = nxt_b0_sent_eq_recv' and MI_b1_sent_plus_minusrecv_eq_1__1' = b1_sent_plus_minusrecv_eq_1 and MF_b1_sent_plus_minusrecv_eq_1__1' = nxt_b1_sent_plus_minusrecv_eq_1' and MI_b2_sent_plus_minusrecv_eq_2__1' = b2_sent_plus_minusrecv_eq_2 and MF_b2_sent_plus_minusrecv_eq_2__1' = nxt_b2_sent_plus_minusrecv_eq_2' and havoc(main_without_err,MI_b0_sent_eq_recv__1,MI_b1_sent_plus_minusrecv_eq_1__1,MI_b2_sent_plus_minusrecv_eq_2__1,MF_b0_sent_eq_recv__1,MF_b1_sent_plus_minusrecv_eq_1__1,MF_b2_sent_plus_minusrecv_eq_2__1,nxt_b0_sent_eq_recv,nxt_b1_sent_plus_minusrecv_eq_1,nxt_b2_sent_plus_minusrecv_eq_2) } 
+ s1->s2_1 { (res')=traverse_main_without_err_1() and havoc(res) } 
+ s2_1->eventloop { res = 1 and res' = 0 and b0_sent_eq_recv' = nxt_b0_sent_eq_recv and b1_sent_plus_minusrecv_eq_1' = nxt_b1_sent_plus_minusrecv_eq_1 and b2_sent_plus_minusrecv_eq_2' = nxt_b2_sent_plus_minusrecv_eq_2 and havoc(res,b0_sent_eq_recv,b1_sent_plus_minusrecv_eq_1,b2_sent_plus_minusrecv_eq_2) } 
+ s2_5->eventloop { b0_sent_eq_recv' = nxt_b0_sent_eq_recv and b1_sent_plus_minusrecv_eq_1' = nxt_b1_sent_plus_minusrecv_eq_1 and b2_sent_plus_minusrecv_eq_2' = nxt_b2_sent_plus_minusrecv_eq_2 and havoc(b0_sent_eq_recv,b1_sent_plus_minusrecv_eq_1,b2_sent_plus_minusrecv_eq_2) } 
+ s2_8->eventloop { b0_sent_eq_recv' = nxt_b0_sent_eq_recv and b1_sent_plus_minusrecv_eq_1' = nxt_b1_sent_plus_minusrecv_eq_1 and b2_sent_plus_minusrecv_eq_2' = nxt_b2_sent_plus_minusrecv_eq_2 and havoc(b0_sent_eq_recv,b1_sent_plus_minusrecv_eq_1,b2_sent_plus_minusrecv_eq_2) } 
+ s3->s4 { ((((nxt_b0_sent_eq_recv' >= 0 and nxt_b0_sent_eq_recv' <=  1) and nxt_b1_sent_plus_minusrecv_eq_1' >= 0) and nxt_b1_sent_plus_minusrecv_eq_1' <=  1) and nxt_b2_sent_plus_minusrecv_eq_2' >= 0) and nxt_b2_sent_plus_minusrecv_eq_2' <=  1 and MI_b0_sent_eq_recv__1' = b0_sent_eq_recv and MF_b0_sent_eq_recv__1' = nxt_b0_sent_eq_recv' and MI_b1_sent_plus_minusrecv_eq_1__1' = b1_sent_plus_minusrecv_eq_1 and MF_b1_sent_plus_minusrecv_eq_1__1' = nxt_b1_sent_plus_minusrecv_eq_1' and MI_b2_sent_plus_minusrecv_eq_2__1' = b2_sent_plus_minusrecv_eq_2 and MF_b2_sent_plus_minusrecv_eq_2__1' = nxt_b2_sent_plus_minusrecv_eq_2' and havoc(MI_b0_sent_eq_recv__1,MI_b1_sent_plus_minusrecv_eq_1__1,MI_b2_sent_plus_minusrecv_eq_2__1,MF_b0_sent_eq_recv__1,MF_b1_sent_plus_minusrecv_eq_1__1,MF_b2_sent_plus_minusrecv_eq_2__1,nxt_b0_sent_eq_recv,nxt_b1_sent_plus_minusrecv_eq_1,nxt_b2_sent_plus_minusrecv_eq_2) } 
+ s3->s5 { ((((nxt_b0_sent_eq_recv' >= 0 and nxt_b0_sent_eq_recv' <=  1) and nxt_b1_sent_plus_minusrecv_eq_1' >= 0) and nxt_b1_sent_plus_minusrecv_eq_1' <=  1) and nxt_b2_sent_plus_minusrecv_eq_2' >= 0) and nxt_b2_sent_plus_minusrecv_eq_2' <=  1 and MI_b0_sent_eq_recv__1' = b0_sent_eq_recv and MF_b0_sent_eq_recv__1' = nxt_b0_sent_eq_recv' and MI_b1_sent_plus_minusrecv_eq_1__1' = b1_sent_plus_minusrecv_eq_1 and MF_b1_sent_plus_minusrecv_eq_1__1' = nxt_b1_sent_plus_minusrecv_eq_1' and MI_b2_sent_plus_minusrecv_eq_2__1' = b2_sent_plus_minusrecv_eq_2 and MF_b2_sent_plus_minusrecv_eq_2__1' = nxt_b2_sent_plus_minusrecv_eq_2' and havoc(MI_b0_sent_eq_recv__1,MI_b1_sent_plus_minusrecv_eq_1__1,MI_b2_sent_plus_minusrecv_eq_2__1,MF_b0_sent_eq_recv__1,MF_b1_sent_plus_minusrecv_eq_1__1,MF_b2_sent_plus_minusrecv_eq_2__1,nxt_b0_sent_eq_recv,nxt_b1_sent_plus_minusrecv_eq_1,nxt_b2_sent_plus_minusrecv_eq_2) } 
+ s4->se_4 { (res')=traverse_cpost_wrpc_with_err_1() and havoc(res) } 
+ s5->s2_5 { (res')=traverse_cpost_wrpc_without_err_1() and havoc(res) } 
+ s6->s8 { ((((nxt_b0_sent_eq_recv' >= 0 and nxt_b0_sent_eq_recv' <=  1) and nxt_b1_sent_plus_minusrecv_eq_1' >= 0) and nxt_b1_sent_plus_minusrecv_eq_1' <=  1) and nxt_b2_sent_plus_minusrecv_eq_2' >= 0) and nxt_b2_sent_plus_minusrecv_eq_2' <=  1 and MI_b0_sent_eq_recv__1' = b0_sent_eq_recv and MF_b0_sent_eq_recv__1' = nxt_b0_sent_eq_recv' and MI_b1_sent_plus_minusrecv_eq_1__1' = b1_sent_plus_minusrecv_eq_1 and MF_b1_sent_plus_minusrecv_eq_1__1' = nxt_b1_sent_plus_minusrecv_eq_1' and MI_b2_sent_plus_minusrecv_eq_2__1' = b2_sent_plus_minusrecv_eq_2 and MF_b2_sent_plus_minusrecv_eq_2__1' = nxt_b2_sent_plus_minusrecv_eq_2' and havoc(MI_b0_sent_eq_recv__1,MI_b1_sent_plus_minusrecv_eq_1__1,MI_b2_sent_plus_minusrecv_eq_2__1,MF_b0_sent_eq_recv__1,MF_b1_sent_plus_minusrecv_eq_1__1,MF_b2_sent_plus_minusrecv_eq_2__1,nxt_b0_sent_eq_recv,nxt_b1_sent_plus_minusrecv_eq_1,nxt_b2_sent_plus_minusrecv_eq_2) } 
+ s8->s2_8 { (res')=traverse_cpost_rpccall_without_err_1() and havoc(res) } 
+ se_4->se { res = 1 and res' = 0 and b0_sent_eq_recv' = nxt_b0_sent_eq_recv and b1_sent_plus_minusrecv_eq_1' = nxt_b1_sent_plus_minusrecv_eq_1 and b2_sent_plus_minusrecv_eq_2' = nxt_b2_sent_plus_minusrecv_eq_2 and havoc(res,b0_sent_eq_recv,b1_sent_plus_minusrecv_eq_1,b2_sent_plus_minusrecv_eq_2) } 
+ si->s0 { ((((b0_sent_eq_recv' >= 0 and b0_sent_eq_recv' <=  1) and b1_sent_plus_minusrecv_eq_1' >= 0) and b1_sent_plus_minusrecv_eq_1' <=  1) and b2_sent_plus_minusrecv_eq_2' >= 0) and b2_sent_plus_minusrecv_eq_2' <=  1 and main_without_err' = 0 and PC2' = 0 and cmain' = 0 and CNT_cpost_wrpc' = 0 and CNT_cpost_rpccall' = 0 and havoc(b0_sent_eq_recv,b1_sent_plus_minusrecv_eq_1,b2_sent_plus_minusrecv_eq_2,main_without_err,PC2,cmain,CNT_cpost_wrpc,CNT_cpost_rpccall) }
+}
+traverse_cpost_rpccall_without_err_0{
+
+res : int;
+out done : int;
+initial p3;
+final sf;
+ 
+ p0->p0p1True { MI_b1_sent_plus_minusrecv_eq_1__0' = 1-MI_b1_sent_plus_minusrecv_eq_1__0+1-MI_b0_sent_eq_recv__0+MI_b2_sent_plus_minusrecv_eq_2__0 and havoc(MI_b1_sent_plus_minusrecv_eq_1__1) } 
+ p0p1True->p1 { MI_b1_sent_plus_minusrecv_eq_1__0 >= 3 or MI_b2_sent_plus_minusrecv_eq_2__0 = 1 and MI_b1_sent_plus_minusrecv_eq_1__0' = 1 and havoc(MI_b1_sent_plus_minusrecv_eq_1__0) } 
+ p0p1True->p1 { MI_b2_sent_plus_minusrecv_eq_2__0 = 0 and MI_b1_sent_plus_minusrecv_eq_1__0 < 3 and MI_b1_sent_plus_minusrecv_eq_1__0' = 0 and havoc(MI_b1_sent_plus_minusrecv_eq_1__0) } 
+ p1->p1p2True { MI_b2_sent_plus_minusrecv_eq_2__0' = 1-MI_b1_sent_plus_minusrecv_eq_1__0+1-MI_b2_sent_plus_minusrecv_eq_2__0+1-MI_b0_sent_eq_recv__0 and havoc(MI_b2_sent_plus_minusrecv_eq_2__0) } 
+ p1p2True->p2 { MI_b2_sent_plus_minusrecv_eq_2__0 >= 3 and MI_b2_sent_plus_minusrecv_eq_2__0' = 1 and havoc(MI_b2_sent_plus_minusrecv_eq_2__0) } 
+ p1p2True->p2 { MI_b2_sent_plus_minusrecv_eq_2__0 < 3 and MI_b2_sent_plus_minusrecv_eq_2__0' = 0 and havoc(MI_b2_sent_plus_minusrecv_eq_2__0) } 
+ p2->sf { (MI_b0_sent_eq_recv__0 = MF_b0_sent_eq_recv__0 and MI_b1_sent_plus_minusrecv_eq_1__0 = MF_b1_sent_plus_minusrecv_eq_1__0) and MI_b2_sent_plus_minusrecv_eq_2__0 = MF_b2_sent_plus_minusrecv_eq_2__0 and done' = 1 and havoc(done) } 
+ p3->p3p0True { MI_b0_sent_eq_recv__0' = 1-MI_b2_sent_plus_minusrecv_eq_2__0+1-MI_b0_sent_eq_recv__0+MI_b1_sent_plus_minusrecv_eq_1__0 and havoc(MI_b0_sent_eq_recv__0) } 
+ p3p0True->p0 { MI_b0_sent_eq_recv__0 >= 3 or MI_b1_sent_plus_minusrecv_eq_1__0 = 1 and MI_b0_sent_eq_recv__0' = 1 and havoc(MI_b0_sent_eq_recv__0) } 
+ p3p0True->p0 { MI_b1_sent_plus_minusrecv_eq_1__0 = 0 and MI_b0_sent_eq_recv__0 < 3 and MI_b0_sent_eq_recv__0' = 0 and havoc(MI_b0_sent_eq_recv__0) }
+}
+traverse_cpost_rpccall_without_err_1{
+
+res : int;
+out done : int;
+initial p3;
+final sf;
+ 
+ p0->p0p1True { MI_b1_sent_plus_minusrecv_eq_1__1' = 1-MI_b1_sent_plus_minusrecv_eq_1__1+1-MI_b0_sent_eq_recv__1+MI_b2_sent_plus_minusrecv_eq_2__1 and havoc(MI_b1_sent_plus_minusrecv_eq_1__1) } 
+ p0p1True->p1 { MI_b1_sent_plus_minusrecv_eq_1__1 >= 3 or MI_b2_sent_plus_minusrecv_eq_2__1 = 1 and MI_b1_sent_plus_minusrecv_eq_1__1' = 1 and havoc(MI_b1_sent_plus_minusrecv_eq_1__1) } 
+ p0p1True->p1 { MI_b2_sent_plus_minusrecv_eq_2__1 = 0 and MI_b1_sent_plus_minusrecv_eq_1__1 < 3 and MI_b1_sent_plus_minusrecv_eq_1__1' = 0 and havoc(MI_b1_sent_plus_minusrecv_eq_1__1) } 
+ p1->p1p2True { MI_b2_sent_plus_minusrecv_eq_2__1' = 1-MI_b1_sent_plus_minusrecv_eq_1__1+1-MI_b2_sent_plus_minusrecv_eq_2__1+1-MI_b0_sent_eq_recv__1 and havoc(MI_b2_sent_plus_minusrecv_eq_2__1) } 
+ p1p2True->p2 { MI_b2_sent_plus_minusrecv_eq_2__1 >= 3 and MI_b2_sent_plus_minusrecv_eq_2__1' = 1 and havoc(MI_b2_sent_plus_minusrecv_eq_2__1) } 
+ p1p2True->p2 { MI_b2_sent_plus_minusrecv_eq_2__1 < 3 and MI_b2_sent_plus_minusrecv_eq_2__1' = 0 and havoc(MI_b2_sent_plus_minusrecv_eq_2__1) } 
+ p2->sf { (MI_b0_sent_eq_recv__1 = MF_b0_sent_eq_recv__1 and MI_b1_sent_plus_minusrecv_eq_1__1 = MF_b1_sent_plus_minusrecv_eq_1__1) and MI_b2_sent_plus_minusrecv_eq_2__1 = MF_b2_sent_plus_minusrecv_eq_2__1 and done' = 1 and havoc(done) } 
+ p3->p3p0True { MI_b0_sent_eq_recv__1' = 1-MI_b2_sent_plus_minusrecv_eq_2__1+1-MI_b0_sent_eq_recv__1+MI_b1_sent_plus_minusrecv_eq_1__1 and havoc(MI_b0_sent_eq_recv__1) } 
+ p3p0True->si { MI_b0_sent_eq_recv__1 >= 3 or MI_b1_sent_plus_minusrecv_eq_1__1 = 1 and MI_b0_sent_eq_recv__1' = 1 and havoc(MI_b0_sent_eq_recv__1) } 
+ p3p0True->si { MI_b1_sent_plus_minusrecv_eq_1__1 = 0 and MI_b0_sent_eq_recv__1 < 3 and MI_b0_sent_eq_recv__1' = 0 and havoc(MI_b0_sent_eq_recv__1) }
+}
+traverse_cpost_wrpc_with_err_0{
+
+res : int;
+out done : int;
+initial p2;
+final sf;
+ 
+ p0->sf { (MI_b0_sent_eq_recv__0 = MF_b0_sent_eq_recv__0 and MI_b1_sent_plus_minusrecv_eq_1__0 = MF_b1_sent_plus_minusrecv_eq_1__0) and MI_b2_sent_plus_minusrecv_eq_2__0 = MF_b2_sent_plus_minusrecv_eq_2__0 and done' = 1 and havoc(done) } 
+ p1->p0 { 1 = 1 and havoc() } 
+ p1->sf { ((1 = 1 and MI_b0_sent_eq_recv__0 = MF_b0_sent_eq_recv__0) and MI_b1_sent_plus_minusrecv_eq_1__0 = MF_b1_sent_plus_minusrecv_eq_1__0) and MI_b2_sent_plus_minusrecv_eq_2__0 = MF_b2_sent_plus_minusrecv_eq_2__0 and done' = 1 and havoc(done) } 
+ p2->p1 { 1 = 1 and havoc() }
+}
+traverse_cpost_wrpc_with_err_1{
+
+res : int;
+out done : int;
+initial p2;
+final sf;
+ 
+ p0->sf { (MI_b0_sent_eq_recv__1 = MF_b0_sent_eq_recv__1 and MI_b1_sent_plus_minusrecv_eq_1__1 = MF_b1_sent_plus_minusrecv_eq_1__1) and MI_b2_sent_plus_minusrecv_eq_2__1 = MF_b2_sent_plus_minusrecv_eq_2__1 and done' = 1 and havoc(done) } 
+ p1->p0 { 1 = 1 and havoc() } 
+ p1->sf { ((1 = 1 and MI_b0_sent_eq_recv__1 = MF_b0_sent_eq_recv__1) and MI_b1_sent_plus_minusrecv_eq_1__1 = MF_b1_sent_plus_minusrecv_eq_1__1) and MI_b2_sent_plus_minusrecv_eq_2__1 = MF_b2_sent_plus_minusrecv_eq_2__1 and done' = 1 and havoc(done) } 
+ p2->p1 { 1 = 1 and havoc() }
+}
+traverse_cpost_wrpc_without_err_0{
+
+res : int;
+out done : int;
+initial p7;
+final sf;
+ 
+ p0->p1 { 1 = 1 and havoc() } 
+ p0->p9 { 1 = 1 and havoc() } 
+ p1->p2 { 1 = 1 and havoc() } 
+ p1->p9 { 1 = 1 and havoc() } 
+ p10->sf { (MI_b0_sent_eq_recv__0 = MF_b0_sent_eq_recv__0 and MI_b1_sent_plus_minusrecv_eq_1__0 = MF_b1_sent_plus_minusrecv_eq_1__0) and MI_b2_sent_plus_minusrecv_eq_2__0 = MF_b2_sent_plus_minusrecv_eq_2__0 and done' = 1 and havoc(done) } 
+ p2->p3 { CNT_cpost_rpccall' = CNT_cpost_rpccall+1 and havoc(CNT_cpost_rpccall) } 
+ p3->p3p4True { MI_b0_sent_eq_recv__0' = 1-MI_b1_sent_plus_minusrecv_eq_1__0+1-MI_b2_sent_plus_minusrecv_eq_2__0+1-MI_b0_sent_eq_recv__0 and havoc(MI_b0_sent_eq_recv__0) } 
+ p3p4True->p4 { MI_b0_sent_eq_recv__0 >= 3 and MI_b0_sent_eq_recv__0' = 1 and havoc(MI_b0_sent_eq_recv__0) } 
+ p3p4True->p4 { MI_b0_sent_eq_recv__0 < 3 and MI_b0_sent_eq_recv__0' = 0 and havoc(MI_b0_sent_eq_recv__0) } 
+ p4->p5 { MI_b1_sent_plus_minusrecv_eq_1__0' = MI_b0_sent_eq_recv__0 and havoc(MI_b1_sent_plus_minusrecv_eq_1__0) } 
+ p5->p9 { MI_b2_sent_plus_minusrecv_eq_2__0' = MI_b1_sent_plus_minusrecv_eq_1__0 and havoc(MI_b2_sent_plus_minusrecv_eq_2__0) } 
+ p6->sf { (MI_b0_sent_eq_recv__0 = MF_b0_sent_eq_recv__0 and MI_b1_sent_plus_minusrecv_eq_1__0 = MF_b1_sent_plus_minusrecv_eq_1__0) and MI_b2_sent_plus_minusrecv_eq_2__0 = MF_b2_sent_plus_minusrecv_eq_2__0 and done' = 1 and havoc(done) } 
+ p7->p8 { 1 = 1 and havoc() } 
+ p8->p0 { 1 = 1 and havoc() } 
+ p8->p10 { 1 = 1 and havoc() } 
+ p9->p6 { CNT_cpost_wrpc' = CNT_cpost_wrpc+1 and havoc(CNT_cpost_wrpc) }
+}
+traverse_cpost_wrpc_without_err_1{
+
+res : int;
+out done : int;
+initial p7;
+final sf;
+ 
+ p0->p1 { 1 = 1 and havoc() } 
+ p0->p9 { 1 = 1 and havoc() } 
+ p1->p2 { 1 = 1 and havoc() } 
+ p1->p9 { 1 = 1 and havoc() } 
+ p10->sf { (MI_b0_sent_eq_recv__1 = MF_b0_sent_eq_recv__1 and MI_b1_sent_plus_minusrecv_eq_1__1 = MF_b1_sent_plus_minusrecv_eq_1__1) and MI_b2_sent_plus_minusrecv_eq_2__1 = MF_b2_sent_plus_minusrecv_eq_2__1 and done' = 1 and havoc(done) } 
+ p2->p3 { CNT_cpost_rpccall' = CNT_cpost_rpccall+1 and havoc(CNT_cpost_rpccall) } 
+ p3->p3p4True { MI_b0_sent_eq_recv__1' = 1-MI_b1_sent_plus_minusrecv_eq_1__1+1-MI_b2_sent_plus_minusrecv_eq_2__1+1-MI_b0_sent_eq_recv__1 and havoc(MI_b0_sent_eq_recv__1) } 
+ p3p4True->p4 { MI_b0_sent_eq_recv__1 >= 3 and MI_b0_sent_eq_recv__1' = 1 and havoc(MI_b0_sent_eq_recv__1) } 
+ p3p4True->p4 { MI_b0_sent_eq_recv__1 < 3 and MI_b0_sent_eq_recv__1' = 0 and havoc(MI_b0_sent_eq_recv__1) } 
+ p4->p5 { MI_b1_sent_plus_minusrecv_eq_1__1' = MI_b0_sent_eq_recv__1 and havoc(MI_b1_sent_plus_minusrecv_eq_1__1) } 
+ p5->p9 { MI_b2_sent_plus_minusrecv_eq_2__1' = MI_b1_sent_plus_minusrecv_eq_1__1 and havoc(MI_b2_sent_plus_minusrecv_eq_2__1) } 
+ p6->sf { (MI_b0_sent_eq_recv__1 = MF_b0_sent_eq_recv__1 and MI_b1_sent_plus_minusrecv_eq_1__1 = MF_b1_sent_plus_minusrecv_eq_1__1) and MI_b2_sent_plus_minusrecv_eq_2__1 = MF_b2_sent_plus_minusrecv_eq_2__1 and done' = 1 and havoc(done) } 
+ p7->p8 { 1 = 1 and havoc() } 
+ p8->p0 { 1 = 1 and havoc() } 
+ p8->p10 { 1 = 1 and havoc() } 
+ p9->p6 { CNT_cpost_wrpc' = CNT_cpost_wrpc+1 and havoc(CNT_cpost_wrpc) }
+}
+traverse_main_without_err_0{
+
+res : int;
+out done : int;
+initial si;
+final sf;
+ 
+ p0->sf { (MI_b0_sent_eq_recv__0 = MF_b0_sent_eq_recv__0 and MI_b1_sent_plus_minusrecv_eq_1__0 = MF_b1_sent_plus_minusrecv_eq_1__0) and MI_b2_sent_plus_minusrecv_eq_2__0 = MF_b2_sent_plus_minusrecv_eq_2__0 and PC2' = PC2-1 and done' = 1 and havoc(PC2,done) } 
+ p1->p2 { MI_b0_sent_eq_recv__0 = 1 and havoc() } 
+ p2->sf { (MI_b0_sent_eq_recv__0 = MF_b0_sent_eq_recv__0 and MI_b1_sent_plus_minusrecv_eq_1__0 = MF_b1_sent_plus_minusrecv_eq_1__0) and MI_b2_sent_plus_minusrecv_eq_2__0 = MF_b2_sent_plus_minusrecv_eq_2__0 and done' = 1 and havoc(done) } 
+ p3->p1 { CNT_cpost_wrpc' = CNT_cpost_wrpc+1 and cmain' = cmain-1 and havoc(CNT_cpost_wrpc,cmain) } 
+ p4->p4_0 { (((((0 >= 1 and MI_b0_sent_eq_recv__0' >= 0) and MI_b0_sent_eq_recv__0' <=  1) and MI_b1_sent_plus_minusrecv_eq_1__0' >= 0) and MI_b1_sent_plus_minusrecv_eq_1__0' <=  1) and MI_b2_sent_plus_minusrecv_eq_2__0' >= 0) and MI_b2_sent_plus_minusrecv_eq_2__0' <=  1 and MF_b0_sent_eq_recv__0' = MF_b0_sent_eq_recv__0 and MF_b0_sent_eq_recv__0' = MI_b0_sent_eq_recv__0' and MF_b1_sent_plus_minusrecv_eq_1__0' = MF_b1_sent_plus_minusrecv_eq_1__0 and MF_b1_sent_plus_minusrecv_eq_1__0' = MI_b1_sent_plus_minusrecv_eq_1__0' and MF_b2_sent_plus_minusrecv_eq_2__0' = MF_b2_sent_plus_minusrecv_eq_2__0 and MF_b2_sent_plus_minusrecv_eq_2__0' = MI_b2_sent_plus_minusrecv_eq_2__0' and main_without_err' = main_without_err-1 and PC2' = PC2+1 and havoc(MF_b0_sent_eq_recv__0,MF_b1_sent_plus_minusrecv_eq_1__0,MF_b2_sent_plus_minusrecv_eq_2__0,MF_b0_sent_eq_recv__0,MF_b1_sent_plus_minusrecv_eq_1__0,MF_b2_sent_plus_minusrecv_eq_2__0,MI_b0_sent_eq_recv__0,MI_b1_sent_plus_minusrecv_eq_1__0,MI_b2_sent_plus_minusrecv_eq_2__0,main_without_err,PC2) } 
+ p4->p4_1 { (((((0 >= 1 and MF_b0_sent_eq_recv__0' >= 0) and MF_b0_sent_eq_recv__0' <=  1) and MF_b1_sent_plus_minusrecv_eq_1__0' >= 0) and MF_b1_sent_plus_minusrecv_eq_1__0' <=  1) and MF_b2_sent_plus_minusrecv_eq_2__0' >= 0) and MF_b2_sent_plus_minusrecv_eq_2__0' <=  1 and MI_b0_sent_eq_recv__0' = MI_b0_sent_eq_recv__0 and MI_b0_sent_eq_recv__0' = MF_b0_sent_eq_recv__0' and MI_b1_sent_plus_minusrecv_eq_1__0' = MI_b1_sent_plus_minusrecv_eq_1__0 and MI_b1_sent_plus_minusrecv_eq_1__0' = MF_b1_sent_plus_minusrecv_eq_1__0' and MI_b2_sent_plus_minusrecv_eq_2__0' = MI_b2_sent_plus_minusrecv_eq_2__0 and MI_b2_sent_plus_minusrecv_eq_2__0' = MF_b2_sent_plus_minusrecv_eq_2__0' and main_without_err' = main_without_err-1 and cmain' = cmain+1 and havoc(MI_b0_sent_eq_recv__0,MI_b1_sent_plus_minusrecv_eq_1__0,MI_b2_sent_plus_minusrecv_eq_2__0,MI_b0_sent_eq_recv__0,MI_b1_sent_plus_minusrecv_eq_1__0,MI_b2_sent_plus_minusrecv_eq_2__0,MF_b0_sent_eq_recv__0,MF_b1_sent_plus_minusrecv_eq_1__0,MF_b2_sent_plus_minusrecv_eq_2__0,main_without_err,cmain) } 
+ p4_0->si4_0 { res' = 1 and havoc(res) } 
+ p4_1->si4_1 { res' = 1 and havoc(res) } 
+ si->p0 { PC2 >= 1 and havoc() } 
+ si->p3 { cmain >= 1 and havoc() } 
+ si->p4 { main_without_err >= 1 and havoc() } 
+ si4_0->p3 { res = 1 and res' = 0 and cmain' = cmain+1 and havoc(res,cmain) } 
+ si4_1->p0 { res = 1 and res' = 0 and PC2' = PC2+1 and havoc(res,PC2) }
+}
+traverse_main_without_err_1{
+
+res : int;
+out done : int;
+initial si;
+final sf;
+ 
+ p0->sf { (MI_b0_sent_eq_recv__1 = MF_b0_sent_eq_recv__1 and MI_b1_sent_plus_minusrecv_eq_1__1 = MF_b1_sent_plus_minusrecv_eq_1__1) and MI_b2_sent_plus_minusrecv_eq_2__1 = MF_b2_sent_plus_minusrecv_eq_2__1 and PC2' = PC2-1 and done' = 1 and havoc(PC2,done) } 
+ p1->p2 { MI_b0_sent_eq_recv__1 = 1 and havoc() } 
+ p2->sf { (MI_b0_sent_eq_recv__1 = MF_b0_sent_eq_recv__1 and MI_b1_sent_plus_minusrecv_eq_1__1 = MF_b1_sent_plus_minusrecv_eq_1__1) and MI_b2_sent_plus_minusrecv_eq_2__1 = MF_b2_sent_plus_minusrecv_eq_2__1 and done' = 1 and havoc(done) } 
+ p3->p1 { CNT_cpost_wrpc' = CNT_cpost_wrpc+1 and cmain' = cmain-1 and havoc(CNT_cpost_wrpc,cmain) } 
+ p4->p4_0 { (((((1 >= 1 and MI_b0_sent_eq_recv__0' >= 0) and MI_b0_sent_eq_recv__0' <=  1) and MI_b1_sent_plus_minusrecv_eq_1__0' >= 0) and MI_b1_sent_plus_minusrecv_eq_1__0' <=  1) and MI_b2_sent_plus_minusrecv_eq_2__0' >= 0) and MI_b2_sent_plus_minusrecv_eq_2__0' <=  1 and MF_b0_sent_eq_recv__0' = MF_b0_sent_eq_recv__1 and MF_b0_sent_eq_recv__1' = MI_b0_sent_eq_recv__0' and MF_b1_sent_plus_minusrecv_eq_1__0' = MF_b1_sent_plus_minusrecv_eq_1__1 and MF_b1_sent_plus_minusrecv_eq_1__1' = MI_b1_sent_plus_minusrecv_eq_1__0' and MF_b2_sent_plus_minusrecv_eq_2__0' = MF_b2_sent_plus_minusrecv_eq_2__1 and MF_b2_sent_plus_minusrecv_eq_2__1' = MI_b2_sent_plus_minusrecv_eq_2__0' and main_without_err' = main_without_err-1 and PC2' = PC2+1 and havoc(MF_b0_sent_eq_recv__0,MF_b1_sent_plus_minusrecv_eq_1__0,MF_b2_sent_plus_minusrecv_eq_2__0,MF_b0_sent_eq_recv__1,MF_b1_sent_plus_minusrecv_eq_1__1,MF_b2_sent_plus_minusrecv_eq_2__1,MI_b0_sent_eq_recv__0,MI_b1_sent_plus_minusrecv_eq_1__0,MI_b2_sent_plus_minusrecv_eq_2__0,main_without_err,PC2) } 
+ p4->p4_1 { (((((1 >= 1 and MF_b0_sent_eq_recv__0' >= 0) and MF_b0_sent_eq_recv__0' <=  1) and MF_b1_sent_plus_minusrecv_eq_1__0' >= 0) and MF_b1_sent_plus_minusrecv_eq_1__0' <=  1) and MF_b2_sent_plus_minusrecv_eq_2__0' >= 0) and MF_b2_sent_plus_minusrecv_eq_2__0' <=  1 and MI_b0_sent_eq_recv__0' = MI_b0_sent_eq_recv__1 and MI_b0_sent_eq_recv__1' = MF_b0_sent_eq_recv__0' and MI_b1_sent_plus_minusrecv_eq_1__0' = MI_b1_sent_plus_minusrecv_eq_1__1 and MI_b1_sent_plus_minusrecv_eq_1__1' = MF_b1_sent_plus_minusrecv_eq_1__0' and MI_b2_sent_plus_minusrecv_eq_2__0' = MI_b2_sent_plus_minusrecv_eq_2__1 and MI_b2_sent_plus_minusrecv_eq_2__1' = MF_b2_sent_plus_minusrecv_eq_2__0' and main_without_err' = main_without_err-1 and cmain' = cmain+1 and havoc(MI_b0_sent_eq_recv__0,MI_b1_sent_plus_minusrecv_eq_1__0,MI_b2_sent_plus_minusrecv_eq_2__0,MI_b0_sent_eq_recv__1,MI_b1_sent_plus_minusrecv_eq_1__1,MI_b2_sent_plus_minusrecv_eq_2__1,MF_b0_sent_eq_recv__0,MF_b1_sent_plus_minusrecv_eq_1__0,MF_b2_sent_plus_minusrecv_eq_2__0,main_without_err,cmain) } 
+ p4_0->si4_0 { (res')=traverse_main_without_err_0() and havoc(res) } 
+ p4_1->si4_1 { (res')=traverse_main_without_err_0() and havoc(res) } 
+ si->p0 { PC2 >= 1 and havoc() } 
+ si->p3 { cmain >= 1 and havoc() } 
+ si->p4 { main_without_err >= 1 and havoc() } 
+ si4_0->p3 { res = 1 and res' = 0 and cmain' = cmain+1 and havoc(res,cmain) } 
+ si4_1->p0 { res = 1 and res' = 0 and PC2' = PC2+1 and havoc(res,PC2) }
+}
+
+ 

@@ -1,0 +1,37 @@
+nts Inf6 ; 
+main{
+
+bs,a,as,v1,b,v0,status,flag : int;
+initial s1;
+
+error se; 
+ s1->s2 { a' = v0 } 
+ s10->s14 { (((((b > 0 and a = a') and bs = bs') and as = as') and status = status') and flag = flag') and b = b' } 
+ s10->s15 { (((((b <=  0 and a = a') and bs = bs') and as = as') and status = status') and flag = flag') and b = b' } 
+ s11->s12 { (((((bs != as and a = a') and bs = bs') and as = as') and status = status') and flag = flag') and b = b' } 
+ s11->s13 { (((((bs = as and a = a') and bs = bs') and as = as') and status = status') and flag = flag') and b = b' } 
+ s12->s0 { (((((flag = 0 and a = a') and bs = bs') and as = as') and status = status') and flag = flag') and b = b' } 
+ s12->se { (((((flag != 0 and a = a') and bs = bs') and as = as') and status = status') and flag = flag') and b = b' } 
+ s13->s12 { ((((flag' = 1 and a = a') and bs = bs') and as = as') and status = status') and b = b' } 
+ s14->s11 { ((((bs' = 0 and a = a') and as = as') and status = status') and flag = flag') and b = b' } 
+ s15->s11 { ((((bs' = 1 and a = a') and as = as') and status = status') and flag = flag') and b = b' } 
+ s16->s10 { ((((as' = 0 and a = a') and bs = bs') and status = status') and flag = flag') and b = b' } 
+ s17->s10 { ((((as' = 1 and a = a') and bs = bs') and status = status') and flag = flag') and b = b' } 
+ s18->s9 { (((((b > 0 and a = a') and bs = bs') and as = as') and status = status') and flag = flag') and b = b' } 
+ s19->s9 { (((((b <=  0 and a = a') and bs = bs') and as = as') and status = status') and flag = flag') and b = b' } 
+ s2->s3 { a = a' and b' = v1 } 
+ s20->s8 { ((((status' = 0 and a = a') and bs = bs') and as = as') and flag = flag') and b = b' } 
+ s21->s8 { ((((status' = 1 and a = a') and bs = bs') and as = as') and flag = flag') and b = b' } 
+ s3->s4 { (status' = 0 and a = a') and b = b' } 
+ s4->s5 { ((as' = 0 and a = a') and b = b') and status = status' } 
+ s5->s6 { (((bs' = 0 and a = a') and b = b') and status = status') and as = as' } 
+ s6->s7 { ((((flag' = 0 and a = a') and bs = bs') and as = as') and status = status') and b = b' } 
+ s7->s20 { (((((a > 0 and a = a') and bs = bs') and as = as') and status = status') and flag = flag') and b = b' } 
+ s7->s21 { (((((a <=  0 and a = a') and bs = bs') and as = as') and status = status') and flag = flag') and b = b' } 
+ s8->s18 { (((((status = 1 and a = a') and bs = bs') and as = as') and status = status') and flag = flag') and b = b' } 
+ s8->s19 { (((((status != 1 and a = a') and bs = bs') and as = as') and status = status') and flag = flag') and b = b' } 
+ s9->s16 { (((((a > 0 and a = a') and bs = bs') and as = as') and status = status') and flag = flag') and b = b' } 
+ s9->s17 { (((((a <=  0 and a = a') and bs = bs') and as = as') and status = status') and flag = flag') and b = b' }
+}
+
+ 
