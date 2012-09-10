@@ -92,7 +92,7 @@ struct
 							  that global variables
 							  satisfy. 
 						       *)
-	nts_system_threads : ( string * int ) list  option;   (*
+	nts_system_threads : ( string * Big_int.big_int ) list  option;   (*
 							Optional
 							threads declaration,
 							name of the nts subsystem
@@ -448,9 +448,6 @@ ordering on their name. *)
 
 
 
-   
-     
-
   let pprint_all_cautomata cautomata_table =
     let pprint_automata_folder cname cautomaton prev_str =
       match prev_str with
@@ -462,6 +459,32 @@ ordering on their name. *)
 	  end
     in
     Hashtbl.fold pprint_automata_folder cautomata_table "" 
+
+
+  let pprint_optional_init nt_sys prefix =
+    match nt_sys.nts_gvars_init with
+	Some(sthing::_) ->
+	  begin
+	    Format.sprintf "%sinit %s;\n" prefix (Nts_generic.nts_pprint_genrel sthing) 
+	  end
+      | None -> prefix
+
+
+
+  let pprint_optional_thread_list nt_sys prefix =
+    let thread_pprint_iterator ret_string (thread_name, nb_instances) =
+      match ret_string with
+	  "" -> Format.sprintf "instances %s [%s]" 
+	    thread_name (Big_int.string_of_big_int nb_instances)
+	| _ -> Format.sprintf "%s,%s [%s]" 
+	  ret_string thread_name (Big_int.string_of_big_int nb_instances) 
+    in
+    match nt_sys.nts_system_threads  with
+	Some(thread_list ) ->
+	  let str = List.fold_left thread_pprint_iterator "" thread_list in
+	  Format.sprintf "%s%s;\n" prefix str 
+      | None -> prefix
+	
 
 
   let pprint_nts nt_system =
@@ -480,6 +503,10 @@ ordering on their name. *)
       )
     in
     let ret_string= ret_string^gvars_pprint
+    in
+    let ret_string= pprint_optional_init nt_system ret_string
+    in
+    let ret_string = pprint_optional_thread_list nt_system ret_string
     in
     (*
     let all_automata = pprint_all_cautomata  nt_system.nts_automata

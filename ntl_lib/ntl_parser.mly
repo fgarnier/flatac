@@ -112,7 +112,7 @@ to properly type which AND are boolean conjuction or separators
 between guards, havocs and funcalls.
 *)
 
-let rebuild_trans_guards nts_trans_split_prec_list =
+let rebuild_gen_relation nts_trans_split_prec_list =
   let nts_guards_of_parsed_info (cnt_curr_bool, bool_stack ) parsed_elem =
     match parsed_elem with
 	`Trans_new_guard -> 
@@ -141,11 +141,16 @@ let rebuild_trans_guards nts_trans_split_prec_list =
     List.fold_left nts_guards_of_parsed_info (CntGenTrue, None) nts_trans_split_prec_list in
   match s with 
       None -> let c = Nts_generic.simplify_gen_rel c 
-	      in CntGenGuard(c)
+	      in c
     | Some(stack) -> 
       let res_rel = CntGenRelComp(CntGenBOr,c,stack) in
       let res_rel = Nts_generic.simplify_gen_rel res_rel in
-      CntGenGuard(res_rel)
+      res_rel
+
+
+let rebuild_trans_guards nts_trans_split_prec_list =
+  let gen_cond = rebuild_gen_relation nts_trans_split_prec_list in
+  CntGenGuard(gen_cond)
 
 
 let rebuild_non_guard_trans list_res = 
@@ -156,14 +161,20 @@ let rebuild_non_guard_trans list_res =
       | _ -> lres
   in
   List.fold_left non_guard_folder [] list_res
+
+
+(** *)
+let normalize_gvars_init_cond_parameter p = 
+  match p with
+      `GVarsInitCond(q) -> q
       
 
 
 let append_to_opt_list optlist appendix =
   match optlist with
       Some(lst)-> lst@appendix
-    | None appendix
-
+    | None -> appendix
+      
 
 let rebuild_top_level_infos nts_name toplevel_list =
   let rebuild_left_folder nts_param header_list_elem =
@@ -191,11 +202,16 @@ let rebuild_top_level_infos nts_name toplevel_list =
 
       | `Gvars_cond(nts_conditions) ->
 	begin
+	  let condition = rebuild_gen_relation nts_conditions 
+	    (* normalize_gvars_init_cond_parameter nts_conditions*)
+	  in
 	    {
 	      nts_system_name = nts_param.nts_system_name;
 	      nts_global_vars = nts_param.nts_global_vars;
-	      nts_automata = nts_collection;
-	      nts_gvars_init = nts_param.nts_gvars_init;
+	      nts_automata =  nts_param.nts_automata;
+	      nts_gvars_init = Some ((append_to_opt_list 
+			       nts_param.nts_gvars_init (condition::[])));
+
 	      nts_system_threads = nts_param.nts_system_threads;
 	    }
 	end
@@ -205,9 +221,10 @@ let rebuild_top_level_infos nts_name toplevel_list =
 	    {
 	      nts_system_name = nts_param.nts_system_name;
 	      nts_global_vars = nts_param.nts_global_vars;
-	      nts_automata = nts_collection;
+	      nts_automata = nts_param.nts_automata;
 	      nts_gvars_init = nts_param.nts_gvars_init;
-	      nts_system_threads = nts_param.nts_system_threads;
+	      nts_system_threads = Some ( (append_to_opt_list 
+		nts_param.nts_system_threads threads_list_decl));
 	    }
 	  end
   in
@@ -269,7 +286,9 @@ ntldescr : NTSDECL IDENT SEMICOLON comma_sep_header_list {
   {
     nts_system_name = nts_name;
     nts_global_vars = [] ;
-    nts_automata = cautomata_hashtbl_of_cautomata_list $4
+    nts_automata = cautomata_hashtbl_of_cautomata_list $4;
+    nts_gvars_init = None;
+    nts_system_threads = None ;
   }
 } 
 ;
@@ -279,15 +298,16 @@ comma_sep_header_list : gvars_decl SEMICOLON decl_sequence {
   let nts_automata = cautomata_hashtbl_of_cautomata_list $3 in
   `Decl_gvars($1)::`Decl_seq(nts_automata)::[]
 }
+
 | gvars_decl SEMICOLON comma_sep_header_list {
     `Decl_gvars($1)::$3
   }
 
-| init_gvars_condition_list SEMICOLON comma_sep_header_list {
+| gvars_initial_conditions SEMICOLON comma_sep_header_list {
       `Gvars_cond($1)::$3
   }
 
-| init_gvars_condition_list SEMICOLON decl_sequence {
+| gvars_initial_conditions SEMICOLON decl_sequence {
   let nts_automata  = cautomata_hashtbl_of_cautomata_list $3 in
   `Gvars_cond($1)::`Decl_seq(nts_automata)::[]
 }
@@ -298,17 +318,43 @@ comma_sep_header_list : gvars_decl SEMICOLON decl_sequence {
 }
 
 | thread_declaration SEMICOLON comma_sep_header_list {
-  Thread_decl($1)::$3
+  `Thread_decl($1)::$3
 }
 ;
+
+/*
+init_gvars_condition_list : INIT gvars_initial_conditions {$2} 
+; 
+*/
+
+/*
+gvars_condition_list : pressburg_atomic_bool {`GVarsInitCond($1)::[]}
+| pressburg_tree_guards {`GVarsInitCond($1)::[]}
+| pressburg_tree_guards BAND gvars_condition_list {`GVarsInitCond($1):: $3 }
+| pressburg_atomic_bool BAND gvars_condition_list {`GVarsInitCond($1):: $3 }
+;
+*/
+
+
+gvars_initial_conditions : INIT nts_trans_split_prec {$2}
+
+/*
+ gvars_condition_list : pressburg_atomic_bool {$1::[]}
+| pressburg_tree_guards {$1::[]}
+| pressburg_tree_guards BAND gvars_condition_list {$1 :: $3 }
+| pressburg_atomic_bool BAND gvars_condition_list {$1 :: $3 }
+;
+*/
 
 ident_list : IDENT {[$1]}
 | IDENT COMMA ident_list {$1::$3}
 ;
 
+/*
 gvars_list_decl : gvars_decl SEMICOLON gvars_list_decl {$1 @ $3}
 | gvars_decl SEMICOLON {$1}
 ;
+*/
 
 gvars_decl : ident_list COLON INTDECL  { 
   List.map (fun s-> NtsGenVar(NtsIVar(s),NtsUnPrimed)) $1
@@ -328,25 +374,18 @@ List.map  (fun s->NtsGenVar( NtsBVar(s),NtsUnPrimed)) $1
 ;
 
 
-
-init_gvars_conditions_list : INIT gvars_conditions_list {$2}
-;
-
-gvars_conditions_list : gvars_condition BAND gvars_conditions_list { $1 :: $3 }
-| gvars_condition SEMICOLON { $1::[] };
-
-
-gvars_condition : pressburg_tree_guards {$1}
-| pressburg_atomic_bool {$1}
+/*
+init_gvars_condition_list_decl : INIT gvars_condition_list_decl {$2}
+;*/
 
 
 thread_declaration : INSTANCES thread_decl_list { $2 };
 
 thread_decl_list : thread_decl COMMA thread_decl_list { $1 :: $3 }
-| thread_decl SEMICOLON {[$1]};
+| thread_decl  {[$1]};
 
 
-thread_decl : IDENT LBRACK INT RBRACK {
+thread_decl : IDENT OBRACK INT CBRACK {
    ($1 , $3 )
 };
 
@@ -438,8 +477,7 @@ transitions :  IDENT ARROW IDENT LBRACK  RBRACK {
   let control_org = control_of_id_param $3 in
   let control_dest= control_of_id_param $5 in
   let transit = $7 in
-  (control_org, control_dest, transit )
- 
+  (control_org, control_dest, transit ) 
 }
 
 | IDENT COLON IDENT ARROW IDENT LBRACK  RBRACK {
@@ -549,7 +587,6 @@ nts_trans_split : nts_trans_split_prec {
 }
 
 
-
 primed_var_list : primed_express COMMA primed_var_list %prec PRIMEVARLIST {$1::$3}
 | primed_express COMMA primed_express {$1::[$3]}
 ;
@@ -606,7 +643,6 @@ gen_affect : PRIMEDVAR EQ IDENT  LBRACE arithm_expr_list RBRACE {
 }
 | IDENT LBRACE arithm_expr_list RBRACE  {CntGenCall($1,None,$3)}
 | IDENT LBRACE RBRACE {CntGenCall($1,None,[])}
-
 ;
 
 
@@ -621,7 +657,6 @@ pressburg_tree_guards : LBRACE pressburg_atomic_bool RBRACE
   CntGenRelComp(CntGenBAnd,$1,$3)
 }
 
-
 | pressburg_tree_guards BAND pressburg_tree_guards {
   CntGenRelComp(CntGenBAnd,$1,$3)
 }
@@ -634,7 +669,6 @@ pressburg_tree_guards : LBRACE pressburg_atomic_bool RBRACE
    CntGenRelComp(CntGenBAnd,$1,$3)
   
 }
-
 
 | qformula BAND  pressburg_tree_guards {
   CntGenRelComp(CntGenBAnd,$1,$3)
@@ -756,7 +790,6 @@ havocise : HAVOC LBRACE ident_list RBRACE {
 }
 
 |  HAVOC LBRACE  RBRACE {
-  
   CntGenHavoc([])
 }
 ;

@@ -68,7 +68,7 @@ sig
         nts_global_vars : nts_genrel_var list;
         nts_automata : ( string , nts_automaton ) Hashtbl.t;
 	nts_gvars_init : Nts_types.nts_gen_relation list option;
-        nts_system_threads : (string * int) list option;
+        nts_system_threads : (string * Big_int.big_int) list option;
       }
 	
   val anot_parser : unit -> anotations

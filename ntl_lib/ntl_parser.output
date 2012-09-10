@@ -1,147 +1,156 @@
    0  $accept : %entry% $end
 
    1  ntldescr : NTSDECL IDENT SEMICOLON comma_sep_header_list
-   2           | NTSDECL IDENT SEMICOLON gvars_decl SEMICOLON decl_sequence
-   3           | NTSDECL IDENT SEMICOLON decl_sequence
+   2           | NTSDECL IDENT SEMICOLON decl_sequence
 
-   4  comma_sep_header_list : gvars_decl SEMICOLON decl_sequence
-   5                        | gvars_decl SEMICOLON comma_sep_header_list
+   3  comma_sep_header_list : gvars_decl SEMICOLON decl_sequence
+   4                        | gvars_decl SEMICOLON comma_sep_header_list
+   5                        | gvars_initial_conditions SEMICOLON comma_sep_header_list
+   6                        | gvars_initial_conditions SEMICOLON decl_sequence
+   7                        | thread_declaration SEMICOLON decl_sequence
+   8                        | thread_declaration SEMICOLON comma_sep_header_list
 
-   6  ident_list : IDENT
-   7             | IDENT COMMA ident_list
+   9  gvars_initial_conditions : INIT nts_trans_split_prec
 
-   8  gvars_list_decl : gvars_decl SEMICOLON gvars_list_decl
-   9                  | gvars_decl SEMICOLON
+  10  ident_list : IDENT
+  11             | IDENT COMMA ident_list
 
-  10  gvars_decl : ident_list COLON INTDECL
-  11             | ident_list COLON REALDECL SEMICOLON
-  12             | ident_list COLON NATDECL SEMICOLON
-  13             | ident_list COLON BOOLDECL SEMICOLON
+  12  gvars_decl : ident_list COLON INTDECL
+  13             | ident_list COLON REALDECL SEMICOLON
+  14             | ident_list COLON NATDECL SEMICOLON
+  15             | ident_list COLON BOOLDECL SEMICOLON
 
-  14  decl_sequence : decl_automata decl_sequence
-  15                | EOF
+  16  thread_declaration : INSTANCES thread_decl_list
 
-  16  decl_automata : IDENT LBRACK vars_automaton states_list transitions_list RBRACK
+  17  thread_decl_list : thread_decl COMMA thread_decl_list
+  18                   | thread_decl
 
-  17  vars_automaton : vars_loc vars_automaton
-  18                 | vars_loc
+  19  thread_decl : IDENT OBRACK INT CBRACK
 
-  19  vars_loc : INPUTVARLIST typed_id_list_list SEMICOLON
-  20           | OUTPUTVARLIST typed_id_list_list SEMICOLON
-  21           | typed_id_list_list SEMICOLON
+  20  decl_sequence : decl_automata decl_sequence
+  21                | EOF
 
-  22  typed_id_list_list : typed_id_list COMMA typed_id_list_list
-  23                     | typed_id_list
+  22  decl_automata : IDENT LBRACK vars_automaton states_list transitions_list RBRACK
 
-  24  typed_id_list : ident_list COLON INTDECL
-  25                | ident_list COLON NATDECL
-  26                | ident_list COLON REALDECL
-  27                | ident_list COLON BOOLDECL
+  23  vars_automaton : vars_loc vars_automaton
+  24                 | vars_loc
 
-  28  transitions_list : transitions transitions_list
-  29                   | transitions
+  25  vars_loc : INPUTVARLIST typed_id_list_list SEMICOLON
+  26           | OUTPUTVARLIST typed_id_list_list SEMICOLON
+  27           | typed_id_list_list SEMICOLON
 
-  30  transitions : IDENT ARROW IDENT LBRACK RBRACK
-  31              | IDENT ARROW IDENT LBRACK nts_trans_split RBRACK
-  32              | IDENT COLON IDENT ARROW IDENT LBRACK nts_trans_split RBRACK
-  33              | IDENT COLON IDENT ARROW IDENT LBRACK RBRACK
+  28  typed_id_list_list : typed_id_list COMMA typed_id_list_list
+  29                     | typed_id_list
 
-  34  states_list : cautomaton_state states_list
-  35              | cautomaton_state
+  30  typed_id_list : ident_list COLON INTDECL
+  31                | ident_list COLON NATDECL
+  32                | ident_list COLON REALDECL
+  33                | ident_list COLON BOOLDECL
 
-  36  cautomaton_state : INITSTATE ident_list SEMICOLON
-  37                   | FINALSTATE ident_list SEMICOLON
-  38                   | ERRORSTATE ident_list SEMICOLON
+  34  transitions_list : transitions transitions_list
+  35                   | transitions
 
-  39  nts_trans_elem : BNOT pressburg_atomic_bool
-  40                 | BOR
-  41                 | BNOT LBRACE pressburg_atomic_bool RBRACE
-  42                 | BNOT LBRACE pressburg_tree_guards RBRACE
-  43                 | LBRACE pressburg_atomic_bool RBRACE
-  44                 | LBRACE pressburg_tree_guards RBRACE
-  45                 | pressburg_atomic_bool
-  46                 | gen_affect
-  47                 | havocise
-  48                 | qformula
-  49                 | LBRACE qformula RBRACE
+  36  transitions : IDENT ARROW IDENT LBRACK RBRACK
+  37              | IDENT ARROW IDENT LBRACK nts_trans_split RBRACK
+  38              | IDENT COLON IDENT ARROW IDENT LBRACK nts_trans_split RBRACK
+  39              | IDENT COLON IDENT ARROW IDENT LBRACK RBRACK
 
-  50  qformula : EXISTS ident_list COLON INTDECL DOT pressburg_atomic_bool
-  51           | EXISTS ident_list COLON INTDECL DOT LBRACE pressburg_tree_guards RBRACE
-  52           | EXISTS ident_list COLON INTDECL DOT LBRACE qformula RBRACE
-  53           | FORALL ident_list COLON INTDECL DOT pressburg_atomic_bool
-  54           | FORALL ident_list COLON INTDECL DOT LBRACE pressburg_tree_guards RBRACE
-  55           | FORALL ident_list COLON INTDECL DOT LBRACE qformula RBRACE
+  40  states_list : cautomaton_state states_list
+  41              | cautomaton_state
 
-  56  nts_trans_split_prec : nts_trans_elem BOR nts_trans_split_prec
-  57                       | nts_trans_elem BAND nts_trans_split_prec
-  58                       | nts_trans_elem
+  42  cautomaton_state : INITSTATE ident_list SEMICOLON
+  43                   | FINALSTATE ident_list SEMICOLON
+  44                   | ERRORSTATE ident_list SEMICOLON
 
-  59  nts_trans_split : nts_trans_split_prec
+  45  nts_trans_elem : BNOT pressburg_atomic_bool
+  46                 | BOR
+  47                 | BNOT LBRACE pressburg_atomic_bool RBRACE
+  48                 | BNOT LBRACE pressburg_tree_guards RBRACE
+  49                 | LBRACE pressburg_atomic_bool RBRACE
+  50                 | LBRACE pressburg_tree_guards RBRACE
+  51                 | pressburg_atomic_bool
+  52                 | gen_affect
+  53                 | havocise
+  54                 | qformula
+  55                 | LBRACE qformula RBRACE
 
-  60  primed_var_list : primed_express COMMA primed_var_list
-  61                  | primed_express COMMA primed_express
+  56  qformula : EXISTS ident_list COLON INTDECL DOT pressburg_atomic_bool
+  57           | EXISTS ident_list COLON INTDECL DOT LBRACE pressburg_tree_guards RBRACE
+  58           | EXISTS ident_list COLON INTDECL DOT LBRACE qformula RBRACE
+  59           | FORALL ident_list COLON INTDECL DOT pressburg_atomic_bool
+  60           | FORALL ident_list COLON INTDECL DOT LBRACE pressburg_tree_guards RBRACE
+  61           | FORALL ident_list COLON INTDECL DOT LBRACE qformula RBRACE
 
-  62  gen_affect : PRIMEDVAR EQ IDENT LBRACE arithm_expr_list RBRACE
-  63             | PRIMEDVAR EQ IDENT LBRACE RBRACE
-  64             | PRIMEDVAR EQ arithm_expr
-  65             | LBRACE PRIMEDVAR RBRACE EQ IDENT LBRACE arithm_expr_list RBRACE
-  66             | LBRACE PRIMEDVAR RBRACE EQ IDENT LBRACE RBRACE
-  67             | LBRACE primed_var_list RBRACE EQ IDENT LBRACE arithm_expr_list RBRACE
-  68             | LBRACE primed_var_list RBRACE EQ IDENT LBRACE RBRACE
-  69             | IDENT LBRACE arithm_expr_list RBRACE
-  70             | IDENT LBRACE RBRACE
+  62  nts_trans_split_prec : nts_trans_elem BOR nts_trans_split_prec
+  63                       | nts_trans_elem BAND nts_trans_split_prec
+  64                       | nts_trans_elem
 
-  71  pressburg_tree_guards : LBRACE pressburg_atomic_bool RBRACE
-  72                        | LBRACE pressburg_tree_guards RBRACE
-  73                        | LBRACE qformula RBRACE
-  74                        | pressburg_atomic_bool BAND pressburg_atomic_bool
-  75                        | pressburg_tree_guards BAND pressburg_tree_guards
-  76                        | pressburg_tree_guards BAND pressburg_atomic_bool
-  77                        | pressburg_atomic_bool BAND pressburg_tree_guards
-  78                        | qformula BAND pressburg_tree_guards
-  79                        | qformula BAND pressburg_atomic_bool
-  80                        | pressburg_tree_guards BAND qformula
-  81                        | pressburg_atomic_bool BAND qformula
-  82                        | pressburg_atomic_bool BOR pressburg_atomic_bool
-  83                        | pressburg_tree_guards BOR pressburg_atomic_bool
-  84                        | pressburg_atomic_bool BOR pressburg_tree_guards
-  85                        | pressburg_tree_guards BOR pressburg_tree_guards
-  86                        | qformula BOR pressburg_tree_guards
-  87                        | qformula BOR pressburg_atomic_bool
-  88                        | pressburg_tree_guards BOR qformula
-  89                        | pressburg_atomic_bool BOR qformula
-  90                        | BNOT pressburg_tree_guards
-  91                        | BNOT pressburg_atomic_bool
+  65  nts_trans_split : nts_trans_split_prec
 
-  92  pressburg_atomic_bool : BTRUE
-  93                        | BFALSE
-  94                        | arithm_expr GT arithm_expr
-  95                        | arithm_expr LT arithm_expr
-  96                        | arithm_expr GEQ arithm_expr
-  97                        | arithm_expr LEQ arithm_expr
-  98                        | arithm_expr EQ arithm_expr
-  99                        | arithm_expr NEQ arithm_expr
+  66  primed_var_list : primed_express COMMA primed_var_list
+  67                  | primed_express COMMA primed_express
 
- 100  primed_express : PRIMEDVAR
+  68  gen_affect : PRIMEDVAR EQ IDENT LBRACE arithm_expr_list RBRACE
+  69             | PRIMEDVAR EQ IDENT LBRACE RBRACE
+  70             | PRIMEDVAR EQ arithm_expr
+  71             | LBRACE PRIMEDVAR RBRACE EQ IDENT LBRACE arithm_expr_list RBRACE
+  72             | LBRACE PRIMEDVAR RBRACE EQ IDENT LBRACE RBRACE
+  73             | LBRACE primed_var_list RBRACE EQ IDENT LBRACE arithm_expr_list RBRACE
+  74             | LBRACE primed_var_list RBRACE EQ IDENT LBRACE RBRACE
+  75             | IDENT LBRACE arithm_expr_list RBRACE
+  76             | IDENT LBRACE RBRACE
 
- 101  arithm_expr_list : arithm_expr
- 102                   | arithm_expr COMMA arithm_expr_list
+  77  pressburg_tree_guards : LBRACE pressburg_atomic_bool RBRACE
+  78                        | LBRACE pressburg_tree_guards RBRACE
+  79                        | LBRACE qformula RBRACE
+  80                        | pressburg_atomic_bool BAND pressburg_atomic_bool
+  81                        | pressburg_tree_guards BAND pressburg_tree_guards
+  82                        | pressburg_tree_guards BAND pressburg_atomic_bool
+  83                        | pressburg_atomic_bool BAND pressburg_tree_guards
+  84                        | qformula BAND pressburg_tree_guards
+  85                        | qformula BAND pressburg_atomic_bool
+  86                        | pressburg_tree_guards BAND qformula
+  87                        | pressburg_atomic_bool BAND qformula
+  88                        | pressburg_atomic_bool BOR pressburg_atomic_bool
+  89                        | pressburg_tree_guards BOR pressburg_atomic_bool
+  90                        | pressburg_atomic_bool BOR pressburg_tree_guards
+  91                        | pressburg_tree_guards BOR pressburg_tree_guards
+  92                        | qformula BOR pressburg_tree_guards
+  93                        | qformula BOR pressburg_atomic_bool
+  94                        | pressburg_tree_guards BOR qformula
+  95                        | pressburg_atomic_bool BOR qformula
+  96                        | BNOT pressburg_tree_guards
+  97                        | BNOT pressburg_atomic_bool
 
- 103  arithm_expr : INT
- 104              | IDENT
- 105              | primed_express
- 106              | LBRACE arithm_expr RBRACE
- 107              | MINUS arithm_expr
- 108              | arithm_expr PLUS arithm_expr
- 109              | arithm_expr MINUS arithm_expr
- 110              | arithm_expr DIV arithm_expr
- 111              | arithm_expr MOD arithm_expr
- 112              | arithm_expr TIMES arithm_expr
+  98  pressburg_atomic_bool : BTRUE
+  99                        | BFALSE
+ 100                        | arithm_expr GT arithm_expr
+ 101                        | arithm_expr LT arithm_expr
+ 102                        | arithm_expr GEQ arithm_expr
+ 103                        | arithm_expr LEQ arithm_expr
+ 104                        | arithm_expr EQ arithm_expr
+ 105                        | arithm_expr NEQ arithm_expr
 
- 113  havocise : HAVOC LBRACE ident_list RBRACE
- 114           | HAVOC LBRACE RBRACE
+ 106  primed_express : PRIMEDVAR
 
- 115  %entry% : '\001' ntldescr
+ 107  arithm_expr_list : arithm_expr
+ 108                   | arithm_expr COMMA arithm_expr_list
+
+ 109  arithm_expr : INT
+ 110              | IDENT
+ 111              | primed_express
+ 112              | LBRACE arithm_expr RBRACE
+ 113              | MINUS arithm_expr
+ 114              | arithm_expr PLUS arithm_expr
+ 115              | arithm_expr MINUS arithm_expr
+ 116              | arithm_expr DIV arithm_expr
+ 117              | arithm_expr MOD arithm_expr
+ 118              | arithm_expr TIMES arithm_expr
+
+ 119  havocise : HAVOC LBRACE ident_list RBRACE
+ 120           | HAVOC LBRACE RBRACE
+
+ 121  %entry% : '\001' ntldescr
 
 state 0
 	$accept : . %entry% $end  (0)
@@ -153,7 +162,7 @@ state 0
 
 
 state 1
-	%entry% : '\001' . ntldescr  (115)
+	%entry% : '\001' . ntldescr  (121)
 
 	NTSDECL  shift 3
 	.  error
@@ -169,23 +178,21 @@ state 2
 
 state 3
 	ntldescr : NTSDECL . IDENT SEMICOLON comma_sep_header_list  (1)
-	ntldescr : NTSDECL . IDENT SEMICOLON gvars_decl SEMICOLON decl_sequence  (2)
-	ntldescr : NTSDECL . IDENT SEMICOLON decl_sequence  (3)
+	ntldescr : NTSDECL . IDENT SEMICOLON decl_sequence  (2)
 
 	IDENT  shift 5
 	.  error
 
 
 state 4
-	%entry% : '\001' ntldescr .  (115)
+	%entry% : '\001' ntldescr .  (121)
 
-	.  reduce 115
+	.  reduce 121
 
 
 state 5
 	ntldescr : NTSDECL IDENT . SEMICOLON comma_sep_header_list  (1)
-	ntldescr : NTSDECL IDENT . SEMICOLON gvars_decl SEMICOLON decl_sequence  (2)
-	ntldescr : NTSDECL IDENT . SEMICOLON decl_sequence  (3)
+	ntldescr : NTSDECL IDENT . SEMICOLON decl_sequence  (2)
 
 	SEMICOLON  shift 6
 	.  error
@@ -193,2708 +200,2866 @@ state 5
 
 state 6
 	ntldescr : NTSDECL IDENT SEMICOLON . comma_sep_header_list  (1)
-	ntldescr : NTSDECL IDENT SEMICOLON . gvars_decl SEMICOLON decl_sequence  (2)
-	ntldescr : NTSDECL IDENT SEMICOLON . decl_sequence  (3)
+	ntldescr : NTSDECL IDENT SEMICOLON . decl_sequence  (2)
 
 	IDENT  shift 7
 	EOF  shift 8
+	INSTANCES  shift 9
+	INIT  shift 10
 	.  error
 
-	comma_sep_header_list  goto 9
-	gvars_decl  goto 10
-	decl_sequence  goto 11
-	ident_list  goto 12
-	decl_automata  goto 13
+	comma_sep_header_list  goto 11
+	decl_sequence  goto 12
+	gvars_decl  goto 13
+	gvars_initial_conditions  goto 14
+	thread_declaration  goto 15
+	ident_list  goto 16
+	decl_automata  goto 17
 
 
 state 7
-	ident_list : IDENT .  (6)
-	ident_list : IDENT . COMMA ident_list  (7)
-	decl_automata : IDENT . LBRACK vars_automaton states_list transitions_list RBRACK  (16)
+	ident_list : IDENT .  (10)
+	ident_list : IDENT . COMMA ident_list  (11)
+	decl_automata : IDENT . LBRACK vars_automaton states_list transitions_list RBRACK  (22)
 
-	LBRACK  shift 14
-	COMMA  shift 15
-	COLON  reduce 6
+	LBRACK  shift 18
+	COMMA  shift 19
+	COLON  reduce 10
 
 
 state 8
-	decl_sequence : EOF .  (15)
+	decl_sequence : EOF .  (21)
 
-	.  reduce 15
+	.  reduce 21
 
 
 state 9
+	thread_declaration : INSTANCES . thread_decl_list  (16)
+
+	IDENT  shift 20
+	.  error
+
+	thread_decl_list  goto 21
+	thread_decl  goto 22
+
+
+state 10
+	gvars_initial_conditions : INIT . nts_trans_split_prec  (9)
+
+	INT  shift 23
+	IDENT  shift 24
+	PRIMEDVAR  shift 25
+	MINUS  shift 26
+	LBRACE  shift 27
+	BTRUE  shift 28
+	BFALSE  shift 29
+	BOR  shift 30
+	BNOT  shift 31
+	HAVOC  shift 32
+	EXISTS  shift 33
+	FORALL  shift 34
+	.  error
+
+	arithm_expr  goto 35
+	nts_trans_split_prec  goto 36
+	nts_trans_elem  goto 37
+	pressburg_atomic_bool  goto 38
+	gen_affect  goto 39
+	havocise  goto 40
+	qformula  goto 41
+	primed_express  goto 42
+
+
+state 11
 	ntldescr : NTSDECL IDENT SEMICOLON comma_sep_header_list .  (1)
 
 	.  reduce 1
 
 
-state 10
-	ntldescr : NTSDECL IDENT SEMICOLON gvars_decl . SEMICOLON decl_sequence  (2)
-	comma_sep_header_list : gvars_decl . SEMICOLON decl_sequence  (4)
-	comma_sep_header_list : gvars_decl . SEMICOLON comma_sep_header_list  (5)
-
-	SEMICOLON  shift 16
-	.  error
-
-
-state 11
-	ntldescr : NTSDECL IDENT SEMICOLON decl_sequence .  (3)
-
-	.  reduce 3
-
-
 state 12
-	gvars_decl : ident_list . COLON INTDECL  (10)
-	gvars_decl : ident_list . COLON REALDECL SEMICOLON  (11)
-	gvars_decl : ident_list . COLON NATDECL SEMICOLON  (12)
-	gvars_decl : ident_list . COLON BOOLDECL SEMICOLON  (13)
+	ntldescr : NTSDECL IDENT SEMICOLON decl_sequence .  (2)
 
-	COLON  shift 17
-	.  error
+	.  reduce 2
 
 
 state 13
-	decl_sequence : decl_automata . decl_sequence  (14)
+	comma_sep_header_list : gvars_decl . SEMICOLON decl_sequence  (3)
+	comma_sep_header_list : gvars_decl . SEMICOLON comma_sep_header_list  (4)
 
-	IDENT  shift 18
-	EOF  shift 8
+	SEMICOLON  shift 43
 	.  error
-
-	decl_sequence  goto 19
-	decl_automata  goto 13
 
 
 state 14
-	decl_automata : IDENT LBRACK . vars_automaton states_list transitions_list RBRACK  (16)
+	comma_sep_header_list : gvars_initial_conditions . SEMICOLON comma_sep_header_list  (5)
+	comma_sep_header_list : gvars_initial_conditions . SEMICOLON decl_sequence  (6)
 
-	IDENT  shift 20
-	INPUTVARLIST  shift 21
-	OUTPUTVARLIST  shift 22
+	SEMICOLON  shift 44
 	.  error
-
-	ident_list  goto 23
-	vars_automaton  goto 24
-	vars_loc  goto 25
-	typed_id_list_list  goto 26
-	typed_id_list  goto 27
 
 
 state 15
-	ident_list : IDENT COMMA . ident_list  (7)
-
-	IDENT  shift 20
-	.  error
-
-	ident_list  goto 28
-
-
-state 16
-	ntldescr : NTSDECL IDENT SEMICOLON gvars_decl SEMICOLON . decl_sequence  (2)
-	comma_sep_header_list : gvars_decl SEMICOLON . decl_sequence  (4)
-	comma_sep_header_list : gvars_decl SEMICOLON . comma_sep_header_list  (5)
-
-	IDENT  shift 7
-	EOF  shift 8
-	.  error
-
-	comma_sep_header_list  goto 29
-	gvars_decl  goto 30
-	decl_sequence  goto 31
-	ident_list  goto 12
-	decl_automata  goto 13
-
-
-state 17
-	gvars_decl : ident_list COLON . INTDECL  (10)
-	gvars_decl : ident_list COLON . REALDECL SEMICOLON  (11)
-	gvars_decl : ident_list COLON . NATDECL SEMICOLON  (12)
-	gvars_decl : ident_list COLON . BOOLDECL SEMICOLON  (13)
-
-	INTDECL  shift 32
-	NATDECL  shift 33
-	REALDECL  shift 34
-	BOOLDECL  shift 35
-	.  error
-
-
-state 18
-	decl_automata : IDENT . LBRACK vars_automaton states_list transitions_list RBRACK  (16)
-
-	LBRACK  shift 14
-	.  error
-
-
-state 19
-	decl_sequence : decl_automata decl_sequence .  (14)
-
-	.  reduce 14
-
-
-state 20
-	ident_list : IDENT .  (6)
-	ident_list : IDENT . COMMA ident_list  (7)
-
-	COMMA  shift 15
-	RBRACE  reduce 6
-	COLON  reduce 6
-	SEMICOLON  reduce 6
-
-
-state 21
-	vars_loc : INPUTVARLIST . typed_id_list_list SEMICOLON  (19)
-
-	IDENT  shift 20
-	.  error
-
-	ident_list  goto 23
-	typed_id_list_list  goto 36
-	typed_id_list  goto 27
-
-
-state 22
-	vars_loc : OUTPUTVARLIST . typed_id_list_list SEMICOLON  (20)
-
-	IDENT  shift 20
-	.  error
-
-	ident_list  goto 23
-	typed_id_list_list  goto 37
-	typed_id_list  goto 27
-
-
-state 23
-	typed_id_list : ident_list . COLON INTDECL  (24)
-	typed_id_list : ident_list . COLON NATDECL  (25)
-	typed_id_list : ident_list . COLON REALDECL  (26)
-	typed_id_list : ident_list . COLON BOOLDECL  (27)
-
-	COLON  shift 38
-	.  error
-
-
-state 24
-	decl_automata : IDENT LBRACK vars_automaton . states_list transitions_list RBRACK  (16)
-
-	INITSTATE  shift 39
-	FINALSTATE  shift 40
-	ERRORSTATE  shift 41
-	.  error
-
-	states_list  goto 42
-	cautomaton_state  goto 43
-
-
-state 25
-	vars_automaton : vars_loc . vars_automaton  (17)
-	vars_automaton : vars_loc .  (18)
-
-	IDENT  shift 20
-	INPUTVARLIST  shift 21
-	OUTPUTVARLIST  shift 22
-	INITSTATE  reduce 18
-	FINALSTATE  reduce 18
-	ERRORSTATE  reduce 18
-
-	ident_list  goto 23
-	vars_automaton  goto 44
-	vars_loc  goto 25
-	typed_id_list_list  goto 26
-	typed_id_list  goto 27
-
-
-state 26
-	vars_loc : typed_id_list_list . SEMICOLON  (21)
+	comma_sep_header_list : thread_declaration . SEMICOLON decl_sequence  (7)
+	comma_sep_header_list : thread_declaration . SEMICOLON comma_sep_header_list  (8)
 
 	SEMICOLON  shift 45
 	.  error
 
 
-state 27
-	typed_id_list_list : typed_id_list . COMMA typed_id_list_list  (22)
-	typed_id_list_list : typed_id_list .  (23)
+state 16
+	gvars_decl : ident_list . COLON INTDECL  (12)
+	gvars_decl : ident_list . COLON REALDECL SEMICOLON  (13)
+	gvars_decl : ident_list . COLON NATDECL SEMICOLON  (14)
+	gvars_decl : ident_list . COLON BOOLDECL SEMICOLON  (15)
 
-	COMMA  shift 46
-	SEMICOLON  reduce 23
-
-
-state 28
-	ident_list : IDENT COMMA ident_list .  (7)
-
-	.  reduce 7
-
-
-state 29
-	comma_sep_header_list : gvars_decl SEMICOLON comma_sep_header_list .  (5)
-
-	.  reduce 5
-
-
-state 30
-	comma_sep_header_list : gvars_decl . SEMICOLON decl_sequence  (4)
-	comma_sep_header_list : gvars_decl . SEMICOLON comma_sep_header_list  (5)
-
-	SEMICOLON  shift 47
+	COLON  shift 46
 	.  error
 
 
-31: reduce/reduce conflict (reduce 2, reduce 4) on $end
-state 31
-	ntldescr : NTSDECL IDENT SEMICOLON gvars_decl SEMICOLON decl_sequence .  (2)
-	comma_sep_header_list : gvars_decl SEMICOLON decl_sequence .  (4)
+state 17
+	decl_sequence : decl_automata . decl_sequence  (20)
 
-	.  reduce 2
-
-
-state 32
-	gvars_decl : ident_list COLON INTDECL .  (10)
-
-	.  reduce 10
-
-
-state 33
-	gvars_decl : ident_list COLON NATDECL . SEMICOLON  (12)
-
-	SEMICOLON  shift 48
+	IDENT  shift 47
+	EOF  shift 8
 	.  error
 
+	decl_sequence  goto 48
+	decl_automata  goto 17
 
-state 34
-	gvars_decl : ident_list COLON REALDECL . SEMICOLON  (11)
 
-	SEMICOLON  shift 49
+state 18
+	decl_automata : IDENT LBRACK . vars_automaton states_list transitions_list RBRACK  (22)
+
+	IDENT  shift 49
+	INPUTVARLIST  shift 50
+	OUTPUTVARLIST  shift 51
 	.  error
 
-
-state 35
-	gvars_decl : ident_list COLON BOOLDECL . SEMICOLON  (13)
-
-	SEMICOLON  shift 50
-	.  error
-
-
-state 36
-	vars_loc : INPUTVARLIST typed_id_list_list . SEMICOLON  (19)
-
-	SEMICOLON  shift 51
-	.  error
+	ident_list  goto 52
+	vars_automaton  goto 53
+	vars_loc  goto 54
+	typed_id_list_list  goto 55
+	typed_id_list  goto 56
 
 
-state 37
-	vars_loc : OUTPUTVARLIST typed_id_list_list . SEMICOLON  (20)
+state 19
+	ident_list : IDENT COMMA . ident_list  (11)
 
-	SEMICOLON  shift 52
-	.  error
-
-
-state 38
-	typed_id_list : ident_list COLON . INTDECL  (24)
-	typed_id_list : ident_list COLON . NATDECL  (25)
-	typed_id_list : ident_list COLON . REALDECL  (26)
-	typed_id_list : ident_list COLON . BOOLDECL  (27)
-
-	INTDECL  shift 53
-	NATDECL  shift 54
-	REALDECL  shift 55
-	BOOLDECL  shift 56
-	.  error
-
-
-state 39
-	cautomaton_state : INITSTATE . ident_list SEMICOLON  (36)
-
-	IDENT  shift 20
+	IDENT  shift 49
 	.  error
 
 	ident_list  goto 57
 
 
-state 40
-	cautomaton_state : FINALSTATE . ident_list SEMICOLON  (37)
+state 20
+	thread_decl : IDENT . OBRACK INT CBRACK  (19)
 
-	IDENT  shift 20
-	.  error
-
-	ident_list  goto 58
-
-
-state 41
-	cautomaton_state : ERRORSTATE . ident_list SEMICOLON  (38)
-
-	IDENT  shift 20
-	.  error
-
-	ident_list  goto 59
-
-
-state 42
-	decl_automata : IDENT LBRACK vars_automaton states_list . transitions_list RBRACK  (16)
-
-	IDENT  shift 60
-	.  error
-
-	transitions_list  goto 61
-	transitions  goto 62
-
-
-state 43
-	states_list : cautomaton_state . states_list  (34)
-	states_list : cautomaton_state .  (35)
-
-	INITSTATE  shift 39
-	FINALSTATE  shift 40
-	ERRORSTATE  shift 41
-	IDENT  reduce 35
-
-	states_list  goto 63
-	cautomaton_state  goto 43
-
-
-state 44
-	vars_automaton : vars_loc vars_automaton .  (17)
-
-	.  reduce 17
-
-
-state 45
-	vars_loc : typed_id_list_list SEMICOLON .  (21)
-
-	.  reduce 21
-
-
-state 46
-	typed_id_list_list : typed_id_list COMMA . typed_id_list_list  (22)
-
-	IDENT  shift 20
-	.  error
-
-	ident_list  goto 23
-	typed_id_list_list  goto 64
-	typed_id_list  goto 27
-
-
-state 47
-	comma_sep_header_list : gvars_decl SEMICOLON . decl_sequence  (4)
-	comma_sep_header_list : gvars_decl SEMICOLON . comma_sep_header_list  (5)
-
-	IDENT  shift 7
-	EOF  shift 8
-	.  error
-
-	comma_sep_header_list  goto 29
-	gvars_decl  goto 30
-	decl_sequence  goto 65
-	ident_list  goto 12
-	decl_automata  goto 13
-
-
-state 48
-	gvars_decl : ident_list COLON NATDECL SEMICOLON .  (12)
-
-	.  reduce 12
-
-
-state 49
-	gvars_decl : ident_list COLON REALDECL SEMICOLON .  (11)
-
-	.  reduce 11
-
-
-state 50
-	gvars_decl : ident_list COLON BOOLDECL SEMICOLON .  (13)
-
-	.  reduce 13
-
-
-state 51
-	vars_loc : INPUTVARLIST typed_id_list_list SEMICOLON .  (19)
-
-	.  reduce 19
-
-
-state 52
-	vars_loc : OUTPUTVARLIST typed_id_list_list SEMICOLON .  (20)
-
-	.  reduce 20
-
-
-state 53
-	typed_id_list : ident_list COLON INTDECL .  (24)
-
-	.  reduce 24
-
-
-state 54
-	typed_id_list : ident_list COLON NATDECL .  (25)
-
-	.  reduce 25
-
-
-state 55
-	typed_id_list : ident_list COLON REALDECL .  (26)
-
-	.  reduce 26
-
-
-state 56
-	typed_id_list : ident_list COLON BOOLDECL .  (27)
-
-	.  reduce 27
-
-
-state 57
-	cautomaton_state : INITSTATE ident_list . SEMICOLON  (36)
-
-	SEMICOLON  shift 66
+	OBRACK  shift 58
 	.  error
 
 
-state 58
-	cautomaton_state : FINALSTATE ident_list . SEMICOLON  (37)
-
-	SEMICOLON  shift 67
-	.  error
-
-
-state 59
-	cautomaton_state : ERRORSTATE ident_list . SEMICOLON  (38)
-
-	SEMICOLON  shift 68
-	.  error
-
-
-state 60
-	transitions : IDENT . ARROW IDENT LBRACK RBRACK  (30)
-	transitions : IDENT . ARROW IDENT LBRACK nts_trans_split RBRACK  (31)
-	transitions : IDENT . COLON IDENT ARROW IDENT LBRACK nts_trans_split RBRACK  (32)
-	transitions : IDENT . COLON IDENT ARROW IDENT LBRACK RBRACK  (33)
-
-	COLON  shift 69
-	ARROW  shift 70
-	.  error
-
-
-state 61
-	decl_automata : IDENT LBRACK vars_automaton states_list transitions_list . RBRACK  (16)
-
-	RBRACK  shift 71
-	.  error
-
-
-state 62
-	transitions_list : transitions . transitions_list  (28)
-	transitions_list : transitions .  (29)
-
-	IDENT  shift 60
-	RBRACK  reduce 29
-
-	transitions_list  goto 72
-	transitions  goto 62
-
-
-state 63
-	states_list : cautomaton_state states_list .  (34)
-
-	.  reduce 34
-
-
-state 64
-	typed_id_list_list : typed_id_list COMMA typed_id_list_list .  (22)
-
-	.  reduce 22
-
-
-state 65
-	comma_sep_header_list : gvars_decl SEMICOLON decl_sequence .  (4)
-
-	.  reduce 4
-
-
-state 66
-	cautomaton_state : INITSTATE ident_list SEMICOLON .  (36)
-
-	.  reduce 36
-
-
-state 67
-	cautomaton_state : FINALSTATE ident_list SEMICOLON .  (37)
-
-	.  reduce 37
-
-
-state 68
-	cautomaton_state : ERRORSTATE ident_list SEMICOLON .  (38)
-
-	.  reduce 38
-
-
-state 69
-	transitions : IDENT COLON . IDENT ARROW IDENT LBRACK nts_trans_split RBRACK  (32)
-	transitions : IDENT COLON . IDENT ARROW IDENT LBRACK RBRACK  (33)
-
-	IDENT  shift 73
-	.  error
-
-
-state 70
-	transitions : IDENT ARROW . IDENT LBRACK RBRACK  (30)
-	transitions : IDENT ARROW . IDENT LBRACK nts_trans_split RBRACK  (31)
-
-	IDENT  shift 74
-	.  error
-
-
-state 71
-	decl_automata : IDENT LBRACK vars_automaton states_list transitions_list RBRACK .  (16)
+state 21
+	thread_declaration : INSTANCES thread_decl_list .  (16)
 
 	.  reduce 16
 
 
-state 72
-	transitions_list : transitions transitions_list .  (28)
+state 22
+	thread_decl_list : thread_decl . COMMA thread_decl_list  (17)
+	thread_decl_list : thread_decl .  (18)
 
-	.  reduce 28
+	COMMA  shift 59
+	SEMICOLON  reduce 18
 
 
-state 73
-	transitions : IDENT COLON IDENT . ARROW IDENT LBRACK nts_trans_split RBRACK  (32)
-	transitions : IDENT COLON IDENT . ARROW IDENT LBRACK RBRACK  (33)
+state 23
+	arithm_expr : INT .  (109)
 
-	ARROW  shift 75
+	.  reduce 109
+
+
+state 24
+	gen_affect : IDENT . LBRACE arithm_expr_list RBRACE  (75)
+	gen_affect : IDENT . LBRACE RBRACE  (76)
+	arithm_expr : IDENT .  (110)
+
+	LBRACE  shift 60
+	TIMES  reduce 110
+	PLUS  reduce 110
+	MINUS  reduce 110
+	DIV  reduce 110
+	MOD  reduce 110
+	LT  reduce 110
+	GT  reduce 110
+	EQ  reduce 110
+	NEQ  reduce 110
+	LEQ  reduce 110
+	GEQ  reduce 110
+
+
+state 25
+	gen_affect : PRIMEDVAR . EQ IDENT LBRACE arithm_expr_list RBRACE  (68)
+	gen_affect : PRIMEDVAR . EQ IDENT LBRACE RBRACE  (69)
+	gen_affect : PRIMEDVAR . EQ arithm_expr  (70)
+	primed_express : PRIMEDVAR .  (106)
+
+	EQ  shift 61
+	TIMES  reduce 106
+	PLUS  reduce 106
+	MINUS  reduce 106
+	DIV  reduce 106
+	MOD  reduce 106
+	LT  reduce 106
+	GT  reduce 106
+	NEQ  reduce 106
+	LEQ  reduce 106
+	GEQ  reduce 106
+
+
+state 26
+	arithm_expr : MINUS . arithm_expr  (113)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 64
 	.  error
 
+	arithm_expr  goto 65
+	primed_express  goto 42
 
-state 74
-	transitions : IDENT ARROW IDENT . LBRACK RBRACK  (30)
-	transitions : IDENT ARROW IDENT . LBRACK nts_trans_split RBRACK  (31)
 
-	LBRACK  shift 76
+state 27
+	nts_trans_elem : LBRACE . pressburg_atomic_bool RBRACE  (49)
+	nts_trans_elem : LBRACE . pressburg_tree_guards RBRACE  (50)
+	nts_trans_elem : LBRACE . qformula RBRACE  (55)
+	gen_affect : LBRACE . PRIMEDVAR RBRACE EQ IDENT LBRACE arithm_expr_list RBRACE  (71)
+	gen_affect : LBRACE . PRIMEDVAR RBRACE EQ IDENT LBRACE RBRACE  (72)
+	gen_affect : LBRACE . primed_var_list RBRACE EQ IDENT LBRACE arithm_expr_list RBRACE  (73)
+	gen_affect : LBRACE . primed_var_list RBRACE EQ IDENT LBRACE RBRACE  (74)
+	arithm_expr : LBRACE . arithm_expr RBRACE  (112)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 66
+	MINUS  shift 26
+	LBRACE  shift 67
+	BTRUE  shift 28
+	BFALSE  shift 29
+	BNOT  shift 68
+	EXISTS  shift 33
+	FORALL  shift 34
 	.  error
 
+	arithm_expr  goto 69
+	pressburg_atomic_bool  goto 70
+	pressburg_tree_guards  goto 71
+	qformula  goto 72
+	primed_var_list  goto 73
+	primed_express  goto 74
 
-state 75
-	transitions : IDENT COLON IDENT ARROW . IDENT LBRACK nts_trans_split RBRACK  (32)
-	transitions : IDENT COLON IDENT ARROW . IDENT LBRACK RBRACK  (33)
 
-	IDENT  shift 77
-	.  error
+state 28
+	pressburg_atomic_bool : BTRUE .  (98)
 
+	.  reduce 98
 
-state 76
-	transitions : IDENT ARROW IDENT LBRACK . RBRACK  (30)
-	transitions : IDENT ARROW IDENT LBRACK . nts_trans_split RBRACK  (31)
 
-	INT  shift 78
-	IDENT  shift 79
-	PRIMEDVAR  shift 80
-	MINUS  shift 81
-	LBRACE  shift 82
-	RBRACK  shift 83
-	BTRUE  shift 84
-	BFALSE  shift 85
-	BOR  shift 86
-	BNOT  shift 87
-	HAVOC  shift 88
-	EXISTS  shift 89
-	FORALL  shift 90
-	.  error
+state 29
+	pressburg_atomic_bool : BFALSE .  (99)
 
-	arithm_expr  goto 91
-	nts_trans_split  goto 92
-	nts_trans_elem  goto 93
-	pressburg_atomic_bool  goto 94
-	gen_affect  goto 95
-	havocise  goto 96
-	qformula  goto 97
-	nts_trans_split_prec  goto 98
-	primed_express  goto 99
+	.  reduce 99
 
 
-state 77
-	transitions : IDENT COLON IDENT ARROW IDENT . LBRACK nts_trans_split RBRACK  (32)
-	transitions : IDENT COLON IDENT ARROW IDENT . LBRACK RBRACK  (33)
-
-	LBRACK  shift 100
-	.  error
-
-
-state 78
-	arithm_expr : INT .  (103)
-
-	.  reduce 103
-
-
-state 79
-	gen_affect : IDENT . LBRACE arithm_expr_list RBRACE  (69)
-	gen_affect : IDENT . LBRACE RBRACE  (70)
-	arithm_expr : IDENT .  (104)
-
-	LBRACE  shift 101
-	TIMES  reduce 104
-	PLUS  reduce 104
-	MINUS  reduce 104
-	DIV  reduce 104
-	MOD  reduce 104
-	LT  reduce 104
-	GT  reduce 104
-	EQ  reduce 104
-	NEQ  reduce 104
-	LEQ  reduce 104
-	GEQ  reduce 104
-
-
-state 80
-	gen_affect : PRIMEDVAR . EQ IDENT LBRACE arithm_expr_list RBRACE  (62)
-	gen_affect : PRIMEDVAR . EQ IDENT LBRACE RBRACE  (63)
-	gen_affect : PRIMEDVAR . EQ arithm_expr  (64)
-	primed_express : PRIMEDVAR .  (100)
-
-	EQ  shift 102
-	TIMES  reduce 100
-	PLUS  reduce 100
-	MINUS  reduce 100
-	DIV  reduce 100
-	MOD  reduce 100
-	LT  reduce 100
-	GT  reduce 100
-	NEQ  reduce 100
-	LEQ  reduce 100
-	GEQ  reduce 100
-
-
-state 81
-	arithm_expr : MINUS . arithm_expr  (107)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 105
-	.  error
-
-	arithm_expr  goto 106
-	primed_express  goto 99
-
-
-state 82
-	nts_trans_elem : LBRACE . pressburg_atomic_bool RBRACE  (43)
-	nts_trans_elem : LBRACE . pressburg_tree_guards RBRACE  (44)
-	nts_trans_elem : LBRACE . qformula RBRACE  (49)
-	gen_affect : LBRACE . PRIMEDVAR RBRACE EQ IDENT LBRACE arithm_expr_list RBRACE  (65)
-	gen_affect : LBRACE . PRIMEDVAR RBRACE EQ IDENT LBRACE RBRACE  (66)
-	gen_affect : LBRACE . primed_var_list RBRACE EQ IDENT LBRACE arithm_expr_list RBRACE  (67)
-	gen_affect : LBRACE . primed_var_list RBRACE EQ IDENT LBRACE RBRACE  (68)
-	arithm_expr : LBRACE . arithm_expr RBRACE  (106)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 107
-	MINUS  shift 81
-	LBRACE  shift 108
-	BTRUE  shift 84
-	BFALSE  shift 85
-	BNOT  shift 109
-	EXISTS  shift 89
-	FORALL  shift 90
-	.  error
-
-	arithm_expr  goto 110
-	pressburg_atomic_bool  goto 111
-	pressburg_tree_guards  goto 112
-	qformula  goto 113
-	primed_var_list  goto 114
-	primed_express  goto 115
-
-
-state 83
-	transitions : IDENT ARROW IDENT LBRACK RBRACK .  (30)
-
-	.  reduce 30
-
-
-state 84
-	pressburg_atomic_bool : BTRUE .  (92)
-
-	.  reduce 92
-
-
-state 85
-	pressburg_atomic_bool : BFALSE .  (93)
-
-	.  reduce 93
-
-
-state 86
-	nts_trans_elem : BOR .  (40)
-
-	.  reduce 40
-
-
-state 87
-	nts_trans_elem : BNOT . pressburg_atomic_bool  (39)
-	nts_trans_elem : BNOT . LBRACE pressburg_atomic_bool RBRACE  (41)
-	nts_trans_elem : BNOT . LBRACE pressburg_tree_guards RBRACE  (42)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 116
-	BTRUE  shift 84
-	BFALSE  shift 85
-	.  error
-
-	arithm_expr  goto 91
-	pressburg_atomic_bool  goto 117
-	primed_express  goto 99
-
-
-state 88
-	havocise : HAVOC . LBRACE ident_list RBRACE  (113)
-	havocise : HAVOC . LBRACE RBRACE  (114)
-
-	LBRACE  shift 118
-	.  error
-
-
-state 89
-	qformula : EXISTS . ident_list COLON INTDECL DOT pressburg_atomic_bool  (50)
-	qformula : EXISTS . ident_list COLON INTDECL DOT LBRACE pressburg_tree_guards RBRACE  (51)
-	qformula : EXISTS . ident_list COLON INTDECL DOT LBRACE qformula RBRACE  (52)
-
-	IDENT  shift 20
-	.  error
-
-	ident_list  goto 119
-
-
-state 90
-	qformula : FORALL . ident_list COLON INTDECL DOT pressburg_atomic_bool  (53)
-	qformula : FORALL . ident_list COLON INTDECL DOT LBRACE pressburg_tree_guards RBRACE  (54)
-	qformula : FORALL . ident_list COLON INTDECL DOT LBRACE qformula RBRACE  (55)
-
-	IDENT  shift 20
-	.  error
-
-	ident_list  goto 120
-
-
-state 91
-	pressburg_atomic_bool : arithm_expr . GT arithm_expr  (94)
-	pressburg_atomic_bool : arithm_expr . LT arithm_expr  (95)
-	pressburg_atomic_bool : arithm_expr . GEQ arithm_expr  (96)
-	pressburg_atomic_bool : arithm_expr . LEQ arithm_expr  (97)
-	pressburg_atomic_bool : arithm_expr . EQ arithm_expr  (98)
-	pressburg_atomic_bool : arithm_expr . NEQ arithm_expr  (99)
-	arithm_expr : arithm_expr . PLUS arithm_expr  (108)
-	arithm_expr : arithm_expr . MINUS arithm_expr  (109)
-	arithm_expr : arithm_expr . DIV arithm_expr  (110)
-	arithm_expr : arithm_expr . MOD arithm_expr  (111)
-	arithm_expr : arithm_expr . TIMES arithm_expr  (112)
-
-	TIMES  shift 121
-	PLUS  shift 122
-	MINUS  shift 123
-	DIV  shift 124
-	MOD  shift 125
-	LT  shift 126
-	GT  shift 127
-	EQ  shift 128
-	NEQ  shift 129
-	LEQ  shift 130
-	GEQ  shift 131
-	.  error
-
-
-state 92
-	transitions : IDENT ARROW IDENT LBRACK nts_trans_split . RBRACK  (31)
-
-	RBRACK  shift 132
-	.  error
-
-
-state 93
-	nts_trans_split_prec : nts_trans_elem . BOR nts_trans_split_prec  (56)
-	nts_trans_split_prec : nts_trans_elem . BAND nts_trans_split_prec  (57)
-	nts_trans_split_prec : nts_trans_elem .  (58)
-
-	BAND  shift 133
-	BOR  shift 134
-	RBRACK  reduce 58
-
-
-state 94
-	nts_trans_elem : pressburg_atomic_bool .  (45)
-
-	.  reduce 45
-
-
-state 95
-	nts_trans_elem : gen_affect .  (46)
+state 30
+	nts_trans_elem : BOR .  (46)
 
 	.  reduce 46
 
 
-state 96
-	nts_trans_elem : havocise .  (47)
+state 31
+	nts_trans_elem : BNOT . pressburg_atomic_bool  (45)
+	nts_trans_elem : BNOT . LBRACE pressburg_atomic_bool RBRACE  (47)
+	nts_trans_elem : BNOT . LBRACE pressburg_tree_guards RBRACE  (48)
 
-	.  reduce 47
-
-
-state 97
-	nts_trans_elem : qformula .  (48)
-
-	.  reduce 48
-
-
-state 98
-	nts_trans_split : nts_trans_split_prec .  (59)
-
-	.  reduce 59
-
-
-state 99
-	arithm_expr : primed_express .  (105)
-
-	.  reduce 105
-
-
-state 100
-	transitions : IDENT COLON IDENT ARROW IDENT LBRACK . nts_trans_split RBRACK  (32)
-	transitions : IDENT COLON IDENT ARROW IDENT LBRACK . RBRACK  (33)
-
-	INT  shift 78
-	IDENT  shift 79
-	PRIMEDVAR  shift 80
-	MINUS  shift 81
-	LBRACE  shift 82
-	RBRACK  shift 135
-	BTRUE  shift 84
-	BFALSE  shift 85
-	BOR  shift 86
-	BNOT  shift 87
-	HAVOC  shift 88
-	EXISTS  shift 89
-	FORALL  shift 90
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 75
+	BTRUE  shift 28
+	BFALSE  shift 29
 	.  error
 
-	arithm_expr  goto 91
-	nts_trans_split  goto 136
-	nts_trans_elem  goto 93
-	pressburg_atomic_bool  goto 94
-	gen_affect  goto 95
-	havocise  goto 96
-	qformula  goto 97
-	nts_trans_split_prec  goto 98
-	primed_express  goto 99
+	arithm_expr  goto 35
+	pressburg_atomic_bool  goto 76
+	primed_express  goto 42
 
 
-state 101
-	gen_affect : IDENT LBRACE . arithm_expr_list RBRACE  (69)
-	gen_affect : IDENT LBRACE . RBRACE  (70)
+state 32
+	havocise : HAVOC . LBRACE ident_list RBRACE  (119)
+	havocise : HAVOC . LBRACE RBRACE  (120)
 
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 105
-	RBRACE  shift 137
-	.  error
-
-	arithm_expr  goto 138
-	primed_express  goto 99
-	arithm_expr_list  goto 139
-
-
-state 102
-	gen_affect : PRIMEDVAR EQ . IDENT LBRACE arithm_expr_list RBRACE  (62)
-	gen_affect : PRIMEDVAR EQ . IDENT LBRACE RBRACE  (63)
-	gen_affect : PRIMEDVAR EQ . arithm_expr  (64)
-
-	INT  shift 78
-	IDENT  shift 140
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 105
-	.  error
-
-	arithm_expr  goto 141
-	primed_express  goto 99
-
-
-state 103
-	arithm_expr : IDENT .  (104)
-
-	.  reduce 104
-
-
-state 104
-	primed_express : PRIMEDVAR .  (100)
-
-	.  reduce 100
-
-
-state 105
-	arithm_expr : LBRACE . arithm_expr RBRACE  (106)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 105
-	.  error
-
-	arithm_expr  goto 142
-	primed_express  goto 99
-
-
-state 106
-	arithm_expr : MINUS arithm_expr .  (107)
-	arithm_expr : arithm_expr . PLUS arithm_expr  (108)
-	arithm_expr : arithm_expr . MINUS arithm_expr  (109)
-	arithm_expr : arithm_expr . DIV arithm_expr  (110)
-	arithm_expr : arithm_expr . MOD arithm_expr  (111)
-	arithm_expr : arithm_expr . TIMES arithm_expr  (112)
-
-	TIMES  shift 121
-	PLUS  shift 122
-	MINUS  shift 123
-	DIV  shift 124
-	MOD  shift 125
-	LT  reduce 107
-	GT  reduce 107
-	EQ  reduce 107
-	NEQ  reduce 107
-	LEQ  reduce 107
-	GEQ  reduce 107
-	RBRACE  reduce 107
-	RBRACK  reduce 107
-	COMMA  reduce 107
-	BAND  reduce 107
-	BOR  reduce 107
-
-
-107: shift/reduce conflict (shift 143, reduce 100) on RBRACE
-state 107
-	gen_affect : LBRACE PRIMEDVAR . RBRACE EQ IDENT LBRACE arithm_expr_list RBRACE  (65)
-	gen_affect : LBRACE PRIMEDVAR . RBRACE EQ IDENT LBRACE RBRACE  (66)
-	primed_express : PRIMEDVAR .  (100)
-
-	RBRACE  shift 143
-	TIMES  reduce 100
-	PLUS  reduce 100
-	MINUS  reduce 100
-	DIV  reduce 100
-	MOD  reduce 100
-	LT  reduce 100
-	GT  reduce 100
-	EQ  reduce 100
-	NEQ  reduce 100
-	LEQ  reduce 100
-	GEQ  reduce 100
-	COMMA  reduce 100
-
-
-state 108
-	pressburg_tree_guards : LBRACE . pressburg_atomic_bool RBRACE  (71)
-	pressburg_tree_guards : LBRACE . pressburg_tree_guards RBRACE  (72)
-	pressburg_tree_guards : LBRACE . qformula RBRACE  (73)
-	arithm_expr : LBRACE . arithm_expr RBRACE  (106)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 108
-	BTRUE  shift 84
-	BFALSE  shift 85
-	BNOT  shift 109
-	EXISTS  shift 89
-	FORALL  shift 90
-	.  error
-
-	arithm_expr  goto 110
-	pressburg_atomic_bool  goto 144
-	pressburg_tree_guards  goto 145
-	qformula  goto 146
-	primed_express  goto 99
-
-
-state 109
-	pressburg_tree_guards : BNOT . pressburg_tree_guards  (90)
-	pressburg_tree_guards : BNOT . pressburg_atomic_bool  (91)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 108
-	BTRUE  shift 84
-	BFALSE  shift 85
-	BNOT  shift 109
-	EXISTS  shift 89
-	FORALL  shift 90
-	.  error
-
-	arithm_expr  goto 91
-	pressburg_atomic_bool  goto 147
-	pressburg_tree_guards  goto 148
-	qformula  goto 149
-	primed_express  goto 99
-
-
-state 110
-	pressburg_atomic_bool : arithm_expr . GT arithm_expr  (94)
-	pressburg_atomic_bool : arithm_expr . LT arithm_expr  (95)
-	pressburg_atomic_bool : arithm_expr . GEQ arithm_expr  (96)
-	pressburg_atomic_bool : arithm_expr . LEQ arithm_expr  (97)
-	pressburg_atomic_bool : arithm_expr . EQ arithm_expr  (98)
-	pressburg_atomic_bool : arithm_expr . NEQ arithm_expr  (99)
-	arithm_expr : LBRACE arithm_expr . RBRACE  (106)
-	arithm_expr : arithm_expr . PLUS arithm_expr  (108)
-	arithm_expr : arithm_expr . MINUS arithm_expr  (109)
-	arithm_expr : arithm_expr . DIV arithm_expr  (110)
-	arithm_expr : arithm_expr . MOD arithm_expr  (111)
-	arithm_expr : arithm_expr . TIMES arithm_expr  (112)
-
-	TIMES  shift 121
-	PLUS  shift 122
-	MINUS  shift 123
-	DIV  shift 124
-	MOD  shift 125
-	LT  shift 126
-	GT  shift 127
-	EQ  shift 128
-	NEQ  shift 129
-	LEQ  shift 130
-	GEQ  shift 131
-	RBRACE  shift 150
+	LBRACE  shift 77
 	.  error
 
 
-state 111
-	nts_trans_elem : LBRACE pressburg_atomic_bool . RBRACE  (43)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_atomic_bool  (74)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_tree_guards  (77)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND qformula  (81)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_atomic_bool  (82)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_tree_guards  (84)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR qformula  (89)
+state 33
+	qformula : EXISTS . ident_list COLON INTDECL DOT pressburg_atomic_bool  (56)
+	qformula : EXISTS . ident_list COLON INTDECL DOT LBRACE pressburg_tree_guards RBRACE  (57)
+	qformula : EXISTS . ident_list COLON INTDECL DOT LBRACE qformula RBRACE  (58)
 
-	RBRACE  shift 151
-	BAND  shift 152
-	BOR  shift 153
+	IDENT  shift 49
+	.  error
+
+	ident_list  goto 78
+
+
+state 34
+	qformula : FORALL . ident_list COLON INTDECL DOT pressburg_atomic_bool  (59)
+	qformula : FORALL . ident_list COLON INTDECL DOT LBRACE pressburg_tree_guards RBRACE  (60)
+	qformula : FORALL . ident_list COLON INTDECL DOT LBRACE qformula RBRACE  (61)
+
+	IDENT  shift 49
+	.  error
+
+	ident_list  goto 79
+
+
+state 35
+	pressburg_atomic_bool : arithm_expr . GT arithm_expr  (100)
+	pressburg_atomic_bool : arithm_expr . LT arithm_expr  (101)
+	pressburg_atomic_bool : arithm_expr . GEQ arithm_expr  (102)
+	pressburg_atomic_bool : arithm_expr . LEQ arithm_expr  (103)
+	pressburg_atomic_bool : arithm_expr . EQ arithm_expr  (104)
+	pressburg_atomic_bool : arithm_expr . NEQ arithm_expr  (105)
+	arithm_expr : arithm_expr . PLUS arithm_expr  (114)
+	arithm_expr : arithm_expr . MINUS arithm_expr  (115)
+	arithm_expr : arithm_expr . DIV arithm_expr  (116)
+	arithm_expr : arithm_expr . MOD arithm_expr  (117)
+	arithm_expr : arithm_expr . TIMES arithm_expr  (118)
+
+	TIMES  shift 80
+	PLUS  shift 81
+	MINUS  shift 82
+	DIV  shift 83
+	MOD  shift 84
+	LT  shift 85
+	GT  shift 86
+	EQ  shift 87
+	NEQ  shift 88
+	LEQ  shift 89
+	GEQ  shift 90
 	.  error
 
 
-state 112
-	nts_trans_elem : LBRACE pressburg_tree_guards . RBRACE  (44)
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (75)
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (76)
-	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (80)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (83)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (85)
-	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (88)
+state 36
+	gvars_initial_conditions : INIT nts_trans_split_prec .  (9)
 
-	RBRACE  shift 154
-	BAND  shift 155
-	BOR  shift 156
-	.  error
+	.  reduce 9
 
 
-state 113
-	nts_trans_elem : LBRACE qformula . RBRACE  (49)
-	pressburg_tree_guards : qformula . BAND pressburg_tree_guards  (78)
-	pressburg_tree_guards : qformula . BAND pressburg_atomic_bool  (79)
-	pressburg_tree_guards : qformula . BOR pressburg_tree_guards  (86)
-	pressburg_tree_guards : qformula . BOR pressburg_atomic_bool  (87)
+state 37
+	nts_trans_split_prec : nts_trans_elem . BOR nts_trans_split_prec  (62)
+	nts_trans_split_prec : nts_trans_elem . BAND nts_trans_split_prec  (63)
+	nts_trans_split_prec : nts_trans_elem .  (64)
 
-	RBRACE  shift 157
-	BAND  shift 158
-	BOR  shift 159
-	.  error
-
-
-state 114
-	gen_affect : LBRACE primed_var_list . RBRACE EQ IDENT LBRACE arithm_expr_list RBRACE  (67)
-	gen_affect : LBRACE primed_var_list . RBRACE EQ IDENT LBRACE RBRACE  (68)
-
-	RBRACE  shift 160
-	.  error
-
-
-state 115
-	primed_var_list : primed_express . COMMA primed_var_list  (60)
-	primed_var_list : primed_express . COMMA primed_express  (61)
-	arithm_expr : primed_express .  (105)
-
-	COMMA  shift 161
-	TIMES  reduce 105
-	PLUS  reduce 105
-	MINUS  reduce 105
-	DIV  reduce 105
-	MOD  reduce 105
-	LT  reduce 105
-	GT  reduce 105
-	EQ  reduce 105
-	NEQ  reduce 105
-	LEQ  reduce 105
-	GEQ  reduce 105
-	RBRACE  reduce 105
-
-
-state 116
-	nts_trans_elem : BNOT LBRACE . pressburg_atomic_bool RBRACE  (41)
-	nts_trans_elem : BNOT LBRACE . pressburg_tree_guards RBRACE  (42)
-	arithm_expr : LBRACE . arithm_expr RBRACE  (106)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 108
-	BTRUE  shift 84
-	BFALSE  shift 85
-	BNOT  shift 109
-	EXISTS  shift 89
-	FORALL  shift 90
-	.  error
-
-	arithm_expr  goto 110
-	pressburg_atomic_bool  goto 162
-	pressburg_tree_guards  goto 163
-	qformula  goto 149
-	primed_express  goto 99
-
-
-state 117
-	nts_trans_elem : BNOT pressburg_atomic_bool .  (39)
-
-	.  reduce 39
-
-
-state 118
-	havocise : HAVOC LBRACE . ident_list RBRACE  (113)
-	havocise : HAVOC LBRACE . RBRACE  (114)
-
-	IDENT  shift 20
-	RBRACE  shift 164
-	.  error
-
-	ident_list  goto 165
-
-
-state 119
-	qformula : EXISTS ident_list . COLON INTDECL DOT pressburg_atomic_bool  (50)
-	qformula : EXISTS ident_list . COLON INTDECL DOT LBRACE pressburg_tree_guards RBRACE  (51)
-	qformula : EXISTS ident_list . COLON INTDECL DOT LBRACE qformula RBRACE  (52)
-
-	COLON  shift 166
-	.  error
-
-
-state 120
-	qformula : FORALL ident_list . COLON INTDECL DOT pressburg_atomic_bool  (53)
-	qformula : FORALL ident_list . COLON INTDECL DOT LBRACE pressburg_tree_guards RBRACE  (54)
-	qformula : FORALL ident_list . COLON INTDECL DOT LBRACE qformula RBRACE  (55)
-
-	COLON  shift 167
-	.  error
-
-
-state 121
-	arithm_expr : arithm_expr TIMES . arithm_expr  (112)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 105
-	.  error
-
-	arithm_expr  goto 168
-	primed_express  goto 99
-
-
-state 122
-	arithm_expr : arithm_expr PLUS . arithm_expr  (108)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 105
-	.  error
-
-	arithm_expr  goto 169
-	primed_express  goto 99
-
-
-state 123
-	arithm_expr : arithm_expr MINUS . arithm_expr  (109)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 105
-	.  error
-
-	arithm_expr  goto 170
-	primed_express  goto 99
-
-
-state 124
-	arithm_expr : arithm_expr DIV . arithm_expr  (110)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 105
-	.  error
-
-	arithm_expr  goto 171
-	primed_express  goto 99
-
-
-state 125
-	arithm_expr : arithm_expr MOD . arithm_expr  (111)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 105
-	.  error
-
-	arithm_expr  goto 172
-	primed_express  goto 99
-
-
-state 126
-	pressburg_atomic_bool : arithm_expr LT . arithm_expr  (95)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 105
-	.  error
-
-	arithm_expr  goto 173
-	primed_express  goto 99
-
-
-state 127
-	pressburg_atomic_bool : arithm_expr GT . arithm_expr  (94)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 105
-	.  error
-
-	arithm_expr  goto 174
-	primed_express  goto 99
-
-
-state 128
-	pressburg_atomic_bool : arithm_expr EQ . arithm_expr  (98)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 105
-	.  error
-
-	arithm_expr  goto 175
-	primed_express  goto 99
-
-
-state 129
-	pressburg_atomic_bool : arithm_expr NEQ . arithm_expr  (99)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 105
-	.  error
-
-	arithm_expr  goto 176
-	primed_express  goto 99
-
-
-state 130
-	pressburg_atomic_bool : arithm_expr LEQ . arithm_expr  (97)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 105
-	.  error
-
-	arithm_expr  goto 177
-	primed_express  goto 99
-
-
-state 131
-	pressburg_atomic_bool : arithm_expr GEQ . arithm_expr  (96)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 105
-	.  error
-
-	arithm_expr  goto 178
-	primed_express  goto 99
-
-
-state 132
-	transitions : IDENT ARROW IDENT LBRACK nts_trans_split RBRACK .  (31)
-
-	.  reduce 31
-
-
-state 133
-	nts_trans_split_prec : nts_trans_elem BAND . nts_trans_split_prec  (57)
-
-	INT  shift 78
-	IDENT  shift 79
-	PRIMEDVAR  shift 80
-	MINUS  shift 81
-	LBRACE  shift 82
-	BTRUE  shift 84
-	BFALSE  shift 85
-	BOR  shift 86
-	BNOT  shift 87
-	HAVOC  shift 88
-	EXISTS  shift 89
-	FORALL  shift 90
-	.  error
-
-	arithm_expr  goto 91
-	nts_trans_elem  goto 93
-	pressburg_atomic_bool  goto 94
-	gen_affect  goto 95
-	havocise  goto 96
-	qformula  goto 97
-	nts_trans_split_prec  goto 179
-	primed_express  goto 99
-
-
-state 134
-	nts_trans_split_prec : nts_trans_elem BOR . nts_trans_split_prec  (56)
-
-	INT  shift 78
-	IDENT  shift 79
-	PRIMEDVAR  shift 80
-	MINUS  shift 81
-	LBRACE  shift 82
-	BTRUE  shift 84
-	BFALSE  shift 85
-	BOR  shift 86
-	BNOT  shift 87
-	HAVOC  shift 88
-	EXISTS  shift 89
-	FORALL  shift 90
-	.  error
-
-	arithm_expr  goto 91
-	nts_trans_elem  goto 93
-	pressburg_atomic_bool  goto 94
-	gen_affect  goto 95
-	havocise  goto 96
-	qformula  goto 97
-	nts_trans_split_prec  goto 180
-	primed_express  goto 99
-
-
-state 135
-	transitions : IDENT COLON IDENT ARROW IDENT LBRACK RBRACK .  (33)
-
-	.  reduce 33
-
-
-state 136
-	transitions : IDENT COLON IDENT ARROW IDENT LBRACK nts_trans_split . RBRACK  (32)
-
-	RBRACK  shift 181
-	.  error
-
-
-state 137
-	gen_affect : IDENT LBRACE RBRACE .  (70)
-
-	.  reduce 70
-
-
-state 138
-	arithm_expr_list : arithm_expr .  (101)
-	arithm_expr_list : arithm_expr . COMMA arithm_expr_list  (102)
-	arithm_expr : arithm_expr . PLUS arithm_expr  (108)
-	arithm_expr : arithm_expr . MINUS arithm_expr  (109)
-	arithm_expr : arithm_expr . DIV arithm_expr  (110)
-	arithm_expr : arithm_expr . MOD arithm_expr  (111)
-	arithm_expr : arithm_expr . TIMES arithm_expr  (112)
-
-	TIMES  shift 121
-	PLUS  shift 122
-	MINUS  shift 123
-	DIV  shift 124
-	MOD  shift 125
-	COMMA  shift 182
-	RBRACE  reduce 101
-
-
-state 139
-	gen_affect : IDENT LBRACE arithm_expr_list . RBRACE  (69)
-
-	RBRACE  shift 183
-	.  error
-
-
-state 140
-	gen_affect : PRIMEDVAR EQ IDENT . LBRACE arithm_expr_list RBRACE  (62)
-	gen_affect : PRIMEDVAR EQ IDENT . LBRACE RBRACE  (63)
-	arithm_expr : IDENT .  (104)
-
-	LBRACE  shift 184
-	TIMES  reduce 104
-	PLUS  reduce 104
-	MINUS  reduce 104
-	DIV  reduce 104
-	MOD  reduce 104
-	RBRACK  reduce 104
-	BAND  reduce 104
-	BOR  reduce 104
-
-
-state 141
-	gen_affect : PRIMEDVAR EQ arithm_expr .  (64)
-	arithm_expr : arithm_expr . PLUS arithm_expr  (108)
-	arithm_expr : arithm_expr . MINUS arithm_expr  (109)
-	arithm_expr : arithm_expr . DIV arithm_expr  (110)
-	arithm_expr : arithm_expr . MOD arithm_expr  (111)
-	arithm_expr : arithm_expr . TIMES arithm_expr  (112)
-
-	TIMES  shift 121
-	PLUS  shift 122
-	MINUS  shift 123
-	DIV  shift 124
-	MOD  shift 125
+	BAND  shift 91
+	BOR  shift 92
 	RBRACK  reduce 64
-	BAND  reduce 64
-	BOR  reduce 64
+	SEMICOLON  reduce 64
 
 
-state 142
-	arithm_expr : LBRACE arithm_expr . RBRACE  (106)
-	arithm_expr : arithm_expr . PLUS arithm_expr  (108)
-	arithm_expr : arithm_expr . MINUS arithm_expr  (109)
-	arithm_expr : arithm_expr . DIV arithm_expr  (110)
-	arithm_expr : arithm_expr . MOD arithm_expr  (111)
-	arithm_expr : arithm_expr . TIMES arithm_expr  (112)
+state 38
+	nts_trans_elem : pressburg_atomic_bool .  (51)
 
-	TIMES  shift 121
-	PLUS  shift 122
-	MINUS  shift 123
-	DIV  shift 124
-	MOD  shift 125
-	RBRACE  shift 150
-	.  error
+	.  reduce 51
 
 
-state 143
-	gen_affect : LBRACE PRIMEDVAR RBRACE . EQ IDENT LBRACE arithm_expr_list RBRACE  (65)
-	gen_affect : LBRACE PRIMEDVAR RBRACE . EQ IDENT LBRACE RBRACE  (66)
+state 39
+	nts_trans_elem : gen_affect .  (52)
 
-	EQ  shift 185
-	.  error
+	.  reduce 52
 
 
-state 144
-	pressburg_tree_guards : LBRACE pressburg_atomic_bool . RBRACE  (71)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_atomic_bool  (74)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_tree_guards  (77)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND qformula  (81)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_atomic_bool  (82)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_tree_guards  (84)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR qformula  (89)
+state 40
+	nts_trans_elem : havocise .  (53)
 
-	RBRACE  shift 186
-	BAND  shift 152
-	BOR  shift 153
-	.  error
+	.  reduce 53
 
 
-state 145
-	pressburg_tree_guards : LBRACE pressburg_tree_guards . RBRACE  (72)
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (75)
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (76)
-	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (80)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (83)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (85)
-	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (88)
+state 41
+	nts_trans_elem : qformula .  (54)
 
-	RBRACE  shift 187
-	BAND  shift 155
-	BOR  shift 156
-	.  error
+	.  reduce 54
 
 
-state 146
-	pressburg_tree_guards : LBRACE qformula . RBRACE  (73)
-	pressburg_tree_guards : qformula . BAND pressburg_tree_guards  (78)
-	pressburg_tree_guards : qformula . BAND pressburg_atomic_bool  (79)
-	pressburg_tree_guards : qformula . BOR pressburg_tree_guards  (86)
-	pressburg_tree_guards : qformula . BOR pressburg_atomic_bool  (87)
-
-	RBRACE  shift 188
-	BAND  shift 158
-	BOR  shift 159
-	.  error
-
-
-state 147
-	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_atomic_bool  (74)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_tree_guards  (77)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND qformula  (81)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_atomic_bool  (82)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_tree_guards  (84)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR qformula  (89)
-	pressburg_tree_guards : BNOT pressburg_atomic_bool .  (91)
-
-	.  reduce 91
-
-
-state 148
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (75)
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (76)
-	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (80)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (83)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (85)
-	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (88)
-	pressburg_tree_guards : BNOT pressburg_tree_guards .  (90)
-
-	.  reduce 90
-
-
-state 149
-	pressburg_tree_guards : qformula . BAND pressburg_tree_guards  (78)
-	pressburg_tree_guards : qformula . BAND pressburg_atomic_bool  (79)
-	pressburg_tree_guards : qformula . BOR pressburg_tree_guards  (86)
-	pressburg_tree_guards : qformula . BOR pressburg_atomic_bool  (87)
-
-	BAND  shift 158
-	BOR  shift 159
-	.  error
-
-
-state 150
-	arithm_expr : LBRACE arithm_expr RBRACE .  (106)
-
-	.  reduce 106
-
-
-state 151
-	nts_trans_elem : LBRACE pressburg_atomic_bool RBRACE .  (43)
-
-	.  reduce 43
-
-
-state 152
-	pressburg_tree_guards : pressburg_atomic_bool BAND . pressburg_atomic_bool  (74)
-	pressburg_tree_guards : pressburg_atomic_bool BAND . pressburg_tree_guards  (77)
-	pressburg_tree_guards : pressburg_atomic_bool BAND . qformula  (81)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 108
-	BTRUE  shift 84
-	BFALSE  shift 85
-	BNOT  shift 109
-	EXISTS  shift 89
-	FORALL  shift 90
-	.  error
-
-	arithm_expr  goto 91
-	pressburg_atomic_bool  goto 189
-	pressburg_tree_guards  goto 190
-	qformula  goto 191
-	primed_express  goto 99
-
-
-state 153
-	pressburg_tree_guards : pressburg_atomic_bool BOR . pressburg_atomic_bool  (82)
-	pressburg_tree_guards : pressburg_atomic_bool BOR . pressburg_tree_guards  (84)
-	pressburg_tree_guards : pressburg_atomic_bool BOR . qformula  (89)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 108
-	BTRUE  shift 84
-	BFALSE  shift 85
-	BNOT  shift 109
-	EXISTS  shift 89
-	FORALL  shift 90
-	.  error
-
-	arithm_expr  goto 91
-	pressburg_atomic_bool  goto 192
-	pressburg_tree_guards  goto 193
-	qformula  goto 194
-	primed_express  goto 99
-
-
-state 154
-	nts_trans_elem : LBRACE pressburg_tree_guards RBRACE .  (44)
-
-	.  reduce 44
-
-
-state 155
-	pressburg_tree_guards : pressburg_tree_guards BAND . pressburg_tree_guards  (75)
-	pressburg_tree_guards : pressburg_tree_guards BAND . pressburg_atomic_bool  (76)
-	pressburg_tree_guards : pressburg_tree_guards BAND . qformula  (80)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 108
-	BTRUE  shift 84
-	BFALSE  shift 85
-	BNOT  shift 109
-	EXISTS  shift 89
-	FORALL  shift 90
-	.  error
-
-	arithm_expr  goto 91
-	pressburg_atomic_bool  goto 195
-	pressburg_tree_guards  goto 196
-	qformula  goto 197
-	primed_express  goto 99
-
-
-state 156
-	pressburg_tree_guards : pressburg_tree_guards BOR . pressburg_atomic_bool  (83)
-	pressburg_tree_guards : pressburg_tree_guards BOR . pressburg_tree_guards  (85)
-	pressburg_tree_guards : pressburg_tree_guards BOR . qformula  (88)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 108
-	BTRUE  shift 84
-	BFALSE  shift 85
-	BNOT  shift 109
-	EXISTS  shift 89
-	FORALL  shift 90
-	.  error
-
-	arithm_expr  goto 91
-	pressburg_atomic_bool  goto 198
-	pressburg_tree_guards  goto 199
-	qformula  goto 200
-	primed_express  goto 99
-
-
-state 157
-	nts_trans_elem : LBRACE qformula RBRACE .  (49)
-
-	.  reduce 49
-
-
-state 158
-	pressburg_tree_guards : qformula BAND . pressburg_tree_guards  (78)
-	pressburg_tree_guards : qformula BAND . pressburg_atomic_bool  (79)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 108
-	BTRUE  shift 84
-	BFALSE  shift 85
-	BNOT  shift 109
-	EXISTS  shift 89
-	FORALL  shift 90
-	.  error
-
-	arithm_expr  goto 91
-	pressburg_atomic_bool  goto 201
-	pressburg_tree_guards  goto 202
-	qformula  goto 149
-	primed_express  goto 99
-
-
-state 159
-	pressburg_tree_guards : qformula BOR . pressburg_tree_guards  (86)
-	pressburg_tree_guards : qformula BOR . pressburg_atomic_bool  (87)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 108
-	BTRUE  shift 84
-	BFALSE  shift 85
-	BNOT  shift 109
-	EXISTS  shift 89
-	FORALL  shift 90
-	.  error
-
-	arithm_expr  goto 91
-	pressburg_atomic_bool  goto 203
-	pressburg_tree_guards  goto 204
-	qformula  goto 149
-	primed_express  goto 99
-
-
-state 160
-	gen_affect : LBRACE primed_var_list RBRACE . EQ IDENT LBRACE arithm_expr_list RBRACE  (67)
-	gen_affect : LBRACE primed_var_list RBRACE . EQ IDENT LBRACE RBRACE  (68)
-
-	EQ  shift 205
-	.  error
-
-
-state 161
-	primed_var_list : primed_express COMMA . primed_var_list  (60)
-	primed_var_list : primed_express COMMA . primed_express  (61)
-
-	PRIMEDVAR  shift 104
-	.  error
-
-	primed_var_list  goto 206
-	primed_express  goto 207
-
-
-state 162
-	nts_trans_elem : BNOT LBRACE pressburg_atomic_bool . RBRACE  (41)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_atomic_bool  (74)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_tree_guards  (77)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND qformula  (81)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_atomic_bool  (82)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_tree_guards  (84)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR qformula  (89)
-
-	RBRACE  shift 208
-	BAND  shift 152
-	BOR  shift 153
-	.  error
-
-
-state 163
-	nts_trans_elem : BNOT LBRACE pressburg_tree_guards . RBRACE  (42)
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (75)
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (76)
-	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (80)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (83)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (85)
-	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (88)
-
-	RBRACE  shift 209
-	BAND  shift 155
-	BOR  shift 156
-	.  error
-
-
-state 164
-	havocise : HAVOC LBRACE RBRACE .  (114)
-
-	.  reduce 114
-
-
-state 165
-	havocise : HAVOC LBRACE ident_list . RBRACE  (113)
-
-	RBRACE  shift 210
-	.  error
-
-
-state 166
-	qformula : EXISTS ident_list COLON . INTDECL DOT pressburg_atomic_bool  (50)
-	qformula : EXISTS ident_list COLON . INTDECL DOT LBRACE pressburg_tree_guards RBRACE  (51)
-	qformula : EXISTS ident_list COLON . INTDECL DOT LBRACE qformula RBRACE  (52)
-
-	INTDECL  shift 211
-	.  error
-
-
-state 167
-	qformula : FORALL ident_list COLON . INTDECL DOT pressburg_atomic_bool  (53)
-	qformula : FORALL ident_list COLON . INTDECL DOT LBRACE pressburg_tree_guards RBRACE  (54)
-	qformula : FORALL ident_list COLON . INTDECL DOT LBRACE qformula RBRACE  (55)
-
-	INTDECL  shift 212
-	.  error
-
-
-state 168
-	arithm_expr : arithm_expr . PLUS arithm_expr  (108)
-	arithm_expr : arithm_expr . MINUS arithm_expr  (109)
-	arithm_expr : arithm_expr . DIV arithm_expr  (110)
-	arithm_expr : arithm_expr . MOD arithm_expr  (111)
-	arithm_expr : arithm_expr . TIMES arithm_expr  (112)
-	arithm_expr : arithm_expr TIMES arithm_expr .  (112)
-
-	.  reduce 112
-
-
-state 169
-	arithm_expr : arithm_expr . PLUS arithm_expr  (108)
-	arithm_expr : arithm_expr PLUS arithm_expr .  (108)
-	arithm_expr : arithm_expr . MINUS arithm_expr  (109)
-	arithm_expr : arithm_expr . DIV arithm_expr  (110)
-	arithm_expr : arithm_expr . MOD arithm_expr  (111)
-	arithm_expr : arithm_expr . TIMES arithm_expr  (112)
-
-	TIMES  shift 121
-	DIV  shift 124
-	MOD  shift 125
-	PLUS  reduce 108
-	MINUS  reduce 108
-	LT  reduce 108
-	GT  reduce 108
-	EQ  reduce 108
-	NEQ  reduce 108
-	LEQ  reduce 108
-	GEQ  reduce 108
-	RBRACE  reduce 108
-	RBRACK  reduce 108
-	COMMA  reduce 108
-	BAND  reduce 108
-	BOR  reduce 108
-
-
-state 170
-	arithm_expr : arithm_expr . PLUS arithm_expr  (108)
-	arithm_expr : arithm_expr . MINUS arithm_expr  (109)
-	arithm_expr : arithm_expr MINUS arithm_expr .  (109)
-	arithm_expr : arithm_expr . DIV arithm_expr  (110)
-	arithm_expr : arithm_expr . MOD arithm_expr  (111)
-	arithm_expr : arithm_expr . TIMES arithm_expr  (112)
-
-	TIMES  shift 121
-	DIV  shift 124
-	MOD  shift 125
-	PLUS  reduce 109
-	MINUS  reduce 109
-	LT  reduce 109
-	GT  reduce 109
-	EQ  reduce 109
-	NEQ  reduce 109
-	LEQ  reduce 109
-	GEQ  reduce 109
-	RBRACE  reduce 109
-	RBRACK  reduce 109
-	COMMA  reduce 109
-	BAND  reduce 109
-	BOR  reduce 109
-
-
-state 171
-	arithm_expr : arithm_expr . PLUS arithm_expr  (108)
-	arithm_expr : arithm_expr . MINUS arithm_expr  (109)
-	arithm_expr : arithm_expr . DIV arithm_expr  (110)
-	arithm_expr : arithm_expr DIV arithm_expr .  (110)
-	arithm_expr : arithm_expr . MOD arithm_expr  (111)
-	arithm_expr : arithm_expr . TIMES arithm_expr  (112)
-
-	.  reduce 110
-
-
-state 172
-	arithm_expr : arithm_expr . PLUS arithm_expr  (108)
-	arithm_expr : arithm_expr . MINUS arithm_expr  (109)
-	arithm_expr : arithm_expr . DIV arithm_expr  (110)
-	arithm_expr : arithm_expr . MOD arithm_expr  (111)
-	arithm_expr : arithm_expr MOD arithm_expr .  (111)
-	arithm_expr : arithm_expr . TIMES arithm_expr  (112)
+state 42
+	arithm_expr : primed_express .  (111)
 
 	.  reduce 111
 
 
-state 173
-	pressburg_atomic_bool : arithm_expr LT arithm_expr .  (95)
-	arithm_expr : arithm_expr . PLUS arithm_expr  (108)
-	arithm_expr : arithm_expr . MINUS arithm_expr  (109)
-	arithm_expr : arithm_expr . DIV arithm_expr  (110)
-	arithm_expr : arithm_expr . MOD arithm_expr  (111)
-	arithm_expr : arithm_expr . TIMES arithm_expr  (112)
+state 43
+	comma_sep_header_list : gvars_decl SEMICOLON . decl_sequence  (3)
+	comma_sep_header_list : gvars_decl SEMICOLON . comma_sep_header_list  (4)
 
-	TIMES  shift 121
-	PLUS  shift 122
-	MINUS  shift 123
-	DIV  shift 124
-	MOD  shift 125
-	RBRACE  reduce 95
-	RBRACK  reduce 95
-	BAND  reduce 95
-	BOR  reduce 95
+	IDENT  shift 7
+	EOF  shift 8
+	INSTANCES  shift 9
+	INIT  shift 10
+	.  error
 
-
-state 174
-	pressburg_atomic_bool : arithm_expr GT arithm_expr .  (94)
-	arithm_expr : arithm_expr . PLUS arithm_expr  (108)
-	arithm_expr : arithm_expr . MINUS arithm_expr  (109)
-	arithm_expr : arithm_expr . DIV arithm_expr  (110)
-	arithm_expr : arithm_expr . MOD arithm_expr  (111)
-	arithm_expr : arithm_expr . TIMES arithm_expr  (112)
-
-	TIMES  shift 121
-	PLUS  shift 122
-	MINUS  shift 123
-	DIV  shift 124
-	MOD  shift 125
-	RBRACE  reduce 94
-	RBRACK  reduce 94
-	BAND  reduce 94
-	BOR  reduce 94
+	comma_sep_header_list  goto 93
+	decl_sequence  goto 94
+	gvars_decl  goto 13
+	gvars_initial_conditions  goto 14
+	thread_declaration  goto 15
+	ident_list  goto 16
+	decl_automata  goto 17
 
 
-state 175
-	pressburg_atomic_bool : arithm_expr EQ arithm_expr .  (98)
-	arithm_expr : arithm_expr . PLUS arithm_expr  (108)
-	arithm_expr : arithm_expr . MINUS arithm_expr  (109)
-	arithm_expr : arithm_expr . DIV arithm_expr  (110)
-	arithm_expr : arithm_expr . MOD arithm_expr  (111)
-	arithm_expr : arithm_expr . TIMES arithm_expr  (112)
+state 44
+	comma_sep_header_list : gvars_initial_conditions SEMICOLON . comma_sep_header_list  (5)
+	comma_sep_header_list : gvars_initial_conditions SEMICOLON . decl_sequence  (6)
 
-	TIMES  shift 121
-	PLUS  shift 122
-	MINUS  shift 123
-	DIV  shift 124
-	MOD  shift 125
-	RBRACE  reduce 98
-	RBRACK  reduce 98
-	BAND  reduce 98
-	BOR  reduce 98
+	IDENT  shift 7
+	EOF  shift 8
+	INSTANCES  shift 9
+	INIT  shift 10
+	.  error
 
-
-state 176
-	pressburg_atomic_bool : arithm_expr NEQ arithm_expr .  (99)
-	arithm_expr : arithm_expr . PLUS arithm_expr  (108)
-	arithm_expr : arithm_expr . MINUS arithm_expr  (109)
-	arithm_expr : arithm_expr . DIV arithm_expr  (110)
-	arithm_expr : arithm_expr . MOD arithm_expr  (111)
-	arithm_expr : arithm_expr . TIMES arithm_expr  (112)
-
-	TIMES  shift 121
-	PLUS  shift 122
-	MINUS  shift 123
-	DIV  shift 124
-	MOD  shift 125
-	RBRACE  reduce 99
-	RBRACK  reduce 99
-	BAND  reduce 99
-	BOR  reduce 99
+	comma_sep_header_list  goto 95
+	decl_sequence  goto 96
+	gvars_decl  goto 13
+	gvars_initial_conditions  goto 14
+	thread_declaration  goto 15
+	ident_list  goto 16
+	decl_automata  goto 17
 
 
-state 177
-	pressburg_atomic_bool : arithm_expr LEQ arithm_expr .  (97)
-	arithm_expr : arithm_expr . PLUS arithm_expr  (108)
-	arithm_expr : arithm_expr . MINUS arithm_expr  (109)
-	arithm_expr : arithm_expr . DIV arithm_expr  (110)
-	arithm_expr : arithm_expr . MOD arithm_expr  (111)
-	arithm_expr : arithm_expr . TIMES arithm_expr  (112)
+state 45
+	comma_sep_header_list : thread_declaration SEMICOLON . decl_sequence  (7)
+	comma_sep_header_list : thread_declaration SEMICOLON . comma_sep_header_list  (8)
 
-	TIMES  shift 121
-	PLUS  shift 122
-	MINUS  shift 123
-	DIV  shift 124
-	MOD  shift 125
-	RBRACE  reduce 97
-	RBRACK  reduce 97
-	BAND  reduce 97
-	BOR  reduce 97
+	IDENT  shift 7
+	EOF  shift 8
+	INSTANCES  shift 9
+	INIT  shift 10
+	.  error
 
-
-state 178
-	pressburg_atomic_bool : arithm_expr GEQ arithm_expr .  (96)
-	arithm_expr : arithm_expr . PLUS arithm_expr  (108)
-	arithm_expr : arithm_expr . MINUS arithm_expr  (109)
-	arithm_expr : arithm_expr . DIV arithm_expr  (110)
-	arithm_expr : arithm_expr . MOD arithm_expr  (111)
-	arithm_expr : arithm_expr . TIMES arithm_expr  (112)
-
-	TIMES  shift 121
-	PLUS  shift 122
-	MINUS  shift 123
-	DIV  shift 124
-	MOD  shift 125
-	RBRACE  reduce 96
-	RBRACK  reduce 96
-	BAND  reduce 96
-	BOR  reduce 96
+	comma_sep_header_list  goto 97
+	decl_sequence  goto 98
+	gvars_decl  goto 13
+	gvars_initial_conditions  goto 14
+	thread_declaration  goto 15
+	ident_list  goto 16
+	decl_automata  goto 17
 
 
-state 179
-	nts_trans_split_prec : nts_trans_elem BAND nts_trans_split_prec .  (57)
+state 46
+	gvars_decl : ident_list COLON . INTDECL  (12)
+	gvars_decl : ident_list COLON . REALDECL SEMICOLON  (13)
+	gvars_decl : ident_list COLON . NATDECL SEMICOLON  (14)
+	gvars_decl : ident_list COLON . BOOLDECL SEMICOLON  (15)
 
-	.  reduce 57
+	INTDECL  shift 99
+	NATDECL  shift 100
+	REALDECL  shift 101
+	BOOLDECL  shift 102
+	.  error
 
 
-state 180
-	nts_trans_split_prec : nts_trans_elem BOR nts_trans_split_prec .  (56)
+state 47
+	decl_automata : IDENT . LBRACK vars_automaton states_list transitions_list RBRACK  (22)
 
-	.  reduce 56
+	LBRACK  shift 18
+	.  error
 
 
-state 181
-	transitions : IDENT COLON IDENT ARROW IDENT LBRACK nts_trans_split RBRACK .  (32)
+state 48
+	decl_sequence : decl_automata decl_sequence .  (20)
+
+	.  reduce 20
+
+
+state 49
+	ident_list : IDENT .  (10)
+	ident_list : IDENT . COMMA ident_list  (11)
+
+	COMMA  shift 19
+	RBRACE  reduce 10
+	COLON  reduce 10
+	SEMICOLON  reduce 10
+
+
+state 50
+	vars_loc : INPUTVARLIST . typed_id_list_list SEMICOLON  (25)
+
+	IDENT  shift 49
+	.  error
+
+	ident_list  goto 52
+	typed_id_list_list  goto 103
+	typed_id_list  goto 56
+
+
+state 51
+	vars_loc : OUTPUTVARLIST . typed_id_list_list SEMICOLON  (26)
+
+	IDENT  shift 49
+	.  error
+
+	ident_list  goto 52
+	typed_id_list_list  goto 104
+	typed_id_list  goto 56
+
+
+state 52
+	typed_id_list : ident_list . COLON INTDECL  (30)
+	typed_id_list : ident_list . COLON NATDECL  (31)
+	typed_id_list : ident_list . COLON REALDECL  (32)
+	typed_id_list : ident_list . COLON BOOLDECL  (33)
+
+	COLON  shift 105
+	.  error
+
+
+state 53
+	decl_automata : IDENT LBRACK vars_automaton . states_list transitions_list RBRACK  (22)
+
+	INITSTATE  shift 106
+	FINALSTATE  shift 107
+	ERRORSTATE  shift 108
+	.  error
+
+	states_list  goto 109
+	cautomaton_state  goto 110
+
+
+state 54
+	vars_automaton : vars_loc . vars_automaton  (23)
+	vars_automaton : vars_loc .  (24)
+
+	IDENT  shift 49
+	INPUTVARLIST  shift 50
+	OUTPUTVARLIST  shift 51
+	INITSTATE  reduce 24
+	FINALSTATE  reduce 24
+	ERRORSTATE  reduce 24
+
+	ident_list  goto 52
+	vars_automaton  goto 111
+	vars_loc  goto 54
+	typed_id_list_list  goto 55
+	typed_id_list  goto 56
+
+
+state 55
+	vars_loc : typed_id_list_list . SEMICOLON  (27)
+
+	SEMICOLON  shift 112
+	.  error
+
+
+state 56
+	typed_id_list_list : typed_id_list . COMMA typed_id_list_list  (28)
+	typed_id_list_list : typed_id_list .  (29)
+
+	COMMA  shift 113
+	SEMICOLON  reduce 29
+
+
+state 57
+	ident_list : IDENT COMMA ident_list .  (11)
+
+	.  reduce 11
+
+
+state 58
+	thread_decl : IDENT OBRACK . INT CBRACK  (19)
+
+	INT  shift 114
+	.  error
+
+
+state 59
+	thread_decl_list : thread_decl COMMA . thread_decl_list  (17)
+
+	IDENT  shift 20
+	.  error
+
+	thread_decl_list  goto 115
+	thread_decl  goto 22
+
+
+state 60
+	gen_affect : IDENT LBRACE . arithm_expr_list RBRACE  (75)
+	gen_affect : IDENT LBRACE . RBRACE  (76)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 64
+	RBRACE  shift 116
+	.  error
+
+	arithm_expr  goto 117
+	primed_express  goto 42
+	arithm_expr_list  goto 118
+
+
+state 61
+	gen_affect : PRIMEDVAR EQ . IDENT LBRACE arithm_expr_list RBRACE  (68)
+	gen_affect : PRIMEDVAR EQ . IDENT LBRACE RBRACE  (69)
+	gen_affect : PRIMEDVAR EQ . arithm_expr  (70)
+
+	INT  shift 23
+	IDENT  shift 119
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 64
+	.  error
+
+	arithm_expr  goto 120
+	primed_express  goto 42
+
+
+state 62
+	arithm_expr : IDENT .  (110)
+
+	.  reduce 110
+
+
+state 63
+	primed_express : PRIMEDVAR .  (106)
+
+	.  reduce 106
+
+
+state 64
+	arithm_expr : LBRACE . arithm_expr RBRACE  (112)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 64
+	.  error
+
+	arithm_expr  goto 121
+	primed_express  goto 42
+
+
+state 65
+	arithm_expr : MINUS arithm_expr .  (113)
+	arithm_expr : arithm_expr . PLUS arithm_expr  (114)
+	arithm_expr : arithm_expr . MINUS arithm_expr  (115)
+	arithm_expr : arithm_expr . DIV arithm_expr  (116)
+	arithm_expr : arithm_expr . MOD arithm_expr  (117)
+	arithm_expr : arithm_expr . TIMES arithm_expr  (118)
+
+	TIMES  shift 80
+	PLUS  shift 81
+	MINUS  shift 82
+	DIV  shift 83
+	MOD  shift 84
+	LT  reduce 113
+	GT  reduce 113
+	EQ  reduce 113
+	NEQ  reduce 113
+	LEQ  reduce 113
+	GEQ  reduce 113
+	RBRACE  reduce 113
+	RBRACK  reduce 113
+	SEMICOLON  reduce 113
+	COMMA  reduce 113
+	BAND  reduce 113
+	BOR  reduce 113
+
+
+66: shift/reduce conflict (shift 122, reduce 106) on RBRACE
+state 66
+	gen_affect : LBRACE PRIMEDVAR . RBRACE EQ IDENT LBRACE arithm_expr_list RBRACE  (71)
+	gen_affect : LBRACE PRIMEDVAR . RBRACE EQ IDENT LBRACE RBRACE  (72)
+	primed_express : PRIMEDVAR .  (106)
+
+	RBRACE  shift 122
+	TIMES  reduce 106
+	PLUS  reduce 106
+	MINUS  reduce 106
+	DIV  reduce 106
+	MOD  reduce 106
+	LT  reduce 106
+	GT  reduce 106
+	EQ  reduce 106
+	NEQ  reduce 106
+	LEQ  reduce 106
+	GEQ  reduce 106
+	COMMA  reduce 106
+
+
+state 67
+	pressburg_tree_guards : LBRACE . pressburg_atomic_bool RBRACE  (77)
+	pressburg_tree_guards : LBRACE . pressburg_tree_guards RBRACE  (78)
+	pressburg_tree_guards : LBRACE . qformula RBRACE  (79)
+	arithm_expr : LBRACE . arithm_expr RBRACE  (112)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 67
+	BTRUE  shift 28
+	BFALSE  shift 29
+	BNOT  shift 68
+	EXISTS  shift 33
+	FORALL  shift 34
+	.  error
+
+	arithm_expr  goto 69
+	pressburg_atomic_bool  goto 123
+	pressburg_tree_guards  goto 124
+	qformula  goto 125
+	primed_express  goto 42
+
+
+state 68
+	pressburg_tree_guards : BNOT . pressburg_tree_guards  (96)
+	pressburg_tree_guards : BNOT . pressburg_atomic_bool  (97)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 67
+	BTRUE  shift 28
+	BFALSE  shift 29
+	BNOT  shift 68
+	EXISTS  shift 33
+	FORALL  shift 34
+	.  error
+
+	arithm_expr  goto 35
+	pressburg_atomic_bool  goto 126
+	pressburg_tree_guards  goto 127
+	qformula  goto 128
+	primed_express  goto 42
+
+
+state 69
+	pressburg_atomic_bool : arithm_expr . GT arithm_expr  (100)
+	pressburg_atomic_bool : arithm_expr . LT arithm_expr  (101)
+	pressburg_atomic_bool : arithm_expr . GEQ arithm_expr  (102)
+	pressburg_atomic_bool : arithm_expr . LEQ arithm_expr  (103)
+	pressburg_atomic_bool : arithm_expr . EQ arithm_expr  (104)
+	pressburg_atomic_bool : arithm_expr . NEQ arithm_expr  (105)
+	arithm_expr : LBRACE arithm_expr . RBRACE  (112)
+	arithm_expr : arithm_expr . PLUS arithm_expr  (114)
+	arithm_expr : arithm_expr . MINUS arithm_expr  (115)
+	arithm_expr : arithm_expr . DIV arithm_expr  (116)
+	arithm_expr : arithm_expr . MOD arithm_expr  (117)
+	arithm_expr : arithm_expr . TIMES arithm_expr  (118)
+
+	TIMES  shift 80
+	PLUS  shift 81
+	MINUS  shift 82
+	DIV  shift 83
+	MOD  shift 84
+	LT  shift 85
+	GT  shift 86
+	EQ  shift 87
+	NEQ  shift 88
+	LEQ  shift 89
+	GEQ  shift 90
+	RBRACE  shift 129
+	.  error
+
+
+state 70
+	nts_trans_elem : LBRACE pressburg_atomic_bool . RBRACE  (49)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_atomic_bool  (80)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_tree_guards  (83)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND qformula  (87)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_atomic_bool  (88)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_tree_guards  (90)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR qformula  (95)
+
+	RBRACE  shift 130
+	BAND  shift 131
+	BOR  shift 132
+	.  error
+
+
+state 71
+	nts_trans_elem : LBRACE pressburg_tree_guards . RBRACE  (50)
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (81)
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (82)
+	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (86)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (89)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (91)
+	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (94)
+
+	RBRACE  shift 133
+	BAND  shift 134
+	BOR  shift 135
+	.  error
+
+
+state 72
+	nts_trans_elem : LBRACE qformula . RBRACE  (55)
+	pressburg_tree_guards : qformula . BAND pressburg_tree_guards  (84)
+	pressburg_tree_guards : qformula . BAND pressburg_atomic_bool  (85)
+	pressburg_tree_guards : qformula . BOR pressburg_tree_guards  (92)
+	pressburg_tree_guards : qformula . BOR pressburg_atomic_bool  (93)
+
+	RBRACE  shift 136
+	BAND  shift 137
+	BOR  shift 138
+	.  error
+
+
+state 73
+	gen_affect : LBRACE primed_var_list . RBRACE EQ IDENT LBRACE arithm_expr_list RBRACE  (73)
+	gen_affect : LBRACE primed_var_list . RBRACE EQ IDENT LBRACE RBRACE  (74)
+
+	RBRACE  shift 139
+	.  error
+
+
+state 74
+	primed_var_list : primed_express . COMMA primed_var_list  (66)
+	primed_var_list : primed_express . COMMA primed_express  (67)
+	arithm_expr : primed_express .  (111)
+
+	COMMA  shift 140
+	TIMES  reduce 111
+	PLUS  reduce 111
+	MINUS  reduce 111
+	DIV  reduce 111
+	MOD  reduce 111
+	LT  reduce 111
+	GT  reduce 111
+	EQ  reduce 111
+	NEQ  reduce 111
+	LEQ  reduce 111
+	GEQ  reduce 111
+	RBRACE  reduce 111
+
+
+state 75
+	nts_trans_elem : BNOT LBRACE . pressburg_atomic_bool RBRACE  (47)
+	nts_trans_elem : BNOT LBRACE . pressburg_tree_guards RBRACE  (48)
+	arithm_expr : LBRACE . arithm_expr RBRACE  (112)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 67
+	BTRUE  shift 28
+	BFALSE  shift 29
+	BNOT  shift 68
+	EXISTS  shift 33
+	FORALL  shift 34
+	.  error
+
+	arithm_expr  goto 69
+	pressburg_atomic_bool  goto 141
+	pressburg_tree_guards  goto 142
+	qformula  goto 128
+	primed_express  goto 42
+
+
+state 76
+	nts_trans_elem : BNOT pressburg_atomic_bool .  (45)
+
+	.  reduce 45
+
+
+state 77
+	havocise : HAVOC LBRACE . ident_list RBRACE  (119)
+	havocise : HAVOC LBRACE . RBRACE  (120)
+
+	IDENT  shift 49
+	RBRACE  shift 143
+	.  error
+
+	ident_list  goto 144
+
+
+state 78
+	qformula : EXISTS ident_list . COLON INTDECL DOT pressburg_atomic_bool  (56)
+	qformula : EXISTS ident_list . COLON INTDECL DOT LBRACE pressburg_tree_guards RBRACE  (57)
+	qformula : EXISTS ident_list . COLON INTDECL DOT LBRACE qformula RBRACE  (58)
+
+	COLON  shift 145
+	.  error
+
+
+state 79
+	qformula : FORALL ident_list . COLON INTDECL DOT pressburg_atomic_bool  (59)
+	qformula : FORALL ident_list . COLON INTDECL DOT LBRACE pressburg_tree_guards RBRACE  (60)
+	qformula : FORALL ident_list . COLON INTDECL DOT LBRACE qformula RBRACE  (61)
+
+	COLON  shift 146
+	.  error
+
+
+state 80
+	arithm_expr : arithm_expr TIMES . arithm_expr  (118)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 64
+	.  error
+
+	arithm_expr  goto 147
+	primed_express  goto 42
+
+
+state 81
+	arithm_expr : arithm_expr PLUS . arithm_expr  (114)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 64
+	.  error
+
+	arithm_expr  goto 148
+	primed_express  goto 42
+
+
+state 82
+	arithm_expr : arithm_expr MINUS . arithm_expr  (115)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 64
+	.  error
+
+	arithm_expr  goto 149
+	primed_express  goto 42
+
+
+state 83
+	arithm_expr : arithm_expr DIV . arithm_expr  (116)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 64
+	.  error
+
+	arithm_expr  goto 150
+	primed_express  goto 42
+
+
+state 84
+	arithm_expr : arithm_expr MOD . arithm_expr  (117)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 64
+	.  error
+
+	arithm_expr  goto 151
+	primed_express  goto 42
+
+
+state 85
+	pressburg_atomic_bool : arithm_expr LT . arithm_expr  (101)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 64
+	.  error
+
+	arithm_expr  goto 152
+	primed_express  goto 42
+
+
+state 86
+	pressburg_atomic_bool : arithm_expr GT . arithm_expr  (100)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 64
+	.  error
+
+	arithm_expr  goto 153
+	primed_express  goto 42
+
+
+state 87
+	pressburg_atomic_bool : arithm_expr EQ . arithm_expr  (104)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 64
+	.  error
+
+	arithm_expr  goto 154
+	primed_express  goto 42
+
+
+state 88
+	pressburg_atomic_bool : arithm_expr NEQ . arithm_expr  (105)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 64
+	.  error
+
+	arithm_expr  goto 155
+	primed_express  goto 42
+
+
+state 89
+	pressburg_atomic_bool : arithm_expr LEQ . arithm_expr  (103)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 64
+	.  error
+
+	arithm_expr  goto 156
+	primed_express  goto 42
+
+
+state 90
+	pressburg_atomic_bool : arithm_expr GEQ . arithm_expr  (102)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 64
+	.  error
+
+	arithm_expr  goto 157
+	primed_express  goto 42
+
+
+state 91
+	nts_trans_split_prec : nts_trans_elem BAND . nts_trans_split_prec  (63)
+
+	INT  shift 23
+	IDENT  shift 24
+	PRIMEDVAR  shift 25
+	MINUS  shift 26
+	LBRACE  shift 27
+	BTRUE  shift 28
+	BFALSE  shift 29
+	BOR  shift 30
+	BNOT  shift 31
+	HAVOC  shift 32
+	EXISTS  shift 33
+	FORALL  shift 34
+	.  error
+
+	arithm_expr  goto 35
+	nts_trans_split_prec  goto 158
+	nts_trans_elem  goto 37
+	pressburg_atomic_bool  goto 38
+	gen_affect  goto 39
+	havocise  goto 40
+	qformula  goto 41
+	primed_express  goto 42
+
+
+state 92
+	nts_trans_split_prec : nts_trans_elem BOR . nts_trans_split_prec  (62)
+
+	INT  shift 23
+	IDENT  shift 24
+	PRIMEDVAR  shift 25
+	MINUS  shift 26
+	LBRACE  shift 27
+	BTRUE  shift 28
+	BFALSE  shift 29
+	BOR  shift 30
+	BNOT  shift 31
+	HAVOC  shift 32
+	EXISTS  shift 33
+	FORALL  shift 34
+	.  error
+
+	arithm_expr  goto 35
+	nts_trans_split_prec  goto 159
+	nts_trans_elem  goto 37
+	pressburg_atomic_bool  goto 38
+	gen_affect  goto 39
+	havocise  goto 40
+	qformula  goto 41
+	primed_express  goto 42
+
+
+state 93
+	comma_sep_header_list : gvars_decl SEMICOLON comma_sep_header_list .  (4)
+
+	.  reduce 4
+
+
+state 94
+	comma_sep_header_list : gvars_decl SEMICOLON decl_sequence .  (3)
+
+	.  reduce 3
+
+
+state 95
+	comma_sep_header_list : gvars_initial_conditions SEMICOLON comma_sep_header_list .  (5)
+
+	.  reduce 5
+
+
+state 96
+	comma_sep_header_list : gvars_initial_conditions SEMICOLON decl_sequence .  (6)
+
+	.  reduce 6
+
+
+state 97
+	comma_sep_header_list : thread_declaration SEMICOLON comma_sep_header_list .  (8)
+
+	.  reduce 8
+
+
+state 98
+	comma_sep_header_list : thread_declaration SEMICOLON decl_sequence .  (7)
+
+	.  reduce 7
+
+
+state 99
+	gvars_decl : ident_list COLON INTDECL .  (12)
+
+	.  reduce 12
+
+
+state 100
+	gvars_decl : ident_list COLON NATDECL . SEMICOLON  (14)
+
+	SEMICOLON  shift 160
+	.  error
+
+
+state 101
+	gvars_decl : ident_list COLON REALDECL . SEMICOLON  (13)
+
+	SEMICOLON  shift 161
+	.  error
+
+
+state 102
+	gvars_decl : ident_list COLON BOOLDECL . SEMICOLON  (15)
+
+	SEMICOLON  shift 162
+	.  error
+
+
+state 103
+	vars_loc : INPUTVARLIST typed_id_list_list . SEMICOLON  (25)
+
+	SEMICOLON  shift 163
+	.  error
+
+
+state 104
+	vars_loc : OUTPUTVARLIST typed_id_list_list . SEMICOLON  (26)
+
+	SEMICOLON  shift 164
+	.  error
+
+
+state 105
+	typed_id_list : ident_list COLON . INTDECL  (30)
+	typed_id_list : ident_list COLON . NATDECL  (31)
+	typed_id_list : ident_list COLON . REALDECL  (32)
+	typed_id_list : ident_list COLON . BOOLDECL  (33)
+
+	INTDECL  shift 165
+	NATDECL  shift 166
+	REALDECL  shift 167
+	BOOLDECL  shift 168
+	.  error
+
+
+state 106
+	cautomaton_state : INITSTATE . ident_list SEMICOLON  (42)
+
+	IDENT  shift 49
+	.  error
+
+	ident_list  goto 169
+
+
+state 107
+	cautomaton_state : FINALSTATE . ident_list SEMICOLON  (43)
+
+	IDENT  shift 49
+	.  error
+
+	ident_list  goto 170
+
+
+state 108
+	cautomaton_state : ERRORSTATE . ident_list SEMICOLON  (44)
+
+	IDENT  shift 49
+	.  error
+
+	ident_list  goto 171
+
+
+state 109
+	decl_automata : IDENT LBRACK vars_automaton states_list . transitions_list RBRACK  (22)
+
+	IDENT  shift 172
+	.  error
+
+	transitions_list  goto 173
+	transitions  goto 174
+
+
+state 110
+	states_list : cautomaton_state . states_list  (40)
+	states_list : cautomaton_state .  (41)
+
+	INITSTATE  shift 106
+	FINALSTATE  shift 107
+	ERRORSTATE  shift 108
+	IDENT  reduce 41
+
+	states_list  goto 175
+	cautomaton_state  goto 110
+
+
+state 111
+	vars_automaton : vars_loc vars_automaton .  (23)
+
+	.  reduce 23
+
+
+state 112
+	vars_loc : typed_id_list_list SEMICOLON .  (27)
+
+	.  reduce 27
+
+
+state 113
+	typed_id_list_list : typed_id_list COMMA . typed_id_list_list  (28)
+
+	IDENT  shift 49
+	.  error
+
+	ident_list  goto 52
+	typed_id_list_list  goto 176
+	typed_id_list  goto 56
+
+
+state 114
+	thread_decl : IDENT OBRACK INT . CBRACK  (19)
+
+	CBRACK  shift 177
+	.  error
+
+
+state 115
+	thread_decl_list : thread_decl COMMA thread_decl_list .  (17)
+
+	.  reduce 17
+
+
+state 116
+	gen_affect : IDENT LBRACE RBRACE .  (76)
+
+	.  reduce 76
+
+
+state 117
+	arithm_expr_list : arithm_expr .  (107)
+	arithm_expr_list : arithm_expr . COMMA arithm_expr_list  (108)
+	arithm_expr : arithm_expr . PLUS arithm_expr  (114)
+	arithm_expr : arithm_expr . MINUS arithm_expr  (115)
+	arithm_expr : arithm_expr . DIV arithm_expr  (116)
+	arithm_expr : arithm_expr . MOD arithm_expr  (117)
+	arithm_expr : arithm_expr . TIMES arithm_expr  (118)
+
+	TIMES  shift 80
+	PLUS  shift 81
+	MINUS  shift 82
+	DIV  shift 83
+	MOD  shift 84
+	COMMA  shift 178
+	RBRACE  reduce 107
+
+
+state 118
+	gen_affect : IDENT LBRACE arithm_expr_list . RBRACE  (75)
+
+	RBRACE  shift 179
+	.  error
+
+
+state 119
+	gen_affect : PRIMEDVAR EQ IDENT . LBRACE arithm_expr_list RBRACE  (68)
+	gen_affect : PRIMEDVAR EQ IDENT . LBRACE RBRACE  (69)
+	arithm_expr : IDENT .  (110)
+
+	LBRACE  shift 180
+	TIMES  reduce 110
+	PLUS  reduce 110
+	MINUS  reduce 110
+	DIV  reduce 110
+	MOD  reduce 110
+	RBRACK  reduce 110
+	SEMICOLON  reduce 110
+	BAND  reduce 110
+	BOR  reduce 110
+
+
+state 120
+	gen_affect : PRIMEDVAR EQ arithm_expr .  (70)
+	arithm_expr : arithm_expr . PLUS arithm_expr  (114)
+	arithm_expr : arithm_expr . MINUS arithm_expr  (115)
+	arithm_expr : arithm_expr . DIV arithm_expr  (116)
+	arithm_expr : arithm_expr . MOD arithm_expr  (117)
+	arithm_expr : arithm_expr . TIMES arithm_expr  (118)
+
+	TIMES  shift 80
+	PLUS  shift 81
+	MINUS  shift 82
+	DIV  shift 83
+	MOD  shift 84
+	RBRACK  reduce 70
+	SEMICOLON  reduce 70
+	BAND  reduce 70
+	BOR  reduce 70
+
+
+state 121
+	arithm_expr : LBRACE arithm_expr . RBRACE  (112)
+	arithm_expr : arithm_expr . PLUS arithm_expr  (114)
+	arithm_expr : arithm_expr . MINUS arithm_expr  (115)
+	arithm_expr : arithm_expr . DIV arithm_expr  (116)
+	arithm_expr : arithm_expr . MOD arithm_expr  (117)
+	arithm_expr : arithm_expr . TIMES arithm_expr  (118)
+
+	TIMES  shift 80
+	PLUS  shift 81
+	MINUS  shift 82
+	DIV  shift 83
+	MOD  shift 84
+	RBRACE  shift 129
+	.  error
+
+
+state 122
+	gen_affect : LBRACE PRIMEDVAR RBRACE . EQ IDENT LBRACE arithm_expr_list RBRACE  (71)
+	gen_affect : LBRACE PRIMEDVAR RBRACE . EQ IDENT LBRACE RBRACE  (72)
+
+	EQ  shift 181
+	.  error
+
+
+state 123
+	pressburg_tree_guards : LBRACE pressburg_atomic_bool . RBRACE  (77)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_atomic_bool  (80)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_tree_guards  (83)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND qformula  (87)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_atomic_bool  (88)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_tree_guards  (90)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR qformula  (95)
+
+	RBRACE  shift 182
+	BAND  shift 131
+	BOR  shift 132
+	.  error
+
+
+state 124
+	pressburg_tree_guards : LBRACE pressburg_tree_guards . RBRACE  (78)
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (81)
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (82)
+	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (86)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (89)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (91)
+	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (94)
+
+	RBRACE  shift 183
+	BAND  shift 134
+	BOR  shift 135
+	.  error
+
+
+state 125
+	pressburg_tree_guards : LBRACE qformula . RBRACE  (79)
+	pressburg_tree_guards : qformula . BAND pressburg_tree_guards  (84)
+	pressburg_tree_guards : qformula . BAND pressburg_atomic_bool  (85)
+	pressburg_tree_guards : qformula . BOR pressburg_tree_guards  (92)
+	pressburg_tree_guards : qformula . BOR pressburg_atomic_bool  (93)
+
+	RBRACE  shift 184
+	BAND  shift 137
+	BOR  shift 138
+	.  error
+
+
+state 126
+	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_atomic_bool  (80)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_tree_guards  (83)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND qformula  (87)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_atomic_bool  (88)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_tree_guards  (90)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR qformula  (95)
+	pressburg_tree_guards : BNOT pressburg_atomic_bool .  (97)
+
+	.  reduce 97
+
+
+state 127
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (81)
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (82)
+	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (86)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (89)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (91)
+	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (94)
+	pressburg_tree_guards : BNOT pressburg_tree_guards .  (96)
+
+	.  reduce 96
+
+
+state 128
+	pressburg_tree_guards : qformula . BAND pressburg_tree_guards  (84)
+	pressburg_tree_guards : qformula . BAND pressburg_atomic_bool  (85)
+	pressburg_tree_guards : qformula . BOR pressburg_tree_guards  (92)
+	pressburg_tree_guards : qformula . BOR pressburg_atomic_bool  (93)
+
+	BAND  shift 137
+	BOR  shift 138
+	.  error
+
+
+state 129
+	arithm_expr : LBRACE arithm_expr RBRACE .  (112)
+
+	.  reduce 112
+
+
+state 130
+	nts_trans_elem : LBRACE pressburg_atomic_bool RBRACE .  (49)
+
+	.  reduce 49
+
+
+state 131
+	pressburg_tree_guards : pressburg_atomic_bool BAND . pressburg_atomic_bool  (80)
+	pressburg_tree_guards : pressburg_atomic_bool BAND . pressburg_tree_guards  (83)
+	pressburg_tree_guards : pressburg_atomic_bool BAND . qformula  (87)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 67
+	BTRUE  shift 28
+	BFALSE  shift 29
+	BNOT  shift 68
+	EXISTS  shift 33
+	FORALL  shift 34
+	.  error
+
+	arithm_expr  goto 35
+	pressburg_atomic_bool  goto 185
+	pressburg_tree_guards  goto 186
+	qformula  goto 187
+	primed_express  goto 42
+
+
+state 132
+	pressburg_tree_guards : pressburg_atomic_bool BOR . pressburg_atomic_bool  (88)
+	pressburg_tree_guards : pressburg_atomic_bool BOR . pressburg_tree_guards  (90)
+	pressburg_tree_guards : pressburg_atomic_bool BOR . qformula  (95)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 67
+	BTRUE  shift 28
+	BFALSE  shift 29
+	BNOT  shift 68
+	EXISTS  shift 33
+	FORALL  shift 34
+	.  error
+
+	arithm_expr  goto 35
+	pressburg_atomic_bool  goto 188
+	pressburg_tree_guards  goto 189
+	qformula  goto 190
+	primed_express  goto 42
+
+
+state 133
+	nts_trans_elem : LBRACE pressburg_tree_guards RBRACE .  (50)
+
+	.  reduce 50
+
+
+state 134
+	pressburg_tree_guards : pressburg_tree_guards BAND . pressburg_tree_guards  (81)
+	pressburg_tree_guards : pressburg_tree_guards BAND . pressburg_atomic_bool  (82)
+	pressburg_tree_guards : pressburg_tree_guards BAND . qformula  (86)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 67
+	BTRUE  shift 28
+	BFALSE  shift 29
+	BNOT  shift 68
+	EXISTS  shift 33
+	FORALL  shift 34
+	.  error
+
+	arithm_expr  goto 35
+	pressburg_atomic_bool  goto 191
+	pressburg_tree_guards  goto 192
+	qformula  goto 193
+	primed_express  goto 42
+
+
+state 135
+	pressburg_tree_guards : pressburg_tree_guards BOR . pressburg_atomic_bool  (89)
+	pressburg_tree_guards : pressburg_tree_guards BOR . pressburg_tree_guards  (91)
+	pressburg_tree_guards : pressburg_tree_guards BOR . qformula  (94)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 67
+	BTRUE  shift 28
+	BFALSE  shift 29
+	BNOT  shift 68
+	EXISTS  shift 33
+	FORALL  shift 34
+	.  error
+
+	arithm_expr  goto 35
+	pressburg_atomic_bool  goto 194
+	pressburg_tree_guards  goto 195
+	qformula  goto 196
+	primed_express  goto 42
+
+
+state 136
+	nts_trans_elem : LBRACE qformula RBRACE .  (55)
+
+	.  reduce 55
+
+
+state 137
+	pressburg_tree_guards : qformula BAND . pressburg_tree_guards  (84)
+	pressburg_tree_guards : qformula BAND . pressburg_atomic_bool  (85)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 67
+	BTRUE  shift 28
+	BFALSE  shift 29
+	BNOT  shift 68
+	EXISTS  shift 33
+	FORALL  shift 34
+	.  error
+
+	arithm_expr  goto 35
+	pressburg_atomic_bool  goto 197
+	pressburg_tree_guards  goto 198
+	qformula  goto 128
+	primed_express  goto 42
+
+
+state 138
+	pressburg_tree_guards : qformula BOR . pressburg_tree_guards  (92)
+	pressburg_tree_guards : qformula BOR . pressburg_atomic_bool  (93)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 67
+	BTRUE  shift 28
+	BFALSE  shift 29
+	BNOT  shift 68
+	EXISTS  shift 33
+	FORALL  shift 34
+	.  error
+
+	arithm_expr  goto 35
+	pressburg_atomic_bool  goto 199
+	pressburg_tree_guards  goto 200
+	qformula  goto 128
+	primed_express  goto 42
+
+
+state 139
+	gen_affect : LBRACE primed_var_list RBRACE . EQ IDENT LBRACE arithm_expr_list RBRACE  (73)
+	gen_affect : LBRACE primed_var_list RBRACE . EQ IDENT LBRACE RBRACE  (74)
+
+	EQ  shift 201
+	.  error
+
+
+state 140
+	primed_var_list : primed_express COMMA . primed_var_list  (66)
+	primed_var_list : primed_express COMMA . primed_express  (67)
+
+	PRIMEDVAR  shift 63
+	.  error
+
+	primed_var_list  goto 202
+	primed_express  goto 203
+
+
+state 141
+	nts_trans_elem : BNOT LBRACE pressburg_atomic_bool . RBRACE  (47)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_atomic_bool  (80)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_tree_guards  (83)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND qformula  (87)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_atomic_bool  (88)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_tree_guards  (90)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR qformula  (95)
+
+	RBRACE  shift 204
+	BAND  shift 131
+	BOR  shift 132
+	.  error
+
+
+state 142
+	nts_trans_elem : BNOT LBRACE pressburg_tree_guards . RBRACE  (48)
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (81)
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (82)
+	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (86)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (89)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (91)
+	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (94)
+
+	RBRACE  shift 205
+	BAND  shift 134
+	BOR  shift 135
+	.  error
+
+
+state 143
+	havocise : HAVOC LBRACE RBRACE .  (120)
+
+	.  reduce 120
+
+
+state 144
+	havocise : HAVOC LBRACE ident_list . RBRACE  (119)
+
+	RBRACE  shift 206
+	.  error
+
+
+state 145
+	qformula : EXISTS ident_list COLON . INTDECL DOT pressburg_atomic_bool  (56)
+	qformula : EXISTS ident_list COLON . INTDECL DOT LBRACE pressburg_tree_guards RBRACE  (57)
+	qformula : EXISTS ident_list COLON . INTDECL DOT LBRACE qformula RBRACE  (58)
+
+	INTDECL  shift 207
+	.  error
+
+
+state 146
+	qformula : FORALL ident_list COLON . INTDECL DOT pressburg_atomic_bool  (59)
+	qformula : FORALL ident_list COLON . INTDECL DOT LBRACE pressburg_tree_guards RBRACE  (60)
+	qformula : FORALL ident_list COLON . INTDECL DOT LBRACE qformula RBRACE  (61)
+
+	INTDECL  shift 208
+	.  error
+
+
+state 147
+	arithm_expr : arithm_expr . PLUS arithm_expr  (114)
+	arithm_expr : arithm_expr . MINUS arithm_expr  (115)
+	arithm_expr : arithm_expr . DIV arithm_expr  (116)
+	arithm_expr : arithm_expr . MOD arithm_expr  (117)
+	arithm_expr : arithm_expr . TIMES arithm_expr  (118)
+	arithm_expr : arithm_expr TIMES arithm_expr .  (118)
+
+	.  reduce 118
+
+
+state 148
+	arithm_expr : arithm_expr . PLUS arithm_expr  (114)
+	arithm_expr : arithm_expr PLUS arithm_expr .  (114)
+	arithm_expr : arithm_expr . MINUS arithm_expr  (115)
+	arithm_expr : arithm_expr . DIV arithm_expr  (116)
+	arithm_expr : arithm_expr . MOD arithm_expr  (117)
+	arithm_expr : arithm_expr . TIMES arithm_expr  (118)
+
+	TIMES  shift 80
+	DIV  shift 83
+	MOD  shift 84
+	PLUS  reduce 114
+	MINUS  reduce 114
+	LT  reduce 114
+	GT  reduce 114
+	EQ  reduce 114
+	NEQ  reduce 114
+	LEQ  reduce 114
+	GEQ  reduce 114
+	RBRACE  reduce 114
+	RBRACK  reduce 114
+	SEMICOLON  reduce 114
+	COMMA  reduce 114
+	BAND  reduce 114
+	BOR  reduce 114
+
+
+state 149
+	arithm_expr : arithm_expr . PLUS arithm_expr  (114)
+	arithm_expr : arithm_expr . MINUS arithm_expr  (115)
+	arithm_expr : arithm_expr MINUS arithm_expr .  (115)
+	arithm_expr : arithm_expr . DIV arithm_expr  (116)
+	arithm_expr : arithm_expr . MOD arithm_expr  (117)
+	arithm_expr : arithm_expr . TIMES arithm_expr  (118)
+
+	TIMES  shift 80
+	DIV  shift 83
+	MOD  shift 84
+	PLUS  reduce 115
+	MINUS  reduce 115
+	LT  reduce 115
+	GT  reduce 115
+	EQ  reduce 115
+	NEQ  reduce 115
+	LEQ  reduce 115
+	GEQ  reduce 115
+	RBRACE  reduce 115
+	RBRACK  reduce 115
+	SEMICOLON  reduce 115
+	COMMA  reduce 115
+	BAND  reduce 115
+	BOR  reduce 115
+
+
+state 150
+	arithm_expr : arithm_expr . PLUS arithm_expr  (114)
+	arithm_expr : arithm_expr . MINUS arithm_expr  (115)
+	arithm_expr : arithm_expr . DIV arithm_expr  (116)
+	arithm_expr : arithm_expr DIV arithm_expr .  (116)
+	arithm_expr : arithm_expr . MOD arithm_expr  (117)
+	arithm_expr : arithm_expr . TIMES arithm_expr  (118)
+
+	.  reduce 116
+
+
+state 151
+	arithm_expr : arithm_expr . PLUS arithm_expr  (114)
+	arithm_expr : arithm_expr . MINUS arithm_expr  (115)
+	arithm_expr : arithm_expr . DIV arithm_expr  (116)
+	arithm_expr : arithm_expr . MOD arithm_expr  (117)
+	arithm_expr : arithm_expr MOD arithm_expr .  (117)
+	arithm_expr : arithm_expr . TIMES arithm_expr  (118)
+
+	.  reduce 117
+
+
+state 152
+	pressburg_atomic_bool : arithm_expr LT arithm_expr .  (101)
+	arithm_expr : arithm_expr . PLUS arithm_expr  (114)
+	arithm_expr : arithm_expr . MINUS arithm_expr  (115)
+	arithm_expr : arithm_expr . DIV arithm_expr  (116)
+	arithm_expr : arithm_expr . MOD arithm_expr  (117)
+	arithm_expr : arithm_expr . TIMES arithm_expr  (118)
+
+	TIMES  shift 80
+	PLUS  shift 81
+	MINUS  shift 82
+	DIV  shift 83
+	MOD  shift 84
+	RBRACE  reduce 101
+	RBRACK  reduce 101
+	SEMICOLON  reduce 101
+	BAND  reduce 101
+	BOR  reduce 101
+
+
+state 153
+	pressburg_atomic_bool : arithm_expr GT arithm_expr .  (100)
+	arithm_expr : arithm_expr . PLUS arithm_expr  (114)
+	arithm_expr : arithm_expr . MINUS arithm_expr  (115)
+	arithm_expr : arithm_expr . DIV arithm_expr  (116)
+	arithm_expr : arithm_expr . MOD arithm_expr  (117)
+	arithm_expr : arithm_expr . TIMES arithm_expr  (118)
+
+	TIMES  shift 80
+	PLUS  shift 81
+	MINUS  shift 82
+	DIV  shift 83
+	MOD  shift 84
+	RBRACE  reduce 100
+	RBRACK  reduce 100
+	SEMICOLON  reduce 100
+	BAND  reduce 100
+	BOR  reduce 100
+
+
+state 154
+	pressburg_atomic_bool : arithm_expr EQ arithm_expr .  (104)
+	arithm_expr : arithm_expr . PLUS arithm_expr  (114)
+	arithm_expr : arithm_expr . MINUS arithm_expr  (115)
+	arithm_expr : arithm_expr . DIV arithm_expr  (116)
+	arithm_expr : arithm_expr . MOD arithm_expr  (117)
+	arithm_expr : arithm_expr . TIMES arithm_expr  (118)
+
+	TIMES  shift 80
+	PLUS  shift 81
+	MINUS  shift 82
+	DIV  shift 83
+	MOD  shift 84
+	RBRACE  reduce 104
+	RBRACK  reduce 104
+	SEMICOLON  reduce 104
+	BAND  reduce 104
+	BOR  reduce 104
+
+
+state 155
+	pressburg_atomic_bool : arithm_expr NEQ arithm_expr .  (105)
+	arithm_expr : arithm_expr . PLUS arithm_expr  (114)
+	arithm_expr : arithm_expr . MINUS arithm_expr  (115)
+	arithm_expr : arithm_expr . DIV arithm_expr  (116)
+	arithm_expr : arithm_expr . MOD arithm_expr  (117)
+	arithm_expr : arithm_expr . TIMES arithm_expr  (118)
+
+	TIMES  shift 80
+	PLUS  shift 81
+	MINUS  shift 82
+	DIV  shift 83
+	MOD  shift 84
+	RBRACE  reduce 105
+	RBRACK  reduce 105
+	SEMICOLON  reduce 105
+	BAND  reduce 105
+	BOR  reduce 105
+
+
+state 156
+	pressburg_atomic_bool : arithm_expr LEQ arithm_expr .  (103)
+	arithm_expr : arithm_expr . PLUS arithm_expr  (114)
+	arithm_expr : arithm_expr . MINUS arithm_expr  (115)
+	arithm_expr : arithm_expr . DIV arithm_expr  (116)
+	arithm_expr : arithm_expr . MOD arithm_expr  (117)
+	arithm_expr : arithm_expr . TIMES arithm_expr  (118)
+
+	TIMES  shift 80
+	PLUS  shift 81
+	MINUS  shift 82
+	DIV  shift 83
+	MOD  shift 84
+	RBRACE  reduce 103
+	RBRACK  reduce 103
+	SEMICOLON  reduce 103
+	BAND  reduce 103
+	BOR  reduce 103
+
+
+state 157
+	pressburg_atomic_bool : arithm_expr GEQ arithm_expr .  (102)
+	arithm_expr : arithm_expr . PLUS arithm_expr  (114)
+	arithm_expr : arithm_expr . MINUS arithm_expr  (115)
+	arithm_expr : arithm_expr . DIV arithm_expr  (116)
+	arithm_expr : arithm_expr . MOD arithm_expr  (117)
+	arithm_expr : arithm_expr . TIMES arithm_expr  (118)
+
+	TIMES  shift 80
+	PLUS  shift 81
+	MINUS  shift 82
+	DIV  shift 83
+	MOD  shift 84
+	RBRACE  reduce 102
+	RBRACK  reduce 102
+	SEMICOLON  reduce 102
+	BAND  reduce 102
+	BOR  reduce 102
+
+
+state 158
+	nts_trans_split_prec : nts_trans_elem BAND nts_trans_split_prec .  (63)
+
+	.  reduce 63
+
+
+state 159
+	nts_trans_split_prec : nts_trans_elem BOR nts_trans_split_prec .  (62)
+
+	.  reduce 62
+
+
+state 160
+	gvars_decl : ident_list COLON NATDECL SEMICOLON .  (14)
+
+	.  reduce 14
+
+
+state 161
+	gvars_decl : ident_list COLON REALDECL SEMICOLON .  (13)
+
+	.  reduce 13
+
+
+state 162
+	gvars_decl : ident_list COLON BOOLDECL SEMICOLON .  (15)
+
+	.  reduce 15
+
+
+state 163
+	vars_loc : INPUTVARLIST typed_id_list_list SEMICOLON .  (25)
+
+	.  reduce 25
+
+
+state 164
+	vars_loc : OUTPUTVARLIST typed_id_list_list SEMICOLON .  (26)
+
+	.  reduce 26
+
+
+state 165
+	typed_id_list : ident_list COLON INTDECL .  (30)
+
+	.  reduce 30
+
+
+state 166
+	typed_id_list : ident_list COLON NATDECL .  (31)
+
+	.  reduce 31
+
+
+state 167
+	typed_id_list : ident_list COLON REALDECL .  (32)
 
 	.  reduce 32
 
 
+state 168
+	typed_id_list : ident_list COLON BOOLDECL .  (33)
+
+	.  reduce 33
+
+
+state 169
+	cautomaton_state : INITSTATE ident_list . SEMICOLON  (42)
+
+	SEMICOLON  shift 209
+	.  error
+
+
+state 170
+	cautomaton_state : FINALSTATE ident_list . SEMICOLON  (43)
+
+	SEMICOLON  shift 210
+	.  error
+
+
+state 171
+	cautomaton_state : ERRORSTATE ident_list . SEMICOLON  (44)
+
+	SEMICOLON  shift 211
+	.  error
+
+
+state 172
+	transitions : IDENT . ARROW IDENT LBRACK RBRACK  (36)
+	transitions : IDENT . ARROW IDENT LBRACK nts_trans_split RBRACK  (37)
+	transitions : IDENT . COLON IDENT ARROW IDENT LBRACK nts_trans_split RBRACK  (38)
+	transitions : IDENT . COLON IDENT ARROW IDENT LBRACK RBRACK  (39)
+
+	COLON  shift 212
+	ARROW  shift 213
+	.  error
+
+
+state 173
+	decl_automata : IDENT LBRACK vars_automaton states_list transitions_list . RBRACK  (22)
+
+	RBRACK  shift 214
+	.  error
+
+
+state 174
+	transitions_list : transitions . transitions_list  (34)
+	transitions_list : transitions .  (35)
+
+	IDENT  shift 172
+	RBRACK  reduce 35
+
+	transitions_list  goto 215
+	transitions  goto 174
+
+
+state 175
+	states_list : cautomaton_state states_list .  (40)
+
+	.  reduce 40
+
+
+state 176
+	typed_id_list_list : typed_id_list COMMA typed_id_list_list .  (28)
+
+	.  reduce 28
+
+
+state 177
+	thread_decl : IDENT OBRACK INT CBRACK .  (19)
+
+	.  reduce 19
+
+
+state 178
+	arithm_expr_list : arithm_expr COMMA . arithm_expr_list  (108)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 64
+	.  error
+
+	arithm_expr  goto 117
+	primed_express  goto 42
+	arithm_expr_list  goto 216
+
+
+state 179
+	gen_affect : IDENT LBRACE arithm_expr_list RBRACE .  (75)
+
+	.  reduce 75
+
+
+state 180
+	gen_affect : PRIMEDVAR EQ IDENT LBRACE . arithm_expr_list RBRACE  (68)
+	gen_affect : PRIMEDVAR EQ IDENT LBRACE . RBRACE  (69)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 64
+	RBRACE  shift 217
+	.  error
+
+	arithm_expr  goto 117
+	primed_express  goto 42
+	arithm_expr_list  goto 218
+
+
+state 181
+	gen_affect : LBRACE PRIMEDVAR RBRACE EQ . IDENT LBRACE arithm_expr_list RBRACE  (71)
+	gen_affect : LBRACE PRIMEDVAR RBRACE EQ . IDENT LBRACE RBRACE  (72)
+
+	IDENT  shift 219
+	.  error
+
+
 state 182
-	arithm_expr_list : arithm_expr COMMA . arithm_expr_list  (102)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 105
-	.  error
-
-	arithm_expr  goto 138
-	primed_express  goto 99
-	arithm_expr_list  goto 213
-
-
-state 183
-	gen_affect : IDENT LBRACE arithm_expr_list RBRACE .  (69)
-
-	.  reduce 69
-
-
-state 184
-	gen_affect : PRIMEDVAR EQ IDENT LBRACE . arithm_expr_list RBRACE  (62)
-	gen_affect : PRIMEDVAR EQ IDENT LBRACE . RBRACE  (63)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 105
-	RBRACE  shift 214
-	.  error
-
-	arithm_expr  goto 138
-	primed_express  goto 99
-	arithm_expr_list  goto 215
-
-
-state 185
-	gen_affect : LBRACE PRIMEDVAR RBRACE EQ . IDENT LBRACE arithm_expr_list RBRACE  (65)
-	gen_affect : LBRACE PRIMEDVAR RBRACE EQ . IDENT LBRACE RBRACE  (66)
-
-	IDENT  shift 216
-	.  error
-
-
-state 186
-	pressburg_tree_guards : LBRACE pressburg_atomic_bool RBRACE .  (71)
-
-	.  reduce 71
-
-
-state 187
-	pressburg_tree_guards : LBRACE pressburg_tree_guards RBRACE .  (72)
-
-	.  reduce 72
-
-
-state 188
-	pressburg_tree_guards : LBRACE qformula RBRACE .  (73)
-
-	.  reduce 73
-
-
-state 189
-	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_atomic_bool  (74)
-	pressburg_tree_guards : pressburg_atomic_bool BAND pressburg_atomic_bool .  (74)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_tree_guards  (77)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND qformula  (81)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_atomic_bool  (82)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_tree_guards  (84)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR qformula  (89)
-
-	.  reduce 74
-
-
-state 190
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (75)
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (76)
-	pressburg_tree_guards : pressburg_atomic_bool BAND pressburg_tree_guards .  (77)
-	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (80)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (83)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (85)
-	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (88)
+	pressburg_tree_guards : LBRACE pressburg_atomic_bool RBRACE .  (77)
 
 	.  reduce 77
 
 
+state 183
+	pressburg_tree_guards : LBRACE pressburg_tree_guards RBRACE .  (78)
+
+	.  reduce 78
+
+
+state 184
+	pressburg_tree_guards : LBRACE qformula RBRACE .  (79)
+
+	.  reduce 79
+
+
+state 185
+	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_atomic_bool  (80)
+	pressburg_tree_guards : pressburg_atomic_bool BAND pressburg_atomic_bool .  (80)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_tree_guards  (83)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND qformula  (87)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_atomic_bool  (88)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_tree_guards  (90)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR qformula  (95)
+
+	.  reduce 80
+
+
+state 186
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (81)
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (82)
+	pressburg_tree_guards : pressburg_atomic_bool BAND pressburg_tree_guards .  (83)
+	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (86)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (89)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (91)
+	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (94)
+
+	.  reduce 83
+
+
+state 187
+	pressburg_tree_guards : qformula . BAND pressburg_tree_guards  (84)
+	pressburg_tree_guards : qformula . BAND pressburg_atomic_bool  (85)
+	pressburg_tree_guards : pressburg_atomic_bool BAND qformula .  (87)
+	pressburg_tree_guards : qformula . BOR pressburg_tree_guards  (92)
+	pressburg_tree_guards : qformula . BOR pressburg_atomic_bool  (93)
+
+	.  reduce 87
+
+
+state 188
+	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_atomic_bool  (80)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_tree_guards  (83)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND qformula  (87)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_atomic_bool  (88)
+	pressburg_tree_guards : pressburg_atomic_bool BOR pressburg_atomic_bool .  (88)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_tree_guards  (90)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR qformula  (95)
+
+	BAND  shift 131
+	RBRACE  reduce 88
+	BOR  reduce 88
+
+
+state 189
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (81)
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (82)
+	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (86)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (89)
+	pressburg_tree_guards : pressburg_atomic_bool BOR pressburg_tree_guards .  (90)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (91)
+	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (94)
+
+	BAND  shift 134
+	RBRACE  reduce 90
+	BOR  reduce 90
+
+
+state 190
+	pressburg_tree_guards : qformula . BAND pressburg_tree_guards  (84)
+	pressburg_tree_guards : qformula . BAND pressburg_atomic_bool  (85)
+	pressburg_tree_guards : qformula . BOR pressburg_tree_guards  (92)
+	pressburg_tree_guards : qformula . BOR pressburg_atomic_bool  (93)
+	pressburg_tree_guards : pressburg_atomic_bool BOR qformula .  (95)
+
+	BAND  shift 137
+	RBRACE  reduce 95
+	BOR  reduce 95
+
+
 state 191
-	pressburg_tree_guards : qformula . BAND pressburg_tree_guards  (78)
-	pressburg_tree_guards : qformula . BAND pressburg_atomic_bool  (79)
-	pressburg_tree_guards : pressburg_atomic_bool BAND qformula .  (81)
-	pressburg_tree_guards : qformula . BOR pressburg_tree_guards  (86)
-	pressburg_tree_guards : qformula . BOR pressburg_atomic_bool  (87)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_atomic_bool  (80)
+	pressburg_tree_guards : pressburg_tree_guards BAND pressburg_atomic_bool .  (82)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_tree_guards  (83)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND qformula  (87)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_atomic_bool  (88)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_tree_guards  (90)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR qformula  (95)
+
+	.  reduce 82
+
+
+state 192
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (81)
+	pressburg_tree_guards : pressburg_tree_guards BAND pressburg_tree_guards .  (81)
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (82)
+	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (86)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (89)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (91)
+	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (94)
 
 	.  reduce 81
 
 
-state 192
-	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_atomic_bool  (74)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_tree_guards  (77)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND qformula  (81)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_atomic_bool  (82)
-	pressburg_tree_guards : pressburg_atomic_bool BOR pressburg_atomic_bool .  (82)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_tree_guards  (84)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR qformula  (89)
-
-	BAND  shift 152
-	RBRACE  reduce 82
-	BOR  reduce 82
-
-
 state 193
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (75)
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (76)
-	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (80)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (83)
-	pressburg_tree_guards : pressburg_atomic_bool BOR pressburg_tree_guards .  (84)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (85)
-	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (88)
+	pressburg_tree_guards : qformula . BAND pressburg_tree_guards  (84)
+	pressburg_tree_guards : qformula . BAND pressburg_atomic_bool  (85)
+	pressburg_tree_guards : pressburg_tree_guards BAND qformula .  (86)
+	pressburg_tree_guards : qformula . BOR pressburg_tree_guards  (92)
+	pressburg_tree_guards : qformula . BOR pressburg_atomic_bool  (93)
 
-	BAND  shift 155
-	RBRACE  reduce 84
-	BOR  reduce 84
+	.  reduce 86
 
 
 state 194
-	pressburg_tree_guards : qformula . BAND pressburg_tree_guards  (78)
-	pressburg_tree_guards : qformula . BAND pressburg_atomic_bool  (79)
-	pressburg_tree_guards : qformula . BOR pressburg_tree_guards  (86)
-	pressburg_tree_guards : qformula . BOR pressburg_atomic_bool  (87)
-	pressburg_tree_guards : pressburg_atomic_bool BOR qformula .  (89)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_atomic_bool  (80)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_tree_guards  (83)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND qformula  (87)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_atomic_bool  (88)
+	pressburg_tree_guards : pressburg_tree_guards BOR pressburg_atomic_bool .  (89)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_tree_guards  (90)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR qformula  (95)
 
-	BAND  shift 158
+	BAND  shift 131
 	RBRACE  reduce 89
 	BOR  reduce 89
 
 
 state 195
-	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_atomic_bool  (74)
-	pressburg_tree_guards : pressburg_tree_guards BAND pressburg_atomic_bool .  (76)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_tree_guards  (77)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND qformula  (81)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_atomic_bool  (82)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_tree_guards  (84)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR qformula  (89)
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (81)
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (82)
+	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (86)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (89)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (91)
+	pressburg_tree_guards : pressburg_tree_guards BOR pressburg_tree_guards .  (91)
+	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (94)
 
-	.  reduce 76
+	BAND  shift 134
+	RBRACE  reduce 91
+	BOR  reduce 91
 
 
 state 196
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (75)
-	pressburg_tree_guards : pressburg_tree_guards BAND pressburg_tree_guards .  (75)
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (76)
-	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (80)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (83)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (85)
-	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (88)
+	pressburg_tree_guards : qformula . BAND pressburg_tree_guards  (84)
+	pressburg_tree_guards : qformula . BAND pressburg_atomic_bool  (85)
+	pressburg_tree_guards : qformula . BOR pressburg_tree_guards  (92)
+	pressburg_tree_guards : qformula . BOR pressburg_atomic_bool  (93)
+	pressburg_tree_guards : pressburg_tree_guards BOR qformula .  (94)
 
-	.  reduce 75
+	BAND  shift 137
+	RBRACE  reduce 94
+	BOR  reduce 94
 
 
 state 197
-	pressburg_tree_guards : qformula . BAND pressburg_tree_guards  (78)
-	pressburg_tree_guards : qformula . BAND pressburg_atomic_bool  (79)
-	pressburg_tree_guards : pressburg_tree_guards BAND qformula .  (80)
-	pressburg_tree_guards : qformula . BOR pressburg_tree_guards  (86)
-	pressburg_tree_guards : qformula . BOR pressburg_atomic_bool  (87)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_atomic_bool  (80)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_tree_guards  (83)
+	pressburg_tree_guards : qformula BAND pressburg_atomic_bool .  (85)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND qformula  (87)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_atomic_bool  (88)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_tree_guards  (90)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR qformula  (95)
 
-	.  reduce 80
+	.  reduce 85
 
 
 state 198
-	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_atomic_bool  (74)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_tree_guards  (77)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND qformula  (81)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_atomic_bool  (82)
-	pressburg_tree_guards : pressburg_tree_guards BOR pressburg_atomic_bool .  (83)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_tree_guards  (84)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR qformula  (89)
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (81)
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (82)
+	pressburg_tree_guards : qformula BAND pressburg_tree_guards .  (84)
+	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (86)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (89)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (91)
+	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (94)
 
-	BAND  shift 152
-	RBRACE  reduce 83
-	BOR  reduce 83
+	.  reduce 84
 
 
 state 199
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (75)
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (76)
-	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (80)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (83)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (85)
-	pressburg_tree_guards : pressburg_tree_guards BOR pressburg_tree_guards .  (85)
-	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (88)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_atomic_bool  (80)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_tree_guards  (83)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND qformula  (87)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_atomic_bool  (88)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_tree_guards  (90)
+	pressburg_tree_guards : qformula BOR pressburg_atomic_bool .  (93)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR qformula  (95)
 
-	BAND  shift 155
-	RBRACE  reduce 85
-	BOR  reduce 85
+	BAND  shift 131
+	RBRACE  reduce 93
+	BOR  reduce 93
 
 
 state 200
-	pressburg_tree_guards : qformula . BAND pressburg_tree_guards  (78)
-	pressburg_tree_guards : qformula . BAND pressburg_atomic_bool  (79)
-	pressburg_tree_guards : qformula . BOR pressburg_tree_guards  (86)
-	pressburg_tree_guards : qformula . BOR pressburg_atomic_bool  (87)
-	pressburg_tree_guards : pressburg_tree_guards BOR qformula .  (88)
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (81)
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (82)
+	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (86)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (89)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (91)
+	pressburg_tree_guards : qformula BOR pressburg_tree_guards .  (92)
+	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (94)
 
-	BAND  shift 158
-	RBRACE  reduce 88
-	BOR  reduce 88
+	BAND  shift 134
+	RBRACE  reduce 92
+	BOR  reduce 92
 
 
 state 201
-	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_atomic_bool  (74)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_tree_guards  (77)
-	pressburg_tree_guards : qformula BAND pressburg_atomic_bool .  (79)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND qformula  (81)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_atomic_bool  (82)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_tree_guards  (84)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR qformula  (89)
+	gen_affect : LBRACE primed_var_list RBRACE EQ . IDENT LBRACE arithm_expr_list RBRACE  (73)
+	gen_affect : LBRACE primed_var_list RBRACE EQ . IDENT LBRACE RBRACE  (74)
 
-	.  reduce 79
-
-
-state 202
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (75)
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (76)
-	pressburg_tree_guards : qformula BAND pressburg_tree_guards .  (78)
-	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (80)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (83)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (85)
-	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (88)
-
-	.  reduce 78
-
-
-state 203
-	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_atomic_bool  (74)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_tree_guards  (77)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND qformula  (81)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_atomic_bool  (82)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_tree_guards  (84)
-	pressburg_tree_guards : qformula BOR pressburg_atomic_bool .  (87)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR qformula  (89)
-
-	BAND  shift 152
-	RBRACE  reduce 87
-	BOR  reduce 87
-
-
-state 204
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (75)
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (76)
-	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (80)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (83)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (85)
-	pressburg_tree_guards : qformula BOR pressburg_tree_guards .  (86)
-	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (88)
-
-	BAND  shift 155
-	RBRACE  reduce 86
-	BOR  reduce 86
-
-
-state 205
-	gen_affect : LBRACE primed_var_list RBRACE EQ . IDENT LBRACE arithm_expr_list RBRACE  (67)
-	gen_affect : LBRACE primed_var_list RBRACE EQ . IDENT LBRACE RBRACE  (68)
-
-	IDENT  shift 217
+	IDENT  shift 220
 	.  error
 
 
-state 206
-	primed_var_list : primed_express COMMA primed_var_list .  (60)
+state 202
+	primed_var_list : primed_express COMMA primed_var_list .  (66)
 
-	.  reduce 60
+	.  reduce 66
+
+
+state 203
+	primed_var_list : primed_express . COMMA primed_var_list  (66)
+	primed_var_list : primed_express . COMMA primed_express  (67)
+	primed_var_list : primed_express COMMA primed_express .  (67)
+
+	COMMA  shift 140
+	RBRACE  reduce 67
+
+
+state 204
+	nts_trans_elem : BNOT LBRACE pressburg_atomic_bool RBRACE .  (47)
+
+	.  reduce 47
+
+
+state 205
+	nts_trans_elem : BNOT LBRACE pressburg_tree_guards RBRACE .  (48)
+
+	.  reduce 48
+
+
+state 206
+	havocise : HAVOC LBRACE ident_list RBRACE .  (119)
+
+	.  reduce 119
 
 
 state 207
-	primed_var_list : primed_express . COMMA primed_var_list  (60)
-	primed_var_list : primed_express . COMMA primed_express  (61)
-	primed_var_list : primed_express COMMA primed_express .  (61)
+	qformula : EXISTS ident_list COLON INTDECL . DOT pressburg_atomic_bool  (56)
+	qformula : EXISTS ident_list COLON INTDECL . DOT LBRACE pressburg_tree_guards RBRACE  (57)
+	qformula : EXISTS ident_list COLON INTDECL . DOT LBRACE qformula RBRACE  (58)
 
-	COMMA  shift 161
-	RBRACE  reduce 61
+	DOT  shift 221
+	.  error
 
 
 state 208
-	nts_trans_elem : BNOT LBRACE pressburg_atomic_bool RBRACE .  (41)
+	qformula : FORALL ident_list COLON INTDECL . DOT pressburg_atomic_bool  (59)
+	qformula : FORALL ident_list COLON INTDECL . DOT LBRACE pressburg_tree_guards RBRACE  (60)
+	qformula : FORALL ident_list COLON INTDECL . DOT LBRACE qformula RBRACE  (61)
 
-	.  reduce 41
+	DOT  shift 222
+	.  error
 
 
 state 209
-	nts_trans_elem : BNOT LBRACE pressburg_tree_guards RBRACE .  (42)
+	cautomaton_state : INITSTATE ident_list SEMICOLON .  (42)
 
 	.  reduce 42
 
 
 state 210
-	havocise : HAVOC LBRACE ident_list RBRACE .  (113)
+	cautomaton_state : FINALSTATE ident_list SEMICOLON .  (43)
 
-	.  reduce 113
+	.  reduce 43
 
 
 state 211
-	qformula : EXISTS ident_list COLON INTDECL . DOT pressburg_atomic_bool  (50)
-	qformula : EXISTS ident_list COLON INTDECL . DOT LBRACE pressburg_tree_guards RBRACE  (51)
-	qformula : EXISTS ident_list COLON INTDECL . DOT LBRACE qformula RBRACE  (52)
+	cautomaton_state : ERRORSTATE ident_list SEMICOLON .  (44)
 
-	DOT  shift 218
-	.  error
+	.  reduce 44
 
 
 state 212
-	qformula : FORALL ident_list COLON INTDECL . DOT pressburg_atomic_bool  (53)
-	qformula : FORALL ident_list COLON INTDECL . DOT LBRACE pressburg_tree_guards RBRACE  (54)
-	qformula : FORALL ident_list COLON INTDECL . DOT LBRACE qformula RBRACE  (55)
+	transitions : IDENT COLON . IDENT ARROW IDENT LBRACK nts_trans_split RBRACK  (38)
+	transitions : IDENT COLON . IDENT ARROW IDENT LBRACK RBRACK  (39)
 
-	DOT  shift 219
+	IDENT  shift 223
 	.  error
 
 
 state 213
-	arithm_expr_list : arithm_expr COMMA arithm_expr_list .  (102)
+	transitions : IDENT ARROW . IDENT LBRACK RBRACK  (36)
+	transitions : IDENT ARROW . IDENT LBRACK nts_trans_split RBRACK  (37)
 
-	.  reduce 102
+	IDENT  shift 224
+	.  error
 
 
 state 214
-	gen_affect : PRIMEDVAR EQ IDENT LBRACE RBRACE .  (63)
+	decl_automata : IDENT LBRACK vars_automaton states_list transitions_list RBRACK .  (22)
 
-	.  reduce 63
+	.  reduce 22
 
 
 state 215
-	gen_affect : PRIMEDVAR EQ IDENT LBRACE arithm_expr_list . RBRACE  (62)
+	transitions_list : transitions transitions_list .  (34)
 
-	RBRACE  shift 220
-	.  error
+	.  reduce 34
 
 
 state 216
-	gen_affect : LBRACE PRIMEDVAR RBRACE EQ IDENT . LBRACE arithm_expr_list RBRACE  (65)
-	gen_affect : LBRACE PRIMEDVAR RBRACE EQ IDENT . LBRACE RBRACE  (66)
+	arithm_expr_list : arithm_expr COMMA arithm_expr_list .  (108)
 
-	LBRACE  shift 221
-	.  error
+	.  reduce 108
 
 
 state 217
-	gen_affect : LBRACE primed_var_list RBRACE EQ IDENT . LBRACE arithm_expr_list RBRACE  (67)
-	gen_affect : LBRACE primed_var_list RBRACE EQ IDENT . LBRACE RBRACE  (68)
+	gen_affect : PRIMEDVAR EQ IDENT LBRACE RBRACE .  (69)
 
-	LBRACE  shift 222
-	.  error
+	.  reduce 69
 
 
 state 218
-	qformula : EXISTS ident_list COLON INTDECL DOT . pressburg_atomic_bool  (50)
-	qformula : EXISTS ident_list COLON INTDECL DOT . LBRACE pressburg_tree_guards RBRACE  (51)
-	qformula : EXISTS ident_list COLON INTDECL DOT . LBRACE qformula RBRACE  (52)
+	gen_affect : PRIMEDVAR EQ IDENT LBRACE arithm_expr_list . RBRACE  (68)
 
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 223
-	BTRUE  shift 84
-	BFALSE  shift 85
+	RBRACE  shift 225
 	.  error
-
-	arithm_expr  goto 91
-	pressburg_atomic_bool  goto 224
-	primed_express  goto 99
 
 
 state 219
-	qformula : FORALL ident_list COLON INTDECL DOT . pressburg_atomic_bool  (53)
-	qformula : FORALL ident_list COLON INTDECL DOT . LBRACE pressburg_tree_guards RBRACE  (54)
-	qformula : FORALL ident_list COLON INTDECL DOT . LBRACE qformula RBRACE  (55)
+	gen_affect : LBRACE PRIMEDVAR RBRACE EQ IDENT . LBRACE arithm_expr_list RBRACE  (71)
+	gen_affect : LBRACE PRIMEDVAR RBRACE EQ IDENT . LBRACE RBRACE  (72)
 
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 225
-	BTRUE  shift 84
-	BFALSE  shift 85
+	LBRACE  shift 226
 	.  error
-
-	arithm_expr  goto 91
-	pressburg_atomic_bool  goto 226
-	primed_express  goto 99
 
 
 state 220
-	gen_affect : PRIMEDVAR EQ IDENT LBRACE arithm_expr_list RBRACE .  (62)
+	gen_affect : LBRACE primed_var_list RBRACE EQ IDENT . LBRACE arithm_expr_list RBRACE  (73)
+	gen_affect : LBRACE primed_var_list RBRACE EQ IDENT . LBRACE RBRACE  (74)
 
-	.  reduce 62
+	LBRACE  shift 227
+	.  error
 
 
 state 221
-	gen_affect : LBRACE PRIMEDVAR RBRACE EQ IDENT LBRACE . arithm_expr_list RBRACE  (65)
-	gen_affect : LBRACE PRIMEDVAR RBRACE EQ IDENT LBRACE . RBRACE  (66)
+	qformula : EXISTS ident_list COLON INTDECL DOT . pressburg_atomic_bool  (56)
+	qformula : EXISTS ident_list COLON INTDECL DOT . LBRACE pressburg_tree_guards RBRACE  (57)
+	qformula : EXISTS ident_list COLON INTDECL DOT . LBRACE qformula RBRACE  (58)
 
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 105
-	RBRACE  shift 227
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 228
+	BTRUE  shift 28
+	BFALSE  shift 29
 	.  error
 
-	arithm_expr  goto 138
-	primed_express  goto 99
-	arithm_expr_list  goto 228
+	arithm_expr  goto 35
+	pressburg_atomic_bool  goto 229
+	primed_express  goto 42
 
 
 state 222
-	gen_affect : LBRACE primed_var_list RBRACE EQ IDENT LBRACE . arithm_expr_list RBRACE  (67)
-	gen_affect : LBRACE primed_var_list RBRACE EQ IDENT LBRACE . RBRACE  (68)
+	qformula : FORALL ident_list COLON INTDECL DOT . pressburg_atomic_bool  (59)
+	qformula : FORALL ident_list COLON INTDECL DOT . LBRACE pressburg_tree_guards RBRACE  (60)
+	qformula : FORALL ident_list COLON INTDECL DOT . LBRACE qformula RBRACE  (61)
 
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 105
-	RBRACE  shift 229
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 230
+	BTRUE  shift 28
+	BFALSE  shift 29
 	.  error
 
-	arithm_expr  goto 138
-	primed_express  goto 99
-	arithm_expr_list  goto 230
+	arithm_expr  goto 35
+	pressburg_atomic_bool  goto 231
+	primed_express  goto 42
 
 
 state 223
-	qformula : EXISTS ident_list COLON INTDECL DOT LBRACE . pressburg_tree_guards RBRACE  (51)
-	qformula : EXISTS ident_list COLON INTDECL DOT LBRACE . qformula RBRACE  (52)
-	arithm_expr : LBRACE . arithm_expr RBRACE  (106)
+	transitions : IDENT COLON IDENT . ARROW IDENT LBRACK nts_trans_split RBRACK  (38)
+	transitions : IDENT COLON IDENT . ARROW IDENT LBRACK RBRACK  (39)
 
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 108
-	BTRUE  shift 84
-	BFALSE  shift 85
-	BNOT  shift 109
-	EXISTS  shift 89
-	FORALL  shift 90
+	ARROW  shift 232
 	.  error
-
-	arithm_expr  goto 110
-	pressburg_atomic_bool  goto 231
-	pressburg_tree_guards  goto 232
-	qformula  goto 233
-	primed_express  goto 99
 
 
 state 224
-	qformula : EXISTS ident_list COLON INTDECL DOT pressburg_atomic_bool .  (50)
+	transitions : IDENT ARROW IDENT . LBRACK RBRACK  (36)
+	transitions : IDENT ARROW IDENT . LBRACK nts_trans_split RBRACK  (37)
 
-	.  reduce 50
+	LBRACK  shift 233
+	.  error
 
 
 state 225
-	qformula : FORALL ident_list COLON INTDECL DOT LBRACE . pressburg_tree_guards RBRACE  (54)
-	qformula : FORALL ident_list COLON INTDECL DOT LBRACE . qformula RBRACE  (55)
-	arithm_expr : LBRACE . arithm_expr RBRACE  (106)
-
-	INT  shift 78
-	IDENT  shift 103
-	PRIMEDVAR  shift 104
-	MINUS  shift 81
-	LBRACE  shift 108
-	BTRUE  shift 84
-	BFALSE  shift 85
-	BNOT  shift 109
-	EXISTS  shift 89
-	FORALL  shift 90
-	.  error
-
-	arithm_expr  goto 110
-	pressburg_atomic_bool  goto 231
-	pressburg_tree_guards  goto 234
-	qformula  goto 235
-	primed_express  goto 99
-
-
-state 226
-	qformula : FORALL ident_list COLON INTDECL DOT pressburg_atomic_bool .  (53)
-
-	.  reduce 53
-
-
-state 227
-	gen_affect : LBRACE PRIMEDVAR RBRACE EQ IDENT LBRACE RBRACE .  (66)
-
-	.  reduce 66
-
-
-state 228
-	gen_affect : LBRACE PRIMEDVAR RBRACE EQ IDENT LBRACE arithm_expr_list . RBRACE  (65)
-
-	RBRACE  shift 236
-	.  error
-
-
-state 229
-	gen_affect : LBRACE primed_var_list RBRACE EQ IDENT LBRACE RBRACE .  (68)
+	gen_affect : PRIMEDVAR EQ IDENT LBRACE arithm_expr_list RBRACE .  (68)
 
 	.  reduce 68
 
 
-state 230
-	gen_affect : LBRACE primed_var_list RBRACE EQ IDENT LBRACE arithm_expr_list . RBRACE  (67)
+state 226
+	gen_affect : LBRACE PRIMEDVAR RBRACE EQ IDENT LBRACE . arithm_expr_list RBRACE  (71)
+	gen_affect : LBRACE PRIMEDVAR RBRACE EQ IDENT LBRACE . RBRACE  (72)
 
-	RBRACE  shift 237
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 64
+	RBRACE  shift 234
 	.  error
+
+	arithm_expr  goto 117
+	primed_express  goto 42
+	arithm_expr_list  goto 235
+
+
+state 227
+	gen_affect : LBRACE primed_var_list RBRACE EQ IDENT LBRACE . arithm_expr_list RBRACE  (73)
+	gen_affect : LBRACE primed_var_list RBRACE EQ IDENT LBRACE . RBRACE  (74)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 64
+	RBRACE  shift 236
+	.  error
+
+	arithm_expr  goto 117
+	primed_express  goto 42
+	arithm_expr_list  goto 237
+
+
+state 228
+	qformula : EXISTS ident_list COLON INTDECL DOT LBRACE . pressburg_tree_guards RBRACE  (57)
+	qformula : EXISTS ident_list COLON INTDECL DOT LBRACE . qformula RBRACE  (58)
+	arithm_expr : LBRACE . arithm_expr RBRACE  (112)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 67
+	BTRUE  shift 28
+	BFALSE  shift 29
+	BNOT  shift 68
+	EXISTS  shift 33
+	FORALL  shift 34
+	.  error
+
+	arithm_expr  goto 69
+	pressburg_atomic_bool  goto 238
+	pressburg_tree_guards  goto 239
+	qformula  goto 240
+	primed_express  goto 42
+
+
+state 229
+	qformula : EXISTS ident_list COLON INTDECL DOT pressburg_atomic_bool .  (56)
+
+	.  reduce 56
+
+
+state 230
+	qformula : FORALL ident_list COLON INTDECL DOT LBRACE . pressburg_tree_guards RBRACE  (60)
+	qformula : FORALL ident_list COLON INTDECL DOT LBRACE . qformula RBRACE  (61)
+	arithm_expr : LBRACE . arithm_expr RBRACE  (112)
+
+	INT  shift 23
+	IDENT  shift 62
+	PRIMEDVAR  shift 63
+	MINUS  shift 26
+	LBRACE  shift 67
+	BTRUE  shift 28
+	BFALSE  shift 29
+	BNOT  shift 68
+	EXISTS  shift 33
+	FORALL  shift 34
+	.  error
+
+	arithm_expr  goto 69
+	pressburg_atomic_bool  goto 238
+	pressburg_tree_guards  goto 241
+	qformula  goto 242
+	primed_express  goto 42
 
 
 state 231
-	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_atomic_bool  (74)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_tree_guards  (77)
-	pressburg_tree_guards : pressburg_atomic_bool . BAND qformula  (81)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_atomic_bool  (82)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_tree_guards  (84)
-	pressburg_tree_guards : pressburg_atomic_bool . BOR qformula  (89)
+	qformula : FORALL ident_list COLON INTDECL DOT pressburg_atomic_bool .  (59)
 
-	BAND  shift 152
-	BOR  shift 153
-	.  error
+	.  reduce 59
 
 
 state 232
-	qformula : EXISTS ident_list COLON INTDECL DOT LBRACE pressburg_tree_guards . RBRACE  (51)
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (75)
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (76)
-	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (80)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (83)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (85)
-	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (88)
+	transitions : IDENT COLON IDENT ARROW . IDENT LBRACK nts_trans_split RBRACK  (38)
+	transitions : IDENT COLON IDENT ARROW . IDENT LBRACK RBRACK  (39)
 
-	RBRACE  shift 238
-	BAND  shift 155
-	BOR  shift 156
+	IDENT  shift 243
 	.  error
 
 
 state 233
-	qformula : EXISTS ident_list COLON INTDECL DOT LBRACE qformula . RBRACE  (52)
-	pressburg_tree_guards : qformula . BAND pressburg_tree_guards  (78)
-	pressburg_tree_guards : qformula . BAND pressburg_atomic_bool  (79)
-	pressburg_tree_guards : qformula . BOR pressburg_tree_guards  (86)
-	pressburg_tree_guards : qformula . BOR pressburg_atomic_bool  (87)
+	transitions : IDENT ARROW IDENT LBRACK . RBRACK  (36)
+	transitions : IDENT ARROW IDENT LBRACK . nts_trans_split RBRACK  (37)
 
-	RBRACE  shift 239
-	BAND  shift 158
-	BOR  shift 159
+	INT  shift 23
+	IDENT  shift 24
+	PRIMEDVAR  shift 25
+	MINUS  shift 26
+	LBRACE  shift 27
+	RBRACK  shift 244
+	BTRUE  shift 28
+	BFALSE  shift 29
+	BOR  shift 30
+	BNOT  shift 31
+	HAVOC  shift 32
+	EXISTS  shift 33
+	FORALL  shift 34
 	.  error
+
+	arithm_expr  goto 35
+	nts_trans_split_prec  goto 245
+	nts_trans_split  goto 246
+	nts_trans_elem  goto 37
+	pressburg_atomic_bool  goto 38
+	gen_affect  goto 39
+	havocise  goto 40
+	qformula  goto 41
+	primed_express  goto 42
 
 
 state 234
-	qformula : FORALL ident_list COLON INTDECL DOT LBRACE pressburg_tree_guards . RBRACE  (54)
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (75)
-	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (76)
-	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (80)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (83)
-	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (85)
-	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (88)
+	gen_affect : LBRACE PRIMEDVAR RBRACE EQ IDENT LBRACE RBRACE .  (72)
 
-	RBRACE  shift 240
-	BAND  shift 155
-	BOR  shift 156
-	.  error
+	.  reduce 72
 
 
 state 235
-	qformula : FORALL ident_list COLON INTDECL DOT LBRACE qformula . RBRACE  (55)
-	pressburg_tree_guards : qformula . BAND pressburg_tree_guards  (78)
-	pressburg_tree_guards : qformula . BAND pressburg_atomic_bool  (79)
-	pressburg_tree_guards : qformula . BOR pressburg_tree_guards  (86)
-	pressburg_tree_guards : qformula . BOR pressburg_atomic_bool  (87)
+	gen_affect : LBRACE PRIMEDVAR RBRACE EQ IDENT LBRACE arithm_expr_list . RBRACE  (71)
 
-	RBRACE  shift 241
-	BAND  shift 158
-	BOR  shift 159
+	RBRACE  shift 247
 	.  error
 
 
 state 236
-	gen_affect : LBRACE PRIMEDVAR RBRACE EQ IDENT LBRACE arithm_expr_list RBRACE .  (65)
+	gen_affect : LBRACE primed_var_list RBRACE EQ IDENT LBRACE RBRACE .  (74)
+
+	.  reduce 74
+
+
+state 237
+	gen_affect : LBRACE primed_var_list RBRACE EQ IDENT LBRACE arithm_expr_list . RBRACE  (73)
+
+	RBRACE  shift 248
+	.  error
+
+
+state 238
+	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_atomic_bool  (80)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND pressburg_tree_guards  (83)
+	pressburg_tree_guards : pressburg_atomic_bool . BAND qformula  (87)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_atomic_bool  (88)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR pressburg_tree_guards  (90)
+	pressburg_tree_guards : pressburg_atomic_bool . BOR qformula  (95)
+
+	BAND  shift 131
+	BOR  shift 132
+	.  error
+
+
+state 239
+	qformula : EXISTS ident_list COLON INTDECL DOT LBRACE pressburg_tree_guards . RBRACE  (57)
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (81)
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (82)
+	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (86)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (89)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (91)
+	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (94)
+
+	RBRACE  shift 249
+	BAND  shift 134
+	BOR  shift 135
+	.  error
+
+
+state 240
+	qformula : EXISTS ident_list COLON INTDECL DOT LBRACE qformula . RBRACE  (58)
+	pressburg_tree_guards : qformula . BAND pressburg_tree_guards  (84)
+	pressburg_tree_guards : qformula . BAND pressburg_atomic_bool  (85)
+	pressburg_tree_guards : qformula . BOR pressburg_tree_guards  (92)
+	pressburg_tree_guards : qformula . BOR pressburg_atomic_bool  (93)
+
+	RBRACE  shift 250
+	BAND  shift 137
+	BOR  shift 138
+	.  error
+
+
+state 241
+	qformula : FORALL ident_list COLON INTDECL DOT LBRACE pressburg_tree_guards . RBRACE  (60)
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_tree_guards  (81)
+	pressburg_tree_guards : pressburg_tree_guards . BAND pressburg_atomic_bool  (82)
+	pressburg_tree_guards : pressburg_tree_guards . BAND qformula  (86)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_atomic_bool  (89)
+	pressburg_tree_guards : pressburg_tree_guards . BOR pressburg_tree_guards  (91)
+	pressburg_tree_guards : pressburg_tree_guards . BOR qformula  (94)
+
+	RBRACE  shift 251
+	BAND  shift 134
+	BOR  shift 135
+	.  error
+
+
+state 242
+	qformula : FORALL ident_list COLON INTDECL DOT LBRACE qformula . RBRACE  (61)
+	pressburg_tree_guards : qformula . BAND pressburg_tree_guards  (84)
+	pressburg_tree_guards : qformula . BAND pressburg_atomic_bool  (85)
+	pressburg_tree_guards : qformula . BOR pressburg_tree_guards  (92)
+	pressburg_tree_guards : qformula . BOR pressburg_atomic_bool  (93)
+
+	RBRACE  shift 252
+	BAND  shift 137
+	BOR  shift 138
+	.  error
+
+
+state 243
+	transitions : IDENT COLON IDENT ARROW IDENT . LBRACK nts_trans_split RBRACK  (38)
+	transitions : IDENT COLON IDENT ARROW IDENT . LBRACK RBRACK  (39)
+
+	LBRACK  shift 253
+	.  error
+
+
+state 244
+	transitions : IDENT ARROW IDENT LBRACK RBRACK .  (36)
+
+	.  reduce 36
+
+
+state 245
+	nts_trans_split : nts_trans_split_prec .  (65)
 
 	.  reduce 65
 
 
-state 237
-	gen_affect : LBRACE primed_var_list RBRACE EQ IDENT LBRACE arithm_expr_list RBRACE .  (67)
+state 246
+	transitions : IDENT ARROW IDENT LBRACK nts_trans_split . RBRACK  (37)
 
-	.  reduce 67
-
-
-state 238
-	qformula : EXISTS ident_list COLON INTDECL DOT LBRACE pressburg_tree_guards RBRACE .  (51)
-
-	.  reduce 51
+	RBRACK  shift 254
+	.  error
 
 
-state 239
-	qformula : EXISTS ident_list COLON INTDECL DOT LBRACE qformula RBRACE .  (52)
+state 247
+	gen_affect : LBRACE PRIMEDVAR RBRACE EQ IDENT LBRACE arithm_expr_list RBRACE .  (71)
 
-	.  reduce 52
-
-
-state 240
-	qformula : FORALL ident_list COLON INTDECL DOT LBRACE pressburg_tree_guards RBRACE .  (54)
-
-	.  reduce 54
+	.  reduce 71
 
 
-state 241
-	qformula : FORALL ident_list COLON INTDECL DOT LBRACE qformula RBRACE .  (55)
+state 248
+	gen_affect : LBRACE primed_var_list RBRACE EQ IDENT LBRACE arithm_expr_list RBRACE .  (73)
 
-	.  reduce 55
-
-
-Rules never reduced:
-	gvars_list_decl : gvars_decl SEMICOLON gvars_list_decl  (8)
-	gvars_list_decl : gvars_decl SEMICOLON  (9)
+	.  reduce 73
 
 
-State 31 contains 1 reduce/reduce conflict.
-State 107 contains 1 shift/reduce conflict.
+state 249
+	qformula : EXISTS ident_list COLON INTDECL DOT LBRACE pressburg_tree_guards RBRACE .  (57)
+
+	.  reduce 57
 
 
-58 terminals, 29 nonterminals
-116 grammar rules, 242 states
+state 250
+	qformula : EXISTS ident_list COLON INTDECL DOT LBRACE qformula RBRACE .  (58)
+
+	.  reduce 58
+
+
+state 251
+	qformula : FORALL ident_list COLON INTDECL DOT LBRACE pressburg_tree_guards RBRACE .  (60)
+
+	.  reduce 60
+
+
+state 252
+	qformula : FORALL ident_list COLON INTDECL DOT LBRACE qformula RBRACE .  (61)
+
+	.  reduce 61
+
+
+state 253
+	transitions : IDENT COLON IDENT ARROW IDENT LBRACK . nts_trans_split RBRACK  (38)
+	transitions : IDENT COLON IDENT ARROW IDENT LBRACK . RBRACK  (39)
+
+	INT  shift 23
+	IDENT  shift 24
+	PRIMEDVAR  shift 25
+	MINUS  shift 26
+	LBRACE  shift 27
+	RBRACK  shift 255
+	BTRUE  shift 28
+	BFALSE  shift 29
+	BOR  shift 30
+	BNOT  shift 31
+	HAVOC  shift 32
+	EXISTS  shift 33
+	FORALL  shift 34
+	.  error
+
+	arithm_expr  goto 35
+	nts_trans_split_prec  goto 245
+	nts_trans_split  goto 256
+	nts_trans_elem  goto 37
+	pressburg_atomic_bool  goto 38
+	gen_affect  goto 39
+	havocise  goto 40
+	qformula  goto 41
+	primed_express  goto 42
+
+
+state 254
+	transitions : IDENT ARROW IDENT LBRACK nts_trans_split RBRACK .  (37)
+
+	.  reduce 37
+
+
+state 255
+	transitions : IDENT COLON IDENT ARROW IDENT LBRACK RBRACK .  (39)
+
+	.  reduce 39
+
+
+state 256
+	transitions : IDENT COLON IDENT ARROW IDENT LBRACK nts_trans_split . RBRACK  (38)
+
+	RBRACK  shift 257
+	.  error
+
+
+state 257
+	transitions : IDENT COLON IDENT ARROW IDENT LBRACK nts_trans_split RBRACK .  (38)
+
+	.  reduce 38
+
+
+State 66 contains 1 shift/reduce conflict.
+
+
+60 terminals, 32 nonterminals
+122 grammar rules, 258 states

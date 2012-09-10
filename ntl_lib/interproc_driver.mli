@@ -17,9 +17,9 @@ type ntl_spl_il_instruction = NS_Skip
 			      | NS_If of nts_gen_relation * nts_spl_il_label * nts_spl_il_label option
 			      | NS_Goto of nts_spl_il_label
 			      | NS_Call of nts_var list option * string * cnt_arithm_exp list 
-			      | NS_local of bool * nts_var list * NS_block
+			      | NS_local of bool * nts_var list * ntl_spl_block
 
-and ntl_spl_il_instr = {
+and  ntl_spl_il_instr = {
   ns_insturction :  ntl_spl_il_instruction option ;
   ns_ipoint : point ; (* Type defined in syntax.mli of Interproc*)
 } 
