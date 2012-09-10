@@ -29,7 +29,7 @@ DATE = `eval date +%Y%m%d`
 DIST_TAR_NAME = ocaml_ntlib$(DATE).tgz
  
 clean : 
-	rm -f *.cmo *.o *.cmx *.cmxa *.cmi *.cma *.annot parse_n_print $(GENSOURCE)
+	rm -f *.cmo *.o *.cmx *.cmxa *.cmi *.cma *.annot parse_n_print xparse_n_print $(GENSOURCE)
 
 all : .depend $(INTERFACES) $(OBJECTS) $(XOBJECTS) $(TEST) fixpointvalid
 	@echo "Build successfull"
@@ -40,6 +40,9 @@ dist : all clean
 	cd .. && echo `pwd` && tar czvf $(DIST_TAR_NAME) ntl_lib/ && cd ntl_lib/
 	cp ../$(DIST_TAR_NAME) ./
 
+dist_no_fixpoint : .depend $(INTERFACES) $(OBJECTS) $(XOBJECTS) $(TEST) clean
+	 cd .. && echo `pwd` && tar czvf $(DIST_TAR_NAME) ntl_lib/ && cd ntl_lib/
+	cp ../$(DIST_TAR_NAME) ./
 %.cmo : %.ml
 	@echo  "Compiling"  $<
 	@ocamlc ${CFLAGS}  $< -o $@ ${TYPES_INCLUDES}
