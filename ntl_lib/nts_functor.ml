@@ -1,7 +1,8 @@
 open Nts_types
 open Hashtbl
 open Nts_generic
-
+open Simplification (* Contains what needed to remove
+		    useless variable declarations*)
 
 
 exception Var_name_already_used
@@ -516,8 +517,6 @@ ordering on their name. *)
     ret_string^all_automata^"\n"
     
    
-
-
 
 
 
