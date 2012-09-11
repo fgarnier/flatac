@@ -206,7 +206,6 @@ let rebuild_top_level_infos nts_name toplevel_list =
 	  let condition = rebuild_gen_relation nts_conditions 
 	    (* normalize_gvars_init_cond_parameter nts_conditions*)
 	  in
-	   Format.printf "[DEBUG : GVAR COND] %s \n" ( Nts_generic.nts_pprint_genrel condition);
 	    {
 	      nts_system_name = nts_param.nts_system_name;
 	      nts_global_vars = nts_param.nts_global_vars;
