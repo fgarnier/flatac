@@ -468,6 +468,7 @@ ordering on their name. *)
 	  begin
 	    Format.sprintf "%sinit %s;\n" prefix (Nts_generic.nts_pprint_genrel sthing) 
 	  end
+      | Some([]) -> prefix
       | None -> prefix
 
 
@@ -517,14 +518,94 @@ ordering on their name. *)
     ret_string^all_automata^"\n"
     
    
+      
+
+
+  (**
+
+     One propose a set of functions that get rid of declared variables
+     that don't appear in the transtions
+     
+  *)
+
+  let locally_used_variables diary nt_aut =
+    let log_var_in_transitions_iterator _ nts_translabel =
+      Simplification.add_vars_of_trans_label_list_to_diary diary nts_translabel
+    in
+    let trans_table_iterator _ inner_table =
+      Hashtbl.iter log_var_in_transitions_iterator inner_table
+    in
+    Hashtbl.iter trans_table_iterator nt_aut.transitions
+
+
+ 
+  
+  let update_local_list nt_aut loc_vars_list =
+    {
+      nts_automata_name=nt_aut.nts_automata_name;
+      anot=nt_aut.anot;
+      init_states=nt_aut.init_states;
+      final_states=nt_aut.final_states;
+      error_states=nt_aut.error_states;
+      input_vars = loc_vars_list;
+      output_vars = nt_aut.output_vars;
+      local_vars = nt_aut.local_vars;
+      transitions = nt_aut.transitions;
+
+    }
 
 
 
+  let nts_sys_with_update_cautomaton_table nt_sys ctable =
+    {
+      nts_system_name = nt_sys.nts_system_name ;
+      nts_global_vars = nt_sys.nts_global_vars ;
+      nts_automata = ctable ; 
+      nts_gvars_init = nt_sys.nts_gvars_init ; 
+      nts_system_threads = nt_sys.nts_system_threads;  
+    }
 
-    (** Types and functions used to generate a control flow graph
-    from the numerical transition system description*)
+
+  (**
+     This functions removes the local variables of an automaton
+     if if they are not listed in the diary.
+  *)
 
 
+  let clean_unlisted_local_vars diary nt_aut =
+    let local_list_folder glist gvar =
+      if (contains_nts_genrel_var diary gvar) then gvar::glist
+      else
+	glist
+    in
+    let clean_local_list =
+      (List.fold_left local_list_folder [] nt_aut.local_vars)
+    in
+    update_local_list nt_aut clean_local_list
+
+      
+      
+  let clean_unlisted_vars_on_all_system_table nt_system =
+    
+    let cleaner_folder cname nt_aut new_table =
+      let local_diary = create_empty_var_diary () 
+      in
+      locally_used_variables local_diary nt_aut; 
+      (* Fills diarry with used
+	 variables*)
+      let clean_entry = clean_unlisted_local_vars local_diary nt_aut
+      in
+      Hashtbl.add new_table cname clean_entry; new_table
+    (* Modify each automaton
+       within the hashtbl.*)
+    in
+    let new_table = Hashtbl.create 97 in
+    Hashtbl.fold cleaner_folder nt_system.nts_automata new_table
+    
+      
+  (** Types and functions used to generate a control flow graph
+      from the numerical transition system description*)
+      
 
   type nts_basic_block = {
     mutable head_label : string ;

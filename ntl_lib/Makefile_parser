@@ -12,11 +12,11 @@ DOCFLAGS := -html -d $(DOCEXPORTDIR) *.ml *.mli
 
 CFLAGS = -g -annot -c
 INTERFACES = ntl_parser.mli
-OBJECTS = nts_types.cmo nts.cmo nts_generic.cmo nts_functor.cmo ntsint.cmo \
+OBJECTS = nts_types.cmo nts.cmo simplification.cmo nts_generic.cmo nts_functor.cmo ntsint.cmo \
 	ntl_lexer.cmo parsing_error.cmo \
 	ntl_parser.cmo parse_n_print.cmo 
 
-XOBJECTS = nts_types.cmx nts.cmx nts_generic.cmx nts_functor.cmx ntsint.cmx \
+XOBJECTS = nts_types.cmx nts.cmx simplification.cmx nts_generic.cmx nts_functor.cmx ntsint.cmx \
 	ntl_lexer.cmx parsing_error.cmx \
 	ntl_parser.cmx parse_n_print.cmx 
 

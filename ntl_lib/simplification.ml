@@ -21,6 +21,20 @@ let add_nts_var_to_diary diary nvar =
   if (Hashtbl.mem table nvar) then () 
   else Hashtbl.add table nvar ()
 
+
+
+let contains_var diary nvar =
+  let table = get_diary_table diary in
+  Hashtbl.mem table nvar
+
+
+let contains_nts_genrel_var diary gen_var =
+  match gen_var with 
+      NtsGenVar(nvar,_) ->  contains_var diary nvar
+      
+
+
+
 (*
 let rec add_vars_of_arithm_expr_to_diary diary ( expr : cnt_arithm_expr ) =
   match diary with
@@ -124,5 +138,10 @@ let add_vars_of_cnt_trans_label_to_diary diary ( lbl : nts_trans_label ) =
       end
 
     | CntGenHavoc _ -> ()
+
+
+
+let add_vars_of_trans_label_list_to_diary diary (tlabel : nts_trans_label list ) =
+  List.iter (fun s -> add_vars_of_cnt_trans_label_to_diary diary s ) tlabel
 
 
