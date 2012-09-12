@@ -518,8 +518,6 @@ ordering on their name. *)
     ret_string^all_automata^"\n"
     
    
-      
-
 
   (**
 
@@ -536,7 +534,9 @@ ordering on their name. *)
       Hashtbl.iter log_var_in_transitions_iterator inner_table
     in
     Hashtbl.iter trans_table_iterator nt_aut.transitions
-
+(*;
+    Format.printf "[locally_used_variables] \n"; (Simplification.pprint_diary diary) 
+*)
 
  
   
@@ -547,11 +547,10 @@ ordering on their name. *)
       init_states=nt_aut.init_states;
       final_states=nt_aut.final_states;
       error_states=nt_aut.error_states;
-      input_vars = loc_vars_list;
+      input_vars = nt_aut.input_vars; 
       output_vars = nt_aut.output_vars;
-      local_vars = nt_aut.local_vars;
+      local_vars = loc_vars_list; 
       transitions = nt_aut.transitions;
-
     }
 
 
@@ -572,14 +571,28 @@ ordering on their name. *)
   *)
 
 
-  let clean_unlisted_local_vars diary nt_aut =
-    let local_list_folder glist gvar =
-      if (contains_nts_genrel_var diary gvar) then gvar::glist
+  let clean_unlisted_local_vars  nt_aut =
+   
+    let local_list_folder diary glist gvar =
+      if (contains_nts_genrel_var diary gvar) then 
+	(*begin
+	  Format.printf "Keeping variable %s \n" (nts_pprint_genvar gvar);*)
+	  gvar::glist
+	(*end*)
       else
-	glist
+	(*begin
+	  Format.printf "Deleting local variable  %s \n " (nts_pprint_genvar gvar);*)
+	  glist
+	(*end*)
     in
+
+    let diary = create_empty_var_diary () in 
+    locally_used_variables diary nt_aut;
+    (*Format.printf "Clean unlisded local vars : Diary contains : \n";
+    Simplification.pprint_diary diary;*)
+    
     let clean_local_list =
-      (List.fold_left local_list_folder [] nt_aut.local_vars)
+      (List.fold_left ( local_list_folder diary) [] nt_aut.local_vars)
     in
     update_local_list nt_aut clean_local_list
 
@@ -593,7 +606,7 @@ ordering on their name. *)
       locally_used_variables local_diary nt_aut; 
       (* Fills diarry with used
 	 variables*)
-      let clean_entry = clean_unlisted_local_vars local_diary nt_aut
+      let clean_entry = clean_unlisted_local_vars  nt_aut
       in
       Hashtbl.add new_table cname clean_entry; new_table
     (* Modify each automaton

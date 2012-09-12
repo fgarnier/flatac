@@ -5,36 +5,73 @@ open Nts_types
   lists.*)
 
 
-type vars_entry = UVars_diary of ( nts_var ,  unit ) Hashtbl.t
+type vars_entry = UVars_diary of ( string ,  unit ) Hashtbl.t
 type vars_entry_by_name = UNamedVarsDiary of ( string , nts_var ) Hashtbl.t
 
 let create_empty_var_diary () =
   let tbl = Hashtbl.create 11 in
   UVars_diary tbl
 
-let get_diary_table t =
-  match t with 
+let get_diary_table tble =
+  match tble with 
       UVars_diary(table) -> table
 
-let add_nts_var_to_diary diary nvar =
-  let table = get_diary_table diary in
-  if (Hashtbl.mem table nvar) then () 
-  else Hashtbl.add table nvar ()
+let get_var_name nvar =
+  match nvar with 
+      NtsIVar(vname) | NtsINdetVar(vname) | NtsRVar(vname) 
+    |  NtsBVar(vname)  |  NtsMiscType(vname) | NtsNVar(vname) ->
+      vname
 
+let add_nts_var_to_diary diary nvar =
+  
+  let table = get_diary_table diary in
+  let vname = get_var_name nvar in
+  if (Hashtbl.mem table vname) then () 
+  else
+    begin
+     (* Format.printf "Adding var %s to diary \n" (Nts.nts_pprint_nts_var nvar);*)
+      Hashtbl.add table  vname ()
+    end
+
+
+
+
+
+
+      
+let pprint_diary diary =
+  let pprint_table var unit =
+    Format.printf "var : %s \n" (var)
+  in
+  let table = get_diary_table diary in
+  Hashtbl.iter pprint_table table
 
 
 let contains_var diary nvar =
+  (*Format.printf "In contain var : Diary contains : \n"; pprint_diary diary ;*) 
   let table = get_diary_table diary in
-  Hashtbl.mem table nvar
+  let vname = get_var_name nvar in
+  (*let test =*)
+    Hashtbl.mem table vname 
 
+    (*in
+
+  if test then 
+    begin
+      Format.printf "Variable %s found \n" (Nts.nts_pprint_nts_var nvar);
+      true
+    end
+  else
+    begin
+      Format.printf "Variable %s not found \n" (Nts.nts_pprint_nts_var nvar);
+      Format.printf "Var %s  \n" (Nts.nts_pprint_nts_var nvar);
+      false
+    end
+  *)
 
 let contains_nts_genrel_var diary gen_var =
   match gen_var with 
       NtsGenVar(nvar,_) ->  contains_var diary nvar
-      
-
-
-
 (*
 let rec add_vars_of_arithm_expr_to_diary diary ( expr : cnt_arithm_expr ) =
   match diary with
