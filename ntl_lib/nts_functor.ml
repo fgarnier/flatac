@@ -603,6 +603,20 @@ ordering on their name. *)
     Hashtbl.fold cleaner_folder nt_system.nts_automata new_table
     
       
+
+  
+(**
+comptes a numerical transition system in which all local variables
+list of each automaton has been cleared of non used varibles
+*)
+  let nt_system_var_cleaner nt_sys =
+    let clean_system_table = clean_unlisted_vars_on_all_system_table nt_sys
+    in
+     nts_sys_with_update_cautomaton_table nt_sys clean_system_table
+    
+ 
+
+
   (** Types and functions used to generate a control flow graph
       from the numerical transition system description*)
       

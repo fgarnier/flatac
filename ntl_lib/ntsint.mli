@@ -47,7 +47,10 @@ module Nts_int :
     val pprint_inputvars : nts_automaton -> string
     val pprint_outputvars : nts_automaton -> string
     val pprint_localvars : nts_automaton -> string
+    val nt_system_var_cleaner : nts_system -> nts_system
     val pprint_to_nts : nts_automaton -> string
     val pprint_nts : nts_system -> string
     val pprint_transitions : string -> nts_automaton -> string
+    val compute_pred_relation :
+      nts_automaton -> (control, (control, unit) Hashtbl.t) Hashtbl.t
   end

@@ -94,6 +94,12 @@ sig
   val pprint_outputvars : nts_automaton  -> string 
   val pprint_localvars : nts_automaton  -> string
 
+  (**
+     computes a numerical transition system in which all local variables
+     list of each automaton has been cleared of non used varibles
+  *)
+  val nt_system_var_cleaner : nts_system -> nts_system 
+
   val pprint_to_nts : nts_automaton -> string
   val pprint_nts : nts_system -> string 
     (* Here for debuging purposes. Shall be removed for release
