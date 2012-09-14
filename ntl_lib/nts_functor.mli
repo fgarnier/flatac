@@ -70,7 +70,9 @@ sig
 	nts_gvars_init : Nts_types.nts_gen_relation list option;
         nts_system_threads : (string * Big_int.big_int) list option;
       }
-	
+  
+
+  val pprint_control : control -> string	
   val anot_parser : unit -> anotations
 
   (*val rename_nts_system : nts_system -> string -> unit*)
