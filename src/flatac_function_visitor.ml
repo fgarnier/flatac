@@ -66,6 +66,8 @@ open Flatac_extended_cfg
 (*GVarDecl of funspec*) 
 
 
+ exception Empty_name
+
 class flatac_visitor (prj : Project.t )  = object (self)
   inherit Visitor.generic_frama_c_visitor (prj) (Cil.inplace_visit())
     
@@ -74,6 +76,7 @@ class flatac_visitor (prj : Project.t )  = object (self)
     begin 
       match ( Kernel.Files.get() ) with
 	  [] -> raise No_file_name_given
+	| ""::_ -> raise Empty_name
 	| f::_ -> f
     end
 
@@ -90,6 +93,7 @@ class flatac_visitor (prj : Project.t )  = object (self)
    initializer self#get_nts_name()
 
   method private get_nts_name () =
+    (*let source_file_name = local_file_ast.fileName in*)
     let index = ref 0 in
     while 
       ((!index < (String.length source_file_name)) && 
@@ -153,7 +157,7 @@ class flatac_visitor (prj : Project.t )  = object (self)
       let current_ecfg_output = registered_ecfg#pprint_ecfg_vertex () in
 	pre_msg^current_ecfg_output^"\n"
     in
-      Hashtbl.fold  pprint_folder function_tables ("nts "^source_file_name^";")
+      Hashtbl.fold  pprint_folder function_tables ("nts "^nts_name^";")
 
   (*method pprint_all_ntsint_global_var () =*)
     
