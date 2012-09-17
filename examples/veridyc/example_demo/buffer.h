@@ -28,7 +28,7 @@ typedef struct {
  *
  */
   
-int init(buffer_t*, int);
+int initb(buffer_t*, int);
 
 int put(buffer_t*, int, char*);
 

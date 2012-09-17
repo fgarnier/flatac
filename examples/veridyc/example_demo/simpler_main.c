@@ -12,7 +12,7 @@ int main() {
 
   buffer_t *b=malloc(sizeof(buffer_t));
 
-  init(b, 24);
+  initb(b, 24);
 
   while (1) {
     char line[80];

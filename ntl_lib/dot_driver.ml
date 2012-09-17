@@ -14,6 +14,9 @@ module Make =
       type nts_automaton = NFParam.nts_automaton
       type nts_system = NFParam.nts_system
 
+      open NFParam
+
+
       let pprint_control = NFParam.pprint_control
 	
 	
@@ -23,7 +26,7 @@ module Make =
 	  Format.sprintf "%s %s [label=\"initial\";color=blue];\n" 
 	    prefix (pprint_control control) 
 	in
-	Hashtbl.fold  in_folder ca.init_states ""
+	Hashtbl.fold  in_folder ca.NFParam.init_states ""
      
 	  
       let dot_of_final_nodes (ca : nts_automaton) =
@@ -31,7 +34,7 @@ module Make =
 	  Format.sprintf "%s %s [label=\"final\";color=green];\n" 
 	    prefix (pprint_control control) 
 	in
-	Hashtbl.fold  in_folder ca.final_states ""
+	Hashtbl.fold  in_folder ca.NFParam.final_states ""
 	  
 	  
       let dot_of_error_nodes (ca : nts_automaton) =
@@ -39,12 +42,12 @@ module Make =
 	  Format.sprintf "%s %s [label=\"error\";color=red];\n" 
 	    prefix (pprint_control control) 
 	in
-	Hashtbl.fold in_folder ca.error_states	""
+	Hashtbl.fold in_folder ca.NFParam.error_states	""
 	  
 	  
       let transitions_of_nts_automaton  (ca : nts_automaton ) prefix  =
 	let inner_folder outter_control  inner_control _ prefix =
-	  Format.sprintf "%s %s_%s->%s_%s;\n" prefix ca.nts_automata_name (pprint_control outter_control) 
+	  Format.sprintf "%s %s_%s->%s_%s;\n" prefix ca.NFParam.nts_automata_name (pprint_control outter_control) 
 	    ca.nts_automata_name (pprint_control inner_control )
 	in
 	let outter_folder outter_control inner_table prefix =

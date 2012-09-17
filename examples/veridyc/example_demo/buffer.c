@@ -12,7 +12,7 @@
  *
  */
 
-int init(buffer_t* b, int size) {
+int initb(buffer_t* b, int size) {
   // make size a multiple of 4
   //size += (size % 4) ? (4 - size % 4) : 0;
   // allocate memory
