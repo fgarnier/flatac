@@ -1,3 +1,27 @@
+(*
+Interface file for prototyping an intermediate languages between the
+Numerical Transition System library language and Interproc SPL
+language.
+
+This language eases the translation of a transition systems to
+the SPL language, where instructions are regrouped into basic
+blocks and where the programs is represented as a listing.
+
+This intermediate language aims at focusing on the translation
+from the tansitions sytems to the control flow structure which
+is proper to SPL.
+A second phase consists in translating the variables, arithmetical
+expressions and pressburger expressions from the NTL languague to
+BDD Apron expressions.
+
+
+(c) Verimag 2012
+Contact florent dot garnier at gmail dot com for  further informations.
+
+
+*)
+
+
 open Syntax (* Module that defines the syntax of the spl language*)
 open Nts_gentypes
 

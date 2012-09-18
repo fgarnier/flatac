@@ -1,3 +1,11 @@
+(*  
+Ntl lib, ocaml implementation.
+(c) Verimag 2012.
+
+Questions : florent dot garnier at gmail dot com
+
+*)
+
 open Nts_types
 
 (** This function cleans up unused variable, i.e. all local variables
@@ -29,7 +37,6 @@ let add_nts_var_to_diary diary nvar =
   if (Hashtbl.mem table vname) then () 
   else
     begin
-     (* Format.printf "Adding var %s to diary \n" (Nts.nts_pprint_nts_var nvar);*)
       Hashtbl.add table  vname ()
     end
 
@@ -48,56 +55,16 @@ let pprint_diary diary =
 
 
 let contains_var diary nvar =
-  (*Format.printf "In contain var : Diary contains : \n"; pprint_diary diary ;*) 
   let table = get_diary_table diary in
   let vname = get_var_name nvar in
-  (*let test =*)
     Hashtbl.mem table vname 
 
-    (*in
 
-  if test then 
-    begin
-      Format.printf "Variable %s found \n" (Nts.nts_pprint_nts_var nvar);
-      true
-    end
-  else
-    begin
-      Format.printf "Variable %s not found \n" (Nts.nts_pprint_nts_var nvar);
-      Format.printf "Var %s  \n" (Nts.nts_pprint_nts_var nvar);
-      false
-    end
-  *)
 
 let contains_nts_genrel_var diary gen_var =
   match gen_var with 
       NtsGenVar(nvar,_) ->  contains_var diary nvar
-(*
-let rec add_vars_of_arithm_expr_to_diary diary ( expr : cnt_arithm_expr ) =
-  match diary with
-      UVars_diary(table) -> 
-	begin
-	  match expr with
-	      CntCst(_) | CntNdet | CntSymCst(_)
-	    | CntInvalidExp -> ()
-	    
-	    | CntVar(_) ->
-	      begin
-		if Hashtbl.mem table expr then ()
-		else Hashtbl.add table expr ()
-	      end
-		
-	    | CntMinus(g,d) | CntSum(g,d) | CntProd(g,d) 
-	    | CntMod(g,d) |CntDiv(g,d) ->
-	      begin
-		add_vars_of_arithm_expr_to_diary diary g;
-		add_vars_of_arithm_expr_to_diary diary d
-	      end
-	    
-	    | CntUnMin(p) ->
-	      add_vars_of_arithm_expr_to_diary diary p
-	end
-*)
+
 
 let rec add_vars_of_genrel_arithm_exp_to_diary diary ( expr : nts_genrel_arithm_exp ) =
   

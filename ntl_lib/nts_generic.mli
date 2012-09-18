@@ -4,6 +4,11 @@ the numerical transitions systems and their relations. The intended relations
 complies with the NTL lib documentations, see README.txt.
 
 
+(c) Verimag 2012
+
+Questions and remarks : write to florent_dot_garnier_AT_gmail_dot_com
+  
+
 *)
 
 exception Found_a_primed_var

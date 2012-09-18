@@ -370,7 +370,7 @@ destination states.*)
     let len = String.length str in
     while (!index < len ) 
     do
-      if (str.[!index]='.') then
+      if (str.[!index]='.' || str.[!index]='/' ||str.[!index]='-' ) then
 	res := !res^"_"
       else
 	res := !res ^(String.make 1 (str.[!index]));
