@@ -64,6 +64,13 @@ open Flatac_extended_cfg
      List.fold_left pprint_list_folder "" gvar_list
 
 (*GVarDecl of funspec*) 
+ 
+
+let get_c_file_name fname =
+    let len = String.length fname in
+    let f_name = String.sub fname 0 (len-2) in
+    f_name
+
 
 
  exception Empty_name
@@ -94,23 +101,27 @@ class flatac_visitor (prj : Project.t )  = object (self)
 
   method private get_nts_name () =
     (*let source_file_name = local_file_ast.fileName in*)
-    let index = ref 0 in
+    (*let index = ref 0 in
     while 
       ((!index < (String.length source_file_name)) && 
 	 (source_file_name.[!index] != '.')) 
     do
       nts_name<-nts_name^(String.make 1 (source_file_name.[!index]));
       index:=!index+1
-    done 
+    done*)
+    Format.printf "[Get nts name] Source file name is %s \n" source_file_name;
+    nts_name <- (get_c_file_name source_file_name);
+    Format.printf "[Get nts name] nts_name equals %s \n" nts_name
+ 
 
    (* It is required that Cfg.computeFileCFG has been called upon the
    Ast file before calling this method.*)
   method private register_ecfg_of_gfun ( funinfos : Cil_types.fundec ) =
-    (*Cfg.prepareCFG funinfos; Cfg.computeCFGInfo funinfos true;*)
-    (*Cfg.cfgfun funinfos;*)
+    
     let gtype_info_visitor = new global_composite_types_visitor ( prj ) 
     in 
-    Visitor.visitFramacFile ( gtype_info_visitor :> frama_c_copy) local_file_ast;
+    Visitor.visitFramacFile ( gtype_info_visitor :> frama_c_copy) 
+      local_file_ast;
     let index = gtype_info_visitor#get_index_of_composite () in
     let debug_msg = pprint_index_of_type_pointer_path index in
     Format.printf "flatac_visitor: Index of global types : %s \n" debug_msg;

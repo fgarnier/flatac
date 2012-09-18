@@ -47,19 +47,26 @@ let pretty_print_cautomata_obj out =
   let project_name = Project.get_name prj in
   Format.printf "Current project name is : %s \n" project_name ;
  
- 
-  let kernel_file_name =  
+
+  let get_c_file_name fname =
+    let len = String.length fname in
+    let f_name = String.sub fname 0 (len-2) in
+    f_name
+  in
+  let kernel_file_name () =  
     begin match ( Kernel.Files.get() ) with
 	[] -> raise No_file_name_given
       | f::_ -> f
     end
   in
-  Format.printf "File name provided by the Kernel.Files.get function is %s \n" kernel_file_name;
+  Format.printf "File name provided by the Kernel.Files.get function is %s \n" (kernel_file_name ());
+  Format.printf "Name without its extension: %s \n" (get_c_file_name (kernel_file_name()))
+ ;
   
  
-  let ca_out_name = Printf.sprintf "%s.nts" kernel_file_name in
+  let ca_out_name = Printf.sprintf "%s.nts" (kernel_file_name ()) in
   let out_file = open_out ca_out_name in
-  let types_out_name = Printf.sprintf "%sa_types" kernel_file_name in
+  let types_out_name = Printf.sprintf "%sa_types" (kernel_file_name()) in
     
   let file_ast = Ast.get() in
   Cfg.clearFileCFG file_ast;
@@ -87,7 +94,7 @@ let pretty_print_cautomata_obj out =
   Format.fprintf types_out_file "%s %!" (composite_types#pprint_pvars_of_comp_types ());
   Format.fprintf format_out_file "%!";
   close_out out_file;
-  close_out types_out
+  close_out types_out 
 
 let print () = Self.result "%t" ( fun out ->  pretty_print_cautomata_obj out )
 
