@@ -54,6 +54,8 @@ let number =  ['0' - '9']
 let intval = number +
 let quote = ['\'']
 let identifier = ( '_' | uletter | lletter)+ ( uletter | lletter | '_' | number )*
+ let dotted_identifier = ( '_' | uletter | lletter)+ ( uletter | lletter | '_' | number | '.')+ ( '_' | uletter | lletter)
+
 let primed_var = (identifier quote)
     
  rule token = parse
@@ -100,6 +102,10 @@ let primed_var = (identifier quote)
   | identifier  { 
     KWD._KWD_or_IDENT (Lexing.lexeme lexbuf)
   }
+  | dotted_identifier {
+    DOTTEDIDENT((Lexing.lexeme lexbuf))
+  }
+
   | primed_var {PRIMEDVAR ( Lexing.lexeme lexbuf )}
   | eof {EOF}
   | _ { 

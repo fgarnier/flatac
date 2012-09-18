@@ -364,11 +364,24 @@ destination states.*)
       
       
   
-    
+  let subst_dot_by_underscore str =
+    let res = ref "" in
+    let index = ref 0 in
+    let len = String.length str in
+    while (!index < len ) 
+    do
+      if (str.[!index]='.') then
+	res := !res^"_"
+      else
+	res := !res ^(String.make 1 (str.[!index]));
+      index:=!index + 1
+    done;
+    !res
       
 
   let pprint_to_nts cautomata = 
       (* let current_ecfg_node = Hashtbl.get vertex current_vertex_id in *)
+    
       let res_string = cautomata.nts_automata_name^"{\n" in
       let res_string = (
 	if List.length cautomata.input_vars > 0 then
@@ -491,7 +504,7 @@ ordering on their name. *)
 
   let pprint_nts nt_system =
     let ret_string =  Format.sprintf "nts %s ; \n"
-      nt_system.nts_system_name 
+      (subst_dot_by_underscore nt_system.nts_system_name) 
     in 
     let gvars_pprint =
       Nts_generic.pprint_typeinfo_nts_genvar_list nt_system.nts_global_vars 

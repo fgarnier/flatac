@@ -246,6 +246,7 @@ let rebuild_top_level_infos nts_name toplevel_list =
 
 %token <Big_int.big_int>  INT
 %token <string> IDENT
+%token <string> DOTTEDIDENT
 %token <float> REAL
 %token <string> PRIMEDVAR 
 %type <Ntsint.Nts_int.nts_system> ntldescr 
@@ -283,6 +284,21 @@ ntldescr : NTSDECL IDENT SEMICOLON comma_sep_header_list {
 }
 
 | NTSDECL IDENT SEMICOLON decl_sequence { 
+  let nts_name = $2 in
+  {
+    nts_system_name = nts_name;
+    nts_global_vars = [] ;
+    nts_automata = cautomata_hashtbl_of_cautomata_list $4;
+    nts_gvars_init = None;
+    nts_system_threads = None ;
+  }
+}
+| NTSDECL DOTTEDIDENT SEMICOLON comma_sep_header_list {
+  let nts_name = $2 in
+  rebuild_top_level_infos nts_name $4 
+}
+
+| NTSDECL DOTTEDIDENT SEMICOLON decl_sequence { 
   let nts_name = $2 in
   {
     nts_system_name = nts_name;
