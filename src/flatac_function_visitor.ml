@@ -100,17 +100,9 @@ class flatac_visitor (prj : Project.t )  = object (self)
    initializer self#get_nts_name()
 
   method private get_nts_name () =
-    (*let source_file_name = local_file_ast.fileName in*)
-    (*let index = ref 0 in
-    while 
-      ((!index < (String.length source_file_name)) && 
-	 (source_file_name.[!index] != '.')) 
-    do
-      nts_name<-nts_name^(String.make 1 (source_file_name.[!index]));
-      index:=!index+1
-    done*)
+  
     Format.printf "[Get nts name] Source file name is %s \n" source_file_name;
-    nts_name <- (get_c_file_name source_file_name);
+    nts_name <- Filename.basename (get_c_file_name source_file_name);
     Format.printf "[Get nts name] nts_name equals %s \n" nts_name
  
 
