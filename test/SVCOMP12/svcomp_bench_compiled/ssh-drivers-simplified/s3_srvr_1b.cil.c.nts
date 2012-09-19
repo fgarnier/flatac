@@ -1,0 +1,153 @@
+nts s3_srvr_1b;
+ 
+main{
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retres_,validity__blastFlag_,validity__s__hit_,validity__s__state_,validity__tmp___1_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_0,__retres,tmp___1,blastFlag,s__hit,s__state : int ;
+
+ out ret_val_, validity__ret_val__  : int;
+initial sinit ;
+final s70;
+error s1,s3,s9,s11,s12,s13,s16,s18,s21,s23,s25,s28,s30,s31,s34,s38,s40,s41,s43,s45,s47,s51,s55,s58,s63,s64,s66,s69,s72,s75,s77,s78,s79,s80,s83; sinit->s0 {  } 
+ s0->s2 { s__state'=8466 and havoc(s__state) } 
+ s2->s4 { blastFlag'=0 and havoc(blastFlag) } 
+ s4->s5 { havoc() } 
+ s5->s6 { havoc() } 
+ s6->s7 { havoc() } 
+ s7->s8 { s__state <=  8512 and havoc() } 
+ s7->s10 { s__state > 8512 and havoc() } 
+ s8->s10 { blastFlag <=  2 and havoc() } 
+ s8->s12 { blastFlag > 2 and havoc() } 
+ s10->s14 { havoc() } 
+ s14->s15 { s__state = 8466 and havoc() } 
+ s14->s17 { s__state != 8466 and havoc() } 
+ s15->s19 { havoc() } 
+ s17->s20 { s__state = 8512 and havoc() } 
+ s17->s22 { s__state != 8512 and havoc() } 
+ s19->s24 { havoc() } 
+ s20->sinter0 { havoc() } 
+ sinter0->s26 { (tmp___1',validity__tmp___1_')=__VERIFIER_nondet_int() and havoc(tmp___1,validity__tmp___1_) } 
+ s22->s27 { s__state = 8640 and havoc() } 
+ s22->s29 { s__state != 8640 and havoc() } 
+ s24->s32 { blastFlag'=2 and blastFlag = 0 and havoc(blastFlag) } 
+ s24->s33 { blastFlag != 0 and havoc() } 
+ s26->s35 { havoc() } 
+ s27->s36 { havoc() } 
+ s29->s37 { s__state = 8656 and havoc() } 
+ s29->s39 { s__state != 8656 and havoc() } 
+ s32->s33 { havoc() } 
+ s33->s42 { s__state'=8656 and s__hit != 0 and havoc(s__state) } 
+ s33->s44 { s__state'=8512 and s__hit = 0 and havoc(s__state) } 
+ s35->s46 { s__state'=8466 and tmp___1 != 0 and havoc(s__state) } 
+ s35->s48 { s__state'=8640 and tmp___1 = 0 and havoc(s__state) } 
+ s36->s49 { havoc() } 
+ s37->s50 { havoc() } 
+ s39->s52 { __retres'=-1 and havoc(__retres) } 
+ s42->s53 { havoc() } 
+ s44->s53 { havoc() } 
+ s46->s54 { havoc() } 
+ s48->s54 { havoc() } 
+ s49->s56 { blastFlag'=4 and blastFlag = 3 and havoc(blastFlag) } 
+ s49->s57 { blastFlag != 3 and havoc() } 
+ s50->s59 { havoc() } 
+ s52->s60 { havoc() } 
+ s53->s61 { havoc() } 
+ s54->s61 { havoc() } 
+ s56->s57 { havoc() } 
+ s57->s62 { s__hit != 0 and havoc() } 
+ s57->s65 { s__state'=8656 and s__hit = 0 and havoc(s__state) } 
+ s59->s67 { blastFlag'=3 and blastFlag = 2 and havoc(blastFlag) } 
+ s59->s68 { blastFlag != 2 and havoc() } 
+ s60->s70 { ret_val_'=__retres and havoc(ret_val_) } 
+ s61->s5 { havoc() } 
+ s62->s52 { __retres'=-1 and havoc(__retres) } 
+ s65->s71 { havoc() } 
+ s67->s68 { havoc() } 
+ s68->s73 { blastFlag'=5 and blastFlag = 4 and havoc(blastFlag) } 
+ s68->s74 { blastFlag != 4 and havoc() } 
+ s71->s61 { havoc() } 
+ s73->s76 { havoc() } 
+ s74->s76 { blastFlag != 5 and havoc() } 
+ s74->s77 { blastFlag = 5 and havoc() } 
+ s76->s81 { s__state'=8640 and s__hit != 0 and havoc(s__state) } 
+ s76->s82 { s__hit = 0 and havoc() } 
+ s81->s84 { havoc() } 
+ s82->s52 { __retres'=-1 and havoc(__retres) } 
+ s84->s61 { havoc() }
+}
+__assert_fail{
+in a,b,c,d,e,f,g,h : int;
+initial sinit ;
+error s0;
+sinit->s0 { true and havoc() }
+}
+
+NonDetInt{
+out ndet, validity_ndet_: int;
+initial sinit;
+final s1;
+
+sinit->s0{ havoc(ndet,  validity_ndet_)}
+s0->s1{havoc()}
+
+}
+
+__VERIFIER_nondet_int{
+out ndet, validity_ndet_: int;
+initial sinit;
+final s1;
+
+sinit->s0{ havoc(ndet,  validity_ndet_)}
+s0->s1{havoc()}
+
+}
+
+__NdetValInRange {
+ out ndval, ndvalid : int;
+ in lowerb, lbval, upperb, upbval : int;
+ initial sinit;
+ final s1;
+
+ sinit->s1 { ndval' <= upperb and ndval' >= lowerb and ndvalid'=1 and havoc(ndval, ndvalid) }
+
+}
+
+strlen{
+ out len, valid_len : int;
+ in ptr_off, ptr_valid : int;
+
+ initial sinit;
+ final s1;
+ sinit->s0 {valid_len'=ptr_valid and havoc(valid_len,len)}
+ s0->s1 { havoc()}
+}
+
+memcpy{
+ in dest_off, dest_val, src_off, srv_val, sizein, size_val : int;
+ out ret_addr, valid_ret : int;
+ initial sinit;
+ final s1;
+
+ sinit -> s0 {ret_addr'=dest_off and valid_ret'=dest_val and havoc(ret_addr,valid_ret)}
+ s0->s1 {havoc()}
+}
+
+strstr{
+ in a,b,c,d : int;
+ out off, val : int;
+
+ initial  sinit;
+ final  sfinal;
+
+ sinit->sfinal {val' = b and havoc(off,val) }
+}
+
+printf{
+ in a,b,c,d : int;
+ out off, val : int;
+
+ initial  sinit;
+ final  sfinal;
+
+ sinit->sfinal { havoc(off,val) }
+
+}

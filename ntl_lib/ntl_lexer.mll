@@ -54,7 +54,7 @@ let number =  ['0' - '9']
 let intval = number +
 let quote = ['\'']
 let identifier = ( '_' | uletter | lletter)+ ( uletter | lletter | '_' | number )*
-let dotted_identifier = ( '.' | '_' | uletter | lletter)+ ( '/' | '-'|'.' | '_' | uletter | lletter | number )+ (uletter | lletter |number)+
+let dotted_identifier = (  '_' | uletter | lletter)+ ( '/' |'.' | '_' | uletter | lletter | number )+ (uletter | lletter |number)+
 
 let primed_var = (identifier quote)
     

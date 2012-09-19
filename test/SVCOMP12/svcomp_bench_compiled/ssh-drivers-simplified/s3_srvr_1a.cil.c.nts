@@ -1,0 +1,215 @@
+nts s3_srvr_1a;
+ 
+main{
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retres_,validity__blastFlag_,validity__s__hit_,validity__s__s3__tmp__new_cipher__algorithms_,validity__s__session__peer_,validity__s__state_,validity__s__verify_mode_,validity__tmp___1_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_0,__retres,tmp___1,blastFlag,s__s3__tmp__new_cipher__algorithms,s__session__peer,s__verify_mode,s__hit,s__state : int ;
+
+ out ret_val_, validity__ret_val__  : int;
+initial sinit ;
+final s156;
+error s98,s1,s100,s3,s102,s105,s9,s108,s11,s12,s110,s13,s112,s113,s16,s18,s21,s119,s23,s121,s123,s124,s27,s29,s30,s129,s32,s131,s132,s35,s135,s38,s40,s138,s42,s141,s142,s45,s144,s47,s146,s50,s52,s54,s152,s56,s155,s158,s61,s159,s160,s63,s161,s66,s164,s69,s71,s73,s74,s77,s80,s82,s84,s86,s89,s92,s94,s95; sinit->s0 {  } 
+ s97->s85 { havoc() } 
+ s0->s2 { s__state'=8466 and havoc(s__state) } 
+ s99->s111 { s__s3__tmp__new_cipher__algorithms+256 != 0 and havoc() } 
+ s99->s114 { s__state'=8576 and s__s3__tmp__new_cipher__algorithms+256 = 0 and havoc(s__state) } 
+ s2->s4 { blastFlag'=0 and havoc(blastFlag) } 
+ s101->s115 { havoc() } 
+ s4->s5 { havoc() } 
+ s5->s6 { havoc() } 
+ s103->s115 { havoc() } 
+ s6->s7 { havoc() } 
+ s104->s53 { havoc() } 
+ s7->s8 { s__state <=  8512 and havoc() } 
+ s7->s10 { s__state > 8512 and havoc() } 
+ s8->s10 { blastFlag <=  2 and havoc() } 
+ s8->s12 { blastFlag > 2 and havoc() } 
+ s106->s116 { havoc() } 
+ s107->s117 { havoc() } 
+ s10->s14 { havoc() } 
+ s109->s118 { s__state = 8656 and havoc() } 
+ s109->s120 { s__state != 8656 and havoc() } 
+ s111->s122 { s__verify_mode+2 != 0 and havoc() } 
+ s111->s125 { s__state'=8560 and s__verify_mode+2 = 0 and havoc(s__state) } 
+ s14->s15 { s__state = 8466 and havoc() } 
+ s14->s17 { s__state != 8466 and havoc() } 
+ s15->s19 { havoc() } 
+ s114->s87 { havoc() } 
+ s17->s20 { s__state = 8496 and havoc() } 
+ s17->s22 { s__state != 8496 and havoc() } 
+ s115->s53 { havoc() } 
+ s116->s53 { havoc() } 
+ s19->s24 { havoc() } 
+ s117->s126 { havoc() } 
+ s20->s25 { havoc() } 
+ s118->s127 { havoc() } 
+ s22->s26 { s__state = 8512 and havoc() } 
+ s22->s28 { s__state != 8512 and havoc() } 
+ s120->s128 { s__state = 8672 and havoc() } 
+ s120->s130 { s__state != 8672 and havoc() } 
+ s24->s31 { blastFlag'=1 and blastFlag = 0 and havoc(blastFlag) } 
+ s24->s33 { s__state'=8496 and blastFlag != 0 and havoc(s__state) } 
+ s122->s114 { s__state'=8576 and havoc(s__state) } 
+ s25->s34 { havoc() } 
+ s26->s36 { s__state'=8528 and havoc(s__state) } 
+ s125->s87 { havoc() } 
+ s28->s37 { s__state = 8528 and havoc() } 
+ s28->s39 { s__state != 8528 and havoc() } 
+ s126->s133 { blastFlag'=4 and blastFlag = 3 and havoc(blastFlag) } 
+ s126->s134 { blastFlag != 3 and havoc() } 
+ s127->s136 { havoc() } 
+ s128->s137 { havoc() } 
+ s31->s33 { s__state'=8496 and havoc(s__state) } 
+ s130->s139 { __retres'=-1 and havoc(__retres) } 
+ s33->s41 { havoc() } 
+ s34->s43 { blastFlag'=2 and blastFlag = 1 and havoc(blastFlag) } 
+ s34->s44 { blastFlag != 1 and havoc() } 
+ s133->s134 { havoc() } 
+ s36->s46 { havoc() } 
+ s134->s140 { s__hit != 0 and havoc() } 
+ s134->s143 { s__state'=8656 and s__hit = 0 and havoc(s__state) } 
+ s37->s48 { s__state'=8544 and havoc(s__state) } 
+ s136->s145 { blastFlag'=3 and blastFlag = 2 and havoc(blastFlag) } 
+ s136->s147 { s__state'=8672 and blastFlag != 2 and havoc(s__state) } 
+ s39->s49 { s__state = 8544 and havoc() } 
+ s39->s51 { s__state != 8544 and havoc() } 
+ s137->s148 { havoc() } 
+ s41->s53 { havoc() } 
+ s139->s149 { havoc() } 
+ s140->s139 { __retres'=-1 and havoc(__retres) } 
+ s43->s44 { havoc() } 
+ s44->s55 { s__state'=8656 and s__hit != 0 and havoc(s__state) } 
+ s44->s57 { s__state'=8512 and s__hit = 0 and havoc(s__state) } 
+ s143->s150 { havoc() } 
+ s46->s53 { havoc() } 
+ s145->s147 { s__state'=8672 and havoc(s__state) } 
+ s48->s58 { havoc() } 
+ s49->s59 { havoc() } 
+ s147->s151 { havoc() } 
+ s148->s153 { blastFlag'=5 and blastFlag = 4 and havoc(blastFlag) } 
+ s148->s154 { blastFlag != 4 and havoc() } 
+ s51->s60 { s__state = 8560 and havoc() } 
+ s51->s62 { s__state != 8560 and havoc() } 
+ s149->s156 { ret_val_'=__retres and havoc(ret_val_) } 
+ s150->s53 { havoc() } 
+ s53->s5 { havoc() } 
+ s151->s53 { havoc() } 
+ s55->s64 { havoc() } 
+ s153->s157 { havoc() } 
+ s154->s157 { blastFlag != 5 and havoc() } 
+ s154->s158 { blastFlag = 5 and havoc() } 
+ s57->s64 { havoc() } 
+ s58->s53 { havoc() } 
+ s59->s65 { havoc() } 
+ s157->s162 { s__state'=8640 and s__hit != 0 and havoc(s__state) } 
+ s157->s163 { s__hit = 0 and havoc() } 
+ s60->s67 { s__state'=8576 and havoc(s__state) } 
+ s62->s68 { s__state = 8576 and havoc() } 
+ s62->s70 { s__state != 8576 and havoc() } 
+ s64->s53 { havoc() } 
+ s162->s165 { havoc() } 
+ s65->s72 { s__verify_mode+1 != 0 and havoc() } 
+ s65->s75 { s__state'=8560 and s__verify_mode+1 = 0 and havoc(s__state) } 
+ s163->s139 { __retres'=-1 and havoc(__retres) } 
+ s67->s76 { havoc() } 
+ s165->s53 { havoc() } 
+ s68->sinter0 { havoc() } 
+ sinter0->s78 { (tmp___1',validity__tmp___1_')=__VERIFIER_nondet_int() and havoc(tmp___1,validity__tmp___1_) } 
+ s70->s79 { s__state = 8592 and havoc() } 
+ s70->s81 { s__state != 8592 and havoc() } 
+ s72->s83 { s__session__peer != 0 and havoc() } 
+ s72->s85 { s__session__peer = 0 and havoc() } 
+ s75->s87 { havoc() } 
+ s76->s53 { havoc() } 
+ s78->s88 { havoc() } 
+ s79->s90 { s__state'=8608 and havoc(s__state) } 
+ s81->s91 { s__state = 8608 and havoc() } 
+ s81->s93 { s__state != 8608 and havoc() } 
+ s83->s97 { s__verify_mode+4 = 0 and havoc() } 
+ s83->s96 { s__state'=8560 and s__verify_mode+4 != 0 and havoc(s__state) } 
+ s85->s99 { havoc() } 
+ s87->s53 { havoc() } 
+ s88->s101 { s__state'=8466 and tmp___1 = 2 and havoc(s__state) } 
+ s88->s103 { s__state'=8592 and tmp___1 != 2 and havoc(s__state) } 
+ s90->s104 { havoc() } 
+ s91->s106 { s__state'=8640 and havoc(s__state) } 
+ s93->s107 { s__state = 8640 and havoc() } 
+ s93->s109 { s__state != 8640 and havoc() } 
+ s96->s87 { havoc() }
+}
+__assert_fail{
+in a,b,c,d,e,f,g,h : int;
+initial sinit ;
+error s0;
+sinit->s0 { true and havoc() }
+}
+
+NonDetInt{
+out ndet, validity_ndet_: int;
+initial sinit;
+final s1;
+
+sinit->s0{ havoc(ndet,  validity_ndet_)}
+s0->s1{havoc()}
+
+}
+
+__VERIFIER_nondet_int{
+out ndet, validity_ndet_: int;
+initial sinit;
+final s1;
+
+sinit->s0{ havoc(ndet,  validity_ndet_)}
+s0->s1{havoc()}
+
+}
+
+__NdetValInRange {
+ out ndval, ndvalid : int;
+ in lowerb, lbval, upperb, upbval : int;
+ initial sinit;
+ final s1;
+
+ sinit->s1 { ndval' <= upperb and ndval' >= lowerb and ndvalid'=1 and havoc(ndval, ndvalid) }
+
+}
+
+strlen{
+ out len, valid_len : int;
+ in ptr_off, ptr_valid : int;
+
+ initial sinit;
+ final s1;
+ sinit->s0 {valid_len'=ptr_valid and havoc(valid_len,len)}
+ s0->s1 { havoc()}
+}
+
+memcpy{
+ in dest_off, dest_val, src_off, srv_val, sizein, size_val : int;
+ out ret_addr, valid_ret : int;
+ initial sinit;
+ final s1;
+
+ sinit -> s0 {ret_addr'=dest_off and valid_ret'=dest_val and havoc(ret_addr,valid_ret)}
+ s0->s1 {havoc()}
+}
+
+strstr{
+ in a,b,c,d : int;
+ out off, val : int;
+
+ initial  sinit;
+ final  sfinal;
+
+ sinit->sfinal {val' = b and havoc(off,val) }
+}
+
+printf{
+ in a,b,c,d : int;
+ out off, val : int;
+
+ initial  sinit;
+ final  sfinal;
+
+ sinit->sfinal { havoc(off,val) }
+
+}

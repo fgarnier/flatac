@@ -1,0 +1,519 @@
+nts s3_srvr_14_BUG.cil;
+ 
+main{
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity__s_,validity__tmp_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_1,_ndet_arg_0,tmp,s : int ;
+
+ out ret_val_, validity__ret_val__  : int;
+initial sinit ;
+final s6;
+error s2,s4; sinit->s0 {  } 
+ s0->s1 { havoc() } 
+ s1->s3 { s'=8464 and havoc(s) } 
+ s3->sinter0 { havoc() } 
+ sinter0->s5 { (tmp',validity__tmp_')=ssl3_accept(s,1) and havoc(tmp,validity__tmp_) } 
+ s5->s6 { ret_val_'=tmp and havoc(ret_val_) }
+}
+ssl3_accept{
+in initial_state,validity__initial_state_ : int;
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity__Time_,validity____cil_tmp55_,validity____cil_tmp56_,validity____cil_tmp57_,validity____cil_tmp58_,validity____cil_tmp59_,validity____cil_tmp60_,validity____cil_tmp61_,validity____retres_,validity__blastFlag_,validity__buf_,validity__cb_,validity__got_new_session_,validity__l_,validity__new_state_,validity__num1_,validity__ret_,validity__s__cert_,validity__s__cert__pkeys__AT0__privatekey_,validity__s__ctx__info_callback_,validity__s__ctx__stats__sess_accept_,validity__s__ctx__stats__sess_accept_good_,validity__s__ctx__stats__sess_accept_renegotiate_,validity__s__debug_,validity__s__hit_,validity__s__in_handshake_,validity__s__info_callback_,validity__s__init_buf___0_,validity__s__init_num_,validity__s__new_session_,validity__s__options_,validity__s__rwstate_,validity__s__s3__tmp__cert_request_,validity__s__s3__tmp__new_cipher_,validity__s__s3__tmp__new_cipher__algo_strength_,validity__s__s3__tmp__new_cipher__algorithms_,validity__s__s3__tmp__next_state___0_,validity__s__s3__tmp__reuse_message_,validity__s__s3__tmp__use_rsa_tmp_,validity__s__server_,validity__s__session__cipher_,validity__s__session__peer_,validity__s__shutdown_,validity__s__state_,validity__s__type_,validity__s__verify_mode_,validity__s__version_,validity__skip_,validity__state_,validity__tmp_,validity__tmp___1_,validity__tmp___10_,validity__tmp___2_,validity__tmp___3_,validity__tmp___4_,validity__tmp___5_,validity__tmp___6_,validity__tmp___7_,validity__tmp___8_,validity__tmp___9_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_0,__retres,__cil_tmp61,__cil_tmp60,__cil_tmp59,__cil_tmp58,__cil_tmp57,__cil_tmp56,__cil_tmp55,blastFlag,tmp___10,tmp___9,tmp___8,tmp___7,tmp___6,tmp___5,tmp___4,tmp___3,tmp___2,tmp___1,got_new_session,skip,state,new_state,ret,num1,cb,tmp,Time,l,buf,s__session__cipher,s__s3__tmp__new_cipher__algo_strength,s__s3__tmp__next_state___0,s__s3__tmp__new_cipher__algorithms,s__s3__tmp__new_cipher,s__s3__tmp__use_rsa_tmp,s__s3__tmp__reuse_message,s__s3__tmp__cert_request,s__ctx__stats__sess_accept_good,s__ctx__stats__sess_accept,s__ctx__stats__sess_accept_renegotiate,s__ctx__info_callback,s__cert__pkeys__AT0__privatekey,s__session__peer,s__verify_mode,s__options,s__cert,s__shutdown,s__debug,s__init_buf___0,s__rwstate,s__hit,s__init_num,s__type,s__version,s__server,s__new_session,s__state,s__in_handshake,s__info_callback : int ;
+
+ out ret_val_, validity__ret_val__  : int;
+initial sinit ;
+final s39;
+error s390,s586,s1,s392,s197,s198,s3,s589,s5,s591,s201,s202,s7,s398,s594,s9,s400,s205,s11,s597,s402,s207,s598,s403,s208,s13,s600,s210,s15,s406,s602,s407,s17,s213,s604,s605,s410,s20,s411,s216,s607,s413,s218,s23,s609,s24,s610,s220,s26,s612,s222,s418,s614,s224,s420,s30,s421,s617,s227,s32,s33,s424,s230,s621,s426,s231,s36,s427,s623,s234,s430,s626,s236,s42,s433,s629,s630,s435,s240,s46,s437,s242,s48,s439,s244,s49,s247,s52,s248,s444,s54,s250,s446,s251,s57,s253,s449,s59,s450,s255,s452,s257,s62,s259,s64,s455,s456,s261,s67,s264,s69,s70,s266,s462,s267,s463,s73,s465,s270,s75,s468,s79,s470,s471,s276,s81,s473,s278,s83,s279,s84,s476,s477,s282,s87,s479,s284,s89,s90,s286,s92,s484,s94,s290,s486,s292,s97,s488,s293,s99,s490,s494,s495,s300,s105,s497,s302,s107,s303,s108,s500,s110,s306,s502,s307,s503,s113,s309,s114,s505,s507,s312,s313,s119,s315,s121,s512,s318,s514,s124,s320,s126,s517,s324,s129,s520,s521,s326,s327,s132,s524,s134,s135,s526,s527,s332,s138,s334,s530,s140,s336,s533,s338,s143,s339,s144,s146,s537,s342,s343,s539,s345,s150,s542,s152,s348,s544,s349,s154,s545,s546,s156,s547,s548,s158,s354,s550,s356,s552,s357,s162,s164,s555,s360,s557,s362,s167,s558,s363,s169,s560,s170,s562,s367,s173,s369,s371,s567,s373,s178,s569,s180,s571,s376,s181,s573,s378,s184,s576,s381,s577,s382,s188,s384,s580,s190,s581,s387,s192,s388,s194; sinit->s0 {  } 
+ s585->s596 { ret <=  0 and havoc() } 
+ s585->s599 { s__state'=8672 and ret > 0 and havoc(s__state) } 
+ s195->s137 { havoc() } 
+ s0->s2 { s__s3__tmp__reuse_message'=0 and havoc(s__s3__tmp__reuse_message) } 
+ s391->s415 { havoc() } 
+ s196->s221 { ret'=-1 and __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__,ret) } 
+ s196->s223 { s__state'=8464 and __if_ndet_cond__ != 0 and havoc(__if_ndet_cond__,s__state) } 
+ s587->s585 { havoc() } 
+ s2->s4 { s__state'=initial_state and havoc(s__state) } 
+ s588->s585 { blastFlag != 8 and havoc() } 
+ s588->s601 { blastFlag'=9 and blastFlag = 8 and havoc(blastFlag) } 
+ s393->s416 { havoc() } 
+ s394->s116 { havoc() } 
+ s199->s225 { s__state'=8480 and havoc(s__state) } 
+ s4->s6 { blastFlag'=0 and havoc(blastFlag) } 
+ s590->s603 { ret <=  0 and havoc() } 
+ s590->s606 { s__state'=8448 and ret > 0 and havoc(s__state) } 
+ s395->s417 { ret <=  0 and havoc() } 
+ s395->s419 { ret > 0 and havoc() } 
+ s200->s226 { tmp___2 != -16384 and havoc() } 
+ s200->s179 { tmp___2 = -16384 and havoc() } 
+ s396->sinter0 { havoc() } 
+ sinter0->s422 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s6->sinter1 { havoc() } 
+ sinter1->s8 { (tmp',validity__tmp_')=__VERIFIER_nondet_int() and havoc(tmp,validity__tmp_) } 
+ s592->s590 { havoc() } 
+ s397->sinter2 { havoc() } 
+ sinter2->s422 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s593->s590 { blastFlag != 9 and havoc() } 
+ s593->s608 { blastFlag'=10 and blastFlag = 9 and havoc(blastFlag) } 
+ s203->s228 { havoc() } 
+ s8->s10 { Time'=tmp and havoc(Time) } 
+ s399->s423 { s__state = 8608 and havoc() } 
+ s399->s425 { s__state != 8608 and havoc() } 
+ s204->s229 { cb != 0 and havoc() } 
+ s204->s145 { skip'=0 and cb = 0 and havoc(skip) } 
+ s595->s611 { s__new_session'=0 and got_new_session != 0 and havoc(s__new_session) } 
+ s595->s613 { ret'=1 and got_new_session = 0 and havoc(ret) } 
+ s10->s12 { cb'=0 and havoc(cb) } 
+ s596->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s401->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s206->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s12->s14 { ret'=-1 and havoc(ret) } 
+ s599->s615 { s__init_num'=0 and havoc(s__init_num) } 
+ s404->s428 { s__init_num'=0 and havoc(s__init_num) } 
+ s209->s232 { s__state'=8496 and havoc(s__state) } 
+ s14->s16 { skip'=0 and havoc(skip) } 
+ s405->sinter3 { havoc() } 
+ sinter3->s358 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s601->s585 { havoc() } 
+ s211->s212 { havoc() } 
+ s16->s18 { got_new_session'=0 and havoc(got_new_session) } 
+ s212->s233 { ret <=  0 and havoc() } 
+ s212->s235 { ret > 0 and havoc() } 
+ s603->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s408->s429 { havoc() } 
+ s18->s19 { havoc() } 
+ s409->s389 { s__s3__tmp__cert_request'=1 and havoc(s__s3__tmp__cert_request) } 
+ s214->s237 { havoc() } 
+ s19->s21 { cb'=s__info_callback and s__info_callback != 0 and havoc(cb) } 
+ s19->s22 { s__info_callback = 0 and havoc() } 
+ s215->s238 { havoc() } 
+ s606->s616 { havoc() } 
+ s21->s25 { s__in_handshake'=s__in_handshake+1 and havoc(s__in_handshake) } 
+ s412->s431 { s__s3__tmp__cert_request'=0 and havoc(s__s3__tmp__cert_request) } 
+ s217->s239 { s__state = 8529 and havoc() } 
+ s217->s241 { s__state != 8529 and havoc() } 
+ s22->s25 { s__in_handshake'=s__in_handshake+1 and s__ctx__info_callback = 0 and havoc(s__in_handshake) } 
+ s22->s27 { cb'=s__ctx__info_callback and s__ctx__info_callback != 0 and havoc(cb) } 
+ s608->s590 { havoc() } 
+ s414->s432 { havoc() } 
+ s219->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s415->s116 { havoc() } 
+ s25->s28 { havoc() } 
+ s611->s618 { s__ctx__stats__sess_accept_good'=s__ctx__stats__sess_accept_good+1 and havoc(s__ctx__stats__sess_accept_good) } 
+ s416->s434 { ret'=-1 and num1 <=  0 and havoc(ret) } 
+ s416->s436 { s__rwstate'=1 and num1 > 0 and havoc(s__rwstate) } 
+ s221->s243 { havoc() } 
+ s417->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s27->s25 { s__in_handshake'=s__in_handshake+1 and havoc(s__in_handshake) } 
+ s613->s619 { havoc() } 
+ s223->s245 { s__ctx__stats__sess_accept'=s__ctx__stats__sess_accept+1 and havoc(s__ctx__stats__sess_accept) } 
+ s28->s29 { tmp___1+12288 != 0 and havoc() } 
+ s28->s31 { tmp___1+12288 = 0 and havoc() } 
+ s419->s438 { s__state'=8466 and ret = 2 and havoc(s__state) } 
+ s419->sinter4 { ret != 2 and havoc() } 
+ sinter4->s440 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s29->s31 { havoc() } 
+ s615->s620 { havoc() } 
+ s225->s246 { havoc() } 
+ s616->s622 { s__s3__tmp__next_state___0'=8640 and s__hit != 0 and havoc(s__s3__tmp__next_state___0) } 
+ s616->s624 { s__s3__tmp__next_state___0'=3 and s__hit = 0 and havoc(s__s3__tmp__next_state___0) } 
+ s226->s247 { state = 8496 and havoc() } 
+ s226->s179 { state != 8496 and havoc() } 
+ s31->s34 { __retres'=-1 and s__cert = 0 and havoc(__retres) } 
+ s31->s35 { s__cert != 0 and havoc() } 
+ s422->s441 { havoc() } 
+ s618->s625 { havoc() } 
+ s423->s442 { havoc() } 
+ s228->s204 { ret > 0 and havoc() } 
+ s228->s249 { ret <=  0 and havoc() } 
+ s619->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s229->s145 { skip'=0 and s__state = state and havoc(skip) } 
+ s229->s252 { new_state'=s__state and s__state != state and havoc(new_state) } 
+ s34->s37 { havoc() } 
+ s620->s627 { ret'=-1 and __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__,ret) } 
+ s620->s628 { __if_ndet_cond__ != 0 and havoc(__if_ndet_cond__) } 
+ s425->s443 { s__state = 8609 and havoc() } 
+ s425->s445 { s__state != 8609 and havoc() } 
+ s35->s38 { havoc() } 
+ s622->s631 { s__init_num'=0 and havoc(s__init_num) } 
+ s232->s254 { s__init_num'=0 and havoc(s__init_num) } 
+ s37->s39 { ret_val_'=__retres and havoc(ret_val_) } 
+ s428->s447 { havoc() } 
+ s233->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s38->s40 { havoc() } 
+ s624->s631 { s__init_num'=0 and havoc(s__init_num) } 
+ s429->s448 { __cil_tmp58+2 != 0 and havoc() } 
+ s429->s451 { skip'=1 and __cil_tmp58+2 = 0 and havoc(skip) } 
+ s625->s613 { ret'=1 and havoc(ret) } 
+ s235->s256 { s__state'=8656 and s__hit != 0 and havoc(s__state) } 
+ s235->s258 { s__state'=8512 and s__hit = 0 and havoc(s__state) } 
+ s40->s41 { havoc() } 
+ s431->s453 { s__state'=8560 and havoc(s__state) } 
+ s41->s43 { state'=s__state and havoc(state) } 
+ s627->s632 { havoc() } 
+ s432->s454 { ret <=  0 and havoc() } 
+ s432->s457 { s__state'=8448 and ret > 0 and havoc(s__state) } 
+ s237->s260 { __cil_tmp56'=s__s3__tmp__new_cipher__algorithms and havoc(__cil_tmp56) } 
+ s628->s116 { havoc() } 
+ s238->s262 { l'=s__s3__tmp__new_cipher__algorithms and havoc(l) } 
+ s43->s44 { havoc() } 
+ s434->s458 { havoc() } 
+ s239->s262 { l'=s__s3__tmp__new_cipher__algorithms and havoc(l) } 
+ s44->s45 { s__state = 12292 and havoc() } 
+ s44->s47 { s__state != 12292 and havoc() } 
+ s45->s50 { s__new_session'=1 and havoc(s__new_session) } 
+ s631->s633 { havoc() } 
+ s436->s372 { s__state'=s__s3__tmp__next_state___0 and havoc(s__state) } 
+ s241->s263 { s__state = 8544 and havoc() } 
+ s241->s265 { s__state != 8544 and havoc() } 
+ s632->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s47->s51 { s__state = 16384 and havoc() } 
+ s47->s53 { s__state != 16384 and havoc() } 
+ s633->s116 { havoc() } 
+ s438->s459 { havoc() } 
+ s243->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s440->s460 { havoc() } 
+ s245->s246 { havoc() } 
+ s50->s55 { havoc() } 
+ s441->s461 { ret <=  0 and havoc() } 
+ s441->s464 { s__state'=8608 and ret > 0 and havoc(s__state) } 
+ s246->s116 { havoc() } 
+ s51->s55 { havoc() } 
+ s442->sinter5 { havoc() } 
+ sinter5->s466 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s443->sinter6 { havoc() } 
+ sinter6->s466 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s53->s56 { s__state = 8192 and havoc() } 
+ s53->s58 { s__state != 8192 and havoc() } 
+ s249->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s445->s467 { s__state = 8640 and havoc() } 
+ s445->s469 { s__state != 8640 and havoc() } 
+ s55->s60 { havoc() } 
+ s56->s60 { havoc() } 
+ s447->s116 { havoc() } 
+ s252->s268 { s__state'=state and havoc(s__state) } 
+ s448->s472 { __cil_tmp59'=s__s3__tmp__new_cipher__algo_strength and havoc(__cil_tmp59) } 
+ s58->s61 { s__state = 24576 and havoc() } 
+ s58->s63 { s__state != 24576 and havoc() } 
+ s254->s269 { havoc() } 
+ s60->s65 { havoc() } 
+ s451->s404 { s__state'=8544 and havoc(s__state) } 
+ s256->s271 { s__init_num'=0 and havoc(s__init_num) } 
+ s61->s65 { havoc() } 
+ s453->s366 { havoc() } 
+ s258->s271 { s__init_num'=0 and havoc(s__init_num) } 
+ s63->s66 { s__state = 8195 and havoc() } 
+ s63->s68 { s__state != 8195 and havoc() } 
+ s454->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s260->s272 { havoc() } 
+ s65->s71 { s__server'=1 and havoc(s__server) } 
+ s66->s71 { s__server'=1 and havoc(s__server) } 
+ s457->s474 { s__s3__tmp__next_state___0'=8576 and havoc(s__s3__tmp__next_state___0) } 
+ s262->s273 { havoc() } 
+ s458->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s263->s274 { havoc() } 
+ s68->s72 { s__state = 8480 and havoc() } 
+ s68->s74 { s__state != 8480 and havoc() } 
+ s459->s116 { havoc() } 
+ s460->s475 { ret <=  0 and havoc() } 
+ s460->s478 { s__init_num'=0 and ret > 0 and havoc(s__init_num) } 
+ s265->s275 { s__state = 8545 and havoc() } 
+ s265->s277 { s__state != 8545 and havoc() } 
+ s461->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s71->s76 { havoc() } 
+ s72->s77 { havoc() } 
+ s268->s280 { s__state'=new_state and havoc(s__state) } 
+ s464->s480 { s__init_num'=0 and havoc(s__init_num) } 
+ s269->s116 { havoc() } 
+ s74->s78 { s__state = 8481 and havoc() } 
+ s74->s80 { s__state != 8481 and havoc() } 
+ s466->s481 { havoc() } 
+ s271->s281 { havoc() } 
+ s76->s82 { havoc() } 
+ s467->s482 { havoc() } 
+ s272->s283 { skip'=1 and __cil_tmp56+256 != 0 and havoc(skip) } 
+ s272->sinter7 { __cil_tmp56+256 = 0 and havoc() } 
+ sinter7->s285 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s77->s85 { s__shutdown'=0 and havoc(s__shutdown) } 
+ s273->s287 { __cil_tmp57'=s__options and havoc(__cil_tmp57) } 
+ s78->s85 { s__shutdown'=0 and havoc(s__shutdown) } 
+ s469->s485 { s__state != 8641 and havoc() } 
+ s469->s483 { s__state = 8641 and havoc() } 
+ s274->s288 { havoc() } 
+ s275->s288 { havoc() } 
+ s80->s86 { s__state = 8482 and havoc() } 
+ s80->s88 { s__state != 8482 and havoc() } 
+ s472->s487 { havoc() } 
+ s277->s291 { s__state != 8560 and havoc() } 
+ s277->s289 { s__state = 8560 and havoc() } 
+ s82->s91 { __cil_tmp55'=s__version*8 and havoc(__cil_tmp55) } 
+ s474->s489 { s__init_num'=0 and havoc(s__init_num) } 
+ s475->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s280->s145 { skip'=0 and havoc(skip) } 
+ s85->sinter8 { havoc() } 
+ sinter8->s93 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s281->s116 { havoc() } 
+ s86->s95 { s__state'=3 and havoc(s__state) } 
+ s478->s491 { s__state'=8592 and havoc(s__state) } 
+ s283->s294 { s__state'=8528 and havoc(s__state) } 
+ s88->s98 { s__state != 8464 and havoc() } 
+ s88->s96 { s__state = 8464 and havoc() } 
+ s480->s492 { havoc() } 
+ s285->s295 { havoc() } 
+ s481->s493 { ret <=  0 and havoc() } 
+ s481->s496 { s__state'=8640 and ret > 0 and havoc(s__state) } 
+ s91->s100 { havoc() } 
+ s482->sinter9 { havoc() } 
+ sinter9->s498 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s287->s296 { havoc() } 
+ s483->sinter10 { havoc() } 
+ sinter10->s498 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s288->s297 { havoc() } 
+ s93->s101 { havoc() } 
+ s289->s298 { havoc() } 
+ s485->s499 { s__state = 8656 and havoc() } 
+ s485->s501 { s__state != 8656 and havoc() } 
+ s95->s102 { havoc() } 
+ s96->s103 { havoc() } 
+ s291->s299 { s__state = 8561 and havoc() } 
+ s291->s301 { s__state != 8561 and havoc() } 
+ s487->s504 { tmp___7'=512 and __cil_tmp59+4 != 0 and havoc(tmp___7) } 
+ s487->s506 { tmp___7'=1024 and __cil_tmp59+4 = 0 and havoc(tmp___7) } 
+ s98->s104 { s__state = 8465 and havoc() } 
+ s98->s106 { s__state != 8465 and havoc() } 
+ s489->s366 { havoc() } 
+ s294->s304 { s__init_num'=0 and havoc(s__init_num) } 
+ s295->s294 { s__state'=8528 and ret > 0 and havoc(s__state) } 
+ s295->s305 { ret <=  0 and havoc() } 
+ s100->s109 { __retres'=-1 and __cil_tmp55 != 3 and havoc(__retres) } 
+ s100->s111 { s__type'=8192 and __cil_tmp55 = 3 and havoc(s__type) } 
+ s491->s459 { havoc() } 
+ s296->s308 { s__s3__tmp__use_rsa_tmp'=1 and __cil_tmp57+2097152 != 0 and havoc(s__s3__tmp__use_rsa_tmp) } 
+ s296->s310 { s__s3__tmp__use_rsa_tmp'=0 and __cil_tmp57+2097152 = 0 and havoc(s__s3__tmp__use_rsa_tmp) } 
+ s101->s112 { ret <=  0 and havoc() } 
+ s101->s115 { s__s3__tmp__next_state___0'=8482 and ret > 0 and havoc(s__s3__tmp__next_state___0) } 
+ s492->s116 { havoc() } 
+ s297->s311 { s__verify_mode+1 != 0 and havoc() } 
+ s297->s314 { skip'=1 and s__verify_mode+1 = 0 and havoc(skip) } 
+ s102->s116 { havoc() } 
+ s493->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s298->sinter11 { havoc() } 
+ sinter11->s316 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s103->s117 { havoc() } 
+ s299->sinter12 { havoc() } 
+ sinter12->s316 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s104->s117 { havoc() } 
+ s496->s508 { s__init_num'=0 and havoc(s__init_num) } 
+ s301->s317 { s__state = 8448 and havoc() } 
+ s301->s319 { s__state != 8448 and havoc() } 
+ s106->s118 { s__state = 8466 and havoc() } 
+ s106->s120 { s__state != 8466 and havoc() } 
+ s498->s509 { havoc() } 
+ s499->s510 { havoc() } 
+ s304->s321 { havoc() } 
+ s109->s122 { havoc() } 
+ s305->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s501->s511 { s__state = 8657 and havoc() } 
+ s501->s513 { s__state != 8657 and havoc() } 
+ s111->s123 { havoc() } 
+ s112->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s308->s322 { havoc() } 
+ s504->s515 { havoc() } 
+ s310->s322 { havoc() } 
+ s115->s127 { s__state'=8448 and havoc(s__state) } 
+ s506->s515 { havoc() } 
+ s311->s323 { s__session__peer != 0 and havoc() } 
+ s311->s325 { s__session__peer = 0 and havoc() } 
+ s116->s128 { havoc() } 
+ s117->s130 { s__shutdown'=0 and havoc(s__shutdown) } 
+ s508->s516 { havoc() } 
+ s118->s130 { s__shutdown'=0 and havoc(s__shutdown) } 
+ s509->s518 { blastFlag'=5 and blastFlag = 4 and havoc(blastFlag) } 
+ s509->s519 { blastFlag != 4 and havoc() } 
+ s314->s328 { s__s3__tmp__cert_request'=0 and havoc(s__s3__tmp__cert_request) } 
+ s510->s522 { s__session__cipher'=s__s3__tmp__new_cipher and havoc(s__session__cipher) } 
+ s120->s131 { s__state = 8496 and havoc() } 
+ s120->s133 { s__state != 8496 and havoc() } 
+ s511->s522 { s__session__cipher'=s__s3__tmp__new_cipher and havoc(s__session__cipher) } 
+ s316->s329 { havoc() } 
+ s317->s330 { havoc() } 
+ s122->s39 { ret_val_'=__retres and havoc(ret_val_) } 
+ s513->s523 { s__state = 8672 and havoc() } 
+ s513->s525 { s__state != 8672 and havoc() } 
+ s123->sinter13 { s__init_buf___0 = 0 and havoc() } 
+ sinter13->s136 { (buf',validity__buf_')=__VERIFIER_nondet_int() and havoc(buf,validity__buf_) } 
+ s123->s137 { s__init_buf___0 != 0 and havoc() } 
+ s319->s331 { s__state = 8576 and havoc() } 
+ s319->s333 { s__state != 8576 and havoc() } 
+ s515->s528 { __cil_tmp60'=tmp___6*8 and havoc(__cil_tmp60) } 
+ s125->s139 { havoc() } 
+ s516->s116 { havoc() } 
+ s321->s116 { havoc() } 
+ s322->s335 { s__s3__tmp__use_rsa_tmp != 0 and havoc() } 
+ s322->s337 { s__s3__tmp__use_rsa_tmp = 0 and havoc() } 
+ s127->s141 { s__init_num'=0 and havoc(s__init_num) } 
+ s518->s529 { havoc() } 
+ s323->s340 { skip'=1 and s__verify_mode+4 != 0 and havoc(skip) } 
+ s323->s341 { s__verify_mode+4 = 0 and havoc() } 
+ s128->s142 { __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__) } 
+ s128->s145 { skip'=0 and __if_ndet_cond__ != 0 and havoc(__if_ndet_cond__,skip) } 
+ s519->s531 { blastFlag'=8 and blastFlag = 7 and havoc(blastFlag) } 
+ s519->s532 { blastFlag != 7 and havoc() } 
+ s325->s344 { __cil_tmp61'=s__s3__tmp__new_cipher__algorithms and havoc(__cil_tmp61) } 
+ s130->sinter14 { havoc() } 
+ sinter14->s147 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s131->s148 { havoc() } 
+ s522->s534 { havoc() } 
+ s523->s535 { havoc() } 
+ s328->s346 { s__state'=8560 and havoc(s__state) } 
+ s133->s149 { s__state = 8497 and havoc() } 
+ s133->s151 { s__state != 8497 and havoc() } 
+ s329->s347 { ret <=  0 and havoc() } 
+ s329->s350 { s__s3__tmp__next_state___0'=8576 and ret > 0 and havoc(s__s3__tmp__next_state___0) } 
+ s525->s536 { s__state = 8673 and havoc() } 
+ s525->s538 { s__state != 8673 and havoc() } 
+ s330->s351 { havoc() } 
+ s331->s352 { havoc() } 
+ s136->s153 { havoc() } 
+ s137->s155 { ret'=-1 and __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__,ret) } 
+ s137->s157 { s__init_num'=0 and __if_ndet_cond__ != 0 and havoc(__if_ndet_cond__,s__init_num) } 
+ s528->s540 { havoc() } 
+ s333->s353 { s__state = 8577 and havoc() } 
+ s333->s355 { s__state != 8577 and havoc() } 
+ s529->s541 { ret <=  0 and havoc() } 
+ s529->s543 { ret > 0 and havoc() } 
+ s139->s159 { __retres'=ret and havoc(__retres) } 
+ s335->sinter15 { havoc() } 
+ sinter15->s358 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s531->s529 { havoc() } 
+ s141->s160 { havoc() } 
+ s532->s529 { blastFlag != 10 and havoc() } 
+ s532->s545 { blastFlag = 10 and havoc() } 
+ s337->s359 { l+30 != 0 and havoc() } 
+ s337->s361 { l+30 = 0 and havoc() } 
+ s142->s145 { skip'=0 and __if_ndet_cond__ != 0 and havoc(__if_ndet_cond__,skip) } 
+ s142->s161 { __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__) } 
+ s534->s549 { ret'=-1 and __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__,ret) } 
+ s534->sinter16 { __if_ndet_cond__ != 0 and havoc(__if_ndet_cond__) } 
+ sinter16->s551 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s535->sinter17 { havoc() } 
+ sinter17->s553 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s340->s364 { s__s3__tmp__cert_request'=0 and havoc(s__s3__tmp__cert_request) } 
+ s145->s38 { havoc() } 
+ s536->sinter18 { havoc() } 
+ sinter18->s553 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s341->s325 { havoc() } 
+ s147->s163 { havoc() } 
+ s538->s554 { s__state = 3 and havoc() } 
+ s538->s556 { s__state != 3 and havoc() } 
+ s148->sinter19 { havoc() } 
+ sinter19->s165 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s344->s365 { havoc() } 
+ s149->sinter20 { havoc() } 
+ sinter20->s165 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s540->sinter21 { __cil_tmp60 > tmp___7 and havoc() } 
+ sinter21->s358 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s540->s559 { skip'=1 and __cil_tmp60 <=  tmp___7 and havoc(skip) } 
+ s541->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s346->s366 { havoc() } 
+ s151->s166 { s__state = 8512 and havoc() } 
+ s151->s168 { s__state != 8512 and havoc() } 
+ s347->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s543->s561 { s__state'=3 and s__hit != 0 and havoc(s__state) } 
+ s543->s563 { s__state'=8656 and s__hit = 0 and havoc(s__state) } 
+ s153->s171 { ret'=-1 and buf = 0 and havoc(ret) } 
+ s153->s172 { buf != 0 and havoc() } 
+ s350->s368 { s__state'=8448 and havoc(s__state) } 
+ s155->s174 { havoc() } 
+ s351->s370 { s__rwstate'=2 and num1 > 0 and havoc(s__rwstate) } 
+ s351->s372 { s__state'=s__s3__tmp__next_state___0 and num1 <=  0 and havoc(s__state) } 
+ s352->sinter22 { havoc() } 
+ sinter22->s374 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s157->s175 { havoc() } 
+ s353->sinter23 { havoc() } 
+ sinter23->s374 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s549->s564 { havoc() } 
+ s159->s176 { havoc() } 
+ s355->s375 { s__state = 8592 and havoc() } 
+ s355->s377 { s__state != 8592 and havoc() } 
+ s160->s116 { havoc() } 
+ s551->s565 { havoc() } 
+ s161->s177 { tmp___1 != -12288 and havoc() } 
+ s161->s179 { tmp___1 = -12288 and havoc() } 
+ s553->s566 { havoc() } 
+ s358->s379 { havoc() } 
+ s163->s182 { blastFlag'=1 and blastFlag = 0 and havoc(blastFlag) } 
+ s163->s183 { blastFlag != 0 and havoc() } 
+ s554->s568 { s__init_buf___0'=0 and havoc(s__init_buf___0) } 
+ s359->sinter24 { havoc() } 
+ sinter24->s358 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s165->s185 { havoc() } 
+ s556->s570 { ret'=-1 and havoc(ret) } 
+ s361->s380 { l+1 != 0 and havoc() } 
+ s361->s383 { skip'=1 and l+1 = 0 and havoc(skip) } 
+ s166->s186 { havoc() } 
+ s168->s187 { s__state = 8513 and havoc() } 
+ s168->s189 { s__state != 8513 and havoc() } 
+ s559->s404 { s__state'=8544 and havoc(s__state) } 
+ s364->s385 { s__state'=8560 and havoc(s__state) } 
+ s365->s389 { s__s3__tmp__cert_request'=1 and __cil_tmp61+256 = 0 and havoc(s__s3__tmp__cert_request) } 
+ s365->s386 { __cil_tmp61+256 != 0 and havoc() } 
+ s561->s572 { s__init_num'=0 and havoc(s__init_num) } 
+ s366->s116 { havoc() } 
+ s171->s191 { havoc() } 
+ s172->s195 { s__init_buf___0'=buf and __if_ndet_cond__ != 0 and havoc(__if_ndet_cond__,s__init_buf___0) } 
+ s172->s193 { ret'=-1 and __if_ndet_cond__ = 0 and havoc(__if_ndet_cond__,ret) } 
+ s563->s572 { s__init_num'=0 and havoc(s__init_num) } 
+ s368->s391 { s__init_num'=0 and havoc(s__init_num) } 
+ s564->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s174->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s565->s574 { blastFlag'=3 and blastFlag = 2 and havoc(blastFlag) } 
+ s565->s575 { blastFlag != 2 and havoc() } 
+ s370->s393 { num1'=tmp___8 and havoc(num1) } 
+ s175->s196 { s__state != 12292 and havoc() } 
+ s175->s199 { s__ctx__stats__sess_accept_renegotiate'=s__ctx__stats__sess_accept_renegotiate+1 and s__state = 12292 and havoc(s__ctx__stats__sess_accept_renegotiate) } 
+ s566->s578 { blastFlag'=4 and blastFlag = 3 and havoc(blastFlag) } 
+ s566->s579 { blastFlag != 3 and havoc() } 
+ s176->s39 { ret_val_'=__retres and havoc(ret_val_) } 
+ s372->s394 { havoc() } 
+ s177->s200 { s__state != 8656 and havoc() } 
+ s177->s179 { s__state = 8656 and havoc() } 
+ s568->s582 { s__init_num'=0 and havoc(s__init_num) } 
+ s374->s395 { havoc() } 
+ s179->sinter25 { s__debug != 0 and havoc() } 
+ sinter25->s203 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) } 
+ s179->s204 { s__debug = 0 and havoc() } 
+ s570->s583 { havoc() } 
+ s375->s396 { havoc() } 
+ s572->s584 { havoc() } 
+ s377->s397 { s__state = 8593 and havoc() } 
+ s377->s399 { s__state != 8593 and havoc() } 
+ s182->s183 { havoc() } 
+ s183->s206 { ret <=  0 and havoc() } 
+ s183->s209 { got_new_session'=1 and ret > 0 and havoc(got_new_session) } 
+ s574->s585 { havoc() } 
+ s379->s401 { ret <=  0 and havoc() } 
+ s379->s404 { s__state'=8544 and ret > 0 and havoc(s__state) } 
+ s575->s587 { blastFlag'=6 and blastFlag = 5 and havoc(blastFlag) } 
+ s575->s588 { blastFlag != 5 and havoc() } 
+ s380->s405 { s__cert__pkeys__AT0__privatekey = 0 and havoc() } 
+ s380->s408 { __cil_tmp58'=s__s3__tmp__new_cipher__algo_strength and s__cert__pkeys__AT0__privatekey != 0 and havoc(__cil_tmp58) } 
+ s185->s211 { blastFlag'=2 and blastFlag = 1 and havoc(blastFlag) } 
+ s185->s212 { blastFlag != 1 and havoc() } 
+ s186->s214 { havoc() } 
+ s187->s214 { havoc() } 
+ s578->s590 { havoc() } 
+ s383->s404 { s__state'=8544 and havoc(s__state) } 
+ s579->s592 { blastFlag'=7 and blastFlag = 6 and havoc(blastFlag) } 
+ s579->s593 { blastFlag != 6 and havoc() } 
+ s189->s215 { s__state = 8528 and havoc() } 
+ s189->s217 { s__state != 8528 and havoc() } 
+ s385->s366 { havoc() } 
+ s386->s409 { s__verify_mode+2 != 0 and havoc() } 
+ s386->s412 { skip'=1 and s__verify_mode+2 = 0 and havoc(skip) } 
+ s191->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s582->s595 { havoc() } 
+ s583->s125 { s__in_handshake'=s__in_handshake-1 and havoc(s__in_handshake) } 
+ s193->s219 { havoc() } 
+ s584->s116 { havoc() } 
+ s389->sinter26 { havoc() } 
+ sinter26->s414 { (ret',validity__ret_')=__VERIFIER_nondet_int() and havoc(ret,validity__ret_) }
+}

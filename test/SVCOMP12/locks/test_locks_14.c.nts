@@ -1,0 +1,157 @@
+nts test_locks_14;
+ 
+get_exit_nondet{
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity__retval_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_0,retval : int ;
+
+ out ret_val_, validity__ret_val__  : int;
+initial sinit ;
+final s1;
+ sinit->s0 {  } 
+ s0->s1 { ret_val_'=retval and havoc(ret_val_) }
+}
+main{
+
+__nts__naffected_ret_val_,validity____nts__naffected_ret_val__,validity____retres_,validity__cond_,validity__lk1_,validity__lk10_,validity__lk11_,validity__lk12_,validity__lk13_,validity__lk14_,validity__lk2_,validity__lk3_,validity__lk4_,validity__lk5_,validity__lk6_,validity__lk7_,validity__lk8_,validity__lk9_,validity__p1_,validity__p10_,validity__p11_,validity__p12_,validity__p13_,validity__p14_,validity__p2_,validity__p3_,validity__p4_,validity__p5_,validity__p6_,validity__p7_,validity__p8_,validity__p9_,__ndet_cond__,__if_ndet_cond__,_ndet_arg_0,__retres,cond,lk14,p14,lk13,p13,lk12,p12,lk11,p11,lk10,p10,lk9,p9,lk8,p8,lk7,p7,lk6,p6,lk5,p5,lk4,p4,lk3,p3,lk2,p2,lk1,p1 : int ;
+
+ out ret_val_, validity__ret_val__  : int;
+initial sinit ;
+final s17;
+error s194,s98,s196,s197,s100,s3,s198,s101,s199,s102,s103,s7,s202,s8,s203,s106,s204,s10,s205,s108,s206,s109,s12,s110,s111,s15,s114,s18,s116,s117,s20,s118,s119,s22,s24,s122,s26,s124,s125,s28,s126,s127,s30,s32,s130,s34,s132,s133,s36,s134,s135,s38,s138,s41,s140,s141,s44,s142,s45,s143,s48,s146,s49,s148,s149,s52,s150,s53,s151,s56,s154,s57,s156,s157,s60,s158,s61,s159,s64,s162,s65,s164,s165,s68,s166,s69,s167,s72,s170,s73,s172,s173,s76,s174,s77,s175,s80,s178,s81,s180,s181,s84,s182,s85,s183,s88,s186,s89,s188,s189,s92,s190,s93,s191,s96; sinit->s0 {  } 
+ s97->s101 { lk1 != 1 and havoc() } 
+ s97->s104 { lk1'=0 and lk1 = 1 and havoc(lk1) } 
+ s0->s1 { havoc() } 
+ s195->s1 { p14 = 0 and havoc() } 
+ s195->s201 { p14 != 0 and havoc() } 
+ s1->s2 { havoc() } 
+ s99->s105 { p2 != 0 and havoc() } 
+ s99->s107 { p2 = 0 and havoc() } 
+ s2->sinter0 { havoc() } 
+ sinter0->s4 { (cond',validity__cond_')=get_exit_nondet() and havoc(cond,validity__cond_) } 
+ s4->s5 { havoc() } 
+ s5->s6 { cond = 0 and havoc() } 
+ s5->s9 { lk1'=0 and cond != 0 and havoc(lk1) } 
+ s200->s195 { havoc() } 
+ s6->s11 { __retres'=0 and havoc(__retres) } 
+ s201->s204 { lk14 != 1 and havoc() } 
+ s201->s207 { lk14'=0 and lk14 = 1 and havoc(lk14) } 
+ s104->s99 { havoc() } 
+ s105->s109 { lk2 != 1 and havoc() } 
+ s105->s112 { lk2'=0 and lk2 = 1 and havoc(lk2) } 
+ s9->s13 { lk2'=0 and havoc(lk2) } 
+ s107->s113 { p3 != 0 and havoc() } 
+ s107->s115 { p3 = 0 and havoc() } 
+ s11->s14 { havoc() } 
+ s207->s1 { havoc() } 
+ s13->s16 { lk3'=0 and havoc(lk3) } 
+ s14->s17 { ret_val_'=__retres and havoc(ret_val_) } 
+ s112->s107 { havoc() } 
+ s113->s117 { lk3 != 1 and havoc() } 
+ s113->s120 { lk3'=0 and lk3 = 1 and havoc(lk3) } 
+ s16->s19 { lk4'=0 and havoc(lk4) } 
+ s115->s121 { p4 != 0 and havoc() } 
+ s115->s123 { p4 = 0 and havoc() } 
+ s19->s21 { lk5'=0 and havoc(lk5) } 
+ s21->s23 { lk6'=0 and havoc(lk6) } 
+ s120->s115 { havoc() } 
+ s23->s25 { lk7'=0 and havoc(lk7) } 
+ s121->s125 { lk4 != 1 and havoc() } 
+ s121->s128 { lk4'=0 and lk4 = 1 and havoc(lk4) } 
+ s25->s27 { lk8'=0 and havoc(lk8) } 
+ s123->s129 { p5 != 0 and havoc() } 
+ s123->s131 { p5 = 0 and havoc() } 
+ s27->s29 { lk9'=0 and havoc(lk9) } 
+ s29->s31 { lk10'=0 and havoc(lk10) } 
+ s128->s123 { havoc() } 
+ s31->s33 { lk11'=0 and havoc(lk11) } 
+ s129->s133 { lk5 != 1 and havoc() } 
+ s129->s136 { lk5'=0 and lk5 = 1 and havoc(lk5) } 
+ s33->s35 { lk12'=0 and havoc(lk12) } 
+ s131->s137 { p6 != 0 and havoc() } 
+ s131->s139 { p6 = 0 and havoc() } 
+ s35->s37 { lk13'=0 and havoc(lk13) } 
+ s37->s39 { lk14'=0 and havoc(lk14) } 
+ s136->s131 { havoc() } 
+ s39->s40 { havoc() } 
+ s137->s141 { lk6 != 1 and havoc() } 
+ s137->s144 { lk6'=0 and lk6 = 1 and havoc(lk6) } 
+ s40->s42 { lk1'=1 and p1 != 0 and havoc(lk1) } 
+ s40->s43 { p1 = 0 and havoc() } 
+ s139->s145 { p7 != 0 and havoc() } 
+ s139->s147 { p7 = 0 and havoc() } 
+ s42->s43 { havoc() } 
+ s43->s46 { lk2'=1 and p2 != 0 and havoc(lk2) } 
+ s43->s47 { p2 = 0 and havoc() } 
+ s46->s47 { havoc() } 
+ s144->s139 { havoc() } 
+ s47->s50 { lk3'=1 and p3 != 0 and havoc(lk3) } 
+ s47->s51 { p3 = 0 and havoc() } 
+ s145->s149 { lk7 != 1 and havoc() } 
+ s145->s152 { lk7'=0 and lk7 = 1 and havoc(lk7) } 
+ s147->s153 { p8 != 0 and havoc() } 
+ s147->s155 { p8 = 0 and havoc() } 
+ s50->s51 { havoc() } 
+ s51->s54 { lk4'=1 and p4 != 0 and havoc(lk4) } 
+ s51->s55 { p4 = 0 and havoc() } 
+ s54->s55 { havoc() } 
+ s152->s147 { havoc() } 
+ s55->s58 { lk5'=1 and p5 != 0 and havoc(lk5) } 
+ s55->s59 { p5 = 0 and havoc() } 
+ s153->s157 { lk8 != 1 and havoc() } 
+ s153->s160 { lk8'=0 and lk8 = 1 and havoc(lk8) } 
+ s155->s161 { p9 != 0 and havoc() } 
+ s155->s163 { p9 = 0 and havoc() } 
+ s58->s59 { havoc() } 
+ s59->s62 { lk6'=1 and p6 != 0 and havoc(lk6) } 
+ s59->s63 { p6 = 0 and havoc() } 
+ s62->s63 { havoc() } 
+ s160->s155 { havoc() } 
+ s63->s66 { lk7'=1 and p7 != 0 and havoc(lk7) } 
+ s63->s67 { p7 = 0 and havoc() } 
+ s161->s165 { lk9 != 1 and havoc() } 
+ s161->s168 { lk9'=0 and lk9 = 1 and havoc(lk9) } 
+ s163->s169 { p10 != 0 and havoc() } 
+ s163->s171 { p10 = 0 and havoc() } 
+ s66->s67 { havoc() } 
+ s67->s70 { lk8'=1 and p8 != 0 and havoc(lk8) } 
+ s67->s71 { p8 = 0 and havoc() } 
+ s70->s71 { havoc() } 
+ s168->s163 { havoc() } 
+ s71->s74 { lk9'=1 and p9 != 0 and havoc(lk9) } 
+ s71->s75 { p9 = 0 and havoc() } 
+ s169->s173 { lk10 != 1 and havoc() } 
+ s169->s176 { lk10'=0 and lk10 = 1 and havoc(lk10) } 
+ s171->s177 { p11 != 0 and havoc() } 
+ s171->s179 { p11 = 0 and havoc() } 
+ s74->s75 { havoc() } 
+ s75->s78 { lk10'=1 and p10 != 0 and havoc(lk10) } 
+ s75->s79 { p10 = 0 and havoc() } 
+ s78->s79 { havoc() } 
+ s176->s171 { havoc() } 
+ s79->s82 { lk11'=1 and p11 != 0 and havoc(lk11) } 
+ s79->s83 { p11 = 0 and havoc() } 
+ s177->s181 { lk11 != 1 and havoc() } 
+ s177->s184 { lk11'=0 and lk11 = 1 and havoc(lk11) } 
+ s179->s185 { p12 != 0 and havoc() } 
+ s179->s187 { p12 = 0 and havoc() } 
+ s82->s83 { havoc() } 
+ s83->s86 { lk12'=1 and p12 != 0 and havoc(lk12) } 
+ s83->s87 { p12 = 0 and havoc() } 
+ s86->s87 { havoc() } 
+ s184->s179 { havoc() } 
+ s87->s90 { lk13'=1 and p13 != 0 and havoc(lk13) } 
+ s87->s91 { p13 = 0 and havoc() } 
+ s185->s189 { lk12 != 1 and havoc() } 
+ s185->s192 { lk12'=0 and lk12 = 1 and havoc(lk12) } 
+ s187->s195 { p13 = 0 and havoc() } 
+ s187->s193 { p13 != 0 and havoc() } 
+ s90->s91 { havoc() } 
+ s91->s94 { lk14'=1 and p14 != 0 and havoc(lk14) } 
+ s91->s95 { p14 = 0 and havoc() } 
+ s94->s95 { havoc() } 
+ s192->s187 { havoc() } 
+ s95->s97 { p1 != 0 and havoc() } 
+ s95->s99 { p1 = 0 and havoc() } 
+ s193->s197 { lk13 != 1 and havoc() } 
+ s193->s200 { lk13'=0 and lk13 = 1 and havoc(lk13) }
+}
