@@ -41,12 +41,18 @@ type primed = Primed
 	      | Unprimed
 type c_int_var = LiIntVar of string
 type c_int_cst = LiIConst of  My_bigint.t
+
+
+type c_float_var = LiFloatVar of string
+type c_float_cst = LiFloatConst of float
+
+
 type c_int_sym_const = LiSymIConst of string
 		       | LiTypeSizeof of Cil_types.typ
 		       | LiCAliasTypeSizeof of Composite_type_types.c_type_name
 
 type c_ptr = LiIntPtr of string (*The represented type is indeed an int*)
-	    
+	     
 
 
 
@@ -71,7 +77,9 @@ type  c_scal_bit_op = LiBitAnd
 
 (** The type of integers scalar expressions*)
 type c_scal = LiVar of primed * c_int_var
+	      | LiFVar of primed * c_float_var
 	      | LiConst of c_int_cst
+	      | LiFConst of c_float_cst
 	      | LiSymConst of c_int_sym_const  (*Like sizeof of types or 
 					       defined constant *)
 	      | LiProd of c_scal * c_scal
@@ -211,46 +219,10 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
       Const(CInt64(cil_cst,_,_))-> LiConst( LiIConst(cil_cst))
     | Const(CChr(c)) -> LiSymConst(LiSymIConst(String.make 1 c))
     | Const(CEnum(e)) -> cil_enumitem_2_scalar e
+    | Const(CReal(v,_,_)) -> LiFConst(LiFloatConst(v))
     	  
     | Lval(Var(f),offset)->
       begin
-	(*match f.vtype with
-	    TInt(_,_) ->
-	      begin 
-		Format.fprintf Ast_goodies.debug_out "INTEGER VAR : %s \b" f.vname;
-	      LiVar(Unprimed,LiIntVar(f.vname))
-	      end
-	  | TPtr(_,_) ->  (* Modified on the 20-10-11, need to check 
-						impact.*)
-
-	    let msg = "This variable : "^f.vname ^"Has a pointer type, but appears in a scalar expression, and I don't know what to do with it \n" in 
-	    let exc =  Bad_expression_type msg in
-	    raise  exc
-	  
-	  | TComp(_,_,_) -> 
-	    LiVar(Unprimed,LiIntVar(f.vname))
-
-	  
-	  | TEnum(e,_) -> 
-	    LiVar(Unprimed,LiIntVar(f.vname))
-
-
-	  | TArray(tinfo,Some(size),_,_)->
-	    let index = get_array_index offset [] in
-	    let dim_of_tabs  =  array_dim f.vtype [] in
-	    let c_array = LiTab(Some(f.vname),dim_of_tabs,tinfo) in
-	    LiElemOfCTab(index,c_array)
-
-
-	  | TArray(tinfo,None,_,_)->
-	    let index = get_array_index offset [] in 
-	    let dim_of_tabs = array_dim f.vtype [] in 
-	    let c_array = LiTab(Some(f.vname),dim_of_tabs,tinfo) in
-	    LiElemOfCTab(index,c_array)
-	      
-
-	  | _-> begin
-	*)
 	let typeofexp = Cil.typeOf expr in
 	let alias_tname = Composite_types.is_integer_type typeofexp in
 	begin

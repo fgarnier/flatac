@@ -14,4 +14,5 @@ type index_of_composite_types = IndexCompositeTypes of
     (( c_type_name , composite_type ) Hashtbl.t)
 
 type integer_alias_type = IntTypeDefAs of c_type_name * Cil_types.typ
+type float_alias_type = FloatTypeDefas of c_type_name * Cil_types.typ
 
