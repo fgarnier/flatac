@@ -93,3 +93,23 @@ let rec is_integer_type ( cilt : Cil_types.typ ) =
       end
 	
 
+let rec is_float_type ( cilt : Cil_types.typ ) =
+  match cilt with
+      TFloat(_,_)  -> 
+	let type_name = Ast_goodies.pprint_ciltypes cilt
+	in 
+	Some(CTypeName(type_name))
+    | TFun(_,_,_,_) | TVoid (_)  
+    | TPtr(_,_)  | TFloat (_,_) | TArray (_,_,_,_) |
+	TBuiltin_va_list (_) | TComp(_) -> None
+
+    | TNamed(tinfo,_) -> 
+      begin
+	let eval_arg = is_float_type tinfo.ttype in
+	match eval_arg with
+	    Some (tval) -> 
+	      let alias_c_name =CTypeName (tinfo.torig_name) in   
+	      Some(alias_c_name)
+		
+	  | None -> None
+      end

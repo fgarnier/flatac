@@ -510,18 +510,7 @@ and get_pvar_from_mem_access ( expn : Cil_types.exp_node) =
 	      let exprprime = get_lval_under_cast e in
 	      get_pvar_from_mem_access exprprime.enode
 
-
-	  (* let pcasted =  ptr_access_caster e in
-	     begin
-	     match pcasted with
-	     AstGLiPtrOfField(s,f) -> 
-	     (PVar((s^"->"^f)))
-	     | AstGLiPtrStarOfPtrField(s,f) -> 
-	     (PVar(("*"^"("^s^"->"^f^")")))
-	  (*| AstGLiPVar(s) -> PVar("*"^s)*)
-	     end *)
-	  (*raise (Debug_info ("CastE(TPtr(_,_),e) \n"))*)
-	    
+ 
 	    
 	  | (_,_) ->
 	    Format.fprintf debug_out "I don't know what to do with :";
@@ -531,40 +520,7 @@ and get_pvar_from_mem_access ( expn : Cil_types.exp_node) =
 	end
     |_ -> raise (Debug_info ("This function is only for analysing Mem(e) lhosts in lval types"))
 
-      (*
-and ptr_access_caster (expr : Cil_types.exp ) =
-  match expr.enode with
-      (CastE(TPtr(_,_),e)) ->
-	ptr_access_caster e 
-	  
-    | ( (Lval( Var(v'), NoOffset ))) ->     
-      AstGLiPVar(v'.vname)
-	
-    | (Lval(Var(v'), Field(finfo,offs))) ->
-       let pointer_name = get_subfield_name "" finfo offs in
-       AstGLiPtrOfField ( v'.vname , pointer_name)
-    | (LVar(Mem(e),off)) ->
-      begin
-	match e.enode , off with
-	    (Lval(Var(v'),_),NoOffset) ->
-	      PVar(v'.vname)
-
-	  | (Lval(Var(v'),_), Field(finfo,offs)) -> 
-	    
-	    let pointer_name = get_subfield_name "" finfo offs in
-	    
-	    in
-	    Format.printf "%s \n" pointer_name;
-	    PVar(pointer_name)
-      end
-   
-    | _ ->
-      Format.fprintf debug_out "I don't know how to parse : ";
-      Cil.d_exp debug_out expr;
-      Format.fprintf debug_out "\n%!";
-      raise (Debug_info ("I failed to parse some expression in ptr_access_caster"))
-(* | (Lval(Mem(e),off))->*)
-      *)    
+     
 	    
 
 let rec get_first_ptvar_from_lparam ( lparam : Cil_types.exp list ) =
@@ -592,11 +548,7 @@ des parametres \n" ;
 			    Contains_no_pvar -> get_first_ptvar_from_lparam l'
 			      
 		      end
-		(* begin
-		 match param.enode with
-		     Lval(Var(varinf),_) -> (PVar(varinf.vname))
-		   | _ -> get_first_ptvar_from_lparam l'
-		 end *)
+	
        
 		    | _  -> get_first_ptvar_from_lparam l' 
 	 end
