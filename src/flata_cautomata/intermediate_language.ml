@@ -79,6 +79,7 @@ type c_scal = LiVar of primed * c_int_var
 	      | LiMinus of c_scal * c_scal
 	      | LiUnMin of c_scal
 	      | LiMod of c_scal * c_scal   (*Modulo operator*)
+	      | LiDiv of c_scal * c_scal (* Integer division*) 
 	      | LiMinusPP of c_ptrexp * c_ptrexp *  Cil_types.typ
 	      | LiScalOfAddr of c_ptrexp * Cil_types.typ 
                                         (* Type must be TPtr(t,_) 
@@ -284,6 +285,13 @@ e is not of type TPtr(_,_), e : %s\n" (Ast_goodies.pprint_cil_exp e) in
 	
     | SizeOf ( t ) -> LiSymConst( LiTypeSizeof ( t ) ) (*  Added 9-9-11 *)
 
+
+    | SizeOfE (expr) -> 
+      begin
+	let t =  Cil.typeOf expr in
+	LiSymConst( LiTypeSizeof ( t ) )
+      end
+	
     | CastE ( t , expr ) -> 
       begin (* If here, one expects the wildcarded
 	       type to be an integer type.*) 
@@ -374,6 +382,14 @@ cast an expression whose type is TEnum but which is not embeded in a CEnum const
 	    raise( Bad_expression_type (msg))
       end	
 
+    | BinOp (Div, expg, expd , t ) ->
+      begin
+	let lg = cil_expr_2_scalar expg in
+	let ld = cil_expr_2_scalar expd in
+	LiDiv(lg,ld)
+      end
+
+
     | BinOp (MinusPP , expg , expd , optype ) ->
       LiMinusPP(cil_expr_2_ptr expg , cil_expr_2_ptr expd, optype)
     
@@ -397,6 +413,13 @@ cast an expression whose type is TEnum but which is not embeded in a CEnum const
 	  | BAnd | BXor | BOr 
 	    ->
 	    raise (Bad_expression_type (" Logical operation on bits are not yet implemented"))
+	  | _ -> 
+	 
+	    begin
+	      Format.printf "I Crash here with that :\n";
+	      Cil.d_exp Ast_goodies.debug_out expr;
+	      raise (Bad_expression_type("Unknown Binop it seems"))
+	    end
 	    
       end
     | _ ->

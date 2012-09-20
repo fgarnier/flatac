@@ -151,6 +151,14 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
 	  let ld = interpret_c_scal_to_cnt sslf r in
 	    CntMod ( lg , ld )
 	end
+
+
+    | LiDiv( l ,r ) ->
+      begin
+	let lg = interpret_c_scal_to_cnt sslf l in
+	let ld = interpret_c_scal_to_cnt sslf r in
+	    CntDiv ( lg , ld ) 
+      end
 	  
     | LiUnMin( t ) -> 
 	let tin = interpret_c_scal_to_cnt sslf t in

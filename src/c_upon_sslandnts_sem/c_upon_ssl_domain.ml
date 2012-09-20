@@ -772,7 +772,12 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 			      |  _ -> 
 				raise ( Debug_info ("Lost in call of malloc/calloc of ((Mem(e),_),Lval(Var(f),_)) case of  next_on_ssl_instr "))
 			  end
-		      | _ -> raise ( Debug_info ("Lost in ((Mem(e),_),Lval(Var(f),_)) case of  next_on_ssl_instr "))
+		      | _ -> 
+			begin
+			  Format.printf "I don't know what to do with : \n";
+			  Cil.dn_instr Ast_goodies.debug_out instruction;
+			raise ( Debug_info ("Lost in ((Mem(e),_),Lval(Var(f),_)) case of  next_on_ssl_instr "))
+			end
 		  end
 		 
 		| _ ->  

@@ -287,6 +287,13 @@ let rec valid_sym_cscal ( loc_map : validity_loc_map ) (sslf : ssl_formula )
 		and_sym_validity fg fd 
 	end
 
+    | LiDiv(cscalg, cscald ) -> 
+      begin
+	let fg = valid_sym_cscal  loc_map sslf cscalg in
+	let fd = valid_sym_cscal  loc_map sslf cscald in
+	 and_sym_validity fg  fd 
+      end
+
     | LiScalOfAddr ( ptrexp , _ ) -> 
       valid_sym_ptrexp loc_map sslf ptrexp
 	  

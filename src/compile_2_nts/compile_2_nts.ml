@@ -135,6 +135,8 @@ let compile_cil_fun_argexpr_2_cnt sslv (e : Cil_types.exp ) =
 		  })
 	      end
 	  | None ->
+	    Format.printf "Failed to compile this argument : \n";
+	    Cil.d_exp Ast_goodies.debug_out e; Format.fprintf Ast_goodies.debug_out "\n%!";
 	    raise (Debug_info ("compile_cil_fun_argexpr_2_cnt : I have an argume which type is neither an integer value nor a pointer/array"))
       end
 

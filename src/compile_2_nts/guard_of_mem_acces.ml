@@ -169,6 +169,9 @@ to do with Info"))
 
     | StartOf(_) -> CntBTrue
 	  
+    | SizeOf(_) -> CntBTrue
+    | SizeOfE(_) -> CntBTrue
+   
     | Lval( Mem(e) , off ) -> (*Access at the offset off of base memory e*)
       begin
 	let pvar_access = Ast_goodies.get_pvar_from_exp e in
