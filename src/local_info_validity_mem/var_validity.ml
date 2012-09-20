@@ -246,8 +246,21 @@ let rec valid_sym_cscal ( loc_map : validity_loc_map ) (sslf : ssl_formula )
 		let excs = Unregistered_var ((vname^" In valid_cscal")) in
 		  raise excs
 	end
-	    
+	 
+
+    | LiFVar (_,LiFloatVar(vname)) ->
+      begin
+	try
+	  let entry = validity_of_byname loc_map vname in
+	  entry.validity
+	with
+	    Not_found -> 
+	      let excs = Unregistered_var ((vname^" In valid_cscal")) in
+	      raise excs
+      end
+
     | LiConst(_) -> TruevarValid
+    | LiFConst(_) -> TruevarValid
     | LiSymConst(_) -> TruevarValid
     | LiElemOfCTab(_,_) -> DKvarValid
     | LiProd ( cscalg, cscald ) ->
