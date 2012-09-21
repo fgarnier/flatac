@@ -34,9 +34,10 @@ let compile_ntsivar_of_int_cil_lval  (l : Cil_types.lval ) =
   let il_lval = Intermediate_language.get_li_intvar_from_exp_node (Lval(l)) in
   match il_lval with
       LiVar(_,LiIntVar(vname))-> NtsIVar(vname)
+    | LiFVar(_,LiFloatVar(vname)) -> NtsRVar(vname)
     | LiIntStarOfPtr(LiPVar(_,LiIntPtr(param_c_pvar),_),_) -> 
 	NtsINdetVar("pvar_access"^param_c_pvar)
-    (*NtsIVar(param_c_pvar)*)
+ 
     | LiElemOfCTab(_,_) -> NtsINdetVar("tab_access")
     | _ -> 
 	Format.fprintf Ast_goodies.debug_out "Failed to fetch ivar in ";
@@ -97,6 +98,52 @@ let compile_sym_validity_to_cnt v =
     |  FalsevarValid -> CntCst(My_bigint.zero)
     |  TruevarValid -> CntCst(My_bigint.one)
 
+
+(* Takes as input a cil value whose type is either integer of
+float/double and returns a Nts variable or expression.*)
+
+let compile_cil_scalar_argument_value sslv (e : Cil_types.exp ) =
+  let type_of_e = Cil.typeOf e in
+  let alias_tname = 
+    Composite_types.is_integer_type type_of_e in
+  match alias_tname with 
+      Some(_) ->
+	begin
+	  let cscal_eval = cil_expr_2_scalar e in
+	  let nts_scal_exp = interpret_c_scal_to_cnt sslv.ssl_part 
+	    cscal_eval in
+	  let valid = Var_validity.valid_sym_cscal sslv.validinfos 
+	    sslv.ssl_part cscal_eval in
+	  IlScalArg(
+	    {
+	      expr = nts_scal_exp ;
+	      validity_of_exp = compile_sym_validity_to_cnt valid ;  
+	    })
+	end
+    |  None ->
+      begin
+	let alias_tname = 
+	  Composite_types.is_float_type type_of_e in
+	match alias_tname with 
+	    Some(_) ->
+	      begin
+		let cscal_eval = cil_expr_2_scalar e in
+		let nts_scal_exp = interpret_c_scal_to_cnt sslv.ssl_part 
+		  cscal_eval in
+		let valid = Var_validity.valid_sym_cscal sslv.validinfos 
+		  sslv.ssl_part cscal_eval in
+		IlScalArg(
+		  {
+		    expr = nts_scal_exp ;
+		    validity_of_exp = compile_sym_validity_to_cnt valid ;  
+		  })
+	      end
+	  | None -> 
+	    raise (Debug_info ("[compile_cil_scalar_argument_value ]I got an argument whose type is neither integer nor a float."))
+      end
+	
+
+
 let compile_cil_fun_argexpr_2_cnt sslv (e : Cil_types.exp ) =
   let type_of_e = Cil.typeOf e 
   in 
@@ -118,7 +165,8 @@ let compile_cil_fun_argexpr_2_cnt sslv (e : Cil_types.exp ) =
 	end
     | _ ->
       begin
-	let alias_tname = 
+        compile_cil_scalar_argument_value sslv e
+	(*let alias_tname = 
 	  Composite_types.is_integer_type type_of_e in
 	match alias_tname with 
 	    Some(_) ->
@@ -135,9 +183,18 @@ let compile_cil_fun_argexpr_2_cnt sslv (e : Cil_types.exp ) =
 		  })
 	      end
 	  | None ->
+
+	    begin
+	     let alias_tname = 
+	       Composite_types.is_float_type type_of_e in 
+	     match alias_tname 
+	       Some(_) ->
+		 
+	    end
 	    Format.printf "Failed to compile this argument : \n";
 	    Cil.d_exp Ast_goodies.debug_out e; Format.fprintf Ast_goodies.debug_out "\n%!";
 	    raise (Debug_info ("compile_cil_fun_argexpr_2_cnt : I have an argume which type is neither an integer value nor a pointer/array"))
+	*)
       end
 
 

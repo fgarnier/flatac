@@ -106,6 +106,11 @@ let int_var_cnt_name ( cexpr : c_scal) =
     | _ -> raise Not_LiVar
 
 
+let float_var_cnt_name ( cexpr : c_scal) =
+   match cexpr with
+      LiFVar(_,LiFloatVar(vname)) -> CntVar(NtsRVar( vname ))
+    | _ -> raise Not_LiVar
+
 (** This function returns a counter associated to base address of a location
 variable. This function is used to model a memory allocation. See thechnical
 report and the section dedicated to malloc. *)
@@ -125,6 +130,8 @@ current context expressed as a ssl formula.*)
 let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
   match scalexp with 
       LiVar(_) -> int_var_cnt_name scalexp
+    | LiFVar(_) -> float_var_cnt_name scalexp
+    | LiFConst(LiFloatConst(f)) -> CntRealConst(f) 
     | LiConst(LiIConst(i)) ->  CntCst(i)
     | LiProd ( l , r ) ->
 	begin
@@ -264,17 +271,7 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
 	  | _ -> CntNdet
       end
 
-    (*| Li
-      begin
-	match cptr with
-	    LiDerefCVar(vname,_) ->
-	      CntVar(NtsIVar(vname))
-	  | LiDerefCPtr(vptr,_) ->
-	    let cnt_vptr = interpret_c_ptrexp_to_cnt sslf vptr in
-	    cnt_vptr
-	      
-	  | _ -> CntNdet
-      end *)
+   
 
     |  LiDerefCPtr ( cptr , t ) ->
       CntNdet

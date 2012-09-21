@@ -27,7 +27,7 @@ exception Not_Array_type
 exception UnnammedLocalArray
 exception Contains_no_ivar
 exception Contains_no_fvar
-
+exception Array_elements_not_scalar (*Neither integer nor real *)
 
 (* 
 Boolean doesn't have a peculiar type in ANSI C. 
@@ -232,9 +232,17 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 	      get_ivar_from_exp expr 
 	      (*LiVar(Unprimed,LiIntVar(name_of_var))*)
 	    | None ->
-	      let msg = "This variable : "^f.vname ^"isn't of type TInt, but appears in a scalar expression \n" in 
-	      let exc =  Bad_expression_type msg in
-	      raise  exc
+	      begin
+		let alias_tname = Composite_types.is_float_type typeofexp in
+		 match alias_tname with
+		   | Some(_) ->
+		     get_fvar_from_exp expr 
+	    (*LiVar(Unprimed,LiIntVar(name_of_var))*)
+		   | None ->
+		     let msg = "This variable : "^f.vname ^"is neither an integer nor a real value, but appears in a scalar expression \n" in 
+		     let exc =  Bad_expression_type msg in
+		     raise  exc
+	      end
 	end  
       end
       	
@@ -736,11 +744,18 @@ and  array_dim (tinfo : Cil_types.typ)
 	  let index_list = index_list@(size_array::[]) in
 	  array_dim tinfo index_list
 	end
-    | _ -> let type_name_if_int_type = 
+    | _ -> 
+      if Composite_types.is_scalar_type tinfo
+      then
+	index_list
+      else
+	raise Array_elements_not_scalar
+
+    (*  let type_name_if_int_type = 
 	     Composite_types.is_integer_type tinfo in
 	   match type_name_if_int_type with
 	       Some(_) -> index_list
-	     | _ -> raise Array_elements_not_integers
+	     | _ -> raise Array_elements_not_integers *)
 
 and get_li_intvar_from_exp_node (expn : Cil_types.exp_node ) =
   match expn with

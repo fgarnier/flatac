@@ -221,6 +221,7 @@ let rec size_boolexp_deeper_than  (bexp : cnt_bool ) (deepness : int ) =
 let rec cnt_pprint_arithm_exp ( exp : cnt_arithm_exp ) =
   match exp with
       CntCst(i) -> My_bigint.to_string i
+    | CntRealConst(f) -> (Format.sprintf "%f" f)
     | CntNdet -> "NDET"
     | CntSymCst(str) -> str
     | CntVar ( ntsvar ) -> nts_pprint_nts_var ntsvar

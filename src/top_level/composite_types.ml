@@ -113,3 +113,17 @@ let rec is_float_type ( cilt : Cil_types.typ ) =
 		
 	  | None -> None
       end
+
+
+
+let is_scalar_type ( cilt : Cil_types.typ ) = 
+  let p = is_integer_type cilt in
+  match p with 
+      Some(_) -> true
+    | None -> 
+      begin
+	let p = is_float_type cilt in
+	match p with
+	    Some(_) -> true
+	  | None -> false
+      end
