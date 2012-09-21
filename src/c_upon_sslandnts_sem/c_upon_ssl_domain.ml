@@ -194,12 +194,19 @@ Impact and guards of a pointer affectation upon the SSL domain.
 let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) mid (sslv : ssl_validity_absdom ) =
   Self.debug ~level:0 "Im am in affect_ptr_upon_sslv \n";
   let sslv =  copy_validity_absdomain sslv in
-  (*let v = get_pvarinfo_of_left_value (lv,off) in*)
-  (*let varname =  get_pvarname_of_left_value lv in*)
-    (** One need to check that lv is a Var which type is TPtr(_,_)*)
+  
+  (** One need to check that lv is a Var which type is TPtr(_,_)*)
   try
     
-    Format.printf "[affect_ptr_upon_sslv: expression :  ?=%s \n]"  (pprint_cil_exp expr);
+    Format.printf "[affect_ptr_upon_sslv: expression :  ?=%s \n]"  
+      (pprint_cil_exp expr);
+
+    Cil.d_lval Ast_goodies.debug_out (lv,off);
+    Format.fprintf Ast_goodies.debug_out " = ";
+    Cil.d_exp Ast_goodies.debug_out expr;
+    Format.fprintf Ast_goodies.debug_out " \n%!";
+
+
     if (is_expr_cst_char expr ) 
     then
       (* In the case if expr is a cst char, one need to represent the
@@ -225,6 +232,10 @@ let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) mi
     else
       (*Here is the general case*)
       let pvar_left = Ast_goodies.get_pvar_from_exp_node  (Lval(lv,off)) in
+      Format.printf "[cupon_sslv : ]Getting pointer variable description from : \n"; 
+      Cil.d_exp Ast_goodies.debug_out expr;
+      Format.fprintf Ast_goodies.debug_out "\n [cupon_sslv] \n %!";
+
       let pvar_right = get_pvar_from_exp expr in
       let sslv = copy_validity_absdomain sslv in
       let lvar_right = get_ptr_affectation sslv.ssl_part pvar_right 

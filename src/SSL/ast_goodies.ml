@@ -421,7 +421,8 @@ let rec get_pvar_from_exp_node (expn : Cil_types.exp_node ) =
 	  let type_of_lval = Cil.typeOfLval ( Var( p ) , off ) in
 	   Format.fprintf  debug_out "get_pvar_from_exp_node : lval has type : \n";
 	  Cil.d_type debug_out type_of_lval;
-	   
+	  Format.printf "\n";
+
 	  match type_of_lval with 
 	      TPtr(_,_) -> 
 		begin
@@ -444,19 +445,26 @@ let rec get_pvar_from_exp_node (expn : Cil_types.exp_node ) =
 	end
 
     | Lval(Mem(e), off ) ->
-      Format.printf "get_pvar_from_exp_node : lval is a Mem(e) \n";
-      get_pvar_from_mem_access expn
+      begin
+	Format.printf "get_pvar_from_exp_node : lval is a Mem(e) \n";
+	get_pvar_from_mem_access expn
+      end
 
 
     | CastE (TPtr (_,_), e ) ->
+      begin
+	Format.printf "Casting subtree type \n";
+	Cil.d_exp debug_out e;
+	Format.fprintf debug_out "\n %!";
 	get_pvar_from_exp e
+      end
 
     | Const ( CInt64 (i ,_,_)) -> 
       if (My_bigint.is_zero i)  then 
 	raise Loc_is_nil
       else raise (Loc_is_a_constant(My_bigint.to_int64 i))
     
-    | BinOp (PlusPI,e1,_,_) 
+    | BinOp (PlusPI,e1,_,_)
     | BinOp (MinusPI,e1,_,_)
     | BinOp (IndexPI,e1,_,_)
 	->
@@ -479,9 +487,31 @@ to do with Info"))
 	    TArray(_,_,_,_) -> PVar(v.vname)
 	  | _ ->  raise (Debug_info ("Getting a Starting address of non array type"))
       end
-    | _ ->  raise Contains_no_pvar
+    | StartOf(lv) ->
+      begin
+	let dummyexp = Cil.dummy_exp expn in
+	Format.printf "Failed to get PVar in expression StartOf(_,_) \n :";
+	Cil.d_exp debug_out dummyexp;
+	
+	Format.fprintf debug_out " lval inside is \n %!";
+	Cil.d_lval debug_out lv;
+	Format.fprintf debug_out "\n%!";
+	get_pvar_from_mem_access (Lval(lv))
+	(*raise Contains_no_pvar*)
+      end
+    | _ -> 
+      begin 
+	let dummyexp = Cil.dummy_exp expn in
+	Format.printf "Failed to get PVar in expression  \n :";
+	Cil.d_exp debug_out dummyexp;
+	Format.printf " Raising exception ... \n %!";
+	raise Contains_no_pvar
+      end
 	  
 and  get_pvar_from_exp (expr : Cil_types.exp ) =
+  Format.fprintf debug_out "Current expression is :\n";
+  Cil.d_exp debug_out expr;
+  Format.fprintf debug_out "\n%!";
   get_pvar_from_exp_node expr.enode
 
 and get_pvar_from_mem_access ( expn : Cil_types.exp_node) =
@@ -512,11 +542,15 @@ and get_pvar_from_mem_access ( expn : Cil_types.exp_node) =
 
  
 	    
-	  | (_,_) ->
-	    Format.fprintf debug_out "I don't know what to do with :";
-	    Cil.d_lval debug_out (Mem(e),off);
-	    Format.fprintf debug_out "\n%!";
-	    raise (Debug_info ("Lost in get_pvar_from_exp_node \n"))
+	    | (_,_) ->
+	      Format.fprintf debug_out "I don't know what to do with :";
+	      Cil.d_lval debug_out (Mem(e),off);
+	      let expnode = Cil.dummy_exp expn in
+	      Format.fprintf debug_out "Expression has type : \n";
+	      let expnodetype = Cil.typeOf expnode in
+	      Cil.d_type debug_out expnodetype;
+	      Format.fprintf debug_out "\n%!";
+	      raise (Debug_info ("Lost in get_pvar_from_exp_node \n"))
 	end
     |_ -> raise (Debug_info ("This function is only for analysing Mem(e) lhosts in lval types"))
 
