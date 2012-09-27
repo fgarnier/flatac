@@ -57,6 +57,21 @@ let is_lval_of_mem_access ((lv,off) : Cil_types.lval) =
 	true
     | _ -> false
 
+
+
+
+
+let is_exp_array ( e : Cil_types.exp ) =
+  let tt = Cil.typeOf e in
+  match tt with
+      TArray(_,_,_,_) -> true
+    | _ -> false
+
+
+let is_expnode_an_array (enode : Cil_types.exp_node ) =
+  let e = Cil.dummy_exp enode in
+  is_exp_array  e 
+  
 (*Returns the name of a SSL pointer variable*)
 let string_of_ptvar (pvar : ptvar) =
   match pvar with
@@ -514,6 +529,103 @@ and  get_pvar_from_exp (expr : Cil_types.exp ) =
   Format.fprintf debug_out "\n%!";
   get_pvar_from_exp_node expr.enode
 
+
+
+and get_pvar_from_array_element_access (exp : Cil_types.exp ) =
+ (* if ( not (is_exp_array exp) )
+  then
+    begin
+      let tt = Cil.typeOf exp in
+      Format.printf "I was expecting an array type, I have that instead \n"; 
+      Cil.d_type debug_out tt;
+      Format.fprintf  debug_out " \n%!"; 
+      assert false
+    end
+ 
+    else *)
+    begin
+      match exp.enode with
+	  StartOf((Var(v),_)) -> 
+	    begin
+	      if ( not (is_exp_array exp) )
+	      then
+		begin
+		  let tt = Cil.typeOf exp in
+		  Format.printf "I was expecting an array type, I have that instead \n"; 
+		  Cil.d_type debug_out tt;
+		  Format.fprintf  debug_out " \n%!"; 
+		  assert false
+		end
+	      else
+		PVar(v.vname)
+	    end
+   
+	| StartOf(_) ->    
+	  assert false
+
+	| Lval(Mem(e),_) ->
+	  begin
+	    match e.enode with
+		BinOp(PlusPI,p,_,_) | BinOp(MinusPI,p,_,_) | BinOp(IndexPI,p,_,_)
+		  ->
+		    begin
+		      get_pvar_from_array_element_access p
+		    end
+	      | _ -> assert false
+	  end
+	| Lval(Var(v),off) ->
+	  if not ( match v.vtype with 
+	      TArray (_,_,_,_) -> true 
+	    | TPtr(TArray (_,_,_,_),_)-> true
+	    | _ -> false
+	  )
+	  then
+	    begin
+	    
+	      Format.printf "Var of lval has type\n"; 
+	      Cil.d_type debug_out v.vtype;
+	      Format.fprintf  debug_out " \n%! Lval is : ";
+	      Cil.d_lval debug_out (Var(v),off);
+	      Format.fprintf  debug_out " \n%!";
+	      assert false
+	    end
+	      else
+		PVar(v.vname)
+
+	    
+	| BinOp(_,_,_,_) ->
+	  assert false
+
+	| Info (_,_) -> 
+	  assert false
+
+	| Const(_) -> 
+	  assert false
+
+	| CastE(TPtr(_,_),e)
+	    -> get_pvar_from_array_element_access e
+
+
+	| AddrOf(_) ->
+	  assert false
+
+	
+	| _ ->
+	  Format.fprintf debug_out "Got that and I'm stuck \n";
+	  Cil.d_exp debug_out exp;
+	  Format.fprintf debug_out "Type of this expression :";
+	  
+	  let tt = Cil.typeOf exp in
+	  Cil.d_type debug_out tt; 
+	  
+	  Format.fprintf debug_out " \n%!";
+	 
+	  assert false
+    end
+	
+	    
+	      
+      
 and get_pvar_from_mem_access ( expn : Cil_types.exp_node) =
   match expn with 
       Lval(Mem(e),off) ->
@@ -540,7 +652,64 @@ and get_pvar_from_mem_access ( expn : Cil_types.exp_node) =
 	      let exprprime = get_lval_under_cast e in
 	      get_pvar_from_mem_access exprprime.enode
 
- 
+	    | (Lval(Mem(b),_),_) ->
+	      assert false
+
+
+	    | (StartOf(Var(v),_),_) ->
+	      PVar(v.vname)
+		
+	    | (StartOf(Mem(_),_),_) ->
+	      assert false
+
+	    | (BinOp(PlusPI,p,_,_),_) | (BinOp(MinusPI,p,_,_),_) |
+	      (BinOp(IndexPI,p,_,_),_)-> 
+	      (* Access to an array element which type is an array*)
+	      get_pvar_from_array_element_access p
+	      (*assert false*)
+
+		
+
+	    |  (AddrOf( Var(v), offset ),_) ->
+	      begin
+		match offset with
+		  (* Field(finf,off) -> 
+		     begin
+		     let sfield_name = get_subfield_name 
+		     v.vname finf off in
+		     LiDerefCVar(sfield_name,v.vtype)
+		     end *)
+		    
+		  | Index(exp,off) ->
+		    begin
+		      (*let indexes = get_array_index offset [] in
+		      let dim = array_dim v.vtype [] in
+		      let parsed_tab = LiTab( Some(v.vname) , dim, v.vtype ) in
+			LiBaseAddrOfArray(indexes,parsed_tab)*)
+		      PVar(v.vname)
+		    end
+		      
+		  | NoOffset ->
+		    begin
+		      match v.vtype with
+			  TArray(_,_,_,_) -> 
+			    begin
+			      (* let dim = array_dim v.vtype [] in
+				 let parsed_tab = LiTab( Some(v.vname) , dim, v.vtype ) 
+				 in
+				 LiBaseAddrOfArray([],parsed_tab)*)
+			      PVar(v.vname)
+			    end
+			      
+			| _->
+			  begin
+			    PVar(v.vname)
+			  end
+		    end
+		      
+	      end
+
+		
 	    
 	    | (_,_) ->
 	      Format.fprintf debug_out "I don't know what to do with :";

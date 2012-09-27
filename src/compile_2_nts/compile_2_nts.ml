@@ -7,6 +7,7 @@ open Ssl_valid_abs_dom_types (* This type defines 2-uples of ssl_formual and
 			    a validity_loc_map*)
 open Ssl_valid_abs_dom (*Contains the copy_validity_absdomain function*)
 open Nts_types
+open Intermediate_language_types
 open Intermediate_language
 open Cnt_interpret
 

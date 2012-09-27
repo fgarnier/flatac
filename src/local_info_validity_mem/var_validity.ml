@@ -5,7 +5,7 @@ open Ssl_types
 open SSL_lex
 open Intermediate_language
 (*open Ssl_valid_abs_dom_types*)
-
+open Intermediate_language_types
 (* Ast_infos is here for testing purposes*)
 open Ast_goodies
 

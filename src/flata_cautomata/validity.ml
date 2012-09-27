@@ -10,11 +10,13 @@ Questions and/or remarks : mail to florent dot garnier At imag dot fr
 **********************************************************************)
 
 open Cil_types
+open Intermediate_language_types
 open Intermediate_language
 open Ssl_types
 open Ssl
 open SSL_lex
 open Validity_types
+
 
 exception Cannot_find_pvar
 exception Cannot_find_lvar

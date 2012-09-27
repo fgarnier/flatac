@@ -15,6 +15,7 @@ and Type *, where Type ranges on char, int, long, float, double etc ...
 *) 
 
 open Cil_types
+open Intermediate_language_types
 open Intermediate_language
 open Ssl_types
 open Ssl
