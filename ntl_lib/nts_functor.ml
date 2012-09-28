@@ -475,13 +475,22 @@ ordering on their name. *)
     Hashtbl.fold pprint_automata_folder cautomata_table "" 
 
 
+
+ let pprint_nts_init_condition_folder pre ntrel =
+    match pre with
+        "" -> (Nts_generic.nts_pprint_genrel ntrel)
+      | _ -> pre^" and "^(Nts_generic.nts_pprint_genrel ntrel)
+
+
   let pprint_optional_init nt_sys prefix =
     match nt_sys.nts_gvars_init with
-	Some(sthing::_) ->
-	  begin
-	    Format.sprintf "%sinit %s;\n" prefix (Nts_generic.nts_pprint_genrel sthing) 
-	  end
+
       | Some([]) -> prefix
+      | Some(l) ->
+          begin
+            let cnd = List.fold_left  pprint_nts_init_condition_folder "" l in
+              Format.sprintf "%sinit %s;\n" prefix cnd
+          end
       | None -> prefix
 
 
