@@ -6,6 +6,7 @@ is evaluated to true. Zero values are interpreted as false.
 (** Scalars "type" contains as well pointers values. NULL is evaluated
 to false and any other non-zero address is evaluated as true. *)
 *)
+
 type primed = Primed
 	      | Unprimed
 type c_int_var = LiIntVar of string
@@ -32,9 +33,6 @@ expressions which ground terms are free integer variables
 and integers constants.
 
 *)
-
-
-
 
 (*type c_tab*)
 	     (*| LiMultDimTab of int list * Cil_types.typ*)
