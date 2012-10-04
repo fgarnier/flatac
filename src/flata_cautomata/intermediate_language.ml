@@ -427,6 +427,13 @@ address type, which type is neither TInt nor TPtr.\n")
       end
 	
 
+    | StartOf(Mem(e),off) -> 
+      begin
+	Cil.d_lval Ast_goodies.debug_out (Mem(e),off);
+	assert false
+
+      end
+
     | AddrOf( Var(v), offset ) ->
       begin
 	match offset with
