@@ -337,6 +337,8 @@ and pprint_cil_exp ( e : Cil_types.exp ) =
 	    
 	  | (Mem(e), offv) -> "AddressOf[Mem["^(pprint_cil_exp e)^"@offset"^(pprint_offset offv)^"]"
       end
+    
+    | StartOf(l) -> Format.sprintf "StartOf[%s]" (pprint_cil_exp (Cil.dummy_exp( Lval(l)))) 
 	
 
     | _ -> "Some not yet parsed expression"
@@ -652,8 +654,10 @@ and get_pvar_from_mem_access ( expn : Cil_types.exp_node) =
 	      let exprprime = get_lval_under_cast e in
 	      get_pvar_from_mem_access exprprime.enode
 
-	    | (Lval(Mem(b),_),_) ->
-	      assert false
+	    | (Lval(Mem(b),off),_) ->
+	      begin
+		assert false
+	      end
 
 
 	    | (StartOf(Var(v),_),_) ->

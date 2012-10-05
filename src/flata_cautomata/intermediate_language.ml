@@ -413,7 +413,7 @@ address type, which type is neither TInt nor TPtr.\n")
     | StartOf((Var(v),offset_access))-> (* Implicit conversion form 
 					   an array to a pointer.*)
       begin
-	match v.vtype with
+	(*match v.vtype with
 	    TArray(t,e,_,_)->
 	      begin
 		let c_array_dim = array_dim v.vtype [] in 
@@ -423,15 +423,31 @@ address type, which type is neither TInt nor TPtr.\n")
 		LiBaseAddrOfArray(index_access,c_array)
      
 	      end
-
+	*)
+	get_array_access_info_from_expr_node (Lval(Var(v),offset_access))
       end
 	
 
     | StartOf(Mem(e),off) -> 
       begin
+	
+	let array_access_info = 
+	  get_array_access_info_from_expr_node 
+	    (Lval(Mem(e),off))  in 
+	array_access_info
+	(*in
+	Li*)
+	(*
 	Cil.d_lval Ast_goodies.debug_out (Mem(e),off);
+	Format.fprintf Ast_goodies.debug_out "\n Offset :";
+	Cil.d_offset Ast_goodies.debug_out off;
+	Format.fprintf Ast_goodies.debug_out "\n %! Expression in Mem(e) is ";
+	Cil.d_exp Ast_goodies.debug_out e;
+	Format.fprintf Ast_goodies.debug_out "\n %!";
+	
+	
 	assert false
-
+	*)
       end
 
     | AddrOf( Var(v), offset ) ->
@@ -641,6 +657,68 @@ and  array_dim (tinfo : Cil_types.typ)
 	   match type_name_if_int_type with
 	       Some(_) -> index_list
 	     | _ -> raise Array_elements_not_integers *)
+
+
+(* Requires that e consists *)
+and get_array_access_info_from_expr_node e =
+  match e with
+    | Lval(Var(v),off) ->
+      begin
+	match v.vtype with
+	    TArray(t,e,_,_) | TPtr(TArray(t,e,_,_),_) ->
+	      begin
+		let c_array_dim = array_dim v.vtype [] in 
+		let base_type = get_base_type_of_array v.vtype  in
+		let c_array= LiTab(Some(v.vname),c_array_dim, base_type) in
+		let index_access =  get_array_index off [] in
+		LiBaseAddrOfArray(index_access,c_array)
+	      end
+	  | _ ->
+	    begin
+	      Format.fprintf Ast_goodies.debug_out "Stuck on this expression \n";
+	      Cil.d_exp Ast_goodies.debug_out ( Cil.dummy_exp e);
+	      Format.fprintf  Ast_goodies.debug_out " \n %!";
+              Format.fprintf Ast_goodies.debug_out "%s \n %!" (Ast_goodies.pprint_cil_exp ( Cil.dummy_exp e) );
+	      assert false
+	    end
+      end
+    | Lval(Mem(e),off) ->
+      begin
+	
+	let ptr = 
+	get_array_access_info_from_expr e
+	in 
+	ptr
+	(*in
+	LiStarOfPtr(prt,t) *)
+      end
+
+    | BinOp (IndexPI,array_info,index,typ)
+    | BinOp (PlusPI,array_info,index,typ)
+      ->
+      begin
+	let ptr = get_array_access_info_from_expr array_info in
+	let index_info = cil_expr_2_scalar index in
+	let ret_val =
+	  ( match ptr with
+	      	LiBaseAddrOfArray(index_access,c_array) ->
+		  (LiBaseAddrOfArray(index_info::index_access,c_array))
+	  )
+	in
+	ret_val
+      end
+
+    | _ ->
+      begin
+	Format.fprintf Ast_goodies.debug_out "Stuck on this expression \n";
+	Cil.d_exp Ast_goodies.debug_out ( Cil.dummy_exp e);
+	Format.fprintf  Ast_goodies.debug_out " \n %!";
+        Format.fprintf Ast_goodies.debug_out "%s \n %!" (Ast_goodies.pprint_cil_exp ( Cil.dummy_exp e) );
+	assert false
+      end
+
+and get_array_access_info_from_expr e =
+  get_array_access_info_from_expr_node e.enode
 
 and get_li_intvar_from_exp_node (expn : Cil_types.exp_node ) =
   match expn with
