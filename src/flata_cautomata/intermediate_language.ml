@@ -85,7 +85,13 @@ let get_base_type_of_array (ttab : Cil_types.typ) =
   in
   match ttab with
       TArray(subtype,_,_,_) -> base_type subtype
-    | _ -> raise Not_Array_type
+    | _ -> 
+      begin
+	Format.fprintf Ast_goodies.debug_out "\n Type given as a parameter is not an array type. Type is : ";
+	Cil.d_type Ast_goodies.debug_out ttab;
+	Format.fprintf Ast_goodies.debug_out "\n Abort  \n %! ";
+	raise Not_Array_type
+      end
       
 
 
@@ -431,11 +437,20 @@ address type, which type is neither TInt nor TPtr.\n")
     | StartOf(Mem(e),off) -> 
       begin
 	
-	let array_access_info = 
+	(*
+	  let array_access_info = 
 	  get_array_access_info_from_expr_node 
 	    (Lval(Mem(e),off))  in 
 	array_access_info
-	(*in
+	*)
+	let type_of_exp = Cil.typeOf (Cil.dummy_exp (Lval(Mem(e),off))) 
+	in
+	let array_ptr_access_info =
+	  get_accessed_array_pointer_info (Lval(Mem(e),off))  
+	in
+	LiStarOfPtr(array_ptr_access_info,type_of_exp)
+     
+      (*in
 	Li*)
 	(*
 	Cil.d_lval Ast_goodies.debug_out (Mem(e),off);
@@ -645,6 +660,22 @@ and  array_dim (tinfo : Cil_types.typ)
 	  let index_list = index_list@(size_array::[]) in
 	  array_dim tinfo index_list
 	end
+
+   (* | TPtr(TArray(tinfo,None,_,_),_)->
+	begin
+	  let size_array = None in
+	  let index_list = index_list@(size_array::[]) in
+	  array_dim tinfo index_list
+	end 
+
+    | TPtr(TArray(tinfo,Some(size),_,_),_)->
+      begin
+	 let size_array = Some((cil_expr_2_scalar size)) in
+	 let index_list = index_list@(size_array::[]) in
+	 array_dim tinfo index_list
+	   
+      end *) 
+	
     | _ -> 
       if Composite_types.is_scalar_type tinfo
       then
@@ -652,12 +683,28 @@ and  array_dim (tinfo : Cil_types.typ)
       else
 	raise Array_elements_not_scalar
 
-    (*  let type_name_if_int_type = 
-	     Composite_types.is_integer_type tinfo in
-	   match type_name_if_int_type with
-	       Some(_) -> index_list
-	     | _ -> raise Array_elements_not_integers *)
-
+(* Extracts array dimentions from pointer of type Array(tinfo,_)* *)
+and  pointed_array_dim (tinfo : Cil_types.typ)
+    (index_list : (c_scal option) list)=
+  match tinfo with
+      TPtr(TArray(tinfo,Some(size),_,_),_)->
+	begin
+	  let size_array = Some((cil_expr_2_scalar size)) in
+	  let index_list = index_list@(size_array::[]) in
+	  array_dim tinfo index_list
+	end
+    |  TPtr(TArray(tinfo,None,_,_),_)->
+	begin
+	  let size_array = None in
+	  let index_list = index_list@(size_array::[]) in
+	  array_dim tinfo index_list
+	end
+   | _ -> 
+      if Composite_types.is_scalar_type tinfo
+      then
+	index_list
+      else
+	raise Array_elements_not_scalar
 
 (* Requires that e consists *)
 and get_array_access_info_from_expr_node e =
@@ -665,7 +712,9 @@ and get_array_access_info_from_expr_node e =
     | Lval(Var(v),off) ->
       begin
 	match v.vtype with
-	    TArray(t,e,_,_) | TPtr(TArray(t,e,_,_),_) ->
+	    TArray(t,e,_,_) 
+	  (*| TPtr(TArray(t,e,_,_),_)*)
+	    ->
 	      begin
 		let c_array_dim = array_dim v.vtype [] in 
 		let base_type = get_base_type_of_array v.vtype  in
@@ -719,6 +768,68 @@ and get_array_access_info_from_expr_node e =
 
 and get_array_access_info_from_expr e =
   get_array_access_info_from_expr_node e.enode
+
+and get_accessed_array_pointer_info e =
+  match e with
+    | Lval(Var(v),off) ->
+      begin
+	match v.vtype with
+	    (*TArray(t,e,_,_)*) 
+	      TPtr(TArray(t,e,_,_) as stype,_)
+	    ->
+	      begin
+		let c_array_dim = pointed_array_dim v.vtype [] in 
+		let base_type = get_base_type_of_array stype  in
+		let c_array= LiTab(Some(v.vname),c_array_dim, base_type) in
+		let index_access =  get_array_index off [] in
+		LiBaseAddrOfArray(index_access,c_array)
+	      end
+	  | _ ->
+	    begin
+	      Format.fprintf Ast_goodies.debug_out "Stuck on this expression \n";
+	      Cil.d_exp Ast_goodies.debug_out ( Cil.dummy_exp e);
+	      Format.fprintf  Ast_goodies.debug_out " \n %!";
+              Format.fprintf Ast_goodies.debug_out "%s \n %!" (Ast_goodies.pprint_cil_exp ( Cil.dummy_exp e) );
+	      assert false
+	    end
+      end
+    | Lval(Mem(e),off) ->
+      begin
+	
+	let ptr = 
+	get_accessed_array_pointer_info_from_expr e
+	in 
+	ptr
+	(*in
+	LiStarOfPtr(prt,t) *)
+      end
+
+    | BinOp (IndexPI,array_info,index,typ)
+    | BinOp (PlusPI,array_info,index,typ)
+      ->
+      begin
+	let ptr = get_accessed_array_pointer_info_from_expr array_info in
+	let index_info = cil_expr_2_scalar index in
+	let ret_val =
+	  ( match ptr with
+	      LiBaseAddrOfArray(index_access,c_array) ->
+		(LiBaseAddrOfArray(index_info::index_access,c_array))
+	  )
+	in
+	ret_val
+      end
+
+    | _ ->
+      begin
+	Format.fprintf Ast_goodies.debug_out "Stuck on this expression \n";
+	Cil.d_exp Ast_goodies.debug_out ( Cil.dummy_exp e);
+	Format.fprintf  Ast_goodies.debug_out " \n %!";
+        Format.fprintf Ast_goodies.debug_out "%s \n %!" (Ast_goodies.pprint_cil_exp ( Cil.dummy_exp e) );
+	assert false
+      end
+
+and get_accessed_array_pointer_info_from_expr e =
+  get_accessed_array_pointer_info e.enode
 
 and get_li_intvar_from_exp_node (expn : Cil_types.exp_node ) =
   match expn with
