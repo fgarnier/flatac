@@ -374,18 +374,24 @@ and cil_expr_2_ptr (expr : Cil_types.exp ) =
 	Cil.d_type debug_out type_of_lval;
 	Format.printf "\n LVal expression is";
 	Cil.d_lval Ast_goodies.debug_out ( Mem(e) , offset );
+	Ast_goodies.pprint_cil_exp (Cil.dummy_exp (Lval( Mem(e) , offset)));
 	Format.fprintf Ast_goodies.debug_out "\n";
 	
+	
 	match type_of_lval with
-	   TInt(_,_) -> (* Addresses of constants such as 0x0, NULL *)
-	     LiAddrOfScal((cil_expr_2_scalar e), type_of_e) 
+	    TInt(_,_) -> (* Addresses of constants such as 0x0, NULL *)
+	      LiAddrOfScal((cil_expr_2_scalar e), type_of_e) 
 	  | TPtr(_,_) ->
-	    let pvar = 
-	      Ast_goodies.get_pvar_from_exp_node (Lval (Mem(e), offset ))
-	    in  
-	    let li_pvar = lipvar_of_pvar  pvar type_of_lval in
+	    begin
+	      Format.fprintf Ast_goodies.debug_out "[cil_exp_2_ptr :]Calling Ast_goodies.get_pvar_from_exp_node upon : \n";
+	      Cil.d_lval Ast_goodies.debug_out (Mem(e), offset); 
+	      Format.fprintf Ast_goodies.debug_out "\n paramter infos %s \n%!" (Ast_goodies.pprint_cil_exp (Cil.dummy_exp (Lval(Mem(e),offset))));
+	      let pvar = 
+		Ast_goodies.get_pvar_from_exp_node (Lval (Mem(e), offset ))
+	      in  
+	      let li_pvar = lipvar_of_pvar  pvar type_of_lval in
 	      LiStarOfPtr(li_pvar,type_of_lval)
-	    
+	    end
 	      
 	  | _ ->  raise (Bad_expression_type ("In cil_expre_2_ptr, trying to accessed the value of a pointer, which value isn't a pointer."))
       end

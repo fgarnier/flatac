@@ -84,7 +84,19 @@ let compile_cil_exp_2_cnt sslv ( e : Cil_types.exp ) =
 				IlScal(scal_exp)
 			    end
 			| None ->
-			    raise (Debug_info ("compile_cil_exp_2_cnt : I have an argume which type is neither an integer value nor a pointer/array"))
+			  begin
+			    let alias_name = Composite_types.is_float_type
+			      type_of_e 
+			    in
+			    match alias_name with 
+				Some(_) ->
+				  begin
+				    let scal_exp = cil_expr_2_scalar e in
+				    IlScal(scal_exp)
+				  end
+			      |  None -> 
+				raise (Debug_info ("compile_cil_exp_2_cnt : I have an argume which type is neither a scalar value (integer or floating point) nor a pointer/array"))
+			  end
 		  end
 	  end
   in

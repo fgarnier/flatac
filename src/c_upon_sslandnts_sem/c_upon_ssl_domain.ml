@@ -782,13 +782,20 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 				"malloc" | "calloc" -> (malloc_ssl_nts_transition (Some(lvo)) sslv lparam mid)
 			  
 			      |  _ -> 
-				raise ( Debug_info ("Lost in call of malloc/calloc of ((Mem(e),_),Lval(Var(f),_)) case of  next_on_ssl_instr "))
+				Format.fprintf Ast_goodies.debug_out "Warning : Malloc return addresse written within an allocated memory cell. This has no impact on the SSL memory shape. \n"; 
+				(sslv,[])::[]
+			(*	raise ( Debug_info ("Lost in call of malloc/calloc of ((Mem(e),_),Lval(Var(f),_)) case of  next_on_ssl_instr ")) *)
+				  
 			  end
 		      | _ -> 
 			begin
-			  Format.printf "I don't know what to do with : \n";
+			  Format.fprintf Ast_goodies.debug_out "I don't know what to do with : \n";
 			  Cil.dn_instr Ast_goodies.debug_out instruction;
+			  (*
 			raise ( Debug_info ("Lost in ((Mem(e),_),Lval(Var(f),_)) case of  next_on_ssl_instr "))
+			  *)
+			  Format.fprintf Ast_goodies.debug_out "Access within a memory cell pointed by a pointer \n, has no impact on the memory shape \n";
+			  (sslv,[])::[]
 			end
 		  end
 		 

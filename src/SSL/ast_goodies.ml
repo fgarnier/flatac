@@ -669,7 +669,8 @@ and get_pvar_from_mem_access ( expn : Cil_types.exp_node) =
 	    | (BinOp(PlusPI,p,_,_),_) | (BinOp(MinusPI,p,_,_),_) |
 	      (BinOp(IndexPI,p,_,_),_)-> 
 	      (* Access to an array element which type is an array*)
-	      get_pvar_from_array_element_access p
+	      (*get_pvar_from_array_element_access p*)
+	      get_pvar_from_exp p
 	      (*assert false*)
 
 		
