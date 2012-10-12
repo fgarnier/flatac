@@ -140,7 +140,14 @@ and cnt_guard_of_mem_access_enode sslv ( expr_node : Cil_types.exp_node ) =
       begin
 	match  is_t_an_int with
 	    Some(_) ->  cnt_guard_of_mem_access sslv e
-	  | None -> raise Dont_know_how_to_generate_guard
+	  | None -> 
+	    begin
+	       let is_t_an_float = Composite_types.is_float_type t in
+	       match is_t_an_float with
+		   Some (_) -> cnt_guard_of_mem_access sslv e
+		 | None ->
+		   raise Dont_know_how_to_generate_guard
+	    end
       end
    
     | Const ( _ ) -> 

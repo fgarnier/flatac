@@ -763,16 +763,57 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 				 failtransit::((sslv,mem_access_trans_label::(cnt_trans_label::[]))::[])
 
 			      | None ->
+				(* 
+				*)
 				begin
+				  let alias_tname = Composite_types.is_float_type v.vtype in
+			 
+				  match alias_tname with
+				    | Some(_) ->
+				      let funname = f.vname in
+				      let arg_nts_list =
+					compile_param_list_2_cnt_list 
+					  sslv lparam in
+				  
+				      let nts_lvals =
+					Nts.make_ntsvars_of_intvars v.vname in
+				      let cnt_trans_label = 
+					CntFunCall(funname,Some(nts_lvals),arg_nts_list) in
+				 (* let mem_access_trans_label =
+				    CntGuard((mem_guards_of_funcall_arg_list sslv lparam)) in
+				    let mem_access_failure_trans_label =
+				    CntNot(mem_access_trans_label) in *)
+				      
+				      
+				  let mem_access_cond = 
+				    (mem_guards_of_funcall_arg_list sslv lparam) in
+				  let mem_access_trans_label =
+				    CntGuard(mem_access_cond) in
+				  let mem_access_failure_trans_label =
+				    CntGuard(CntNot(mem_access_cond)) in
+				  let failure_absdom = create_validity_abstdomain () in
+				  set_heap_to_top failure_absdom.ssl_part;
+				  let failtransit = 
+				    (failure_absdom,mem_access_failure_trans_label::[]) in				  			  
 				  let msg= 
-				    Format.sprintf "[next_on_ssl_instr] Var : %s = %s : %s \n"  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype) in
-				  raise (Debug_info(msg))
-			  (* Format.printf "%s" msg;
-			     (sslv,[])::[] *)
-				end
+				    Format.sprintf "[next_on_ssl_instr] Integer type Var : %s = %s : %s \n[next_on_ssl_instr] argument list %s \n "  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype) (Nts.cnt_pprint_translabel cnt_trans_label ) in
+				  Format.printf "%s" msg;
+				  failtransit::((sslv,mem_access_trans_label::(cnt_trans_label::[]))::[])
+				   
+
+				    | None ->
+				  
+				      begin
+					let msg= 
+					  Format.sprintf "[next_on_ssl_instr] Var : %s = %s : %s \n"  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype) in
+					raise (Debug_info(msg))
+				(* Format.printf "%s" msg;
+				   (sslv,[])::[] *)
+				      end
+				end 
 			  end
 		    end
-
+		      
 		| ((Mem(e),_), Lval(Var(f),_)) ->
 		  begin
 		    match e.enode with 
