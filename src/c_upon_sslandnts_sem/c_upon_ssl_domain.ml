@@ -764,6 +764,8 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 
 			      | None ->
 				(* 
+				   Copié collé de la section précédente ... à factoriser --le 12/10/2012
+ 
 				*)
 				begin
 				  let alias_tname = Composite_types.is_float_type v.vtype in
@@ -779,12 +781,7 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 					Nts.make_ntsvars_of_intvars v.vname in
 				      let cnt_trans_label = 
 					CntFunCall(funname,Some(nts_lvals),arg_nts_list) in
-				 (* let mem_access_trans_label =
-				    CntGuard((mem_guards_of_funcall_arg_list sslv lparam)) in
-				    let mem_access_failure_trans_label =
-				    CntNot(mem_access_trans_label) in *)
-				      
-				      
+				            
 				  let mem_access_cond = 
 				    (mem_guards_of_funcall_arg_list sslv lparam) in
 				  let mem_access_trans_label =

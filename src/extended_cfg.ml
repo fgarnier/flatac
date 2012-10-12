@@ -200,7 +200,16 @@ struct
 	    begin
 	      match (Composite_types.is_integer_type v.vtype) with
 		  Some(_) -> NtsIVar(v.vname)::(NtsIVar("validity__"^v.vname^"_")::nts_var_list)
-		| None -> NtsMiscType(v.vname)::nts_var_list
+		| None ->
+		  begin
+		    match (Composite_types.is_float_type v.vtype) with
+			Some(_) ->
+			  begin
+			    NtsRVar(v.vname)::(NtsIVar("validity__"^v.vname^"_")::nts_var_list)
+			  end
+			  
+		      | None -> NtsMiscType(v.vname)::nts_var_list
+		  end
 	    end
       in 
       nts_sformal <- (List.fold_left in_out_map_folder [] funinfo.sformals  )
