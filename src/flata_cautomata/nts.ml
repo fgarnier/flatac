@@ -102,12 +102,9 @@ let make_ntsvars_of_ptrvar (vname : string ) =
   (NtsIVar(val_name))::(NtsIVar(offset_name)::[])
 
 
-
 let make_ntsvars_of_intvars (vname : string) =
   let val_name = valid_name_of_var vname in 
   (NtsIVar(vname))::(NtsIVar(val_name)::[])
-
-
 
 
 let concat_if_first_arg_nonzero s1 s2 =
@@ -134,6 +131,7 @@ let pprint_typeinfo_int_nts_var_list l =
   let int_var_list = List.filter ( is_int_var) l in
   pprint_nts_var_list int_var_list
 
+(*
 let pprint_typeinfo_nts_var_list l =
   let is_int_var  = function
   NtsIVar( vname ) -> true
@@ -150,8 +148,56 @@ let pprint_typeinfo_nts_var_list l =
   let pp_of_list_of_real = 
     concat_if_first_arg_nonzero (pprint_nts_var_list real_var_list) " : real" in
   concat_comma_both_arg_non_empty pp_of_list_of_int pp_of_list_of_real
- 
-    
+*) 
+
+
+
+(** Polymorphic variant `Curr_Int_Typ, resp. `Curr_Real_Typ, is defined
+and used to state that the previous traversed elemenent of the list is
+and integer, resp. a folating point number. *)
+
+let pprint_typeinfo_nts_var_list l =
+  let get_curr_type_of_var v =
+    match v with
+	NtsIVar(_) -> `Curr_Int_Type
+      | NtsRVar(_) -> `Curr_Real_Type
+  in
+  let get_name_of_nts_var v =
+     match v with
+	NtsIVar(v) -> v
+      | NtsRVar(v) -> v
+  in
+  let string_of_type ctype =
+    match ctype with
+	Some(`Curr_Int_Type) -> ": int" 
+      | Some(`Curr_Real_Type) -> ": real"
+      | None -> ""
+  in
+
+  let outputstring_folder ( prefix , ctype ) nvar  =
+    match ctype, nvar with
+	(None, v) -> 
+	  begin
+	    let vname = get_name_of_nts_var v in
+	    ((Format.sprintf "%s"  vname), 
+	     Some(get_curr_type_of_var v) )
+	  end
+      | (Some(`Curr_Int_Type), NtsIVar(vname)) -> 
+	((Format.sprintf "%s,%s" prefix vname),ctype )
+	  
+      | (Some(`Curr_Real_Type), NtsRVar(vname)) -> 
+	((Format.sprintf "%s,%s" prefix vname), ctype)
+      (*Need to add handling for various array types*)
+      | (Some(`Curr_Int_Type),_) -> 
+	((Format.sprintf "%s : int, %s" prefix 
+	  (get_name_of_nts_var nvar)), Some(get_curr_type_of_var nvar) ) 
+      | (Some(`Curr_Real_Type),_) ->
+	((Format.sprintf "%s :real, %s" prefix  
+	  (get_name_of_nts_var nvar)), Some (get_curr_type_of_var nvar) ) 
+  in
+  let (ret_s,ctype_s) = List.fold_left outputstring_folder ("", None) l in
+  Format.sprintf "%s%s" ret_s (string_of_type ctype_s)
+     
   
 let rec size_arithm_exp ( exp : cnt_arithm_exp ) =
   match exp with 
