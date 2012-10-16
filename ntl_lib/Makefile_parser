@@ -33,7 +33,7 @@ DIST_TAR_NAME = ocaml_ntlib$(DATE).tgz
 clean : 
 	rm -f *.cmo *.o *.cmx *.cmxa *.cmi *.cma *.annot parse_n_print xparse_n_print $(GENSOURCE)
 
-all : .depend $(INTERFACES) $(OBJECTS) $(XOBJECTS) $(TEST) fixpointvalid
+all : .depend $(INTERFACES) $(OBJECTS) $(XOBJECTS) $(TEST) parse_n_print nts2dot
 	@echo "Build successfull"
 
 dist : all clean
