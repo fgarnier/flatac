@@ -4,7 +4,7 @@
 TYPES_INCLUDES := ${FRAMA_C_INCLUDES} 
 GENSOURCE := ntl_parser.ml ntl_parser.mli ntl_lexer.ml 
 SOURCE_FILES := nts_types.ml nts.ml nts_functor.ml ntsint.ml nts_generic.ml\
-	     parsing_error.ml
+	     dot_driver.ml parsing_error.ml
 
 OCAMLDOC := ocamldoc
 DOCEXPORTDIR := ./api
@@ -13,12 +13,14 @@ DOCFLAGS := -html -d $(DOCEXPORTDIR) *.ml *.mli
 CFLAGS = -g -annot -c
 INTERFACES = ntl_parser.mli
 OBJECTS = nts_types.cmo nts.cmo simplification.cmo nts_generic.cmo nts_functor.cmo ntsint.cmo \
+	dot_driver.cmo \
 	ntl_lexer.cmo parsing_error.cmo \
-	ntl_parser.cmo parse_n_print.cmo 
+	ntl_parser.cmo  
 
 XOBJECTS = nts_types.cmx nts.cmx simplification.cmx nts_generic.cmx nts_functor.cmx ntsint.cmx \
+	dot_driver.cmx \
 	ntl_lexer.cmx parsing_error.cmx \
-	ntl_parser.cmx parse_n_print.cmx 
+	ntl_parser.cmx  
 
 LIBNUM = nums.cma # Contains Big_int module
 LIBXNUM = nums.cmxa
@@ -68,10 +70,16 @@ ntl_lexer.ml : ntl_lexer.mll
 	@echo  "Generating Lexer" $<
 	@ocamllex $<
 
-parse_n_print : parse_n_print.ml $(OBJECTS) $(XOBJECTS)
+parse_n_print : parse_n_print.cmo parse_n_print.cmx $(OBJECTS) $(XOBJECTS)
 	@echo "Compiling parse_n_print test"
-	ocamlc -g -o parse_n_print $(LIBNUM) $(OBJECTS)
-	ocamlopt -g -o xparse_n_print  $(LIBXNUM) $(XOBJECTS)
+	ocamlc -g -o parse_n_print $(LIBNUM) $(OBJECTS) parse_n_print.cmo 
+	ocamlopt -g -o xparse_n_print  $(LIBXNUM) $(XOBJECTS) parse_n_print.cmx 
+
+nts2dot	: nts2dot.cmo nts2dot.cmx $(OBJECTS) $(XOBJECTS)
+	@echo "Compiling parse_n_print test"
+	ocamlc -g -o nts2dot $(LIBNUM) $(OBJECTS) nts2dot.cmo 
+	ocamlopt -g -o nts2dot  $(LIBXNUM) $(XOBJECTS) nts2dot.cmx 
+
 
 include .depend
 
