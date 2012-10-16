@@ -36,6 +36,20 @@ module Make =
 	in
 	Hashtbl.fold  in_folder ca.NFParam.final_states ""
 	  
+
+	  
+      let dot_of_error_nodes_reach_upb (ca : nts_automaton ) invtable =
+	let in_folder control () prefix =
+	  if Hashtbl.mem invtable control 
+	  then
+	    begin
+	      Format.sprintf "%s %s_%s [color=red];\n" 
+		prefix ca.NFParam.nts_automata_name  (pprint_control control)
+	    end
+	  else
+	    prefix
+	in
+	Hashtbl.fold  in_folder ca.NFParam.error_states ""
 	  
       let dot_of_error_nodes (ca : nts_automaton) =
 	let in_folder control () prefix =
@@ -64,8 +78,12 @@ module Make =
 	    Format.sprintf " subgraph %s {" ca.nts_automata_name 
 	)
 	in
-	let res = Format.sprintf "%s %s %s %s %s }" ret_str 
-	  (dot_of_init_nodes ca) (dot_of_error_nodes ca)
+	
+	let invtable = NFParam.compute_pred_relation ca 
+	in
+	
+	let res = Format.sprintf "%s %s %s %s %s }" ret_str
+	  (dot_of_init_nodes ca) (dot_of_error_nodes_reach_upb ca invtable)
 	  (dot_of_final_nodes ca) (dot_of_transitions ca "")
 	in 
 	res
