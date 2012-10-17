@@ -1,73 +1,48 @@
-(*
-Interface file for prototyping an intermediate languages between the
-Numerical Transition System library language and Interproc SPL
-language.
+(** Functor for defining a nts using basic blocks and a control flow graph.
+ Needed to perform the first of two stages for the translation from a nts
+to the Interproc SPL language. 
 
-This language eases the translation of a transition systems to
-the SPL language, where instructions are regrouped into basic
-blocks and where the programs is represented as a listing.
+ For any comment or question, please write to :
 
-This intermediate language aims at focusing on the translation
-from the tansitions sytems to the control flow structure which
-is proper to SPL.
-A second phase consists in translating the variables, arithmetical
-expressions and pressburger expressions from the NTL languague to
-BDD Apron expressions.
+ florent dot garnier at imag dot fr
+ or
+ florent dot garnier at gmail dot com
 
-
-(c) Verimag 2012
-Contact florent dot garnier at gmail dot com for  further informations.
-
-
+ (c) Verimag 2012, until released Under an Open Licence.
 *)
 
+module Make :
+  functor (Param : Nts_functor.NTS_PARAM) ->
+    sig
+      module NtsSys :
+        sig
+          type anotations = Nts_functor.Make(Param).anotations
+          type control = Nts_functor.Make(Param).control
+          type nts_automaton =
+            Nts_functor.Make(Param).nts_automaton
+          type nts_system =
+            Nts_functor.Make(Param).nts_system
+        end
 
-open Syntax (* Module that defines the syntax of the spl language*)
-open Nts_gentypes
-
-(*
-let cntbool_of_apron_expr : 'a Bddapron.Syntax.expr -> Nts_types.cnt_bool
-let bddapronexpr_of_cntbool :  Nts_types.cnt_bool -> 'a Bddapron.Syntax.expr
-*)
-
-
-
-type ntl_spl_il_label = string
-
-type ntl_spl_il_instruction = NS_Skip 
-			      | NS_Halt
-			      | NS_Fail
-			      | NS_Assume
-			      | NS_If of nts_gen_relation * nts_spl_il_label * nts_spl_il_label option
-			      | NS_Goto of nts_spl_il_label
-			      | NS_Call of nts_var list option * string * cnt_arithm_exp list 
-			      | NS_local of bool * nts_var list * ntl_spl_block
-
-and  ntl_spl_il_instr = {
-  ns_insturction :  ntl_spl_il_instruction option ;
-  ns_ipoint : point ; (* Type defined in syntax.mli of Interproc*)
-} 
-
-
-and ntl_spl_block = {
-  ns_bpoint : point ;
-  ns_instrs : ntl_spl_il_instr list;
-}
-
-
-type nts_spl_il_procedure = {
-  ns_pname : string ;
-  ns_pinput : cnt_var list;
-  ns_poutput : cnt_var list;
-  ns_pcode : ntl_spl_block ;
-}
-
-
-type nts_spl_il_program = {
-  (*ns_typenumdef : unit*)
-  ns_global : cnt_var list ;
-  ns_initial : nts_genrel_arithm_exp ;
-  ns_final : nts_genrel_arithm_exp ;
-  ns_procedures : (string , nts_spl_il_procedure ) list ;
-  ns_threads : string list; (* For concurr interproc*)
-}
+      type control = NtsSys.control
+      type anotations = NtsSys.anotations
+      
+      type nts_basic_block = {
+        mutable head_label : string;
+        mutable block : (control * Nts_types.nts_trans_label list) list;
+        mutable block_succs :
+          (nts_basic_block ref * Nts_types.nts_trans_label list) list option;
+      }
+	  
+      type nts_automaton_cfg = {
+        mutable nts_cfg_name : string;
+        mutable cfg_anot : anotations;
+        nts_cfg_init_block : (string, unit) Hashtbl.t;
+        nts_cfg_final_block : (string, unit) Hashtbl.t;
+        nts_cfg_error_block : (string, unit) Hashtbl.t;
+        nts_input_vars : Nts_types.nts_genrel_var list;
+        nts_output_vars : Nts_types.nts_genrel_var list;
+        nts_local_vars : Nts_types.nts_genrel_var list;
+        nts_blocks_transitions : (string, nts_basic_block) Hashtbl.t;
+      }
+    end

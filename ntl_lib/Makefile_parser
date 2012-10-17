@@ -4,7 +4,7 @@
 TYPES_INCLUDES := ${FRAMA_C_INCLUDES} 
 GENSOURCE := ntl_parser.ml ntl_parser.mli ntl_lexer.ml 
 SOURCE_FILES := nts_types.ml nts.ml nts_functor.ml ntsint.ml nts_generic.ml\
-	     dot_driver.ml parsing_error.ml
+	     dot_driver.ml  parsing_error.ml
 
 OCAMLDOC := ocamldoc
 DOCEXPORTDIR := ./api
@@ -14,11 +14,15 @@ CFLAGS = -g -annot -c
 INTERFACES = ntl_parser.mli
 OBJECTS = nts_types.cmo nts.cmo simplification.cmo nts_generic.cmo nts_functor.cmo ntsint.cmo \
 	dot_driver.cmo \
+	nts_spl_intermediate_language_types.cmo \
+	interproc_driver.cmo \
 	ntl_lexer.cmo parsing_error.cmo \
 	ntl_parser.cmo  
 
 XOBJECTS = nts_types.cmx nts.cmx simplification.cmx nts_generic.cmx nts_functor.cmx ntsint.cmx \
 	dot_driver.cmx \
+	nts_spl_intermediate_language_types.cmx \
+	interproc_driver.cmx \
 	ntl_lexer.cmx parsing_error.cmx \
 	ntl_parser.cmx  
 
