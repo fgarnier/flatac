@@ -22,8 +22,13 @@ Contact florent dot garnier at gmail dot com for  further informations.
 *)
 
 
-open Syntax (* Module that defines the syntax of the spl language*)
-open Nts_gentypes
+(*
+open Syntax 
+*)
+(* Syntax is the module that defines the syntax of the spl language*)
+
+
+open Nts_types
 
 (*
 let cntbool_of_apron_expr : 'a Bddapron.Syntax.expr -> Nts_types.cnt_bool
@@ -34,12 +39,15 @@ let bddapronexpr_of_cntbool :  Nts_types.cnt_bool -> 'a Bddapron.Syntax.expr
 
 type ntl_spl_il_label = string
 
+type point = ntl_spl_il_label (* Type point is defined in
+			      syntax.mli. Currently defined as follows*)
+
 type ntl_spl_il_instruction = NS_Skip 
 			      | NS_Halt
 			      | NS_Fail
 			      | NS_Assume
-			      | NS_If of nts_gen_relation * nts_spl_il_label * nts_spl_il_label option
-			      | NS_Goto of nts_spl_il_label
+			      | NS_If of nts_gen_relation * ntl_spl_il_label * ntl_spl_il_label option
+			      | NS_Goto of ntl_spl_il_label
 			      | NS_Call of nts_var list option * string * cnt_arithm_exp list 
 			      | NS_local of bool * nts_var list * ntl_spl_block
 
@@ -57,17 +65,17 @@ and ntl_spl_block = {
 
 type nts_spl_il_procedure = {
   ns_pname : string ;
-  ns_pinput : cnt_var list;
-  ns_poutput : cnt_var list;
+  ns_pinput : nts_var list;
+  ns_poutput : nts_var list;
   ns_pcode : ntl_spl_block ;
 }
 
 
 type nts_spl_il_program = {
   (*ns_typenumdef : unit*)
-  ns_global : cnt_var list ;
+  ns_global : nts_var list ;
   ns_initial : nts_genrel_arithm_exp ;
   ns_final : nts_genrel_arithm_exp ;
-  ns_procedures : (string , nts_spl_il_procedure ) list ;
+  ns_procedures : (string * nts_spl_il_procedure ) list ;
   ns_threads : string list; (* For concurr interproc*)
 }
