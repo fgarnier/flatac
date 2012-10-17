@@ -1,5 +1,5 @@
 open Nts_types
-
+open Nts_spl_intermediate_language_types
 
 module Make =
   functor ( Param :  Nts_functor.NTS_PARAM ) ->
