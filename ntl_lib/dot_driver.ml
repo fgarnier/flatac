@@ -19,11 +19,9 @@ module Make =
 
       let pprint_control = NFParam.pprint_control
 	
-	
-	
       let dot_of_init_nodes (ca : nts_automaton) =
 	let in_folder control () prefix =
-	  Format.sprintf "%s %s_%s [label=\"initial\",color=blue];\n" 
+	  Format.sprintf "%s %s_%s [style=filled,color=blue];\n" 
 	    prefix ca.NFParam.nts_automata_name  (pprint_control control) 
 	in
 	Hashtbl.fold  in_folder ca.NFParam.init_states ""
@@ -31,7 +29,7 @@ module Make =
 	  
       let dot_of_final_nodes (ca : nts_automaton) =
 	let in_folder control () prefix =
-	  Format.sprintf "%s%s_%s[label=\"final\",color=green];\n" 
+	  Format.sprintf "%s%s_%s[style=filled,color=green];\n" 
 	    prefix ca.NFParam.nts_automata_name (pprint_control control) 
 	in
 	Hashtbl.fold  in_folder ca.NFParam.final_states ""
@@ -43,7 +41,7 @@ module Make =
 	  if Hashtbl.mem invtable control 
 	  then
 	    begin
-	      Format.sprintf "%s %s_%s [color=red];\n" 
+	      Format.sprintf "%s %s_%s [style=filled,color=red];\n" 
 		prefix ca.NFParam.nts_automata_name  (pprint_control control)
 	    end
 	  else
@@ -75,7 +73,7 @@ module Make =
 	let ret_str = ( if standalone_graph then
 	    Format.sprintf " digraph %s {" ca.nts_automata_name 
 	  else 
-	    Format.sprintf " subgraph %s {" ca.nts_automata_name 
+	    Format.sprintf " subgraph cluster_%s { \n color=blue; label=\"%s\";" ca.nts_automata_name ca.nts_automata_name
 	)
 	in
 	

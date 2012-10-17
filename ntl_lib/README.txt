@@ -23,6 +23,9 @@ In its current state of developpement, this library contains :
 	)
 
  _ A pretty printer.
+ _ A set of function that allows to extract a GraphViz .dot visual
+ representation of a Numerical Transition System.
+
  _ Syntactic and type checking : Developpment in progress.
 
 To build and test the library :

@@ -1,7 +1,7 @@
 digraph s3_clnt_1_BUG { 
- subgraph ssl3_connect {  ssl3_connect_sinit [label="initial",color=blue];
-  ssl3_connect_s245 [color=red];
- ssl3_connect_s220[label="final",color=green];
+ subgraph ssl3_connect {  ssl3_connect_sinit [style=filled,color=blue];
+  ssl3_connect_s245 [style=filled,color=red];
+ ssl3_connect_s220[style=filled,color=green];
  ssl3_connect_s365->ssl3_connect_s379;
 ssl3_connect_s134->ssl3_connect_s151;
 ssl3_connect_s134->ssl3_connect_s152;
@@ -417,8 +417,8 @@ ssl3_connect_s362->ssl3_connect_s376;
 ssl3_connect_s131->ssl3_connect_s148;
 ssl3_connect_s133->ssl3_connect_s149;
  }
- subgraph main {  main_sinit [label="initial",color=blue];
-  main_s8[label="final",color=green];
+ subgraph main {  main_sinit [style=filled,color=blue];
+  main_s8[style=filled,color=green];
  main_s0->main_s1;
 main_s1->main_s3;
 main_s3->main_sinter0;

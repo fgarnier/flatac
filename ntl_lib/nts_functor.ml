@@ -596,22 +596,16 @@ ordering on their name. *)
   let clean_unlisted_local_vars  nt_aut =
    
     let local_list_folder diary glist gvar =
-      if (contains_nts_genrel_var diary gvar) then 
-	(*begin
-	  Format.printf "Keeping variable %s \n" (nts_pprint_genvar gvar);*)
-	  gvar::glist
-	(*end*)
+      if (contains_nts_genrel_var diary gvar) 
+      then 
+	gvar::glist
       else
-	(*begin
-	  Format.printf "Deleting local variable  %s \n " (nts_pprint_genvar gvar);*)
-	  glist
-	(*end*)
+	glist
+	
     in
 
     let diary = create_empty_var_diary () in 
     locally_used_variables diary nt_aut;
-    (*Format.printf "Clean unlisded local vars : Diary contains : \n";
-    Simplification.pprint_diary diary;*)
     
     let clean_local_list =
       (List.fold_left ( local_list_folder diary) [] nt_aut.local_vars)
@@ -641,7 +635,7 @@ ordering on their name. *)
 
   
 (**
-comptes a numerical transition system in which all local variables
+Returns as input a numerical transition system in which all local variables
 list of each automaton has been cleared of non used varibles
 *)
   let nt_system_var_cleaner nt_sys =
