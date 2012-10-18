@@ -269,6 +269,7 @@ let rec cnt_pprint_arithm_exp ( exp : cnt_arithm_exp ) =
       CntCst(i) -> My_bigint.to_string i
     | CntRealConst(f) -> (Format.sprintf "%f" f)
     | CntNdet -> "NDET"
+    | CntRValNdet -> "RealValNdet"
     | CntSymCst(str) -> str
     | CntVar ( ntsvar ) -> nts_pprint_nts_var ntsvar
     | CntNdetVar(varname) -> varname
@@ -734,6 +735,10 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
     let name = Format.sprintf "_ndet_arg_%d" i in
     NtsIVar(name)
 
+  let name_real_ndet_arg i =
+    let name = Format.sprintf "real_typed_ndet_arg_%d" i in
+    NtsRVar(name)
+
   let replace_ndet_args_by_ndet_counters ( ilfunlist :  il_fun_arguments list ) =
     let ndet_args = ref 0 in
     let replace_ndet_args_mapper (ilfunarg : il_fun_arguments ) =
@@ -753,7 +758,19 @@ let cnt_pprint_translabel ( tlabel : cnt_trans_label ) =
 		      ndet_args := !ndet_args + 1;
 		      IlScalArg(ret_val)
 		    end
-		      
+		
+		| CntRValNdet ->
+		  begin
+		      let ret_val =
+			{
+			  expr = CntVar((name_real_ndet_arg !ndet_args));
+			  validity_of_exp = iarg.validity_of_exp;
+			}
+		      in
+		      ndet_args := !ndet_args + 1;
+		      IlScalArg(ret_val)
+		    end
+		    
 		| _-> ilfunarg	  
 	    end
 	      

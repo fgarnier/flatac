@@ -47,6 +47,7 @@ type cnt_binop = CntEq
 type cnt_arithm_exp = CntCst of My_bigint.t
 		      | CntRealConst of float 
 		      | CntNdet
+		      | CntRValNdet (* Unknown real value*)
 		      | CntNdetVar of string (* non deterministic value *)
 		      | CntSymCst of string
 		      | CntVar of nts_var 

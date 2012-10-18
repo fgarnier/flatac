@@ -172,11 +172,11 @@ e is not of type TPtr(_,_), e : %s\n" (Ast_goodies.pprint_cil_exp e) in
 	      
 	  | _ -> 
 	    begin
-	      match (Composite_types.is_integer_type exp_type) with
-		  Some(_) ->
-		    cil_expr_2_scalar expr 
+	      if (Composite_types.is_scalar_type exp_type) then
+		  
+		cil_expr_2_scalar expr 
 		      
-		| None ->
+	      else
 		  raise ( Bad_expression_type "This is not an integer value, as I expected \n")
 	    end 
       end

@@ -223,12 +223,22 @@ struct
 	    begin
 	      match (Composite_types.is_integer_type v.vtype) with
 		  Some(_) -> NtsIVar(v.vname)::nts_var_list
-		| None -> NtsMiscType(v.vname)::nts_var_list
+		| None -> 
+		  begin
+		    match (Composite_types.is_float_type v.vtype) with
+			Some(_) ->
+			  begin
+			    NtsRVar(v.vname)::nts_var_list
+			  end
+		      | None ->
+			(*NtsMiscType(v.vname)::nts_var_list*)
+			nts_var_list
+		  end
 	    end
       in 
 	nts_slocals <- (List.fold_left in_out_map_folder [] funinfo.slocals  );
 	for i=0 to max_args_of_all_callee do
-	  nts_slocals <- (Nts.name_ndet_arg i)::nts_slocals
+	  nts_slocals <- (Nts.name_real_ndet_arg i)::((Nts.name_ndet_arg i)::nts_slocals)
 	done;
 	nts_slocals <- ((NtsIVar("__ndet_cond__"))::(NtsIVar("__if_ndet_cond__"))::nts_slocals)
  
@@ -902,6 +912,9 @@ struct
       match fun_def.svar.vtype with
 	  TFun(TInt(_,_),_,_,_) -> " out ret_val_, validity__ret_val__  : int;" 
 	| TFun(TPtr(_,_),_,_,_) -> " out offset__ret_val__, validity__ret_val__ : int;"
+
+	| TFun(TFloat(_,_),_,_,_) -> " out ret_val_ : real, validity__ret_val__ : int;"
+
 	|  TFun(t,_,_,_) ->
 	  begin
 	    match (Composite_types.is_integer_type t) 
@@ -927,7 +940,7 @@ struct
 	Nts.concat_comma_both_arg_non_empty unaffected_ret_vals
 	validvar_names in
       Nts.concat_comma_both_arg_non_empty validvar_names 
-	((Nts.pprint_typeinfo_int_nts_var_list nts_slocals))
+	((Nts.pprint_typeinfo_nts_var_list nts_slocals))
 	
       
     method private pprint_error_states () =
@@ -963,7 +976,7 @@ struct
       let pprint_loc_pre = front_end#pprint_list_of_malloc_vars () in
       let pprint_loc=Nts.concat_comma_both_arg_non_empty pprint_loc_pre 
 	pprint_loc in
-      let res_string=res_string^"\n"^Nts.concat_if_first_arg_nonzero pprint_loc " : int ;\n" in
+      let res_string=res_string^"\n"^Nts.concat_if_first_arg_nonzero pprint_loc "  ;\n" in
     
       
       let ret_vars = self#pprint_out_vars () in

@@ -192,16 +192,43 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
 					   name associated to the type t.*)
 	end
 
-    | LiScalOfAddr( ptrexp , optype ) -> 
+    | LiScalOfAddr( _ , optyp ) -> 
       begin
        	(*let ll = interpret_c_ptrexp_to_cnt sslf ptrexp in
 	  let  sizeof_ptr_type = interpret_ciltypes_size optype in
 	  CntProd(ll,sizeof_ptr_type *)
-	CntNdet
+       
+	match ( Composite_types.is_integer_type optyp)
+	with
+	    Some(_) -> CntNdet
+	  | None -> 
+	    begin
+	      match ( Composite_types.is_float_type optyp)
+	      with
+		  Some(_) ->  CntRValNdet
+		| None -> CntNdet
+	    end
+	  
       end
 
-    | LiElemOfCTab(_,_) ->
-      CntNdet
+    | LiElemOfCTab(acc_list,LiTab(_,dim_infos,ciltyp)) ->
+      begin
+	if (List.length dim_infos) != ( List.length acc_list)
+	then assert false
+	else
+	  begin
+	    match ( Composite_types.is_integer_type ciltyp)
+	    with
+		Some(_) -> CntNdet
+	      | None -> 
+		begin
+		  match ( Composite_types.is_float_type ciltyp)
+		  with
+		      Some(_) -> CntRValNdet
+		    | None -> assert false
+		end
+	  end
+      end
       
     | LiScalOfLiBool(_)->
       CntNdet (* !! That can be statically decided in various different
