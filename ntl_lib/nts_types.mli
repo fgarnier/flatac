@@ -1,3 +1,4 @@
+
 (* This file has been automatically genrerated using ocamlc -i. Please have a look
 to nts_types.ml for further comments.
 *)
@@ -9,6 +10,7 @@ exception Invalid_nts_expression
 exception Not_an_if_then_else_condition_guard
 
 type nts_quantifier = NtsExists | NtsForall
+
 type nts_base_types = NtsIntType | NtsRealType | NtsBoolType | NtsNatType
 
 type nts_var =
@@ -33,6 +35,7 @@ type nts_gen_arithm_binop =
   | CntGenMod
 
 type nts_gen_arithm_unop = CntGenUMinus
+
 type nts_gen_bool_binop = CntGenBAnd | CntGenBOr
 
 type cnt_arithm_exp =
@@ -49,8 +52,10 @@ type cnt_arithm_exp =
   | CntDiv of cnt_arithm_exp * cnt_arithm_exp
   | CntInvalidExp
 
+type nts_base_type_cst = CntGenICst of Big_int.big_int | CntGenFCst of float
+
 type nts_genrel_arithm_exp =
-    CntGenCst of Big_int.big_int
+    CntGenCst of nts_base_type_cst
   | CntGenNdet
   | CntGenNdetVar of string
   | CntGenSymCst of string

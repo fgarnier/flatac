@@ -82,7 +82,11 @@ type cnt_arithm_exp = CntCst of Big_int.big_int
 		      | CntInvalidExp
 
 
-type nts_genrel_arithm_exp = CntGenCst of Big_int.big_int
+type nts_base_type_cst = CntGenICst of  Big_int.big_int
+			 | CntGenFCst of float
+
+type nts_genrel_arithm_exp = CntGenCst of nts_base_type_cst
+			     
 			     | CntGenNdet
 			     | CntGenNdetVar of string (* non deterministic value *)
 			     | CntGenSymCst of string

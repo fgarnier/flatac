@@ -245,6 +245,7 @@ let rebuild_top_level_infos nts_name toplevel_list =
 
 
 %token <Big_int.big_int>  INT
+%token <float> FLOAT
 %token <string> IDENT
 %token <string> DOTTEDIDENT
 %token <float> REAL
@@ -782,7 +783,12 @@ arithm_expr_list : arithm_expr {$1::[]}
 ;
 
 arithm_expr : INT { let  cst =  $1 in 
-		   CntGenCst(cst)}
+		   CntGenCst(CntGenICst(cst))}
+| FLOAT {
+  let cst = $1 in
+  CntGenCst(CntGenFCst(cst))
+}
+
 
 | IDENT { let vname = $1 in
 	  CntGenVar(NtsGenVar(NtsMiscType(vname),NtsUnPrimed))

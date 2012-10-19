@@ -128,7 +128,8 @@ let rec size_genrel_deeper_than  (bexp : nts_gen_relation ) (depth : int ) =
 
 let rec nts_pprint_genrel_arithm_exp ( exp : nts_genrel_arithm_exp ) =
   match exp with
-      CntGenCst(i) -> Big_int.string_of_big_int i
+      CntGenCst(CntGenICst(i)) -> Big_int.string_of_big_int i
+    | CntGenCst(CntGenFCst(f)) -> Format.sprintf "%f" f
     | CntGenNdet -> "NDET"
     | CntGenSymCst(str) -> str
     | CntGenVar ( ntsgenvar ) -> nts_pprint_genvar ntsgenvar

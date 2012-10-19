@@ -52,6 +52,7 @@ let lletter = ['a' - 'z']
 let uletter = ['A' - 'Z']
 let number =  ['0' - '9']
 let intval = number +
+let floatval = ( number+ '.' number+)
 let quote = ['\'']
 let identifier = ( '_' | uletter | lletter)+ ( uletter | lletter | '_' | number )*
 let dotted_identifier = (  '_' | uletter | lletter)+ ( '/' |'.' | '_' | uletter | lletter | number )+ (uletter | lletter |number)+
@@ -98,6 +99,11 @@ let primed_var = (identifier quote)
     let num =  Big_int.big_int_of_string( 
     Lexing.lexeme lexbuf) in
     INT(num)
+  }
+
+  | floatval{
+    let f=Scanf.sscanf (Lexing.lexeme lexbuf) "%f" (fun s-> s)  in
+    FLOAT(f)
   }
   | identifier  { 
     KWD._KWD_or_IDENT (Lexing.lexeme lexbuf)
