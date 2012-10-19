@@ -68,6 +68,13 @@ let is_exp_array ( e : Cil_types.exp ) =
     | _ -> false
 
 
+let rec base_type_of_muldim_array_type ( t : Cil_types.typ ) =
+  match t with
+      TArray(tinfo,_,_,_)->
+	base_type_of_muldim_array_type tinfo 
+    | t -> t
+
+
 let is_expnode_an_array (enode : Cil_types.exp_node ) =
   let e = Cil.dummy_exp enode in
   is_exp_array  e 

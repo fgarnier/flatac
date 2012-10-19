@@ -288,6 +288,10 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
 
     | LiStarOfPtr(cptr,t) ->
       begin
+	(*Cil.d_type Ast_goodies.debug_out t;
+	Format.fprintf  Ast_goodies.debug_out "%!";
+	  assert false;
+	*)
 	match cptr with
 	    LiDerefCVar(vname,_) ->
 	      CntVar(NtsIVar(vname))
@@ -296,7 +300,17 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
 	    let cnt_vptr = interpret_c_ptrexp_to_cnt sslf vptr in
 	    cnt_vptr
 	      
-	  | _ -> CntNdet
+	  | _ -> 
+	    begin
+	      match (Composite_types.is_integer_type t) with
+		  Some(_) -> CntNdet
+		| None -> 
+		  begin
+		    match (Composite_types.is_float_type t) with
+			Some(_) -> CntRValNdet
+		       | _ -> CntNdet 
+		  end
+	    end
       end
 
    

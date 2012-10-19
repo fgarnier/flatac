@@ -120,6 +120,8 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 		let alias_tname = Composite_types.is_float_type typeofexp in
 		 match alias_tname with
 		   | Some(_) ->
+		     Cil.d_exp Ast_goodies.debug_out expr;
+		     Format.fprintf Ast_goodies.debug_out "\n %!";
 		     get_fvar_from_exp expr 
 	    (*LiVar(Unprimed,LiIntVar(name_of_var))*)
 		   | None ->
@@ -140,7 +142,7 @@ let rec cil_expr_2_scalar (expr : Cil_types.exp ) =
 	      Cil.d_lval debug_out  ( Mem(e), offset);
 	      Format.fprintf  debug_out "\n";
 	      let ptr_addr_e = cil_expr_2_ptr e in
-	      LiScalOfAddr(ptr_addr_e,t)
+	      LiScalOfAddr(ptr_addr_e,tparam)
 
 	  | _ -> 
 	    let msg = Format.sprintf "[Cil_expr_2_scalar :] Accessing LVal(Mem(e),_) where
@@ -965,9 +967,12 @@ and get_li_floatvar_from_exp_node (expn : Cil_types.exp_node ) =
 		match p.vtype with 
 		    TArray(tinfo,_,_,_)->
 		      begin
+			Cil.d_exp Ast_goodies.debug_out;
 			let index_access = get_array_index off [] in
 			let dim_of_tabs = array_dim p.vtype [] in
-			let c_array =  LiTab(Some(p.vname),dim_of_tabs,tinfo) in
+			let base_type = 
+			  Ast_goodies.base_type_of_muldim_array_type tinfo in
+			let c_array =  LiTab(Some(p.vname),dim_of_tabs,base_type) in
 			LiElemOfCTab(index_access,c_array)
 		      end
 		  | _ -> 

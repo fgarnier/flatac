@@ -202,8 +202,10 @@ let pprint_typeinfo_nts_var_list l =
 let rec size_arithm_exp ( exp : cnt_arithm_exp ) =
   match exp with 
        CntCst(_) -> 1
+    |  CntRealConst (_) -> 1
     | CntNdet(_) -> 1
     | CntNdetVar(_) -> 1
+    | CntRValNdet -> 1
     | CntSymCst ( _ ) -> 1
     | CntVar (_) -> 1
     | CntInvalidExp -> 1
@@ -232,6 +234,8 @@ let rec size_arithmexp_deeper_than  (exp : cnt_arithm_exp ) (deepness : int ) =
     match exp with 
        CntCst(_)
       | CntNdet
+      |  CntRealConst(_) 
+      | CntRValNdet 
     | CntSymCst (_ )
     | CntVar (_)
     | CntNdetVar(_)
@@ -573,7 +577,7 @@ let rec is_cnt_bool_det ( b : cnt_bool ) =
 contains no CntNdet constructor *)	
 and is_cnt_arithm_exp_a_function (e : cnt_arithm_exp ) =
   match e with
-   | CntNdet -> false
+   | CntNdet | CntRValNdet -> false
    | CntNdetVar(_) -> false
    | CntMinus(a,b) | CntSum (a,b) 
    | CntProd(a,b) | CntMod (a,b) 
