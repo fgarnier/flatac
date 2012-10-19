@@ -64,12 +64,23 @@ open Flatac_extended_cfg
      List.fold_left pprint_list_folder "" gvar_list
 
 (*GVarDecl of funspec*) 
+
+
+ let substitute_dot_slash_by_underscore str =
+   let str_len = String.length str in
+   for i=0 to str_len-1 
+   do
+     if (str.[i]='.' || str.[i]='/' || str.[i]='-')
+     then String.set str i '_'
+     else ()
+   done;
+   str
  
 
 let get_c_file_name fname =
     let len = String.length fname in
     let f_name = String.sub fname 0 (len-2) in
-    f_name
+    substitute_dot_slash_by_underscore f_name
 
 
 
@@ -171,6 +182,7 @@ class flatac_visitor (prj : Project.t )  = object (self)
     else 
       let out_file = open_out file_name in
       let format_out_file = Format.formatter_of_out_channel out_file in
+      Format.fprintf Ast_goodies.debug_out "Saving nts : %s \n %!" nts_name;
 
 	Format.fprintf format_out_file "nts %s;\n" nts_name;  
 	Format.fprintf format_out_file "%s \n" (pprint_list_of_gvars local_file_ast);
