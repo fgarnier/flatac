@@ -312,12 +312,12 @@ ntldescr : NTSDECL IDENT SEMICOLON comma_sep_header_list {
 ;
 
 
-comma_sep_header_list : gvars_decl SEMICOLON decl_sequence {
+comma_sep_header_list : typed_id_list_list SEMICOLON decl_sequence {
   let nts_automata = cautomata_hashtbl_of_cautomata_list $3 in
   `Decl_gvars($1)::`Decl_seq(nts_automata)::[]
 }
 
-| gvars_decl SEMICOLON comma_sep_header_list {
+| typed_id_list_list SEMICOLON comma_sep_header_list {
     `Decl_gvars($1)::$3
   }
 
@@ -340,61 +340,38 @@ comma_sep_header_list : gvars_decl SEMICOLON decl_sequence {
 }
 ;
 
-/*
-init_gvars_condition_list : INIT gvars_initial_conditions {$2} 
-; 
-*/
 
-/*
-gvars_condition_list : pressburg_atomic_bool {`GVarsInitCond($1)::[]}
-| pressburg_tree_guards {`GVarsInitCond($1)::[]}
-| pressburg_tree_guards BAND gvars_condition_list {`GVarsInitCond($1):: $3 }
-| pressburg_atomic_bool BAND gvars_condition_list {`GVarsInitCond($1):: $3 }
-;
-*/
+
+
 
 
 gvars_initial_conditions : INIT nts_trans_split_prec {$2}
 
-/*
- gvars_condition_list : pressburg_atomic_bool {$1::[]}
-| pressburg_tree_guards {$1::[]}
-| pressburg_tree_guards BAND gvars_condition_list {$1 :: $3 }
-| pressburg_atomic_bool BAND gvars_condition_list {$1 :: $3 }
-;
-*/
 
 ident_list : IDENT {[$1]}
 | IDENT COMMA ident_list {$1::$3}
 ;
 
-/*
-gvars_list_decl : gvars_decl SEMICOLON gvars_list_decl {$1 @ $3}
-| gvars_decl SEMICOLON {$1}
-;
-*/
 
+/*
 gvars_decl : ident_list COLON INTDECL  { 
   List.map (fun s-> NtsGenVar(NtsIVar(s),NtsUnPrimed)) $1
 }
 
-| ident_list COLON REALDECL SEMICOLON {
+| ident_list COLON REALDECL  {
 List.map (fun s->NtsGenVar( NtsRVar(s),NtsUnPrimed)) $1 
 } 
 
-| ident_list COLON NATDECL SEMICOLON {
+| ident_list COLON NATDECL {
 List.map  (fun s->NtsGenVar( NtsNVar(s),NtsUnPrimed)) $1 
 }
 
-| ident_list COLON BOOLDECL SEMICOLON {
+| ident_list COLON BOOLDECL  {
 List.map  (fun s->NtsGenVar( NtsBVar(s),NtsUnPrimed)) $1 
 }
 ;
+*/
 
-
-/*
-init_gvars_condition_list_decl : INIT gvars_condition_list_decl {$2}
-;*/
 
 
 thread_declaration : INSTANCES thread_decl_list { $2 };
