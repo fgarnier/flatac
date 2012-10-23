@@ -140,8 +140,11 @@ let add_vars_of_cnt_trans_label_to_diary diary ( lbl : nts_trans_label ) =
 	add_vars_of_lvals_to_diary diary lvals;
 	add_vars_of_fun_parameters_to_diary diary expr_list
       end
+	
+    (* Havoc list here for dealine, need not to count variables
+    in havoc as used if they don't appear in relations.*)
 
-    | CntGenHavoc _ -> ()
+    | CntGenHavoc (hlist) -> add_vars_of_lvals_to_diary diary (Some(hlist))
 
 
 
