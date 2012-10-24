@@ -92,17 +92,6 @@ abs{
 
 }
 
-fabs{
- in x : real, val : int;
- out res : real, val_out : int ;
- initial sinit ;
- final  sfinal ;
-
- sinit->sfinal { x >= 0.0 and res'= x and val_out'=val and havoc(res,val_out)}
- sinit->sfinal { x< 0.0 and res'= -x and val_out'=val and havoc(res,val_out)}
-
-}
-
 __builtin_alloca{
  in x, val_x : int;
  out y, vx : int ;

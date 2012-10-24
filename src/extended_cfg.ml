@@ -212,7 +212,7 @@ struct
 		  end
 	    end
       in 
-      nts_sformal <- (List.fold_left in_out_map_folder [] funinfo.sformals  )
+      nts_sformal <- (List.fold_left in_out_map_folder [] (List.rev funinfo.sformals ) )
       
 	
     method register_local_vars () =
@@ -905,7 +905,7 @@ struct
 	  in
 	    "final "^retstring^";"
 	else
-	  ""
+	  "final no_rechable_final_state;"
 	
 
     method private pprint_out_vars () =
