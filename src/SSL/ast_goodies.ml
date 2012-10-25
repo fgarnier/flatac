@@ -327,7 +327,11 @@ and pprint_cil_constant (c : Cil_types.constant ) =
 	  
 and pprint_cil_exp ( e : Cil_types.exp ) =
   match e.enode with 
-      Lval( Var(v) , _ ) -> Format.sprintf "Var %s : %s" v.vname (pprint_ciltypes v.vtype)
+      Lval( Var(v) , NoOffset ) -> Format.sprintf "Var %s : %s" v.vname (pprint_ciltypes v.vtype)
+    | Lval( Var(v) , ( Index(_,_) as idx))  -> Format.sprintf "Var %s %s :  %s" v.vname (pprint_offset idx) (pprint_ciltypes v.vtype)
+
+    | Lval( Var(v) , _)  -> Format.sprintf "Var %s  :  %s" v.vname (pprint_ciltypes v.vtype)
+
     |  Lval ( Mem (e' ) , _) -> Format.sprintf "Mem [ %s ]" (pprint_cil_exp e')
     | SizeOfStr (str) -> "sizeof("^str^")"
     | SizeOfE ( e') -> "sizeof("^(pprint_cil_exp e')^")"

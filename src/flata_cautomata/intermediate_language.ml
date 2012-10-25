@@ -41,6 +41,43 @@ in the expression tree.
 *)
 
 
+(** Returns the intermediate language type of an accessed array
+througt, the value need to be a scalar value --either a float or
+an integer type 
+*)
+
+let li_type_of_cil_accessed_array (enode : Cil_types.enode) =
+  let type_of_exp = Cil.dummy_exp enode in
+  if not (is_scalar_type type_of_exp) then assert false
+  else () ;
+  
+
+  let rec indice_accessed node opt_dim_list =
+  match enode with
+      Lval(Var(v),(Index(_,_) as idx) ) ->
+	begin
+	  
+	end
+    
+    | Lval(Mem(e),(Index(_,_) as idx)) ->
+      begin
+	let get_index_access
+	indice_accessed e 
+      end
+	
+
+  
+  
+  
+ 
+
+
+let rec scalar_value_of_array_access (enode : ) Cil_types.enode =
+()
+
+
+
+
 
 let get_name_of_c_ptr p =
   match p with
@@ -376,8 +413,8 @@ and cil_expr_2_ptr (expr : Cil_types.exp ) =
 	Cil.d_type debug_out type_of_lval;
 	Format.printf "\n LVal expression is";
 	Cil.d_lval Ast_goodies.debug_out ( Mem(e) , offset );
-	Ast_goodies.pprint_cil_exp (Cil.dummy_exp (Lval( Mem(e) , offset)));
-	Format.fprintf Ast_goodies.debug_out "\n";
+	let str  = Ast_goodies.pprint_cil_exp (Cil.dummy_exp (Lval( Mem(e) , offset))) in
+	Format.fprintf Ast_goodies.debug_out " %s \n" str;
 	
 	
 	match type_of_lval with
@@ -889,6 +926,9 @@ and get_li_intvar_from_exp_node (expn : Cil_types.exp_node ) =
     | Lval(Mem(e), off ) ->
       begin
 	Format.printf "get_pvar_from_exp_node : lval is a Mem(e) \n";
+	Format.fprintf Ast_goodies.debug_out "%! \n";
+	Cil.d_lval Ast_goodies.debug_out (Mem(e), off);
+	
 	let type_of_expn = Cil.typeOfLval (Mem(e),off) in
 	let itypeval_of_expn = Composite_types.is_integer_type type_of_expn 
 	in
@@ -911,9 +951,19 @@ and get_li_intvar_from_exp_node (expn : Cil_types.exp_node ) =
 	   LiVar(Unprimed,LiIntVar(varname))
 	     
 	     
-	 | (_,Index(_,_)) -> Format.printf "Some index \n"; 
-	   raise (Debug_info ("In get_pvar_from_exp_node : I don't handle
+	 | (Some(_),Index(_,_)) ->
+	   begin
+	     let index_access = get_array_index off [] in
+	     let str = Ast_goodies.pprint_cil_exp 
+	       (Cil.dummy_exp (Lval( Mem(e) , off))) in
+	     Format.fprintf Ast_goodies.debug_out 
+	       "Some index \n expression is : %s \n%!" str;
+	
+	     Format.fprintf Ast_goodies.debug_out "%!";
+	     raise (Debug_info ("In get_pvar_from_exp_node : I don't handle
   array indexes here and there is no reason why I should do it here.\n"))
+	   end
+
 	 | (_,_) -> raise (Debug_info ("Lost in get_ivar_from_exp_node \n"))
       end
 	 
