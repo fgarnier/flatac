@@ -46,16 +46,38 @@ througt, the value need to be a scalar value --either a float or
 an integer type 
 *)
 
+
+(*
 let li_type_of_cil_accessed_array (enode : Cil_types.enode) =
   let type_of_exp = Cil.dummy_exp enode in
   if not (is_scalar_type type_of_exp) then assert false
   else () ;
   
 
+  let rec index_to_scal_list prev_list idx =
+    match idx with
+	Index(indice,NoOffset) -> 
+	  begin
+	    let idx_loc = cil_expr_to_scalar indice in
+	    List.rev (idx_loc::prev_list)
+	  end
+      | Index(indice,off) ->
+	begin
+	  let idx_loc = cil_expr_to_scalar indice in
+	  index_to_scal_list (idx_loc::prev_list) off
+	end
+      | Field(_,_) -> assert false (* This index type deals with
+				      structure field access
+				   *)
+  in
+
+
   let rec indice_accessed node opt_dim_list =
   match enode with
-      Lval(Var(v),(Index(_,_) as idx) ) ->
+      Lval(Var(v),(Index(_,_)) as idx ) ->
 	begin
+	  let loc_index = index_to_scal_list [] idx in
+	  
 	  
 	end
     
@@ -66,7 +88,12 @@ let li_type_of_cil_accessed_array (enode : Cil_types.enode) =
       end
 	
 
-  
+    | BinOp(IndexPI,pointer_exp,index,typ)->
+      begin
+	
+      end
+
+
   
   
  
@@ -74,7 +101,7 @@ let li_type_of_cil_accessed_array (enode : Cil_types.enode) =
 
 let rec scalar_value_of_array_access (enode : ) Cil_types.enode =
 ()
-
+*)
 
 
 
@@ -957,8 +984,12 @@ and get_li_intvar_from_exp_node (expn : Cil_types.exp_node ) =
 	     let str = Ast_goodies.pprint_cil_exp 
 	       (Cil.dummy_exp (Lval( Mem(e) , off))) in
 	     Format.fprintf Ast_goodies.debug_out 
-	       "Some index \n expression is : %s \n%!" str;
-	
+	       "Some index \n expression is : %s \n%! type of expression is :" str;
+	     Cil.d_type Ast_goodies.debug_out 
+	      (Cil.typeOf (Cil.dummy_exp (Lval( Mem(e) , off))));
+	     Format.fprintf Ast_goodies.debug_out "\n Type of term e in Mem(e) : \n";
+	      Cil.d_type Ast_goodies.debug_out (Cil.typeOf e);
+	       Format.fprintf Ast_goodies.debug_out "\n%!";
 	     Format.fprintf Ast_goodies.debug_out "%!";
 	     raise (Debug_info ("In get_pvar_from_exp_node : I don't handle
   array indexes here and there is no reason why I should do it here.\n"))

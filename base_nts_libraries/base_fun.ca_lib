@@ -2,6 +2,8 @@ __assert_fail{
 in a,b,c,d,e,f,g,h : int;
 initial sinit ;
 error s0;
+final none;
+
 sinit->s0 { true and havoc() }
 }
 
