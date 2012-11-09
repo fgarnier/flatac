@@ -49,7 +49,7 @@ class global_mem_manager = object (self)
 	      
 	| (_,None) -> list_affect
     in
-      Hashtbl.fold init_list_folder init_seg_size []
+      Hashtbl.fold init_list_folder init_seg_size [CntHavoc([])]
 
 
 
