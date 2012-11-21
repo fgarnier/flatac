@@ -64,9 +64,11 @@ let pretty_print_cautomata_obj out =
  ;
   
  
-  let ca_out_name = Printf.sprintf "%s.nts" (kernel_file_name ()) in
+  let ca_out_name = 
+    Format.sprintf "%s.nts" (kernel_file_name ()) in
   let out_file = open_out ca_out_name in
-  let types_out_name = Printf.sprintf "%sa_types" (kernel_file_name()) in
+  let types_out_name = Format.sprintf "%sa_types" (kernel_file_name()) in
+  let trace_info_out_name = Format.sprintf "%s_tracinfo" (kernel_file_name()) in
     
   let file_ast = Ast.get() in
   Cfg.clearFileCFG file_ast;
@@ -84,17 +86,23 @@ let pretty_print_cautomata_obj out =
   Format.fprintf out "%s%!" states_out;
   (* This part consists in checking the cfg structure given by Cil*)
  
-
+  let backtrackinginfos = 
+    visited_file#pprint_all_ecfg_info_for_trace_analysis () in
+  
   let types_out = open_out types_out_name in
+  let trace_out= open_out  trace_info_out_name in
   let format_out_file = Format.formatter_of_out_channel out_file in
   let types_out_file = Format.formatter_of_out_channel types_out in
+  let trace_out_file = Format.formatter_of_out_channel  trace_out in
  (* Visitor.visitFramacFile (visit_bibi :> frama_c_copy ) file_ast;
   visit_bibi#pretty_print_f2ca format_out_file;*)  
  
   Format.fprintf types_out_file "%s %!" (composite_types#pprint_pvars_of_comp_types ());
   Format.fprintf format_out_file "%!";
+  Format.fprintf trace_out_file "%s %!" backtrackinginfos ;
   close_out out_file;
-  close_out types_out 
+  close_out types_out;
+  close_out trace_out
 
 let print () = Self.result "%t" ( fun out ->  pretty_print_cautomata_obj out )
 

@@ -176,6 +176,14 @@ class flatac_visitor (prj : Project.t )  = object (self)
   (*method pprint_all_ntsint_global_var () =*)
     
 
+  method pprint_all_ecfg_info_for_trace_analysis () =
+    let pprint_folder _ registered_ecfg pre_msg =
+      let current_ecfg_output = registered_ecfg#pprint_info_for_trace_analysis
+	() in
+      pre_msg^current_ecfg_output^"\n"
+    in
+    Hashtbl.fold  pprint_folder function_tables ("Info for file "^nts_name^";")
+
   method save_in_file ( file_name : string ) =
     if not is_computed then
       raise Untraversed_ast 

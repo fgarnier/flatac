@@ -1003,7 +1003,41 @@ struct
       in 
       let prefix = Format.sprintf " \n States of : %s \n" name in
 	Hashtbl.fold  ecfg_vertex_folder vertices prefix
+
+
+
+    method pprint_ecfgid_sid_map () =
+      let table_folder  exid evertex prefix =
+	let eid = get_id_of_ecfg_id exid in
+	let framac_sid = evertex.statement.sid in
+	(Format.sprintf "%s %d >> %d \n" prefix eid framac_sid)
+      in
+      let res =
+	Hashtbl.fold table_folder vertices "Extendedsid_to_sid_map("  in
+      res^")"
+
+
+
+
+    method build_sid_statement_code_table () = 
+      
+      let sid_code_iter statement =
+	Format.fprintf Format.str_formatter "sid : %d ; C-Code{{" statement.sid;
+	Cil.d_stmt Format.str_formatter statement;
+	Format.fprintf Format.str_formatter "}} \n"
+      in
+      List.iter sid_code_iter funinfo.sallstmts;
+      Format.flush_str_formatter ()
 	
+	
+
+    method pprint_info_for_trace_analysis () =
+      let ecfg_sid_to_sid_print_out=self#pprint_ecfgid_sid_map () in
+      let sid_code_table=self#build_sid_statement_code_table () in
+      Format.sprintf "{{ FUNCTION = %s ;;\n ESID_TO_SID_MAP{{ SYSN %s}};;\n SID_TO_CODE_MAP{{%s}};; }}\n"
+	name ecfg_sid_to_sid_print_out sid_code_table
+
+	    
   end;; (* End of the class ecfg*) 
 end;; (* End of the module extended_cfg.ml*)
 
