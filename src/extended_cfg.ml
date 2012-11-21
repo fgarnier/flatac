@@ -418,10 +418,6 @@ struct
 	  No_such_state_id -> (false ,Ecfg_id(-1))
      
      
-     	    
-
- 
-
 
  (* Pre and post reprensent the identificators of the abstract states,
  i.e. states in the sid * abs_dom_val cross product.*)
