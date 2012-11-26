@@ -1013,8 +1013,8 @@ struct
 	(Format.sprintf "%s %d >> %d \n" prefix eid framac_sid)
       in
       let res =
-	Hashtbl.fold table_folder vertices "Extendedsid_to_sid_map("  in
-      res^")"
+	Hashtbl.fold table_folder vertices ""  in
+      res
 
 
 
@@ -1034,7 +1034,7 @@ struct
     method pprint_info_for_trace_analysis () =
       let ecfg_sid_to_sid_print_out=self#pprint_ecfgid_sid_map () in
       let sid_code_table=self#build_sid_statement_code_table () in
-      Format.sprintf "{{ FUNCTION = %s ;;\n ESID_TO_SID_MAP{{ SYSN %s}};;\n SID_TO_CODE_MAP{{%s}};; }}\n"
+      Format.sprintf "{{ FUNCTION = %s ;;\n ESID_TO_SID_MAP{{ %s}};;\n SID_TO_CODE_MAP{{%s}};; }}\n"
 	name ecfg_sid_to_sid_print_out sid_code_table
 
 	    
