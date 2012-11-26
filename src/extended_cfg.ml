@@ -1022,9 +1022,9 @@ struct
     method build_sid_statement_code_table () = 
       
       let sid_code_iter statement =
-	Format.fprintf Format.str_formatter "sid : %d ; C-Code{{" statement.sid;
+	Format.fprintf Format.str_formatter "sid : %d ; C-Code %c{{%c" statement.sid '@' '@';
 	Cil.d_stmt Format.str_formatter statement;
-	Format.fprintf Format.str_formatter "}} \n"
+	Format.fprintf Format.str_formatter "%c}}%c \n" '@' '@'
       in
       List.iter sid_code_iter funinfo.sallstmts;
       Format.flush_str_formatter ()
