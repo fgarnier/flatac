@@ -1027,7 +1027,8 @@ struct
       
       let sid_code_iter statement =
 	Format.fprintf Format.str_formatter "sid : %d ; C-Code{{" statement.sid;
-	Cil.d_stmt Format.str_formatter statement;
+	(*Cil.d_stmt Format.str_formatter statement;*)
+	Ast_goodies.pprint_statement_head  Format.str_formatter statement;
 	Format.fprintf Format.str_formatter "}} \n"
       in
       List.iter sid_code_iter funinfo.sallstmts;

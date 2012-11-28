@@ -38,7 +38,40 @@ exception Bothparameter_are_None_option
 
 
 
+
   
+let rec pprint_fist_elem_of_block out b =
+  match b.bstmts with
+      hd::_ -> pprint_first_elem_of_stmtkind  out hd.skind
+    | [] -> ()
+and pprint_first_elem_of_stmtkind out s =
+  match s with 
+      Instr(ins) -> Cil.d_instr out ins
+    | Goto(stmt,_) -> Format.fprintf out "goto";pprint_statement_head out !stmt;Format.fprintf out "\n"
+    | If(expr,_,_,_) -> Format.fprintf out "if (";(Cil.d_exp out expr); Format.fprintf out ") \n" 
+    | Loop(_,bin,_,_,_)-> pprint_fist_elem_of_block out bin
+    | Switch(exp,_,_,_)-> Format.fprintf out "switch(";Cil.d_exp out exp ; Format.fprintf out ")\n"
+    | Return(exp,_) -> 
+      begin
+	match exp with
+	    None -> Format.fprintf out "return;"
+	  | Some(exp) ->
+	    begin
+	      Format.fprintf out "return "; 
+	      Cil.d_exp out exp;
+	      Format.fprintf out "\n"; 
+	    end
+      end
+    | Break(_) -> Format.fprintf out "break();"
+    | Block(b) -> pprint_fist_elem_of_block out b
+    | Continue (_) -> Format.fprintf out "continue();"
+    |UnspecifiedSequence(_) -> Format.fprintf out "Unspecified sequence \n"
+    | TryFinally(_,_,_) | TryExcept(_,_,_,_) ->  Format.fprintf out "MsVC try finally or try except constructionns  \n"
+and pprint_statement_head out s =
+ pprint_first_elem_of_stmtkind  out s.skind
+
+
+
 type ast_li_ptr_field = AstGLiIntStarOfPtrField of string * string (*s->ival*)
 			| AstGLiPtrStarOfPtrField of string * string (*s->ptr*)
 			| AstGLiPtrOfField of string * string (*s.ptr*)
