@@ -46,10 +46,10 @@ let rec pprint_fist_elem_of_block out b =
     | [] -> ()
 and pprint_first_elem_of_stmtkind out s =
   match s with 
-      Instr(ins) -> Cil.d_instr out ins
+      Instr(ins) -> Format.fprintf out "";Cil.d_instr out ins
     | Goto(stmt,_) -> Format.fprintf out "goto";pprint_statement_head out !stmt;Format.fprintf out "\n"
-    | If(expr,_,_,_) -> Format.fprintf out "if (";(Cil.d_exp out expr); Format.fprintf out ") \n" 
-    | Loop(_,bin,_,_,_)-> pprint_fist_elem_of_block out bin
+    | If(expr,_,_,_) -> Format.fprintf out "if (";(Cil.d_exp out expr); Format.fprintf out " )  \n" 
+    | Loop(_,bin,_,_,_)-> Format.fprintf out "";pprint_fist_elem_of_block out bin;Format.fprintf out ""
     | Switch(exp,_,_,_)-> Format.fprintf out "switch(";Cil.d_exp out exp ; Format.fprintf out ")\n"
     | Return(exp,_) -> 
       begin
@@ -63,7 +63,7 @@ and pprint_first_elem_of_stmtkind out s =
 	    end
       end
     | Break(_) -> Format.fprintf out "break();"
-    | Block(b) -> pprint_fist_elem_of_block out b
+    | Block(b) -> Format.fprintf out ""; pprint_fist_elem_of_block out b; Format.fprintf out ""
     | Continue (_) -> Format.fprintf out "continue();"
     |UnspecifiedSequence(_) -> Format.fprintf out "Unspecified sequence \n"
     | TryFinally(_,_,_) | TryExcept(_,_,_,_) ->  Format.fprintf out "MsVC try finally or try except constructionns  \n"

@@ -1027,14 +1027,9 @@ struct
 	(*Cil.d_stmt Format.str_formatter statement;*)
 	Ast_goodies.pprint_statement_head  Format.str_formatter statement;
 
-	Cil.d_stmt Format.str_formatter statement;
+	(*Cil.d_stmt Format.str_formatter statement;*)
 	Format.fprintf Format.str_formatter "%c}}%c \n" '@' '@'
 
-(*=======
-	Format.fprintf Format.str_formatter "sid : %d ; C-Code %c{{%c" statement.sid '@' '@';
-	Cil.d_stmt Format.str_formatter statement;
-	Format.fprintf Format.str_formatter "%c}}%c \n" '@' '@'
->>>>>>> 14e1b93dfb74743bac7d3c060f28d984807f1c7c *)
       in
       List.iter sid_code_iter funinfo.sallstmts;
       Format.flush_str_formatter ()
