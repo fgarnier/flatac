@@ -182,7 +182,7 @@ class flatac_visitor (prj : Project.t )  = object (self)
 	() in
       pre_msg^current_ecfg_output^"\n"
     in
-    Hashtbl.fold  pprint_folder function_tables ("Info for file "^nts_name^";")
+    Hashtbl.fold  pprint_folder function_tables ""
 
   method save_in_file ( file_name : string ) =
     if not is_computed then

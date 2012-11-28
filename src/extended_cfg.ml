@@ -418,10 +418,6 @@ struct
 	  No_such_state_id -> (false ,Ecfg_id(-1))
      
      
-     	    
-
- 
-
 
  (* Pre and post reprensent the identificators of the abstract states,
  i.e. states in the sid * abs_dom_val cross product.*)
@@ -1017,8 +1013,8 @@ struct
 	(Format.sprintf "%s %d >> %d \n" prefix eid framac_sid)
       in
       let res =
-	Hashtbl.fold table_folder vertices "Extendedsid_to_sid_map("  in
-      res^")"
+	Hashtbl.fold table_folder vertices ""  in
+      res
 
 
 
@@ -1026,10 +1022,19 @@ struct
     method build_sid_statement_code_table () = 
       
       let sid_code_iter statement =
-	Format.fprintf Format.str_formatter "sid : %d ; C-Code{{" statement.sid;
+
+	Format.fprintf Format.str_formatter "sid : %d ; C-Code %c{{%c" statement.sid '@' '@';
 	(*Cil.d_stmt Format.str_formatter statement;*)
 	Ast_goodies.pprint_statement_head  Format.str_formatter statement;
-	Format.fprintf Format.str_formatter "}} \n"
+
+	Cil.d_stmt Format.str_formatter statement;
+	Format.fprintf Format.str_formatter "%c}}%c \n" '@' '@'
+
+(*=======
+	Format.fprintf Format.str_formatter "sid : %d ; C-Code %c{{%c" statement.sid '@' '@';
+	Cil.d_stmt Format.str_formatter statement;
+	Format.fprintf Format.str_formatter "%c}}%c \n" '@' '@'
+>>>>>>> 14e1b93dfb74743bac7d3c060f28d984807f1c7c *)
       in
       List.iter sid_code_iter funinfo.sallstmts;
       Format.flush_str_formatter ()
@@ -1039,7 +1044,7 @@ struct
     method pprint_info_for_trace_analysis () =
       let ecfg_sid_to_sid_print_out=self#pprint_ecfgid_sid_map () in
       let sid_code_table=self#build_sid_statement_code_table () in
-      Format.sprintf "{{ FUNCTION = %s ;;\n ESID_TO_SID_MAP{{ SYSN %s}};;\n SID_TO_CODE_MAP{{%s}};; }}\n"
+      Format.sprintf "{{ FUNCTION = %s ;;\n ESID_TO_SID_MAP{{ %s}};;\n SID_TO_CODE_MAP{{%s}};; }}\n"
 	name ecfg_sid_to_sid_print_out sid_code_table
 
 	    
