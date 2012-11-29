@@ -72,6 +72,47 @@ and pprint_statement_head out s =
 
 
 
+let dummy_position =  
+  let dummy_lex_p = { pos_fname ="dummy_position"; pos_lnum=0;pos_bol=0;pos_cnum=0;} in
+  (dummy_lex_p,dummy_lex_p)
+
+let get_location_of_instr i =
+  match i with 
+    Set(_,_,l) -> l
+  | Call (_,_,_,l) -> l
+  | Asm(_,_,_,_,_,l) -> l
+  | Skip(l) -> l
+  | Code_annot(_,l) -> l
+
+  
+
+let rec get_location_of_stmt_kind s =
+  match s with
+    Instr(ins) -> get_location_of_instr ins
+    | Goto(_,l) -> l
+    | If(_,_,_,l) -> l
+    | Loop(_,_,l,_,_)-> l
+    | Switch(_,_,_,l)->l
+    | Return(_,l) ->  l
+      
+    | Break(l) -> l
+    | Block(b) -> 
+      begin
+	let h_stmt= List.hd b.bstmts in
+	let t_stmt =List.hd (List.rev b.bstmts) in
+	
+	let (lbeg,_) = get_location_of_stmt_kind h_stmt.skind in
+	let (_,lend) = get_location_of_stmt_kind t_stmt.skind in
+	(lbeg,lend)
+      end
+    | Continue (l) -> l
+    | UnspecifiedSequence(_) -> dummy_position
+    | TryFinally(_,_,_) | TryExcept(_,_,_,_) -> dummy_position 
+
+
+let pprint_position ( p : Lexing.position ) =
+  Format.sprintf "file : %s ; line %d ; colon :%d" p.pos_fname p.pos_lnum ( p.pos_cnum-p.pos_bol)
+
 type ast_li_ptr_field = AstGLiIntStarOfPtrField of string * string (*s->ival*)
 			| AstGLiPtrStarOfPtrField of string * string (*s->ptr*)
 			| AstGLiPtrOfField of string * string (*s.ptr*)

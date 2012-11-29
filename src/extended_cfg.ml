@@ -1023,12 +1023,15 @@ struct
       
       let sid_code_iter statement =
 
-	Format.fprintf Format.str_formatter "sid : %d ; C-Code %c{{%c" statement.sid '@' '@';
+	Format.fprintf Format.str_formatter "sid : %d ; C-Code %c{{%c" statement.sid  '@' '@';
 	(*Cil.d_stmt Format.str_formatter statement;*)
 	Ast_goodies.pprint_statement_head  Format.str_formatter statement;
-
+	let (pbegin,_) = 
+	  Ast_goodies.get_location_of_stmt_kind statement.skind 
+	in
+	let str_of_pbegin = Ast_goodies.pprint_position pbegin in
 	(*Cil.d_stmt Format.str_formatter statement;*)
-	Format.fprintf Format.str_formatter "%c}}%c \n" '@' '@'
+	Format.fprintf Format.str_formatter " %c position : %s %c}}%c \n" '@' str_of_pbegin '@' '@'
 
       in
       List.iter sid_code_iter funinfo.sallstmts;
