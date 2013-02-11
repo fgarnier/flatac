@@ -15,7 +15,7 @@ open SSL_lex
 open Ssl_substitution
 open Ssl_decision
 open Ssl_pprinters
-open Self
+(*open Self*)
 
 
 
@@ -419,8 +419,8 @@ let does_entail (etp : entail_problem ) =
     right = (Ssl.copy etp.right) ;
   } 
   in
-  Self.feedback ~level:0 "I reached does_entail \n";
-  Format.printf " \n [ does_entail ] %s \n " (pprint_entailement_problem etp);  
+  (*Self.feedback ~level:0 "I reached does_entail \n";
+  Format.printf " \n [ does_entail ] %s \n " (pprint_entailement_problem etp);*)  
   begin
     try 
       ssl_entailement etp_prime;
@@ -486,8 +486,8 @@ let accept_new_abstraction (etp : entail_problem ) =
     right = (Ssl.copy etp.right) ;
   } 
   in
-  Self.feedback ~level:0 "I reached does_entail \n";
-  Format.printf " \n [ accept_new_abstraction ] %s \n " (pprint_entailement_problem etp);  
+  (*Self.feedback ~level:0 "I reached does_entail \n";
+  Format.printf " \n [ accept_new_abstraction ] %s \n " (pprint_entailement_problem etp);*)  
   begin
 (*    try *)
       ssl_entailement etp_prime
@@ -555,12 +555,12 @@ let entails_abstraction_adder (etp : entail_problem ) =
     right = (Ssl.copy etp.right) ;
   } 
   in
-  Self.feedback ~level:0 " In entails_abstraction_adder \n";
-  Format.printf " \n [ entails_abstraction_adder : ] %s \n " (pprint_entailement_problem etp);  
+  (*Self.feedback ~level:0 " In entails_abstraction_adder \n";
+  Format.printf " \n [ entails_abstraction_adder : ] %s \n " (pprint_entailement_problem etp); *) 
   begin
 (*    try *)
       ssl_entailement etp_prime;
-    Format.fprintf Ast_goodies.debug_out "[entails_abstraction_adder ] ETP after call to entailement %s " (pprint_entailement_problem etp_prime);
+    (*Format.fprintf Ast_goodies.debug_out "[entails_abstraction_adder ] ETP after call to entailement %s " (pprint_entailement_problem etp_prime);*)
    (* with *
 	Top_heap_exception -> raise Top_heap_exception *)        
 	  (** We shall not deal with exception
