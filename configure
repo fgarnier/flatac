@@ -7,6 +7,13 @@ SRC_DIR=`pwd`/src
 OBJ_DIR=${SRC_DIR}
 DOC_DIR=`pwd`/doc
 
+SSL_ROOT=/Users/florent/REPOSITORIES/SSL_lib
+SSL_LIBDIR=${SSL_ROOT} 
+SSL_INCLUDES="-I ${SSL_ROOT}"
+
+LIB_OCAML_ROOT=/Users/florent/REPOSITORIES/Ocaml-nts
+LIB_OCAML_NTS="-I ${LIB_OCAML_ROOT}"
+  
 MAKEFILE_CONF_NAME=Makefile.conf
 MKCONF=${SRC_DIR}/${MAKEFILE_CONF_NAME}
 
@@ -27,7 +34,9 @@ build_configuration_file () {
     -I $1/lib/fc \
     -I ${SRC_DIR}/"
 
-  echo -e "FRAMA_C_INCLUDES=${FRAMA_C_INCLUDES}" > ${MKCONF}
+  echo -e "SSL_INCLUDES=${SSL_INCUDES}" > ${MKCONF}
+  echo -e "LIB_OCAML_NTS_INCLUDES=${LIB_OCAML_NTS}">> ${MKCONF} 	
+  echo -e "FRAMA_C_INCLUDES=${FRAMA_C_INCLUDES}" >> ${MKCONF}
   echo -e "FRAMAC_SHARE:=`frama-c.byte -print-path`" >> ${MKCONF}
   echo -e "FRAMAC_LIBDIR:=`frama-c.byte -print-libpath`" >> ${MKCONF}
   echo -e "OCAMLC=`which ocamlc`" >> ${MKCONF}
@@ -38,6 +47,18 @@ build_configuration_file () {
   echo -e "TAR_NAME=\$(PACKAGE)-\$(VERSION)" >> ${MKCONF}
   echo -e "DIST_DIR=\$(TAR_NAME)" >> ${MKCONF}
 }
+
+get_lib_objects () {
+  echo -e "\t@echo \"Getting files objects from SSL lib and Ocaml_nts_lib\"" >> Makefile
+  echo -e "\t@cp  ${SSL_ROOT}/*.cm* ${OBJ_DIR}; cp ${LIB_OCAML_ROOT}/*.cm* ${OBJ_DIR}" >> Makefile
+
+}
+get_lib_sources () {
+  echo -e "\t@echo \"Getting files sources from SSL lib and Ocaml_nts_lib\"" >> Makefile
+  echo -e "\t@cp  ${SSL_ROOT}/*.ml* ${SRC_DIR}/import; cp ${LIB_OCAML_ROOT}/*.ml* ${SRC_DIR}/import" >> Makefile
+
+}
+
 
 export_rules () {
   echo -e "\t@echo \"Construction de $1...\"" >> Makefile
@@ -58,6 +79,10 @@ build_global_makefile () {
   echo "" >> Makefile
 
   echo "all:" >> Makefile
+  
+ #get_lib_objects  
+  get_lib_sources
+
   # Special rule for deps computing
   echo -e "\t@echo \"Calcul des dépendences...\"" >> Makefile
   echo -e "\t@./compute_deps" >> Makefile
@@ -66,8 +91,12 @@ build_global_makefile () {
   echo -e "\t@echo \"Compilation du module Self...\"" >> Makefile
   echo -e "\t@cd ${SRC_DIR}/. && \$(OCAMLC) \$(FRAMA_C_INCLUDES) \$(CFLAGS) \
     self.ml -o self.cmo && \$(OCAMLOPT) \$(FRAMA_C_INCLUDES) \$(CFLAGS) self.ml -o self.cmx" >> Makefile
-  # ----
-  for i in $1
+  # ---- Copies the .cmo and cmx files from SSL_lib and Nts_lib 
+  # ---- into the object directory
+  
+   # ----
+
+ for i in $1
   do
     export_rules $i
   done
@@ -118,7 +147,7 @@ build_global_makefile () {
   echo -e "\t-@mkdir ${DOC_DIR}/html >/dev/null 2>&1" >> Makefile
   echo -e "\t-@mkdir ${DOC_DIR}/latex >/dev/null 2>&1" >> Makefile
   echo -e "\t@cd ${SRC_DIR} &&\
-    ocamldoc ${FRAMA_C_INCLUDES} -html -d ${DOC_DIR}/html *.ml top_level/*.ml SSL/*.ml\
+    ocamldoc ${FRAMA_C_INCLUDES} -html -d ${DOC_DIR}/html *.ml top_level/*.ml\
    global_mem/*.ml composite_types/*.ml  flatac_cautomata/*.ml ssl_and_validity_abstract_domain/*.ml local_info_validity_mem/*.ml compile_2_nts/*.ml c_upon_sslandnts_sem/*.ml " >> Makefile
 
 }
@@ -126,7 +155,7 @@ build_global_makefile () {
 [[ $# == 0 ]] && echo "type : ./configure PATH_TO_FRAMAC_SOURCE" && exit
 
 build_configuration_file $1
-build_global_makefile "SSL/ top_level/ global_mem/ flata_cautomata/ local_info_validity_mem/ composite_types/  ssl_and_validity_abstact_domain/ compile_2_nts/ c_upon_sslandnts_sem/ debug_tools/"
+build_global_makefile "import/ top_level/ global_mem/ flata_cautomata/ local_info_validity_mem/ composite_types/  ssl_and_validity_abstact_domain/ compile_2_nts/ c_upon_sslandnts_sem/ debug_tools/"
 
 echo ""
 echo "Configuration done."
