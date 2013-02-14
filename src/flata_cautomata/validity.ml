@@ -22,7 +22,8 @@ exception Cannot_find_pvar
 exception Cannot_find_lvar
 
 
-
+let valid_name_of_var (vname : string ) =
+  "validity__"^vname^"_" 
 
 (** returns the location variable l which models the base address
 of the pointer expression.
@@ -125,7 +126,7 @@ IT shall not be confuse with Var_validity.validity_of and consort.
 let rec valid_cscal (sslf : ssl_formula ) ( scal : c_scal) =
   match scal with
       LiVar(_ , LiIntVar(vname)) -> 
-	let valname = Nts.valid_name_of_var vname in 
+	let valname = valid_name_of_var vname in 
 	IntValid(valname)
 
     | LiConst(_) -> TrueValid
@@ -184,7 +185,7 @@ let rec valid_cscal (sslf : ssl_formula ) ( scal : c_scal) =
 and valid_ptrexp (sslf : ssl_formula ) ( ptrexp :  c_ptrexp ) =
   match ptrexp with 
       LiPVar ( _ , LiIntPtr(vname), _ ) ->  
-	let valname =  Nts.valid_name_of_var vname in 
+	let valname =  valid_name_of_var vname in 
 	(PtValid(valname))
  
     | LiPlusPI ( ptrexpprime , cscal , _) -> 
@@ -227,5 +228,5 @@ and valid_ptrexp (sslf : ssl_formula ) ( ptrexp :  c_ptrexp ) =
 
 
     | LiDerefCVar( vname, t) -> 
-      let valname =  Nts.valid_name_of_var vname in 
+      let valname =  valid_name_of_var vname in 
 	(PtValid(valname))

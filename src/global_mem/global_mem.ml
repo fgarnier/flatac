@@ -12,7 +12,7 @@ class global_mem_manager = object (self)
   val mutable fresh_lvar_id = 1  
     
   val mutable list_of_glob_vars = []
-  val init_seg_size = ( Hashtbl.create 97  : ( locvar , cnt_arithm_exp option ) Hashtbl.t)
+  val init_seg_size = ( Hashtbl.create 97  : ( locvar , nts_genrel_arithm_exp option ) Hashtbl.t)
     
   method lvar_from_malloc () =
     let lval_name = sprintf "mid_%d" gmalloc_id in
@@ -21,7 +21,7 @@ class global_mem_manager = object (self)
     gmalloc_id <- (gmalloc_id + 1 );
     LVar(lval_name)
 
-  method lvar_from_array_decl ( array_size : cnt_arithm_exp option ) = 
+  method lvar_from_array_decl ( array_size : nts_genrel_arithm_exp option ) = 
     let lval_name = sprintf "mid_%d" gmalloc_id in
     list_of_glob_vars <- (Format.sprintf "mid_%d_size" gmalloc_id )::list_of_glob_vars;
     list_of_glob_vars <- (Format.sprintf "mid_%d_base" gmalloc_id )::list_of_glob_vars;
@@ -31,7 +31,7 @@ class global_mem_manager = object (self)
     lval_ret
     
 
-  method lvar_from_constant_char (string_size : cnt_arithm_exp option ) =
+  method lvar_from_constant_char (string_size : nts_genrel_arithm_exp option ) =
     let lval_name = sprintf "mid_%d" gmalloc_id in
     list_of_glob_vars <- (Format.sprintf "mid_%d_size" gmalloc_id )::list_of_glob_vars;
     list_of_glob_vars <- (Format.sprintf "mid_%d_base" gmalloc_id )::list_of_glob_vars;
@@ -45,11 +45,11 @@ class global_mem_manager = object (self)
     let init_list_folder lvar opt_size list_affect =
       match lvar,opt_size with
 	  (LVar(vname),Some(size)) -> 
-	    (CntAffect(NtsIVar(vname),size))::list_affect
+	    (CntGenGuard(CntGenRel(CntEq,CntGenVar(NtsGenVar(NtsVar(vname,NtsIntType),NtsPrimed)),size)))::list_affect
 	      
 	| (_,None) -> list_affect
     in
-      Hashtbl.fold init_list_folder init_seg_size [CntHavoc([])]
+      Hashtbl.fold init_list_folder init_seg_size [CntGenHavoc([])]
 
 
 

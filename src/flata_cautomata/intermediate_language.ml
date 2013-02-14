@@ -824,6 +824,7 @@ and get_array_access_info_from_expr_node e =
 	  ( match ptr with
 	      	LiBaseAddrOfArray(index_access,c_array) ->
 		  (LiBaseAddrOfArray(index_info::index_access,c_array))
+	  | _ -> assert false
 	  )
 	in
 	ret_val
@@ -886,6 +887,7 @@ and get_accessed_array_pointer_info e =
 	  ( match ptr with
 	      LiBaseAddrOfArray(index_access,c_array) ->
 		(LiBaseAddrOfArray(index_info::index_access,c_array))
+	  | _ -> assert false
 	  )
 	in
 	ret_val
@@ -1048,7 +1050,7 @@ and get_li_floatvar_from_exp_node (expn : Cil_types.exp_node ) =
 		match p.vtype with 
 		    TArray(tinfo,_,_,_)->
 		      begin
-			Cil.d_exp Ast_goodies.debug_out;
+			Cil.d_exp Ast_goodies.debug_out (Cil.dummy_exp expn);
 			let index_access = get_array_index off [] in
 			let dim_of_tabs = array_dim p.vtype [] in
 			let base_type = 

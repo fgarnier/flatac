@@ -78,11 +78,16 @@ build_global_makefile () {
   echo ".SECONDARY: doc" >> Makefile
   echo "" >> Makefile
 
-  echo "all:" >> Makefile
-  
- #get_lib_objects  
-  get_lib_sources
+ 
+#get_lib_objects  
+ echo "import:" >> Makefile 
+ get_lib_sources
+ echo -e "" >> Makefile
 
+
+ echo "all:" >> Makefile
+  
+ 
   # Special rule for deps computing
   echo -e "\t@echo \"Calcul des dépendences...\"" >> Makefile
   echo -e "\t@./compute_deps" >> Makefile

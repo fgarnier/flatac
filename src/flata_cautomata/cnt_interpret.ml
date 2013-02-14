@@ -25,6 +25,7 @@ open Validity_types
 open Validity
 open Cil_types
 open Nts_types
+open Big_int
 
 exception Unhandled_valuetype_in_interpretciltypesize
 exception CilTypeHasNoEquivalentNtsType of Cil_types.typ
@@ -47,7 +48,7 @@ let ciltype_2_ntstype (t : Cil_types.typ) =
 in tinfo.tname.*)
 let sizeof_cil_tinfo ( tinfo : Cil_types.typeinfo ) =
   let typename = "sizeof_"^tinfo.tname in
-    CntSymCst( typename )
+    CntSymCst( typename, NtsIntType )
 
 (** Needs to be duely completed.
 Given a type t, this function return the sizeof of t,
@@ -55,33 +56,36 @@ or for type t*, it returns the sizeof of t.
 *)
 let rec interpret_ciltypes_size (ciltype : Cil_types.typ ) =
   match ciltype with
-      TInt(IBool,_) -> CntSymCst ("sizeof_bool")
-    | TInt(IChar,_) -> CntSymCst ("1")
-    | TInt(ISChar,_) -> CntSymCst ("1")
-    | TInt(IUChar,_) -> CntSymCst ("1")	
-    | TInt(IInt,_) -> CntSymCst ("4")
-    | TInt(IUInt,_) -> CntSymCst ("4")
-    | TInt(IShort,_) -> CntSymCst ("2")
-    | TInt(IUShort,_) -> CntSymCst ("2")
-    | TInt(ILong,_) -> CntSymCst ("4")
-    | TInt(IULong,_) -> CntSymCst ("4")
-    | TInt(ILongLong,_) -> CntSymCst ("8")
-    | TInt(IULongLong,_) -> CntSymCst ("8")	
-    | TFloat(FFloat,_) -> CntSymCst ("4")
-    | TFloat(FDouble,_) -> CntSymCst ("8")
-    | TFloat(FLongDouble,_) -> CntSymCst ("")
-    | TVoid([]) -> CntSymCst ("1") 
-    | TNamed(tinfo, _ ) -> sizeof_cil_tinfo tinfo 
-    | TPtr(TVoid([]), _) ->  CntSymCst ("4")
+      TInt(IBool,_) -> 
+	CntGenSymCst (CntSymCst("sizeof_bool",NtsIntType),NtsIntType)
+    | TInt(IChar,_) -> CntGenCst (CntGenICst(Big_int.big_int_of_int 1),NtsIntType)
+    | TInt(ISChar,_) -> CntGenCst (CntGenICst(big_int_of_int 1),NtsIntType)
+    | TInt(IUChar,_) -> CntGenCst (CntGenICst(big_int_of_int 1),NtsIntType)
+    | TInt(IInt,_) -> CntGenCst (CntGenICst(big_int_of_int 4),NtsIntType)
+    | TInt(IUInt,_) -> CntGenCst (CntGenICst(big_int_of_int 4), NtsIntType)
+    | TInt(IShort,_) -> CntGenCst (CntGenICst(big_int_of_int 2), NtsIntType)
+    | TInt(IUShort,_) -> CntGenCst (CntGenICst(big_int_of_int 2), NtsIntType)
+    | TInt(ILong,_) -> CntGenCst (CntGenICst(big_int_of_int 4),NtsIntType)
+    | TInt(IULong,_) -> CntGenCst (CntGenICst(big_int_of_int 4),NtsIntType)
+    | TInt(ILongLong,_) -> CntGenCst (CntGenICst(big_int_of_int 8),NtsIntType)
+    | TInt(IULongLong,_) -> CntGenCst (CntGenICst(big_int_of_int 8), NtsIntType)	
+    | TFloat(FFloat,_) -> CntGenCst (CntGenICst(big_int_of_int 8),NtsIntType)
+    | TFloat(FDouble,_) -> CntGenCst (CntGenICst(big_int_of_int 8),NtsIntType)
+    | TFloat(FLongDouble,_) -> CntGenCst (CntGenICst(big_int_of_int 8),NtsIntType)
+    | TVoid([]) -> CntGenCst (CntGenICst(big_int_of_int 1),NtsIntType) 
+    | TNamed(tinfo, _ ) -> let symsize = sizeof_cil_tinfo tinfo in
+			   CntGenSymCst(symsize,NtsIntType)
+
+    | TPtr(TVoid([]), _) ->  CntGenCst (CntGenICst(big_int_of_int 4),NtsIntType)
     | TPtr(t,_) -> interpret_ciltypes_size t (* Won't work
 					     for t** ...*)
-    | (TArray (tin, None,_,_ )) ->   CntSymCst("sizeof_array_reference")
+    | (TArray (tin, None,_,_ )) ->   CntGenSymCst(CntSymCst("sizeof_array_reference",NtsIntType),NtsIntType)
       
     | _ -> raise  Unhandled_valuetype_in_interpretciltypesize
 
 let offset_cnt_of_pvar (pvar : ptvar) =
   match pvar with 
-      PVar(vname) -> CntVar ( NtsIVar("offset__"^vname^"_") )
+      PVar(vname) -> NtsVar ( ("offset__"^vname^"_"),NtsIntType )
 
 
 (** Same as above, but more conveninant to express CntAffectation,
@@ -90,26 +94,26 @@ match structure to get the embeded NtsIVar(name).
 *)
 let offset_ntsivar_of_pvar (pvar : ptvar ) =
    match pvar with 
-      PVar(vname) -> NtsIVar("offset__"^vname^"_") 
+      PVar(vname) -> NtsVar("offset__"^vname^"_",NtsIntType) 
 
    
 (** This function aims at computing the name of the counter var name
 associated to the offset of a pointer variable*)
 let offset_cnt_name ( ptvar : c_ptrexp ) =  
   match ptvar with
-      LiPVar(_,LiIntPtr(vname),_) -> CntVar ( NtsIVar("offset__"^vname^"_") )
+      LiPVar(_,LiIntPtr(vname),_) -> NtsGenVar ( NtsVar("offset__"^vname^"_",NtsIntType),NtsUnPrimed )
     | _ -> raise Not_LiPVar
   
 
 let int_var_cnt_name ( cexpr : c_scal) =
    match cexpr with
-      LiVar(_,LiIntVar(vname)) -> CntVar(NtsIVar( vname ))
+      LiVar(_,LiIntVar(vname)) -> NtsGenVar(NtsVar( vname, NtsIntType),NtsUnPrimed)
     | _ -> raise Not_LiVar
 
 
 let float_var_cnt_name ( cexpr : c_scal) =
    match cexpr with
-      LiFVar(_,LiFloatVar(vname)) -> CntVar(NtsRVar( vname ))
+      LiFVar(_,LiFloatVar(vname)) -> NtsGenVar(NtsVar( vname ,NtsRealType),NtsUnPrimed)
     | _ -> raise Not_LiVar
 
 (** This function returns a counter associated to base address of a location
@@ -117,47 +121,77 @@ variable. This function is used to model a memory allocation. See thechnical
 report and the section dedicated to malloc. *)
 let lvarbase_cnt_name ( lvar : locvar ) =
   match lvar with
-    | LVar (vname) -> CntVar(NtsIVar(vname^"_base_addr"))
+    | LVar (vname) -> NtsGenVar(NtsVar(vname^"_base_addr",NtsIntType),NtsUnPrimed)
 
 (** Same as above, but for the size of a segment allocation.*)
 let lvarsize_cnt_name ( lvar : locvar ) =
   match lvar with 
-    | LVar (vname ) -> CntVar(NtsIVar(vname^"_size_of_segment"))
+    | LVar (vname ) -> NtsGenVar(NtsVar(vname^"_size_of_segment",NtsIntType),NtsUnPrimed)
 
 
+
+exception TypeMisMatchInBop of c_scal * c_scal
 
 (** Interprets a scalar expression into the nts formalism, w.r.t. the
 current context expressed as a ssl formula.*)
 let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
   match scalexp with 
-      LiVar(_) -> int_var_cnt_name scalexp
-    | LiFVar(_) -> float_var_cnt_name scalexp
-    | LiFConst(LiFloatConst(f)) -> CntRealConst(f) 
+      LiVar(_) -> 
+	 DetAVal(CntGenVar(int_var_cnt_name scalexp))
+    | LiFVar(_) ->
+      DetAVal(CntGenVar(float_var_cnt_name scalexp))
+	
+    | LiFConst(LiFloatConst(f)) -> 
+      DetAVal(CntGenCst(CntRealConst(f),NtsRealType))
+ 
     | LiConst(LiIConst(i)) ->  CntCst(i)
     | LiProd ( l , r ) ->
 	begin
 	  let lg = interpret_c_scal_to_cnt sslf l in
 	  let ld = interpret_c_scal_to_cnt sslf r in
-	    CntProd ( lg , ld )
+	  let type_lg = Nts_generic.type_of_gen_arithmetic_expr lg in
+	  let type_ld = Nts_generic.type_of_gen_arithmetic_expr ld in
+	  if (type_lg=type_ld) then  
+	    DetAVal(CntGenArithmBOp(CntGenProd, lg , ld, type_lg))
+	  else
+	    raise (TypeMisMatchInBop(l,r))
 	end
     |  LiSum  ( l , r ) ->
 	 begin
 	   let lg = interpret_c_scal_to_cnt sslf l in
 	   let ld = interpret_c_scal_to_cnt sslf r in
-	     CntSum ( lg , ld )
+	   let type_lg = Nts_generic.type_of_gen_arithmetic_expr lg in
+	   let type_ld = Nts_generic.type_of_gen_arithmetic_expr ld in
+	   if (type_lg=type_ld) then  
+	     DetAVal(CntGenArithmBOp(CntGenSum, lg , ld, type_lg))
+	   else
+	     raise (TypeMisMatchInBop(l,r))
+	      
 	 end
+	   
     | LiMinus ( l , r ) ->
-	begin
-	  let lg = interpret_c_scal_to_cnt sslf l in
-	  let ld = interpret_c_scal_to_cnt sslf r in
-	    CntMinus ( lg , ld )
+      begin
+	let lg = interpret_c_scal_to_cnt sslf l in
+	let ld = interpret_c_scal_to_cnt sslf r in
+	let type_lg = Nts_generic.type_of_gen_arithmetic_expr lg in
+	let type_ld = Nts_generic.type_of_gen_arithmetic_expr ld in
+	if (type_lg=type_ld) then  
+	  DetAVal(CntGenArithmBOp(CntGenMinus, lg , ld, type_lg))
+	  else
+	    raise (TypeMisMatchInBop(l,r))
 	end
 	  
     | LiMod ( l , r ) ->
 	begin
 	  let lg = interpret_c_scal_to_cnt sslf l in
 	  let ld = interpret_c_scal_to_cnt sslf r in
-	    CntMod ( lg , ld )
+	  let type_lg = Nts_generic.type_of_gen_arithmetic_expr lg in
+	  let type_ld = Nts_generic.type_of_gen_arithmetic_expr ld in
+	  if (type_lg=type_ld) then  
+	    DetAVal(CntGenArithmBOp(CntGenMod, lg , ld, type_lg))
+	  else
+	    raise (TypeMisMatchInBop(l,r)) 
+
 	end
 
 
@@ -165,12 +199,19 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
       begin
 	let lg = interpret_c_scal_to_cnt sslf l in
 	let ld = interpret_c_scal_to_cnt sslf r in
-	    CntDiv ( lg , ld ) 
+	let type_lg = Nts_generic.type_of_gen_arithmetic_expr lg in
+	let type_ld = Nts_generic.type_of_gen_arithmetic_expr ld in
+	if (type_lg=type_ld) then  
+	  DetAVal(CntGenArithmBOp(CntGenDiv, lg , ld, type_lg))
+	  else
+	    raise (TypeMisMatchInBop(l,r)) 
+	
       end
 	  
     | LiUnMin( t ) -> 
 	let tin = interpret_c_scal_to_cnt sslf t in
-	  CntUnMin( tin)
+	let top = Nts_generic.type_of_gen_arithmetic_expr t in
+	  DetAVal(CntGenArithmUOp( CntGenUMinus,tin,top))
 	    
     | LiMinusPP ( l , r , optype) ->
 	let basel = base_ptrexp sslf l in
@@ -179,17 +220,19 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
 	    begin
 	      let lg = interpret_c_ptrexp_to_cnt sslf l in
 	      let ld = interpret_c_ptrexp_to_cnt sslf r in
-		CntMinus ( lg , ld )
+		DetAVal(CntGenArithBOp ( CntGenMinus , lg , ld , NtsIntType))
 	    end
-	  else CntNdet
+	  else CntINdet (** Non deterministic value, which has type int.*)
     
     | LiSymConst ( cnt ) ->
 	begin
 	  match cnt with 
-	      LiSymIConst( const_name ) -> CntSymCst(const_name)
+	      LiSymIConst( const_name ) -> 
+		DetAVal(CntSymCst(const_name))
 	    | LiTypeSizeof ( t )  ->
-		 interpret_ciltypes_size t (* Returns the constant
-					   name associated to the type t.*)
+		 DetAVal(interpret_ciltypes_size t)
+	(* Returns the constant
+	   name associated to the type t.*)
 	end
 
     | LiScalOfAddr( _ , optyp ) -> 
@@ -200,12 +243,12 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
        
 	match ( Composite_types.is_integer_type optyp)
 	with
-	    Some(_) -> CntNdet
+	    Some(_) -> CntINdet
 	  | None -> 
 	    begin
 	      match ( Composite_types.is_float_type optyp)
 	      with
-		  Some(_) ->  CntRValNdet
+		  Some(_) ->  CntRNdet
 		| None -> CntNdet
 	    end
 	  
@@ -219,26 +262,26 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
 	  begin
 	    match ( Composite_types.is_integer_type ciltyp)
 	    with
-		Some(_) -> CntNdet
+		Some(_) -> CntINdet
 	      | None -> 
 		begin
 		  match ( Composite_types.is_float_type ciltyp)
 		  with
-		      Some(_) -> CntRValNdet
+		      Some(_) -> CntRNdet
 		    | None -> assert false
 		end
 	  end
       end
       
     | LiScalOfLiBool(_)->
-      CntNdet (* !! That can be statically decided in various different
+      CntINdet (* !! That can be statically decided in various different
 	      cases, must be refined at some point !!*)
 	
     
 	    
 and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
   match ptrexp with 
-      LiPVar(_,_,_) ->  offset_cnt_name ptrexp
+      LiPVar(_,_,_) ->  DetAVal(offset_cnt_name ptrexp)
      
     | LiPlusPI ( cptrexp , scalv, optype ) -> 
 	begin
