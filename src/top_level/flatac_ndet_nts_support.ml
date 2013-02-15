@@ -1,3 +1,4 @@
+open Nts_types
 open Flatac_ndet_nts_support_types
 
 
@@ -14,10 +15,12 @@ let type_of_ndet_supp_cnt_val_shallow v =
 	match v with	
   | CntINdet -> NtsIntType
   | CntRNdet -> NtsRealType
+  | CntBNdet -> NtsBoolType
+  | CntNdet -> assert false
   | DetAVal(aop) -> Nts_generic.type_of_gen_arithmetic_expr aop
-  | NdetAVal(aop) -> Nts_generic.type_of_gen_arithmetic_expr aop
+  | NDetAVal(aop) -> Nts_generic.type_of_gen_arithmetic_expr aop
   | DetNdetBOp(_,_,_,t) -> t
-  | DetNderUOp(_,_,t) -> t
+  | DetNdetUOp(_,_,t) -> t
 
 
 
@@ -31,7 +34,7 @@ let type_if_eq_det_ndet_aexp l r =
 
 
 (** This function creates a new term *)
-let aterm_binop_ndet_supp_cnt_val ( operator : nts_genrel_arithm_exp ) vg vd =
+let aterm_binop_ndet_supp_cnt_val ( operator : nts_gen_arithm_binop ) vg vd =
   match vg,vd with 
     DetAVal(l),DetAVal(r) -> 
       begin 
@@ -40,21 +43,21 @@ let aterm_binop_ndet_supp_cnt_val ( operator : nts_genrel_arithm_exp ) vg vd =
       end
   | _,_  ->
     begin
-      let aexptype = type_if_eq_det_ndet_aexp l r in
+      let aexptype = type_if_eq_det_ndet_aexp vg vd in
       DetNdetBOp(operator,vg,vd,aexptype)
     end
 
-let aterm_uop_ndet_supp_cnt_val (operator : nts_genrel_arithm_exp ) t =
+let aterm_uop_ndet_supp_cnt_val (operator : nts_gen_arithm_binop ) t =
   match t with
-    DetVal((op,_,typ) as v) ->
-      DetVal(CntGenUOp(operator,v,typ))
+    DetAVal( v) ->
+      DetAVal(CntGenUnOp(operator,v,typ))
   
-  | NdetAVal(aop) -> 
+  | NDetAVal(aop) -> 
     let typofaop = type_of_ndet_supp_cnt_val_shallow aop in
     DetNdetUOp(operator,aop,typofaop)
     
   | _ -> 
-    let typofaop = type_of_ndet_supp_cnt_val_shallow t in
+    let typeofaop = type_of_ndet_supp_cnt_val_shallow t in
     DetNdetUOp(operator,t,typeofaop)
 
 let bterm_genrel_comp rel_binop nd_vall nd_valr =
