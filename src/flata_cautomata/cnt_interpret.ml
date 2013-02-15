@@ -27,6 +27,14 @@ open Cil_types
 open Nts_types
 open Big_int
 
+(**
+   Those two modules allow to handle non determinism 
+   on arithemtical expressions.
+*)
+
+open Flatac_ndet_nts_support_types
+open Flatac_ndet_nts_support
+
 exception Unhandled_valuetype_in_interpretciltypesize
 exception CilTypeHasNoEquivalentNtsType of Cil_types.typ
 
@@ -144,54 +152,46 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
     | LiFConst(LiFloatConst(f)) -> 
       DetAVal(CntGenCst(CntRealConst(f),NtsRealType))
  
-    | LiConst(LiIConst(i)) ->  CntCst(i)
+    | LiConst(LiIConst(i)) ->  DetAVal(CntICst(i))
     | LiProd ( l , r ) ->
 	begin
 	  let lg = interpret_c_scal_to_cnt sslf l in
 	  let ld = interpret_c_scal_to_cnt sslf r in
-	  let type_lg = Nts_generic.type_of_gen_arithmetic_expr lg in
+	  (*let type_lg = Nts_generic.type_of_gen_arithmetic_expr lg in
 	  let type_ld = Nts_generic.type_of_gen_arithmetic_expr ld in
-	  if (type_lg=type_ld) then  
-	    DetAVal(CntGenArithmBOp(CntGenProd, lg , ld, type_lg))
-	  else
-	    raise (TypeMisMatchInBop(l,r))
+	  if (type_lg=type_ld) then*)  
+	  aterm_binop_ndet_supp_cnt_val CntGenProd lg ld
+	  (*DetAVal(CntGenArithmBOp(CntGenProd, lg , ld, type_lg))*)
+	  (*else
+	    raise (TypeMisMatchInBop(l,r))*)
 	end
     |  LiSum  ( l , r ) ->
 	 begin
 	   let lg = interpret_c_scal_to_cnt sslf l in
 	   let ld = interpret_c_scal_to_cnt sslf r in
-	   let type_lg = Nts_generic.type_of_gen_arithmetic_expr lg in
+	   (*let type_lg = Nts_generic.type_of_gen_arithmetic_expr lg in
 	   let type_ld = Nts_generic.type_of_gen_arithmetic_expr ld in
 	   if (type_lg=type_ld) then  
-	     DetAVal(CntGenArithmBOp(CntGenSum, lg , ld, type_lg))
-	   else
+	   DetAVal(CntGenArithmBOp(CntGenSum, lg , ld, type_lg))*)
+	   aterm_binop_ndet_supp_cnt_val CntGenSum lg ld
+	   (*else
 	     raise (TypeMisMatchInBop(l,r))
-	      
+	   *) 
 	 end
 	   
     | LiMinus ( l , r ) ->
       begin
 	let lg = interpret_c_scal_to_cnt sslf l in
 	let ld = interpret_c_scal_to_cnt sslf r in
-	let type_lg = Nts_generic.type_of_gen_arithmetic_expr lg in
-	let type_ld = Nts_generic.type_of_gen_arithmetic_expr ld in
-	if (type_lg=type_ld) then  
-	  DetAVal(CntGenArithmBOp(CntGenMinus, lg , ld, type_lg))
-	  else
-	    raise (TypeMisMatchInBop(l,r))
-	end
+	
+	aterm_binop_ndet_supp_cnt_val CntGenMinus lg ld
+      end
 	  
     | LiMod ( l , r ) ->
 	begin
 	  let lg = interpret_c_scal_to_cnt sslf l in
 	  let ld = interpret_c_scal_to_cnt sslf r in
-	  let type_lg = Nts_generic.type_of_gen_arithmetic_expr lg in
-	  let type_ld = Nts_generic.type_of_gen_arithmetic_expr ld in
-	  if (type_lg=type_ld) then  
-	    DetAVal(CntGenArithmBOp(CntGenMod, lg , ld, type_lg))
-	  else
-	    raise (TypeMisMatchInBop(l,r)) 
-
+	  aterm_binop_ndet_supp_cnt_val CntGenMinus lg ld
 	end
 
 
@@ -199,20 +199,23 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
       begin
 	let lg = interpret_c_scal_to_cnt sslf l in
 	let ld = interpret_c_scal_to_cnt sslf r in
-	let type_lg = Nts_generic.type_of_gen_arithmetic_expr lg in
+	aterm_binop_ndet_supp_cnt_val CntGenDiv lg ld
+      (*let type_lg = Nts_generic.type_of_gen_arithmetic_expr lg in
 	let type_ld = Nts_generic.type_of_gen_arithmetic_expr ld in
 	if (type_lg=type_ld) then  
 	  DetAVal(CntGenArithmBOp(CntGenDiv, lg , ld, type_lg))
 	  else
 	    raise (TypeMisMatchInBop(l,r)) 
-	
+	*)
       end
 	  
     | LiUnMin( t ) -> 
 	let tin = interpret_c_scal_to_cnt sslf t in
-	let top = Nts_generic.type_of_gen_arithmetic_expr t in
+	aterm_uop_ndet_supp_cnt_val CntGenUMinus tin
+	(*let top = Nts_generic.type_of_gen_arithmetic_expr t in
 	  DetAVal(CntGenArithmUOp( CntGenUMinus,tin,top))
-	    
+	*)
+  
     | LiMinusPP ( l , r , optype) ->
 	let basel = base_ptrexp sslf l in
 	let baser = base_ptrexp sslf r in
@@ -220,7 +223,8 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
 	    begin
 	      let lg = interpret_c_ptrexp_to_cnt sslf l in
 	      let ld = interpret_c_ptrexp_to_cnt sslf r in
-		DetAVal(CntGenArithBOp ( CntGenMinus , lg , ld , NtsIntType))
+	      aterm_binop_ndet_supp_cnt_val CntGenMinus lg ld
+	      (*DetAVal(CntGenArithBOp ( CntGenMinus , lg , ld , NtsIntType))*)
 	    end
 	  else CntINdet (** Non deterministic value, which has type int.*)
     
@@ -288,40 +292,50 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
 	  let ll = interpret_c_ptrexp_to_cnt sslf cptrexp in
 	  let lr = interpret_c_scal_to_cnt sslf scalv in
 	  let sizeof_ptr_type = interpret_ciltypes_size optype in
-	  let lr = CntProd( lr , sizeof_ptr_type ) in
-	    CntSum(ll, lr)
+	  let lr = aterm_binop_ndet_supp_cnt_val CntGenProd lr sizeof_ptr_type 
+	  in
+	  aterm_binop_ndet_supp_cnt_val CntGenSum ll lr
+	    
+	(*CntProd( lr , sizeof_ptr_type ) in
+	  CntSum(ll, lr) *)
 	end
     | LiMinusPI ( cptrexp , scalv , optype ) ->
 	begin
 	  let ll = interpret_c_ptrexp_to_cnt sslf cptrexp in
 	  let lr = interpret_c_scal_to_cnt sslf scalv in
 	  let sizeof_ptr_type = interpret_ciltypes_size optype in
-	    CntDiv(CntMinus(ll,lr),sizeof_ptr_type)
+	  let to_div = aterm_binop_ndet_supp_cnt_val CntGenMinus ll lr in
+	  aterm_binop_ndet_supp_cnt_val CntGenMinus to_div sizeof_ptr_type
+	    (* CntDiv(CntMinus(ll,lr),sizeof_ptr_type) *)
 	end
     | LiIndexPI ( cptrexp , scalv, optype ) ->
 	begin
 	  let ll = interpret_c_ptrexp_to_cnt sslf cptrexp in
 	  let lr = interpret_c_scal_to_cnt sslf scalv in
 	  let  sizeof_ptr_type = interpret_ciltypes_size optype in
-	  let lr = CntProd ( lr , sizeof_ptr_type ) in
-	    CntSum(ll,lr) 
+	  let lr = aterm_binop_ndet_supp_cnt_val CntGenProd lr sizeof_ptr_type 
+	  in 
+	  aterm_binop_ndet_supp_cnt_vak CntGenSum lr sizeof_ptr_size
+	    (*CntProd ( lr , sizeof_ptr_type ) in
+	    CntSum(ll,lr) *) 
 	end
 
     | LiAddrOfScal ( scalval , optype ) ->
       begin
 	let ll = interpret_c_scal_to_cnt sslf scalval in
 	let  sizeof_ptr_type = interpret_ciltypes_size optype in
-	CntProd(ll,sizeof_ptr_type)
+	aterm_binop_ndet_supp_cnt_val CntGenProd ll sizeof_ptr_type
+	  (*CntProd(ll,sizeof_ptr_type)*)
       end
 
     | LiBaseAddrOfArray (position,LiTab(Some(name),index_list,typeofelem)) ->
       begin
-	CntNdet (* Offset of an array set to zero*)
+	CntINdet (* Offset of an array set to zero*)
       end
 
     | LiBaseAddrOfArray (position,LiTab(None,index_list,typeofelem)) ->
       begin
-	CntNdet (* Offset of an array set to zero*)
+	CntINdet (* Offset of an array set to zero*)
       end
     | LiDerefCVar(vname, _) ->
       begin
@@ -368,74 +382,83 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
     | LiDerefCTab(LiTab(None,_,_))-> 	
       CntNdet
 
-and c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool ) = 
+and c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool) = 
   match cbool with 
       LiBNot (b) -> 
 	let cnt_arg = c_bool_to_cnt_bool sslf b in 
-	  CntNot ( cnt_arg )
+	  Flatac_ndet_nts_support.neg_bterm cnt_arg 
     | LiBAnd ( bg , bd ) ->
 	begin
 	  let bgarg = c_bool_to_cnt_bool sslf bg in
 	  let bdarg = c_bool_to_cnt_bool sslf bd in
-	    CntBAnd ( bgarg , bdarg ) 
+	  bterm_logic_binop CntGenBAnd bgarg bdarg
+	   (* CntBAnd ( bgarg , bdarg ) *) 
 	end
     
     | LiBOr ( bg , bd ) ->
 	begin
 	  let bgarg = c_bool_to_cnt_bool sslf bg in
 	  let bdarg = c_bool_to_cnt_bool sslf bd in
-	    CntBOr ( bgarg , bdarg ) 
+	  bterm_logic_binop CntGenBOr bgarg bdarg
+	   (* CntBOr ( bgarg , bdarg ) *)
 	end
 
-    | LiBTrue -> CntBTrue
-    | LiBFalse -> CntBFalse
+    | LiBTrue -> ND_CntGenTrue
+    | LiBFalse -> ND_CntGenFalse
 	
     | LiBEq ( cscalg , cscald ) -> 
 	begin
 	  let argg =  interpret_c_scal_to_cnt sslf cscalg in
 	  let argd =  interpret_c_scal_to_cnt sslf cscald in
-	     CntBool ( CntEq , argg , argd )
+	  bterm_genrel_comp CntGenEq argg argd
+	  (*CntBool ( CntEq , argg , argd )*)
 	end
 
     | LiBNeq ( cscalg , cscald ) -> 
 	begin
 	  let argg =  interpret_c_scal_to_cnt sslf cscalg in
 	  let argd =  interpret_c_scal_to_cnt sslf cscald in
-	     CntBool ( CntNeq , argg , argd )
+	  bterm_gemrel_comp CntNeq argg argd
+	(*CntBool ( CntNeq , argg , argd )*)
 	end
 
     | LiBLt ( cscalg , cscald ) -> 
 	begin
 	  let argg =  interpret_c_scal_to_cnt sslf cscalg in
 	  let argd =  interpret_c_scal_to_cnt sslf cscald in
-	     CntBool ( CntLt , argg , argd )
+	  bterm_genrel_comp CntGenLt argg argd   
+	   (* CntBool ( CntLt , argg , argd ) *)
 	end
 	  
     | LiBLeq ( cscalg , cscald ) -> 
 	begin
 	  let argg =  interpret_c_scal_to_cnt sslf cscalg in
 	  let argd =  interpret_c_scal_to_cnt sslf cscald in
-	     CntBool ( CntLeq , argg , argd )
+	  bterm_genrel_comp CntGenLeq argg argd   
+	    (*CntBool ( CntLeq , argg , argd ) *)
 	end
 
     | LiBGt ( cscalg , cscald ) -> 
 	begin
 	  let argg =  interpret_c_scal_to_cnt sslf cscalg in
 	  let argd =  interpret_c_scal_to_cnt sslf cscald in
-	     CntBool ( CntGt , argg , argd )
+	  bterm_genrel_comp CntGenGt argg argd   
+	   (* CntBool ( CntGt , argg , argd ) *)
 	end 
     
     | LiBGeq ( cscalg , cscald ) -> 
 	begin
 	  let argg =  interpret_c_scal_to_cnt sslf cscalg in
 	  let argd =  interpret_c_scal_to_cnt sslf cscald in
-	     CntBool ( CntGeq , argg , argd )
+	  bterm_genrel_comp CntGenGeq argg argd
+	  (*CntBool ( CntGeq , argg , argd )*)
 	end
     
     | LiBScal (cscal) ->
        begin
 	 let arg = interpret_c_scal_to_cnt sslf cscal in
-	   CntBool (CntEq , arg , (CntCst(My_bigint.zero)))
+	 bterm_genrel_comp CntGenEq arg (DetAVal(CntGenICst(My_bigint.zero)))
+	   (*CntBool (CntEq , arg , (CntCst(My_bigint.zero)))*)
        end
 
     (* Pointer comparisons match cases start here*)
@@ -443,7 +466,8 @@ and c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool ) =
 	begin
 	  let argg =  interpret_c_ptrexp_to_cnt sslf cptrg in
 	  let argd =  interpret_c_ptrexp_to_cnt sslf cptrd in
-	     CntBool (CntEq , argg , argd )
+	  bterm_genrel_comp CntGenEq argg argd
+	    (*CntBool (CntEq , argg , argd ) *)
 	end
 	     
 
@@ -451,7 +475,8 @@ and c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool ) =
 	begin
 	  let argg =  interpret_c_ptrexp_to_cnt sslf cptrg in
 	  let argd =  interpret_c_ptrexp_to_cnt sslf cptrd in
-	     CntBool (CntNeq , argg , argd )
+	  bterm_genrel_comp CntNeq argg argd
+	  (*CntBool (CntNeq , argg , argd ) *)
 	end
 
     
@@ -459,7 +484,8 @@ and c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool ) =
 	begin
 	  let argg =  interpret_c_ptrexp_to_cnt sslf cptrg in
 	  let argd =  interpret_c_ptrexp_to_cnt sslf cptrd in
-	     CntBool ( CntGeq , argg , argd )
+	  bterm_genrel_comp CntGeq argg argd
+	(*CntBool ( CntGeq , argg , argd ) *)
 	end
 	
 	
@@ -467,21 +493,24 @@ and c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool ) =
 	begin
 	  let argg =  interpret_c_ptrexp_to_cnt sslf cptrg in
 	  let argd =  interpret_c_ptrexp_to_cnt sslf cptrd in
-	     CntBool ( CntGt , argg , argd )
+	  bterm_genrel_comp CntGt argg argd
+	(*CntBool ( CntGt , argg , argd ) *)
 	end
 
     | LiBPtrLt ( cptrg , cptrd ) ->
 	begin
 	  let argg =  interpret_c_ptrexp_to_cnt sslf cptrg in
 	  let argd =  interpret_c_ptrexp_to_cnt sslf cptrd in
-	    CntBool ( CntLt , argg , argd )
+	   bterm_genrel_comp CntLt argg argd
+	  (*CntBool ( CntLt , argg , argd )*)
 	end	  
 	  
     | LiBPtrLeq ( cptrg , cptrd ) ->
 	begin
 	  let argg =  interpret_c_ptrexp_to_cnt sslf cptrg in
 	  let argd =  interpret_c_ptrexp_to_cnt sslf cptrd in
-	    CntBool (CntLeq , argg , argd )
+	  bterm_genrel_comp CntLea argg argd 
+	    (*CntBool (CntLeq , argg , argd )*)
 	end	  	
 	
 (** Returns the type of the pointer expression, that is

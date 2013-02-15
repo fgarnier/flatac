@@ -1,35 +1,17 @@
-(*
-
-type ndet_supp_cnt_val =
-  DetAVal of Nts_types.nts_genrel_arithm_exp
-| NDetAVal of Nts_types.nts_genrel_arithm_exp 
-| DetNdetBOp of nts_gen_arithm_binop * ndet_supp_cnt_val *ndet_supp_cnt_val
-  * nts_base_type
-| DetNdetUOp of nts_gen_arithm_up * ndet_supp_cnt_val * nts_base_types 
-| CntINdet
-| CntRNdet
-| CntBNdet
-| CntNdet 
-
-*)
-
-
-exception Type_mismatch_in_arithm_expression of Nts_types.nts_genrel_arithm_exp * Nts_types.nts_genrel_arithm_exp
-exception Type_mismatch_in_detndetarithmetic_operation of ndet_supp_cnt_val * ndet_supp_cnt_val
-
-
+open Flatac_ndet_nts_support_types
 
 
 let type_if_type_eq vg vd =
   let opt = Nts_generic.arithm_exp_same_type vg vd in
   match opt with
     Some(t) -> t
-  | None -> raise (Type_mismatch_in_arithm_expression(vg,vd))
+  | None -> raise (Nts_generic.Type_mismatch_in_arithm_expression(vg,vd))
 
 (** Get type as specified in the topmost contructor or in its
 immediate subtree, i.e. non type checking.*)
 
 let type_of_ndet_supp_cnt_val_shallow v =
+	match v with	
   | CntINdet -> NtsIntType
   | CntRNdet -> NtsRealType
   | DetAVal(aop) -> Nts_generic.type_of_gen_arithmetic_expr aop
@@ -71,4 +53,17 @@ let aterm_uop_ndet_supp_cnt_val (operator : nts_genrel_arithm_exp ) t =
     let typofaop = type_of_ndet_supp_cnt_val_shallow aop in
     DetNdetUOp(operator,aop,typofaop)
     
-    
+  | _ -> 
+    let typofaop = type_of_ndet_supp_cnt_val_shallow t in
+    DetNdetUOp(operator,t,typeofaop)
+
+let bterm_genrel_comp rel_binop nd_vall nd_valr =
+  ND_CntGenRelComp(rel_binop,nd_vall,nd_valr)
+
+let bterm_logic_binop binop boolg boold =
+  ND_CntGenRel(binop,boolg,boold)
+
+let neg_bterm bt =
+  match bt with
+    ND_CntGenNot(t) -> t
+  | _ -> ND_CntGenNot(bt)

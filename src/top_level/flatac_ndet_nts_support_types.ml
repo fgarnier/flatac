@@ -1,4 +1,3 @@
-open Nts_types
 
 
 type ndet_supp_cnt_val =
@@ -12,11 +11,12 @@ type ndet_supp_cnt_val =
 | CntBNdet
 | CntNdet 
 
+
+
 type ndet_supp_cnt_bool =
 | ND_CntGenTrue
 | ND_CntGenFalse
-| Nd_CntGenDK
-| ND_CntGenNot of ndet_supp_cnt_val
-| ND_CntGenRelComp of nts_gen_rel_binop * ndet_supp_cnt_bool * ndet_supp_cnt_bool
-| ND_CntGenRel of cnt_binop * ndet_supp_cnt_val * ndet_supp_cnt_val
-
+| ND_CntGenDK
+| ND_CntGenNot of ndet_supp_cnt_bool
+| ND_CntGenRelComp of nts_gen_rel_binop * ndet_supp_cnt_val * ndet_supp_cnt_val
+| ND_CntGenRel of nts_gen_bool_binop * ndet_supp_cnt_bool * ndet_supp_cnt_bool
