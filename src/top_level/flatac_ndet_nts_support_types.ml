@@ -7,7 +7,7 @@ type ndet_supp_cnt_val =
 | NDetAVal of Nts_types.nts_genrel_arithm_exp 
 | DetNdetBOp of nts_gen_arithm_binop * ndet_supp_cnt_val *ndet_supp_cnt_val
   * nts_base_types
-| DetNdetUOp of nts_gen_arithm_binop * ndet_supp_cnt_val * nts_base_types 
+| DetNdetUOp of nts_gen_arithm_unop * ndet_supp_cnt_val * nts_base_types 
 | CntINdet
 | CntRNdet
 | CntBNdet
@@ -24,3 +24,4 @@ type ndet_supp_cnt_bool =
 | ND_CntGenRel of nts_gen_bool_binop * ndet_supp_cnt_bool * ndet_supp_cnt_bool
 exception Type_mismatch_in_detndetarithmetic_operation 
   of ndet_supp_cnt_val * ndet_supp_cnt_val
+

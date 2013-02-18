@@ -47,14 +47,15 @@ let aterm_binop_ndet_supp_cnt_val ( operator : nts_gen_arithm_binop ) vg vd =
       DetNdetBOp(operator,vg,vd,aexptype)
     end
 
-let aterm_uop_ndet_supp_cnt_val (operator : nts_gen_arithm_binop ) t =
+let aterm_uop_ndet_supp_cnt_val (operator : nts_gen_arithm_unop ) t =
   match t with
     DetAVal( v) ->
-      DetAVal(CntGenUnOp(operator,v,typ))
+      let typ = Nts_generic.type_of_gen_arithmetic_expr v in
+      DetAVal(CntGenArithmUOp(operator,v,typ))
   
   | NDetAVal(aop) -> 
-    let typofaop = type_of_ndet_supp_cnt_val_shallow aop in
-    DetNdetUOp(operator,aop,typofaop)
+    let typofaop = type_of_ndet_supp_cnt_val_shallow t in
+    DetNdetUOp(operator,t,typofaop)
     
   | _ -> 
     let typeofaop = type_of_ndet_supp_cnt_val_shallow t in

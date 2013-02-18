@@ -3,7 +3,7 @@ type ndet_supp_cnt_val =
   | NDetAVal of Nts_types.nts_genrel_arithm_exp
   | DetNdetBOp of Nts_types.nts_gen_arithm_binop * ndet_supp_cnt_val *
       ndet_supp_cnt_val * Nts_types.nts_base_types
-  | DetNdetUOp of Nts_types.nts_gen_arithm_binop * ndet_supp_cnt_val *
+  | DetNdetUOp of Nts_types.nts_gen_arithm_unop * ndet_supp_cnt_val *
       Nts_types.nts_base_types
   | CntINdet
   | CntRNdet
