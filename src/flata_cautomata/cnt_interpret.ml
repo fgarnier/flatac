@@ -365,7 +365,7 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
     | LiDerefCVar(vname, _) ->
       begin
 	let vname = dereferenced_name_of_varname vname in  
-	CntVar(NtsIVar(vname))
+	NDetAVal(CntGenVar(NtsGenVar(NtsVar(vname,NtsIntType),NtsUnPrimed)))
       end
 
     | LiStarOfPtr(cptr,t) ->
@@ -376,7 +376,7 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
 	*)
 	match cptr with
 	    LiDerefCVar(vname,_) ->
-	      CntVar(NtsIVar(vname))
+	      NDetAVal(CntGenVar(NtsGenVar(NtsVar(vname,NtsIntType),NtsUnPrimed)))
 	  
 	  | LiDerefCPtr(vptr,_) ->
 	    let cnt_vptr = interpret_c_ptrexp_to_cnt sslf vptr in
@@ -385,11 +385,11 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
 	  | _ -> 
 	    begin
 	      match (Composite_types.is_integer_type t) with
-		  Some(_) -> CntNdet
+		  Some(_) -> CntINdet
 		| None -> 
 		  begin
 		    match (Composite_types.is_float_type t) with
-			Some(_) -> CntRValNdet
+			Some(_) -> CntRNdet
 		       | _ -> CntNdet 
 		  end
 	    end
@@ -398,14 +398,14 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
    
 
     |  LiDerefCPtr ( cptr , t ) ->
-      CntNdet
+      CntINdet
 
     | LiDerefCTab(LiTab(Some(vname),_,_))-> 
       let vname = dereferenced_name_of_varname vname in  
-      CntVar(NtsIVar(vname))
+      NDetAVal(CntGenVar(NtsGenVar((NtsVar(vname,NtsIntType),NtsUnPrimed))))
 	
     | LiDerefCTab(LiTab(None,_,_))-> 	
-      CntNdet
+      CntINdet
 
 and c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool) = 
   match cbool with 
@@ -435,7 +435,7 @@ and c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool) =
 	begin
 	  let argg =  interpret_c_scal_to_cnt sslf cscalg in
 	  let argd =  interpret_c_scal_to_cnt sslf cscald in
-	  bterm_genrel_comp CntGenEq argg argd
+	  bterm_genrel_comp CntEq argg argd
 	  (*CntBool ( CntEq , argg , argd )*)
 	end
 
@@ -443,7 +443,7 @@ and c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool) =
 	begin
 	  let argg =  interpret_c_scal_to_cnt sslf cscalg in
 	  let argd =  interpret_c_scal_to_cnt sslf cscald in
-	  bterm_gemrel_comp CntNeq argg argd
+	  bterm_genrel_comp CntNeq argg argd
 	(*CntBool ( CntNeq , argg , argd )*)
 	end
 
@@ -451,7 +451,7 @@ and c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool) =
 	begin
 	  let argg =  interpret_c_scal_to_cnt sslf cscalg in
 	  let argd =  interpret_c_scal_to_cnt sslf cscald in
-	  bterm_genrel_comp CntGenLt argg argd   
+	  bterm_genrel_comp CntLt argg argd   
 	   (* CntBool ( CntLt , argg , argd ) *)
 	end
 	  
@@ -459,7 +459,7 @@ and c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool) =
 	begin
 	  let argg =  interpret_c_scal_to_cnt sslf cscalg in
 	  let argd =  interpret_c_scal_to_cnt sslf cscald in
-	  bterm_genrel_comp CntGenLeq argg argd   
+	  bterm_genrel_comp CntLeq argg argd   
 	    (*CntBool ( CntLeq , argg , argd ) *)
 	end
 
@@ -467,7 +467,7 @@ and c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool) =
 	begin
 	  let argg =  interpret_c_scal_to_cnt sslf cscalg in
 	  let argd =  interpret_c_scal_to_cnt sslf cscald in
-	  bterm_genrel_comp CntGenGt argg argd   
+	  bterm_genrel_comp CntGt argg argd   
 	   (* CntBool ( CntGt , argg , argd ) *)
 	end 
     
@@ -475,14 +475,15 @@ and c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool) =
 	begin
 	  let argg =  interpret_c_scal_to_cnt sslf cscalg in
 	  let argd =  interpret_c_scal_to_cnt sslf cscald in
-	  bterm_genrel_comp CntGenGeq argg argd
+	  bterm_genrel_comp CntGeq argg argd
 	  (*CntBool ( CntGeq , argg , argd )*)
 	end
     
     | LiBScal (cscal) ->
        begin
 	 let arg = interpret_c_scal_to_cnt sslf cscal in
-	 bterm_genrel_comp CntGenEq arg (DetAVal(CntGenICst(My_bigint.zero)))
+	 
+	 bterm_genrel_comp CntEq arg (DetAVal(CntGenCst(CntGenICst(Big_int.big_int_of_int 0),NtsIntType)))
 	   (*CntBool (CntEq , arg , (CntCst(My_bigint.zero)))*)
        end
 
@@ -491,7 +492,7 @@ and c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool) =
 	begin
 	  let argg =  interpret_c_ptrexp_to_cnt sslf cptrg in
 	  let argd =  interpret_c_ptrexp_to_cnt sslf cptrd in
-	  bterm_genrel_comp CntGenEq argg argd
+	  bterm_genrel_comp CntEq argg argd
 	    (*CntBool (CntEq , argg , argd ) *)
 	end
 	     
@@ -534,7 +535,7 @@ and c_bool_to_cnt_bool (sslf : ssl_formula)(cbool : c_bool) =
 	begin
 	  let argg =  interpret_c_ptrexp_to_cnt sslf cptrg in
 	  let argd =  interpret_c_ptrexp_to_cnt sslf cptrd in
-	  bterm_genrel_comp CntLea argg argd 
+	  bterm_genrel_comp CntLeq argg argd 
 	    (*CntBool (CntLeq , argg , argd )*)
 	end	  	
 	
@@ -566,34 +567,34 @@ let rec type_of_ptrexp ptrexp =
 booleans of the nts arithmetics.*)
 let rec valid_expr_2_cnt_bool ( vexpr : valid_counter ) =
   match vexpr with 
-      TrueValid -> CntBTrue
-    | FalseValid -> CntBFalse
+      TrueValid -> CntGenTrue
+    | FalseValid -> CntGenFalse
     (*
       | PtValid ( s ) -> CntBool(CntEq,CntVar(NtsIVar(("validity__"^s^"_"))),CntCst(1))
     | IntValid ( s ) -> CntBool(CntEq,CntVar(NtsIVar(("validity__"^s^"_"))),CntCst(1))
     *)
-    | PtValid ( s ) -> CntBool(CntEq,CntVar(NtsIVar(s)),CntCst(My_bigint.one))
-    | IntValid ( s ) -> CntBool(CntEq,CntVar(NtsIVar(s)),CntCst(My_bigint.one))
+    | PtValid ( s ) -> CntGenRel(CntEq,CntGenVar(NtsGenVar(NtsVar(s,NtsIntType),NtsUnPrimed)),CntGenCst(CntGenICst(Big_int.big_int_of_int 1),NtsIntType))
+    | IntValid ( s ) -> CntGenRel(CntEq,CntGenVar(NtsGenVar(NtsVar(s,NtsIntType),NtsUnPrimed)),CntGenCst(CntGenICst(Big_int.big_int_of_int 1),NtsIntType))
     | AndValid ( l , r ) -> 
 	begin
 	  match l , r with 
-	      (FalseValid , _ ) -> CntBFalse
-	    | (_,FalseValid ) -> CntBFalse
+	      (FalseValid , _ ) -> CntGenFalse
+	    | (_,FalseValid ) -> CntGenFalse
 	    | (_,_) ->
 		let ll = valid_expr_2_cnt_bool l in
 		let rr =  valid_expr_2_cnt_bool r in
-		  CntBAnd ( ll , rr )
+		  CntGenRelComp (CntGenBAnd, ll , rr )
 	end
 	  
     | OrValid ( l , r ) -> 
 	begin
 	 match l , r with 
-	      (TrueValid , _ ) -> CntBTrue
-	    | (_, TrueValid ) -> CntBTrue
+	      (TrueValid , _ ) -> CntGenTrue
+	    | (_, TrueValid ) -> CntGenTrue
 	    | (_,_) ->
 		let ll = valid_expr_2_cnt_bool l in
 		let rr =  valid_expr_2_cnt_bool r in
-		  CntBOr ( ll , rr )  
+		  CntGenRelComp (CntGenBOr,ll , rr )  
 	end
 
     
