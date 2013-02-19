@@ -900,4 +900,5 @@ let has_default_label (stmt_succs : Cil_types.stmt list ) =
   in
   List.exists stmt_has_default_label stmt_succs
   
+(*let big_int_of_my_bigint t = t*)
 

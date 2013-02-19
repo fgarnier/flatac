@@ -25,8 +25,9 @@ open Validity_types
 open Validity
 open Cil_types
 open Nts_types
+(*open My_bigint
 open Big_int
-
+*)
 (**
    Those two modules allow to handle non determinism 
    on arithemtical expressions.
@@ -58,6 +59,18 @@ let sizeof_cil_tinfo ( tinfo : Cil_types.typeinfo ) =
   let typename = "sizeof_"^tinfo.tname in
     CntSymCst( typename, NtsIntType )
 
+
+(** Only here for type inferece. Scheduled for deletion.*)
+(*let cmp_li_int_type_with_IIcst a b =
+  match a,b with
+    LiConst(LiIConst(i)), DetAVal(CntGenCst(CntGenICst(j),NtsIntType)) ->
+      let i_int64 = My_bigint.to_int64 i in
+      let j_int64 = Big_int.
+      i=j
+  | _ -> false
+*)
+
+
 (** Needs to be duely completed.
 Given a type t, this function return the sizeof of t,
 or for type t*, it returns the sizeof of t.
@@ -67,24 +80,24 @@ let rec interpret_ciltypes_size (ciltype : Cil_types.typ ) =
       TInt(IBool,_) -> 
 	CntGenSymCst (CntSymCst("sizeof_bool",NtsIntType),NtsIntType)
     | TInt(IChar,_) -> CntGenCst (CntGenICst(Big_int.big_int_of_int 1),NtsIntType)
-    | TInt(ISChar,_) -> CntGenCst (CntGenICst(big_int_of_int 1),NtsIntType)
-    | TInt(IUChar,_) -> CntGenCst (CntGenICst(big_int_of_int 1),NtsIntType)
-    | TInt(IInt,_) -> CntGenCst (CntGenICst(big_int_of_int 4),NtsIntType)
-    | TInt(IUInt,_) -> CntGenCst (CntGenICst(big_int_of_int 4), NtsIntType)
-    | TInt(IShort,_) -> CntGenCst (CntGenICst(big_int_of_int 2), NtsIntType)
-    | TInt(IUShort,_) -> CntGenCst (CntGenICst(big_int_of_int 2), NtsIntType)
-    | TInt(ILong,_) -> CntGenCst (CntGenICst(big_int_of_int 4),NtsIntType)
-    | TInt(IULong,_) -> CntGenCst (CntGenICst(big_int_of_int 4),NtsIntType)
-    | TInt(ILongLong,_) -> CntGenCst (CntGenICst(big_int_of_int 8),NtsIntType)
-    | TInt(IULongLong,_) -> CntGenCst (CntGenICst(big_int_of_int 8), NtsIntType)	
-    | TFloat(FFloat,_) -> CntGenCst (CntGenICst(big_int_of_int 8),NtsIntType)
-    | TFloat(FDouble,_) -> CntGenCst (CntGenICst(big_int_of_int 8),NtsIntType)
-    | TFloat(FLongDouble,_) -> CntGenCst (CntGenICst(big_int_of_int 8),NtsIntType)
-    | TVoid([]) -> CntGenCst (CntGenICst(big_int_of_int 1),NtsIntType) 
+    | TInt(ISChar,_) -> CntGenCst (CntGenICst(Big_int.big_int_of_int 1),NtsIntType)
+    | TInt(IUChar,_) -> CntGenCst (CntGenICst(Big_int.big_int_of_int 1),NtsIntType)
+    | TInt(IInt,_) -> CntGenCst (CntGenICst(Big_int.big_int_of_int 4),NtsIntType)
+    | TInt(IUInt,_) -> CntGenCst (CntGenICst(Big_int.big_int_of_int 4), NtsIntType)
+    | TInt(IShort,_) -> CntGenCst (CntGenICst(Big_int.big_int_of_int 2), NtsIntType)
+    | TInt(IUShort,_) -> CntGenCst (CntGenICst(Big_int.big_int_of_int 2), NtsIntType)
+    | TInt(ILong,_) -> CntGenCst (CntGenICst(Big_int.big_int_of_int 4),NtsIntType)
+    | TInt(IULong,_) -> CntGenCst (CntGenICst(Big_int.big_int_of_int 4),NtsIntType)
+    | TInt(ILongLong,_) -> CntGenCst (CntGenICst(Big_int.big_int_of_int 8),NtsIntType)
+    | TInt(IULongLong,_) -> CntGenCst (CntGenICst(Big_int.big_int_of_int 8), NtsIntType)	
+    | TFloat(FFloat,_) -> CntGenCst (CntGenICst(Big_int.big_int_of_int 8),NtsIntType)
+    | TFloat(FDouble,_) -> CntGenCst (CntGenICst(Big_int.big_int_of_int 8),NtsIntType)
+    | TFloat(FLongDouble,_) -> CntGenCst (CntGenICst(Big_int.big_int_of_int 8),NtsIntType)
+    | TVoid([]) -> CntGenCst (CntGenICst(Big_int.big_int_of_int 1),NtsIntType) 
     | TNamed(tinfo, _ ) -> let symsize = sizeof_cil_tinfo tinfo in
 			   CntGenSymCst(symsize,NtsIntType)
 
-    | TPtr(TVoid([]), _) ->  CntGenCst (CntGenICst(big_int_of_int 4),NtsIntType)
+    | TPtr(TVoid([]), _) ->  CntGenCst (CntGenICst(Big_int.big_int_of_int 4),NtsIntType)
     | TPtr(t,_) -> interpret_ciltypes_size t (* Won't work
 					     for t** ...*)
     | (TArray (tin, None,_,_ )) ->   CntGenSymCst(CntSymCst("sizeof_array_reference",NtsIntType),NtsIntType)
@@ -150,9 +163,13 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
       DetAVal(CntGenVar(float_var_cnt_name scalexp))
 	
     | LiFConst(LiFloatConst(f)) -> 
-      DetAVal(CntGenCst(CntRealConst(f),NtsRealType))
+      DetAVal(CntGenCst(CntGenFCst(f),NtsRealType))
  
-    | LiConst(LiIConst(i)) ->  DetAVal(CntICst(i))
+    | LiConst(LiIConst(i)) -> 
+      let i_bigint = My_bigint.to_int64 i in
+      let i_bigint = Big_int.big_int_of_int64 i_bigint in
+       
+      DetAVal(CntGenCst(CntGenICst(i_bigint),NtsIntType))
     | LiProd ( l , r ) ->
 	begin
 	  let lg = interpret_c_scal_to_cnt sslf l in
@@ -232,7 +249,7 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
 	begin
 	  match cnt with 
 	      LiSymIConst( const_name ) -> 
-		DetAVal(CntSymCst(const_name))
+		DetAVal(CntGenSymCst(CntSymCst(const_name,NtsIntType),NtsIntType))
 	    | LiTypeSizeof ( t )  ->
 		 DetAVal(interpret_ciltypes_size t)
 	(* Returns the constant
@@ -285,14 +302,19 @@ let rec interpret_c_scal_to_cnt  ( sslf : ssl_formula )( scalexp : c_scal ) =
 	    
 and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
   match ptrexp with 
-      LiPVar(_,_,_) ->  DetAVal(offset_cnt_name ptrexp)
-     
+      LiPVar(_,_,_) ->
+	begin
+	  let off = offset_cnt_name ptrexp in
+	  DetAVal(CntGenVar(off))
+	end
+
     | LiPlusPI ( cptrexp , scalv, optype ) -> 
 	begin
 	  let ll = interpret_c_ptrexp_to_cnt sslf cptrexp in
 	  let lr = interpret_c_scal_to_cnt sslf scalv in
 	  let sizeof_ptr_type = interpret_ciltypes_size optype in
-	  let lr = aterm_binop_ndet_supp_cnt_val CntGenProd lr sizeof_ptr_type 
+	  let nds_sizeof = DetAVal(sizeof_ptr_type) in
+	  let lr = aterm_binop_ndet_supp_cnt_val CntGenProd lr nds_sizeof 
 	  in
 	  aterm_binop_ndet_supp_cnt_val CntGenSum ll lr
 	    
@@ -304,8 +326,9 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
 	  let ll = interpret_c_ptrexp_to_cnt sslf cptrexp in
 	  let lr = interpret_c_scal_to_cnt sslf scalv in
 	  let sizeof_ptr_type = interpret_ciltypes_size optype in
+	  let nds_sizeof = DetAVal(sizeof_ptr_type) in
 	  let to_div = aterm_binop_ndet_supp_cnt_val CntGenMinus ll lr in
-	  aterm_binop_ndet_supp_cnt_val CntGenMinus to_div sizeof_ptr_type
+	  aterm_binop_ndet_supp_cnt_val CntGenMinus to_div nds_sizeof
 	    (* CntDiv(CntMinus(ll,lr),sizeof_ptr_type) *)
 	end
     | LiIndexPI ( cptrexp , scalv, optype ) ->
@@ -313,9 +336,10 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
 	  let ll = interpret_c_ptrexp_to_cnt sslf cptrexp in
 	  let lr = interpret_c_scal_to_cnt sslf scalv in
 	  let  sizeof_ptr_type = interpret_ciltypes_size optype in
-	  let lr = aterm_binop_ndet_supp_cnt_val CntGenProd lr sizeof_ptr_type 
+	  let nds_sizeof = DetAVal(sizeof_ptr_type) in
+	  let lr = aterm_binop_ndet_supp_cnt_val CntGenProd lr nds_sizeof 
 	  in 
-	  aterm_binop_ndet_supp_cnt_vak CntGenSum lr sizeof_ptr_size
+	  aterm_binop_ndet_supp_cnt_val CntGenSum lr nds_sizeof
 	    (*CntProd ( lr , sizeof_ptr_type ) in
 	    CntSum(ll,lr) *) 
 	end
@@ -324,7 +348,8 @@ and interpret_c_ptrexp_to_cnt (sslf : ssl_formula )( ptrexp : c_ptrexp ) =
       begin
 	let ll = interpret_c_scal_to_cnt sslf scalval in
 	let  sizeof_ptr_type = interpret_ciltypes_size optype in
-	aterm_binop_ndet_supp_cnt_val CntGenProd ll sizeof_ptr_type
+	let nds_sizeof = DetAVal(sizeof_ptr_type) in
+	aterm_binop_ndet_supp_cnt_val CntGenProd ll nds_sizeof
 	  (*CntProd(ll,sizeof_ptr_type)*)
       end
 

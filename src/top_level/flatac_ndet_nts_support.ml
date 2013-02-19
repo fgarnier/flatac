@@ -2,6 +2,14 @@ open Nts_types
 open Flatac_ndet_nts_support_types
 
 
+(** 
+Those types and functions here are used to add to nts 
+expressions the fact that some arithmetical expression don't have 
+a deterministic evaluation.
+
+This is 
+*)
+
 let type_if_type_eq vg vd =
   let opt = Nts_generic.arithm_exp_same_type vg vd in
   match opt with
