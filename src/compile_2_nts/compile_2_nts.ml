@@ -17,7 +17,11 @@ open Var_validity_types
 open Var_validity
 
 open Ast_goodies
+open Flatac_ndet_nts_support_types
+open Flatac_ndet_nts_support
 
+
+open Compilation_util_types
 
 
 let valid_sym_cscal_sslv sslv (exp : c_scal ) =
@@ -26,20 +30,23 @@ let valid_sym_cscal_sslv sslv (exp : c_scal ) =
 let valid_sym_ptrexp_sslv sslv (ptrexp : c_ptrexp ) =
   valid_sym_ptrexp sslv.validinfos sslv.ssl_part ptrexp
 
+(*
 let is_ntisvar_det v =
   match v with
       NtsINdetVar(_) -> false
     | _ -> true
+*)
 
 let compile_ntsivar_of_int_cil_lval  (l : Cil_types.lval ) =
   let il_lval = Intermediate_language.get_li_intvar_from_exp_node (Lval(l)) in
   match il_lval with
-      LiVar(_,LiIntVar(vname))-> NtsIVar(vname)
-    | LiFVar(_,LiFloatVar(vname)) -> NtsRVar(vname)
+      LiVar(_,LiIntVar(vname))-> DetAVal(CntGenVar(NtsGenVar(NtsVar(vname,NtsIntType),NtsUnPrimed)))
+    | LiFVar(_,LiFloatVar(vname)) -> DetAVal(CntGenVar(NtsGenVar(NtsVar(vname,NtsRealType),NtsUnPrimed)))
     | LiIntStarOfPtr(LiPVar(_,LiIntPtr(param_c_pvar),_),_) -> 
-	NtsINdetVar("pvar_access"^param_c_pvar)
+	NDetAVal(CntGenVar(NtsGenVar(NtsVar("pvar_access"^param_c_pvar,NtsIntType),NtsUnPrimed)))
  
-    | LiElemOfCTab(_,_) -> NtsINdetVar("tab_access")
+    | LiElemOfCTab(_,_) -> 
+      NDetAVal(CntGenVar(NtsGenVar(NtsVar("tab_access",NtsIntType),NtsUnPrimed)))
     | _ -> 
 	Format.fprintf Ast_goodies.debug_out "Failed to fetch ivar in ";
 	Cil.d_lval Ast_goodies.debug_out l;
@@ -107,9 +114,9 @@ let compile_cil_exp_2_cnt sslv ( e : Cil_types.exp ) =
 
 let compile_sym_validity_to_cnt v =
   match v with 
-      DKvarValid -> CntCst(My_bigint.minus_one)
-    |  FalsevarValid -> CntCst(My_bigint.zero)
-    |  TruevarValid -> CntCst(My_bigint.one)
+      DKvarValid -> CntGenCst(CntGenICst((Big_int.big_int_of_int (-1))),NtsIntType)
+    |  FalsevarValid -> CntGenCst(CntGenICst((Big_int.big_int_of_int 0)),NtsIntType)
+    |  TruevarValid -> CntGenCst(CntGenICst((Big_int.big_int_of_int 1)),NtsIntType)
 
 
 (* Takes as input a cil value whose type is either integer of
