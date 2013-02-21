@@ -21,7 +21,8 @@ open Flatac_ndet_nts_support_types
 open Flatac_ndet_nts_support
 
 
-open Compilation_util_types
+open Compilation_utils_types
+
 
 
 let valid_sym_cscal_sslv sslv (exp : c_scal ) =
@@ -36,6 +37,10 @@ let is_ntisvar_det v =
       NtsINdetVar(_) -> false
     | _ -> true
 *)
+
+
+
+
 
 let compile_ntsivar_of_int_cil_lval  (l : Cil_types.lval ) =
   let il_lval = Intermediate_language.get_li_intvar_from_exp_node (Lval(l)) in
@@ -137,7 +142,7 @@ let compile_cil_scalar_argument_value sslv (e : Cil_types.exp ) =
 	  IlScalArg(
 	    {
 	      expr = nts_scal_exp ;
-	      validity_of_exp = compile_sym_validity_to_cnt valid ;  
+	      validity_of_exp = DetAVal((compile_sym_validity_to_cnt valid)) ;  
 	    })
 	end
     |  None ->
@@ -155,7 +160,8 @@ let compile_cil_scalar_argument_value sslv (e : Cil_types.exp ) =
 		IlScalArg(
 		  {
 		    expr = nts_scal_exp ;
-		    validity_of_exp = compile_sym_validity_to_cnt valid ;  
+		    validity_of_exp = 
+		      DetAVal((compile_sym_validity_to_cnt valid)) ;  
 		  })
 	      end
 	  | None -> 
@@ -180,7 +186,7 @@ let compile_cil_fun_argexpr_2_cnt sslv (e : Cil_types.exp ) =
 	  IlPtrArg({
 	    base_of_exp = ptr_base  ;
 	    offset_of_exp = nts_ptr_exp ;
-	    validity_of_ptr_exp = compile_sym_validity_to_cnt validkind ;
+	    validity_of_ptr_exp = DetAVal(compile_sym_validity_to_cnt validkind);
 	  })
 	end
     | _ ->
@@ -248,13 +254,16 @@ let rec compile_cil_array_2_cnt sslv (name : string) (vtype_arg : Cil_types.typ)
 		  let inner_type = Cnt_interpret.ciltype_2_ntstype t in
 		  RefBasicTypeArray(inner_type)
 		end
-	  end   	
+	  end   
+      | _ -> assert false	
   in
   let rec translate_recursor vtype =
       match vtype with
 	  TArray(t,Some(exp),_,_)->
 	    begin
 	      let size = compile_cil_exp_2_cnt sslv exp in
+	      let size = Flatac_ndet_nts_support.arithm_value_of_ndsupport_or_fails size 
+	      in
 	      match t with
 		  TArray(_,_,_,_) -> 
 		    begin
@@ -278,36 +287,44 @@ let rec compile_cil_array_2_cnt sslv (name : string) (vtype_arg : Cil_types.typ)
 	| _-> raise Not_Array_type
   in
   let array_type = translate_recursor vtype_arg in
-  NtsArrayVar(name,array_type)
-
-
+  let base_type = Ast_goodies.base_type_of_muldim_array_type vtype_arg in
+  let cmpilbase_type = Cnt_interpret.ciltype_2_ntstype base_type in
+  NtsArrayVar(name,array_type,cmpilbase_type)
 
 
 
 
 let  compile_sizeof_array_type sslv ( t : Cil_types.typ ) =
 
-  let rec array_size_recursor (siz_upper_dim : cnt_arithm_exp option)
+  let rec array_size_recursor (siz_upper_dim : nts_genrel_arithm_exp option)
       (trec : Cil_types.typ ) = 
     
     match siz_upper_dim, trec with 
 	(Some(prev_size), TArray(tin, Some(exp) ,_ ,_ )) ->
 	  let size_curr_dim = compile_cil_exp_2_cnt sslv exp in
-	  let size_curr_dim_prev_size = Some(CntProd(prev_size,size_curr_dim)) 
+	  let size_curr_dim = 
+	    Flatac_ndet_nts_support.arithm_value_of_ndsupport_or_fails 
+	      size_curr_dim 
+	  in
+	  let size_curr_dim_prev_size = 
+	    Some(CntGenArithmBOp(CntGenProd,prev_size,size_curr_dim,NtsIntType)) 
 	  in
 	  array_size_recursor size_curr_dim_prev_size tin 
 	 
       | (None,TArray (tin, Some(exp),_,_ )) ->
-	let size_curr_dim = Some((compile_cil_exp_2_cnt sslv exp)) 
-	in array_size_recursor size_curr_dim tin 
-
+	let size_curr_dim = compile_cil_exp_2_cnt sslv exp in
+	let size_curr_dim = 
+	  Flatac_ndet_nts_support.arithm_value_of_ndsupport_or_fails 
+	  size_curr_dim
+	in array_size_recursor (Some(size_curr_dim)) tin 
+	
      
       | (None,_) -> 
 	Cnt_interpret.interpret_ciltypes_size trec
 
       | (Some(size),_) ->
 	let size_t = Cnt_interpret.interpret_ciltypes_size trec in
-	CntProd(size, size_t)
+	CntGenArithmBOp(CntGenProd,size, size_t,NtsIntType)
   in
    array_size_recursor None t
   

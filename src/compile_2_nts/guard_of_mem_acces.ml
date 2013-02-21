@@ -29,13 +29,13 @@ let make_offset_locpvar (v : ptvar ) =
   match  v  with 
       PVar ( s ) -> let soff =
 	"offset__"^s^"_" in
-	NtsIVar(soff)
+	NtsGenVar(NtsVar(soff,NtsIntType),NtsUnPrimed)
 
 let make_validity_varpvar ( v : ptvar) =
   match  v  with 
       PVar ( s ) -> let vdty =
 	"validity__"^s^"_" in
-	NtsIVar(vdty)
+	NtsGenVar(NtsVar(vdty,NtsIntType),NtsUnPrimed)
 
 
 
@@ -52,18 +52,29 @@ let get_lbasename_of_locvar ( l : locvar ) =
 (** If used to descibe a malloc creation of a mem segment,
 this function must be called AFTER the generation of the
 ssl formula, to get the good gmid identificator.*)
-let make_size_locvar ( l : locvar ) (mid : global_mem_manager ) ( block_size : cnt_arithm_exp) =
-(*  match l with
-      LVar( vname ) ->*) 
-  let id_seg = (My_bigint.of_int( mid#get_last_mid ())) in
+let make_size_locvar ( l : locvar ) (mid : global_mem_manager ) ( block_size : nts_genrel_arithm_exp) =
+ 
+  let id_seg = (Big_int.big_int_of_int( mid#get_last_mid ())) in
   let lbase_name = get_lbasename_of_locvar l in
   let lsize_name = get_lsizename_of_locvar l  in
-  let cnt_lbase = NtsIVar(lbase_name) in
-  let cnt_lsize = NtsIVar(lsize_name) in
-  let affect_list = (CntAffect(cnt_lbase,CntCst( id_seg))::[] ) in
-  let affect_list = (CntAffect(cnt_lsize,block_size))::affect_list in
-  affect_list
+  let cnt_lbase = Nts_generic.make_nts_genvar lbase_name NtsIntType 
+  in  
+  let cnt_lsize =  
+    Nts_generic.make_nts_genvar lsize_name NtsIntType
+  in
+  let id_seg = Nts_generic.make_nts_int_cst id_seg in
+  let affect_id_seg = Nts_generic.affect_aexpr_to_nts_var 
+    cnt_lbase id_seg in
+  let affect_size = Nts_generic.affect_aexpr_to_nts_var 
+    cnt_lsize block_size in
+  let affect_list = (affect_id_seg::[])
+  in
+  (affect_size::affect_list)
 
+
+ (*let affect_list = (CntAffect(cnt_lbase,CntCst( id_seg))::[] ) in
+  let affect_list = (CntAffect(cnt_lsize,block_size))::affect_list in
+  *)
 
 
 
@@ -77,12 +88,15 @@ pointer for multidimentional pointers -- like int **. *)
 
 let  offset_of_mem_access_to_cnt sslv (t : Cil_types.typ ) ( off : Cil_types.offset) =
   match off with
-      NoOffset -> CntCst(My_bigint.zero)
+      NoOffset -> CntGenCst(CntGenICst((Big_int.big_int_of_int 0)),NtsIntType)
     | Index (exp , _ ) -> 
       let offset_exp = compile_cil_exp_2_cnt sslv exp in
       let sizeof_type = interpret_ciltypes_size t in
-      (*CntProd(offset_exp,sizeof_type) *)
-      sizeof_type
+      let offset_exp = 
+	Flatac_ndet_nts_support.arithm_value_of_ndsupport_or_fails offset_exp in
+      
+      CntGenArithmBOp(CntGenProd,offset_exp,sizeof_type,NtsIntType) 
+      (*sizeof_type*)
 
     | Field(_,_) -> raise (Unhandled_offset_type ("Field met in offset_of_mem_access"))
 
@@ -91,20 +105,27 @@ let  offset_of_mem_access_to_cnt sslv (t : Cil_types.typ ) ( off : Cil_types.off
 let cnt_guard_of_array_access sslv (access_offset : Cil_types.offset) 
     ( array_type : Cil_types.typ ) =
   
-  let rec array_within_bounds_cst sslv (pre : cnt_bool) 
+  let rec array_within_bounds_cst sslv (pre : nts_gen_relation) 
       (offset_reader : Cil_types.offset) (current_dim_type : Cil_types.typ) =
     match offset_reader, current_dim_type with 
 	(NoOffset,_) ->
 	  pre
       | (Index(exp,off),TArray(telem,Some(size_curr_row),_,_)) ->
 	let accs_index = compile_cil_exp_2_cnt sslv exp in
-	let size_curr_dim = compile_cil_exp_2_cnt sslv size_curr_row in
-	let current_cst = 
-	  CntBAnd(CntBool(CntLt,accs_index,size_curr_dim),CntBool(CntGeq,accs_index,CntCst(My_bigint.zero))) in
-	array_within_bounds_cst sslv (CntBAnd(pre,current_cst)) off telem
-      | (_,_) -> CntBFalse
+	let accs_index =  Flatac_ndet_nts_support.arithm_value_of_ndsupport_or_fails accs_index 
+	in
+	let size_curr_dim = compile_cil_exp_2_cnt sslv size_curr_row 
+	in
+	let size_curr_dim = Flatac_ndet_nts_support.arithm_value_of_ndsupport_or_fails size_curr_dim
+	in
+	let current_cst =
+	  CntGenRelComp(CntGenBAnd,CntGenRel(CntLt,accs_index,size_curr_dim),CntGenRel(CntGeq,accs_index,(Nts_generic.make_nts_int_cst (Big_int.big_int_of_int 0))))
+	    (*CntBAnd(CntBool(CntLt,accs_index,size_curr_dim),CntBool(CntGeq,accs_index,CntCst(My_bigint.zero))) *)
+	in
+	array_within_bounds_cst sslv (CntGenRelComp(CntGenBAnd,pre,current_cst)) off telem
+      | (_,_) -> CntGenFalse
   in
-  array_within_bounds_cst sslv CntBTrue access_offset array_type
+  array_within_bounds_cst sslv CntGenTrue access_offset array_type
 
 let rec cnt_guard_of_mem_access sslv ( expr : Cil_types.exp ) =
   cnt_guard_of_mem_access_enode sslv expr.enode 
@@ -119,14 +140,14 @@ and cnt_guard_of_mem_access_enode sslv ( expr_node : Cil_types.exp_node ) =
 	begin
 	  match off with
 	      NoOffset ->
-		CntBTrue (* à voir ce qui se passe avec les tableaux *)
+		CntGenTrue (* à voir ce qui se passe avec les tableaux *)
 	    | Index(_,_) ->
 	      cnt_guard_of_array_access sslv off p.vtype
 	     (* let compiled_array = Compile_2_nts.compile_cil_array_2_cnt sslv
 		v.vname v.vtype in
 	      let index_of_accessed_tab = *)  
 	    | Field( ffinfo, off) ->
-	      CntBTrue (* Access to a field of a structure, a new
+	      CntGenTrue (* Access to a field of a structure, a new
 		       value address is copied, no memory access id
 		       performed, hence CntBTrue*)
 		  
@@ -151,16 +172,17 @@ and cnt_guard_of_mem_access_enode sslv ( expr_node : Cil_types.exp_node ) =
       end
    
     | Const ( _ ) -> 
-      CntBTrue
+      CntGenTrue
 	
     | BinOp (PlusPI,a,b,_) ->
       cnt_guard_of_mem_access sslv b
       
     | BinOp (_,a,b,_)
       ->
-      let fg= cnt_guard_of_mem_access sslv a in
+      let fg = cnt_guard_of_mem_access sslv a in
       let fd = cnt_guard_of_mem_access sslv b in
-      CntBAnd(fg,fd)
+      CntGenRelComp(CntGenBAnd,fg,fd)
+	(*CntBAnd(fg,fd)*)
 	
     | UnOp(_,e,_) ->
       cnt_guard_of_mem_access sslv e
@@ -174,10 +196,10 @@ to do with Info"))
       in*)
 
 
-    | StartOf(_) -> CntBTrue
+    | StartOf(_) -> CntGenTrue
 	  
-    | SizeOf(_) -> CntBTrue
-    | SizeOfE(_) -> CntBTrue
+    | SizeOf(_) -> CntGenTrue
+    | SizeOfE(_) -> CntGenTrue
    
     | Lval( Mem(e) , off ) -> (*Access at the offset off of base memory e*)
       begin
@@ -192,7 +214,11 @@ to do with Info"))
 	      in
 	      (* Getting the location variable associated to the pointer 
 	      if any.*)
-	      let locvar_size = CntVar(NtsIVar(locvar_size_name)) in
+	      let locvar_size = Nts_generic.make_nts_genvar
+		locvar_size_name NtsIntType
+	      in
+		
+	      (* CntVar(NtsIVar(locvar_size_name)) in*)
 	      let mem_accs_type = Cil.typeOfLval ( Mem(e), off) in
 	      let sizeof_exp = Cnt_interpret.interpret_ciltypes_size
 		mem_accs_type in
@@ -200,15 +226,22 @@ to do with Info"))
 	      let ptr_exp_t = cil_expr_2_ptr e in
 	      let nts_ptr_exp = interpret_c_ptrexp_to_cnt sslv.ssl_part 
 		ptr_exp_t in
+	      let nts_ptr_exp = Flatac_ndet_nts_support.arithm_value_of_ndsupport_or_fails nts_ptr_exp in
 	      (*let ptr_base = LiPVar((Validity.base_ptrexp sslv.ssl_part ptr_exp_t)) *)
 	      
 	      
 	      let interval_cond = 
-	      CntBAnd(CntBool(CntLt,nts_ptr_exp,locvar_size),CntBool(CntGeq,nts_ptr_exp,CntCst(My_bigint.zero))) 
+		CntGenRelComp(CntGenBAnd,CntGenRel(CntLt,nts_ptr_exp,CntGenVar(locvar_size)),CntGenRel(CntGeq,nts_ptr_exp,((Nts_generic.make_nts_int_cst(Big_int.big_int_of_int 0))))) 
 	      in
-	      let align_cond = CntBool(CntEq,CntMod(nts_ptr_exp,sizeof_exp),CntCst(My_bigint.zero)) 
-	      in
-	      CntBAnd(interval_cond,align_cond)
+	      (*CntBAnd(CntBool(CntLt,nts_ptr_exp,locvar_size),CntBool(CntGeq,nts_ptr_exp,CntCst(My_bigint.zero))) 
+	      in*)
+	      let align_cond = 
+		CntGenRel(CntEq,CntGenArithmBOp(CntGenMod,nts_ptr_exp,sizeof_exp,NtsIntType),
+			  (Nts_generic.make_nts_int_cst(Big_int.big_int_of_int 0))) in
+	      (*CntBool(CntEq,CntMod(nts_ptr_exp,sizeof_exp),CntCst(My_bigint.zero)) *)
+	      
+	      CntGenRelComp(CntGenBAnd,interval_cond,align_cond)
+	    (*CntBAnd(interval_cond,align_cond) *)
 
       (*
 	      (* Computation of the offset of the pointer plus the
@@ -242,13 +275,13 @@ to do with Info"))
       *)
 	    end
 	  else
-	    CntBTrue
+	    CntGenTrue
 	
 	with
 	    _ -> 
 	      begin
 		Format.printf "The ptrvar ?? has not matching affectation in the heap \n" ; 
-		  CntBFalse
+		  CntGenFalse
 	      end
 	
       end
@@ -267,11 +300,11 @@ to do with Info"))
 
 
 let mem_guards_of_funcall_arg_list sslv (l : Cil_types.exp list) =
-  let guard_folder (ret_guard : cnt_bool) (arg : Cil_types.exp  ) =
+  let guard_folder (ret_guard : nts_gen_relation) (arg : Cil_types.exp  ) =
     let arg_guard = cnt_guard_of_mem_access sslv arg in
     match arg_guard with
-	CntBTrue -> ret_guard (* The guard need not to be chaged, And(prev,true) => prev*)
-      | _ -> CntBAnd(ret_guard,arg_guard)
+	CntGenTrue -> ret_guard (* The guard need not to be chaged, And(prev,true) => prev*)
+      | _ -> CntGenRelComp(CntGenBAnd,ret_guard,arg_guard)
   in
-  List.fold_left guard_folder CntBTrue l
+  List.fold_left guard_folder CntGenTrue l
 	

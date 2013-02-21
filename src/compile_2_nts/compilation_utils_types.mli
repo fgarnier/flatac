@@ -19,14 +19,14 @@ by Florent Garnier in the Verimag Laboratory.
 
 type il_ptr_fun_arg = {
   base_of_exp : Ssl_types.SSL_lex.locvar;
-  offset_of_exp : Nts_types.nts_genrel_arithm_exp;
-  validity_of_ptr_exp : Nts_types.nts_genrel_arithm_exp;
+  offset_of_exp : Flatac_ndet_nts_support_types.ndet_supp_cnt_val;
+  validity_of_ptr_exp : Flatac_ndet_nts_support_types.ndet_supp_cnt_val;
 }
 
 
 type il_int_fun_arg = {
-  expr : Nts_types.nts_genrel_arithm_exp;
-  validity_of_exp : Nts_types.nts_genrel_arithm_exp;
+  expr : Flatac_ndet_nts_support_types.ndet_supp_cnt_val;
+  validity_of_exp : Flatac_ndet_nts_support_types.ndet_supp_cnt_val;
 }
 
 

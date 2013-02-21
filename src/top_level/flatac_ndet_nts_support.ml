@@ -79,3 +79,10 @@ let neg_bterm bt =
   match bt with
     ND_CntGenNot(t) -> t
   | _ -> ND_CntGenNot(bt)
+
+
+
+let arithm_value_of_ndsupport_or_fails v =
+  match v with
+    DetAVal(v) -> v
+  | _ -> assert false

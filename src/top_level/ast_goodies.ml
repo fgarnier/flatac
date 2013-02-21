@@ -33,9 +33,16 @@ exception No_2_successors_for_if_successor of int
 exception Less_than_two_elem_in_this_list
 exception Bothparameter_are_None_option
 
+exception Opt_val_is_none
 
 
-
+let non_default_behaviour () =
+  raise Opt_val_is_none
+    
+let extract_val_from_opt_container ?(none_opt_val = non_default_behaviour)  extractor_fun opt_val =
+  match opt_val with
+    Some(stuff) -> extractor_fun stuff
+  | None -> non_default_behaviour ()
 
 
 
