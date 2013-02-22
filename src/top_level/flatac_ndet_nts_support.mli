@@ -59,3 +59,10 @@ Fails if its not.*)
 val arithm_value_of_ndsupport_or_fails : 
   Flatac_ndet_nts_support_types.ndet_supp_cnt_val ->
   Nts_types.nts_genrel_arithm_exp
+
+
+(** Does a value have a deterministic evaluation.*)
+val is_val_det: Flatac_ndet_nts_support_types.ndet_supp_cnt_val -> bool
+
+
+val pprint_val : Flatac_ndet_nts_support_types.ndet_supp_cnt_val -> string 

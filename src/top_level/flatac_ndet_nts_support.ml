@@ -86,3 +86,38 @@ let arithm_value_of_ndsupport_or_fails v =
   match v with
     DetAVal(v) -> v
   | _ -> assert false
+
+(** Checks whether a subtree reprensents a deterministic value*)
+let is_val_det v =
+  match v with
+    DetAVal(_) -> true
+  | _ -> false
+
+
+(*
+
+val nts_pprint_bool_binop :
+  string -> Nts_types.nts_gen_bool_binop -> string -> string
+
+val nts_pprint_aritm_binop : Nts_types.nts_gen_arithm_binop -> string
+*)
+
+
+let rec pprint_val value = 
+  match value with 
+    DetAVal(v) -> Nts_generic.nts_pprint_genrel_arithm_exp v
+  | NDetAVal(v) -> Format.sprintf "Non_det(%s)" (Nts_generic.nts_pprint_genrel_arithm_exp v)
+  | DetNdetBOp(bop,fg,fd,_) ->
+    begin
+      let op_printout = Nts_generic.nts_pprint_aritm_binop bop in
+      let fg_printout = pprint_val fg in
+      let fd_printout = pprint_val fd in
+      Format.sprintf "(%s) %s (%s)" fg_printout op_printout fd_printout 
+    end
+  | DetNdetUOp(uop,f,_) ->
+    begin
+      let op_printout = Nts_generic.nts_pprint_arithm_unop uop in
+      let f_printout = pprint_val f in
+      Format.sprintf "%s (%s)" op_printout f_printout 
+    end
+  | _ -> "Ndet_var"

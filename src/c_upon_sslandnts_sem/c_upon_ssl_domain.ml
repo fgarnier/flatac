@@ -85,9 +85,12 @@ let decl_and_affect_cst_char_star
 	begin
 	  let sslv = copy_validity_absdomain sslv in
 	  let sizeof_string = String.length s in
-	  let sizeof_string = My_bigint.of_int sizeof_string in 
-	  let mem_size = 
-	    CntProd(CntCst(sizeof_string),CntCst(My_bigint.one)) in 
+	  let aop_sizeof_string = Nts_generic.make_nts_int_cst_of_int 
+	    sizeof_string in
+	  let aop_one = Nts_generic.make_nts_int_cst_of_int 1 in
+	  let mem_size = Nts_generic.mul_arithm_expr aop_sizeof_string 
+	    aop_one in
+	    (*CntProd(CntCst(sizeof_string),CntCst(My_bigint.one)) in *)
 	        (*unit_big_int ecodes one, i.e. the size of a char.*)
 	  let lvar = mid#lvar_from_constant_char (Some(mem_size)) in
 	  let pvar = Ast_goodies.get_pvar_from_exp_node  (Lval(lv,off)) in
@@ -132,11 +135,11 @@ let affect_int_val_upon_sslv ((lv , off) : Cil_types.lval) (expr : Cil_types.exp
 		begin
 		  let nts_lvar = Compile_2_nts.compile_ntsivar_of_int_cil_lval 
 		    (lv , off) in
-		    if (not (Nts.is_ntisvar_det nts_lvar)) 
+		    if (not (Flatac_ndet_nts_support.is_val_det nts_lvar)) 
 		    then
 		      ([],ret_absdomain)
 		    else
-		      let vname = Nts.nts_pprint_nts_var nts_lvar in
+		      let vname = Flatac_ndet_nts_support.pprint_val nts_lvar in
 			Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] lval %s has type int \n%! " vname;
 			let locality_of_lval = Var_validity.loc_info_of_lval (lv,off)
 			in
@@ -148,7 +151,8 @@ let affect_int_val_upon_sslv ((lv , off) : Cil_types.lval) (expr : Cil_types.exp
 			  let c_scal_exp = cil_expr_2_scalar expr in 
 			  let cnt_expr = interpret_c_scal_to_cnt sslv.ssl_part
 			    c_scal_exp in
-			    Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] cnt_expr is %s \n %!"  (Nts.cnt_pprint_arithm_exp cnt_expr);
+			    Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] cnt_expr is %s \n %!" 
+			      (Flatac_ndet_nts_support.pprint_val cnt_expr);
 		
 			    let cnt_affect = CntAffect(nts_lvar,cnt_expr) in
 			      (cnt_affect::[],ret_absdomain)
