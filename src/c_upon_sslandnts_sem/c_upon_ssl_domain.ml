@@ -153,8 +153,11 @@ let affect_int_val_upon_sslv ((lv , off) : Cil_types.lval) (expr : Cil_types.exp
 			    c_scal_exp in
 			    Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] cnt_expr is %s \n %!" 
 			      (Flatac_ndet_nts_support.pprint_val cnt_expr);
-		
-			    let cnt_affect = CntAffect(nts_lvar,cnt_expr) in
+			  let cnt_expr = Flatac_ndet_support. cnt_expr in
+		  (*let cnt_affect = CntAffect(nts_lvar,cnt_expr)*)
+			  let cnt_affect = Nts_generic.affect_aexpr_to_nts_var nts_lvar  in
+			  
+		 
 			      (cnt_affect::[],ret_absdomain)
 		end
 	    | None -> 
