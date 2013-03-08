@@ -121,3 +121,220 @@ let rec pprint_val value =
       Format.sprintf "%s (%s)" op_printout f_printout 
     end
   | _ -> "Ndet_var"
+
+
+module Vars_acc = Nts_generic.Vars_acc
+
+
+let rec primed_vars_of_ndet_cnt_val term folder_set =
+  match term with
+    NDetAVal(aexp) | DetAVal (aexp) ->
+      let expv = Nts_generic.primed_vars_of_genrel_aexpr aexp
+      in
+      Vars_acc.union folder_set expv
+  | DetNdetBOp (_,ndexpg,ndexpd,_) -> 
+    begin
+      let var_g = primed_vars_of_ndet_cnt_val ndexpg folder_set in
+      primed_vars_of_ndet_cnt_val ndexpd var_g 
+    end
+
+  | DetNdetUOp (_,v,_)
+    -> primed_vars_of_ndet_cnt_val v folder_set 
+
+  | CntINdet
+  | CntRNdet
+  | CntBNdet
+  | CntNdet -> folder_set
+
+
+
+let rec get_set_of_modified_vars_ndet_cnt_bool term folder_set =
+  match term with 
+    ND_CntGenTrue
+  | ND_CntGenFalse
+  | ND_CntGenDK -> folder_set
+    
+  | ND_CntGenNot ( e) -> 
+    get_set_of_modified_vars_ndet_cnt_bool e folder_set
+ 
+  | ND_CntGenRelComp(_,g,d)-> 
+    let vg =  primed_vars_of_ndet_cnt_val g folder_set in
+    primed_vars_of_ndet_cnt_val d vg
+
+  | ND_CntGenRel (_, ndg, ndd) -> 
+    let vg = get_set_of_modified_vars_ndet_cnt_bool ndg folder_set 
+    in
+    get_set_of_modified_vars_ndet_cnt_bool ndd vg
+
+
+(*
+let get_list_of_modified_varsnd_translabel nd_genrel =
+  let accu = Vars_acc.empty in
+  let rec collect_vars t acc =
+    match t with
+      ND_CntGenGuard () ->
+
+    | ND_CntGenGuardIf ndet_supp_cnt_genrel
+    | ND_CntGenGuardElse of ndet_supp_cnt_genrel
+	
+    | ND_CntGenCall ( _, Some(ret_lhs_vars) , _ ) 
+      -> 
+      begin
+	List.iter (fun s -> Vars_acc.add s acc) ret_lhs_vars
+      end
+				     				     
+    | ND_CntGenHavoc _ -> acc 
+*)		     
+
+
+
+(* this method is used to compute the set of counter variables who are
+   assigned a new value*)
+(*
+
+let havocise (trans_label_list : ndet_supp_nts_trans_label list) =
+  let not_havoc label =
+    match label with
+      ND_CntGenHavoc(_) -> false
+    (*| CntAffect(_,CntNdet)-> false*)
+    (*| CntGuard( CntBool(_,CntNdetVar("__if_ndet_cond__"),_)) -> false*)
+    | _ -> true
+  in
+  let modified_vars (var_list : Nts_types.nts_var list)
+      (trans_label : cnt_trans_label) =
+    match trans_label with
+      
+      
+    (* Elimination
+       de toutes les variables
+       de test à valeurs non déterministes.
+       Cas le plus général,
+       ?? plus grand point fixe ??
+       Pourrait certainement se
+       raffiner.
+    *)
+      
+(*| CntGuard( CntBool(_,CntNdetVar("__if_ndet_cond__"),_))
+-> (NtsIVar("__if_ndet_cond__"))::var_list*)
+      
+    | CntAffect(nvar,_) -> nvar::var_list
+    | ND_CntGenCall(_,Some(nvar_list),_) -> nvar_list@var_list
+    | CntHavoc (nvlist) -> nvlist@var_list
+    | CntGuard(CntBool(_,CntNdetVar("__ndet_cond__"),_))
+    | CntGuard(CntNot(CntBool(_,CntNdetVar("__ndet_cond__"),_)))
+      ->
+      begin
+	if (not (List.exists
+		   (fun s->
+		     match s with
+		     | NtsIVar("__ndet_cond__") -> true
+		     | _ -> false
+		   )
+		   var_list) )
+	then
+	  NtsIVar("__ndet_cond__")::var_list
+	else
+	  var_list
+      end
+    | CntGuardIf(CntBool(_,CntNdetVar("__if_ndet_cond__"),_))
+    | CntGuardElse((CntBool(_,CntNdetVar("__if_ndet_cond__"),_)))
+    | CntGuardElse(CntNot((CntBool(_,CntNdetVar("__if_ndet_cond__"),_))))
+      ->
+      begin
+	if (not (List.exists
+		   (fun s->
+		     match s with
+		     | NtsIVar("__if_ndet_cond__") -> true
+		     | _ -> false
+		   )
+		   var_list) )
+	then
+	  NtsIVar("__if_ndet_cond__")::var_list
+	else
+	  var_list
+      end
+
+
+    | _ -> var_list
+  in
+  let vars_in_havoc = List.fold_left modified_vars [] trans_label_list in
+  let ret_list = List.filter not_havoc trans_label_list in
+  (ret_list@(CntHavoc(vars_in_havoc)::[]))
+*)
+
+
+(*
+
+
+(* this method is used to compute the set of counter variables who are
+   assigned a new value*)
+let havocise (trans_label_list : cnt_trans_label list) =
+  let not_havoc label =
+    match label with
+      CntHavoc(_) -> false
+    (*| CntAffect(_,CntNdet)-> false*)
+    (*| CntGuard( CntBool(_,CntNdetVar("__if_ndet_cond__"),_)) -> false*)
+    | _ -> true
+  in
+  let modified_vars (var_list : Nts_types.nts_var list)
+      (trans_label : cnt_trans_label) =
+    match trans_label with
+      
+      
+    (* Elimination
+       de toutes les variables
+       de test à valeurs non déterministes.
+       Cas le plus général,
+       ?? plus grand point fixe ??
+       Pourrait certainement se
+       raffiner.
+    *)
+      
+(*| CntGuard( CntBool(_,CntNdetVar("__if_ndet_cond__"),_))
+-> (NtsIVar("__if_ndet_cond__"))::var_list*)
+      
+    | CntAffect(nvar,_) -> nvar::var_list
+    | CntFunCall(_,Some(nvar_list),_) -> nvar_list@var_list
+    | CntHavoc (nvlist) -> nvlist@var_list
+    | CntGuard(CntBool(_,CntNdetVar("__ndet_cond__"),_))
+    | CntGuard(CntNot(CntBool(_,CntNdetVar("__ndet_cond__"),_)))
+      ->
+      begin
+	if (not (List.exists
+		   (fun s->
+		     match s with
+		     | NtsIVar("__ndet_cond__") -> true
+		     | _ -> false
+		   )
+		   var_list) )
+	then
+	  NtsIVar("__ndet_cond__")::var_list
+	else
+	  var_list
+      end
+    | CntGuardIf(CntBool(_,CntNdetVar("__if_ndet_cond__"),_))
+    | CntGuardElse((CntBool(_,CntNdetVar("__if_ndet_cond__"),_)))
+    | CntGuardElse(CntNot((CntBool(_,CntNdetVar("__if_ndet_cond__"),_))))
+      ->
+      begin
+	if (not (List.exists
+		   (fun s->
+		     match s with
+		     | NtsIVar("__if_ndet_cond__") -> true
+		     | _ -> false
+		   )
+		   var_list) )
+	then
+	  NtsIVar("__if_ndet_cond__")::var_list
+	else
+	  var_list
+      end
+
+
+    | _ -> var_list
+  in
+  let vars_in_havoc = List.fold_left modified_vars [] trans_label_list in
+  let ret_list = List.filter not_havoc trans_label_list in
+  (ret_list@(CntHavoc(vars_in_havoc)::[]))
+    
+*)
