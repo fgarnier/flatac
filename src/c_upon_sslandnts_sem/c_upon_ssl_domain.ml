@@ -41,6 +41,14 @@ exception Assert_fail_exception
 exception LvalureNotaVariable
 
 
+let try_interpret_cscal_from_ndet_supp sslf scal_param =
+  let interpret_param = interpret_c_scal_to_cnt sslf 
+    scal_param in
+  Flatac_ndet_nts_support.arithm_value_of_ndsupport_or_fails 
+interpret_param
+    
+
+
 (* This function is called by decl_and_affect_cst_char_star *)
 let set_valid_of_lhs_for_cstcharaffect (lv,off) sslv =
   match lv with
@@ -102,9 +110,12 @@ let decl_and_affect_cst_char_star
 	  Ssl.add_alloc_cell lvar sslv.ssl_part;
 	  (*Ssl_valid_abs_dom.add_atomic_affect_to_validity_abstdomain affect
 	    sslv;*)
-	  let update_var_list = Guard_of_mem_acces.make_size_locvar lvar
+	  let update_var_list = Guard_of_mem_acces.make_size_locvar_genrel lvar
 	    mid  mem_size in
-	  ((sslv,update_var_list)::[])
+	  let update_var_list = Nts_generic.make_guard_of_relation 
+	    update_var_list
+	  in
+	  ((sslv,(update_var_list::[]))::[])
 	 
 	end
     | _ -> raise (Debug_info("In decl_and_affect_cst_char_star, the expression has not a const char type "))
@@ -140,6 +151,7 @@ let affect_int_val_upon_sslv ((lv , off) : Cil_types.lval) (expr : Cil_types.exp
 		      ([],ret_absdomain)
 		    else
 		      let vname = Flatac_ndet_nts_support.pprint_val nts_lvar in
+		      let nts_lvar =  Flatac_ndet_nts_support.arithm_value_of_ndsupport_or_fails nts_lvar in
 			Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] lval %s has type int \n%! " vname;
 			let locality_of_lval = Var_validity.loc_info_of_lval (lv,off)
 			in
@@ -153,9 +165,11 @@ let affect_int_val_upon_sslv ((lv , off) : Cil_types.lval) (expr : Cil_types.exp
 			    c_scal_exp in
 			    Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] cnt_expr is %s \n %!" 
 			      (Flatac_ndet_nts_support.pprint_val cnt_expr);
-			  let cnt_expr = Flatac_ndet_support. cnt_expr in
+			  let cnt_expr = Flatac_ndet_nts_support.arithm_value_of_ndsupport_or_fails cnt_expr in
 		  (*let cnt_affect = CntAffect(nts_lvar,cnt_expr)*)
-			  let cnt_affect = Nts_generic.affect_aexpr_to_nts_var nts_lvar  in
+			  let cnt_affect = Nts_generic.make_affect_to_var_from_exp nts_lvar cnt_expr  in
+			  let cnt_affect = Nts_generic.make_guard_of_relation
+			    cnt_affect in
 			  
 		 
 			      (cnt_affect::[],ret_absdomain)
@@ -177,17 +191,24 @@ let affect_int_val_upon_sslv ((lv , off) : Cil_types.lval) (expr : Cil_types.exp
 	let access_cond_of_expr = cnt_guard_of_mem_access sslv expr in
 	let access_cond_of_lval = cnt_guard_of_mem_access_enode sslv (Lval(lv , off))
 	in
-	  Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] Guard for success %s \n %!" (Nts.cnt_pprint_translabel (CntGuard(access_cond_of_expr)));  
-	  Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] Guard for lval %s \n %!" (Nts.cnt_pprint_translabel (CntGuard(access_cond_of_lval))); 
-	let global_succs_guard = CntBAnd(access_cond_of_lval,access_cond_of_expr) in
-	let success_guard = CntGuard(global_succs_guard) in
-	   Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] Guard for success %s \n %!" (Nts.cnt_pprint_translabel success_guard); 
-	let success_transition = (ret_absdomain , success_guard::(cnt_affect_list)) in
+	 (* Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] Guard for success %s \n %!" (Nts_generic.nts_pprint_genrel (CntGuard(access_cond_of_expr)));  
+	  Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] Guard for lval %s \n %!" (Nts.cnt_pprint_translabel (CntGuard(access_cond_of_lval))); *)
+	
+	(*CntBAnd(access_cond_of_lval,access_cond_of_expr) *)
+	
+	let success_cnd = 
+	Nts_generic.and_of_genrel access_cond_of_expr access_cond_of_lval in
+	(*CntGuard(global_succs_guard) *)
+	let global_succs_guard = Nts_generic.make_guard_of_relation success_cnd
+	in
+	  (* Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] Guard for success %s \n %!" (Nts.cnt_pprint_translabel success_guard); *)
+	let success_transition = (ret_absdomain , global_succs_guard::(cnt_affect_list)) in
     (******** Transition for invalid memory access in expr parameter ****************)
 	   Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] begin compute invalid transition block \n %!";
 	let failure_absdom = create_validity_abstdomain () in
 	set_heap_to_top failure_absdom.ssl_part;
-	let failure_guard = CntGuard(CntNot(global_succs_guard)) in
+	(*let failure_cnd = Nts_generic.neg_of_genrel global_succs_guard in*)
+	let failure_guard = Nts_generic.neg_cond_in_guard global_succs_guard in
 	let fail_trans = (failure_absdom,failure_guard ::[] )  in
 	  Format.fprintf Ast_goodies.debug_out "[affect_int_val_upon_sslv] end compute invalid transition block \n %!";
 	fail_trans::(success_transition::[])
@@ -228,9 +249,14 @@ let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) mi
 	does not impact the abstract value domain *)
 	let cnd_of_rhs_access = Guard_of_mem_acces.cnt_guard_of_mem_access
 	  sslv expr in
-	let guard_of_rhs_mem_access = CntGuard(cnd_of_rhs_access) in
-	let negate_of_cnd_of_rhs_access = Nts.negate_cntbool_shallow cnd_of_rhs_access in
-	let guard_of_broken_mem_access = CntGuard(negate_of_cnd_of_rhs_access) in
+	let guard_of_rhs_mem_access = Nts_generic.make_guard_of_relation 
+	  cnd_of_rhs_access in
+	(*CntGuard(cnd_of_rhs_access) in *)
+	(*let negate_of_cnd_of_rhs_access = Nts.negate_cntbool_shallow cnd_of_rhs_access in*)
+	let guard_of_broken_mem_access = Nts_generic.neg_cond_in_guard 
+	  guard_of_rhs_mem_access in
+	(*CntGuard(negate_of_cnd_of_rhs_access) *)
+	
 	let broken_mem = Ssl_valid_abs_dom.create_errorstate_validity_abstdomain () in
 	let transit_list = (sslv,guard_of_rhs_mem_access::[])::[] in
 	let transit_list = (broken_mem,guard_of_broken_mem_access::[])::transit_list
@@ -255,8 +281,11 @@ let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) mi
       end;
       let param_cscal = Intermediate_language.cil_expr_2_ptr expr in
       let offset_of_pexpr = interpret_c_ptrexp_to_cnt sslv.ssl_part param_cscal in
+      let offset_of_pexpr = Flatac_ndet_nts_support.arithm_value_of_ndsupport_or_fails offset_of_pexpr in
       let offset_var_of_pvar = offset_ntsivar_of_pvar pvar_left in
-      let affect_off = CntAffect(offset_var_of_pvar,offset_of_pexpr) in
+      let affect_off = Nts_generic.affect_aexpr_to_nts_var offset_var_of_pvar offset_of_pexpr in
+	(*CntAffect(offset_var_of_pvar,offset_of_pexpr)*)
+      
       let affect_validity_of_pvar = valid_sym_ptrexp sslv.validinfos 
 	sslv.ssl_part param_cscal in
       let valid_rhs_var = make_validity_varpvar pvar_right in
@@ -265,18 +294,31 @@ let affect_ptr_upon_sslv ( (lv,off) : Cil_types.lval)  (expr : Cil_types.exp) mi
 	sslv (Lval(lv,off)) in
       let cnd_of_rhs_access = Guard_of_mem_acces.cnt_guard_of_mem_access 
 	sslv expr in
-      let guard_of_good_mem_access = CntGuard(CntBAnd(cnd_of_rhs_access,cnd_of_lhs_access)) in
-      let copy_valaff_tolhs = CntAffect( valid_lhs_var, CntVar(valid_rhs_var)) in
+      let condition = Nts_generic.and_of_genrel cnd_of_lhs_access cnd_of_rhs_access in
+      let guard_of_good_mem_access = Nts_generic.make_guard_of_relation condition in 
+(*CntGuard(CntBAnd(cnd_of_rhs_access,cnd_of_lhs_access))*) 
+      
+      
+      let val_of_rhv = Nts_generic.aexpr_of_nts_genrel_var valid_rhs_var in
+	 
+      (*let copy_valaff_tolhs = CntAffect( valid_lhs_var, CntVar(valid_rhs_var)) in*)
+      let copy_valaff_tolhs = Nts_generic.affect_aexpr_to_nts_genrel_var 
+      valid_lhs_var val_of_rhv in
       let pvar_loc_info = Var_validity.loc_info_of_lval (lv, off) in
       let sslv_new = set_pvar_validity_in_absdomain 
 	sslv pvar_left affect_validity_of_pvar pvar_loc_info
       in
       let sslv_mem_broken = create_errorstate_validity_abstdomain () in
-      let cnd_of_mem_broken = 
-	Nts.negate_cntbool_shallow (CntBAnd(cnd_of_rhs_access,cnd_of_lhs_access)) in
+      let cnd_of_mem_broken = Nts_generic.and_of_genrel cnd_of_rhs_access cnd_of_lhs_access in
+      let cnd_of_mem_broken = Nts_generic.neg_of_genrel cnd_of_mem_broken in
+      let guard_of_mem_broken = Nts_generic.make_guard_of_relation cnd_of_mem_broken in
+	
+	(*Nts.negate_cntbool_shallow (CntBAnd(cnd_of_rhs_access,cnd_of_lhs_access)) in
       let guard_of_mem_broken =
 	CntGuard( cnd_of_mem_broken)
-      in
+      in*)
+      let affect_off = Nts_generic.make_guard_of_relation affect_off in
+      let copy_valaff_tolhs = Nts_generic.make_guard_of_relation copy_valaff_tolhs in
       let trans_mem_broken = (sslv_mem_broken, guard_of_mem_broken::[]) in
       let ret_trans = ((sslv_new,copy_valaff_tolhs::(affect_off::(guard_of_good_mem_access::[])))::[]) in
       trans_mem_broken::ret_trans
@@ -340,14 +382,33 @@ let free_upon_sslv (pvar : ptvar)(sslv : ssl_validity_absdom ) =
 					       is zero and the error prone 
 						  non-zero case.*)
 	let offset_of_pvar = Cnt_interpret.offset_cnt_of_pvar pvar in
-	let eq_zero_guard = CntBool(CntEq,offset_of_pvar,CntCst(My_bigint.zero)) in
+	let offset_of_pvar = Nts_generic.aexpr_of_nts_var offset_of_pvar in
+	let eq_zero_guard = Nts_generic.guard_eq_aexpr offset_of_pvar
+	  (Nts_generic.make_nts_int_cst_of_int 0)
+	in
+	let eq_zero_transition =  Nts_generic.make_guard_of_relation 
+	  eq_zero_guard 
+	in
+	let non_zero_guard = Nts_generic.neg_of_genrel eq_zero_guard
+	in
+	let neq_zero_transition = Nts_generic.make_guard_of_relation
+	  non_zero_guard
+	in
+	let fucked_up_case =  create_validity_abstdomain () in
+	Ssl.set_heap_to_top fucked_up_case.ssl_part;
+	let trans_list= (fucked_up_case, neq_zero_transition::[])::[] 
+	in
+	let trans_list = (sslv,eq_zero_transition::[])::trans_list in
+	trans_list
+	
+	(*let eq_zero_guard = CntBool(CntEq,offset_of_pvar,CntCst(My_bigint.zero)) in
 	let non_zero_guard =   CntBool(CntNeq,offset_of_pvar,CntCst(My_bigint.zero)) in
 	let fucked_up_case =  create_validity_abstdomain () in
 	Ssl.set_heap_to_top fucked_up_case.ssl_part;
 	let trans_list= (fucked_up_case, (CntGuard(non_zero_guard))::[])::[] 
 	in
 	let trans_list = (sslv,(CntGuard(eq_zero_guard))::[])::trans_list in
-	trans_list
+	trans_list*)
       end
   with
       Not_found -> 
@@ -374,17 +435,48 @@ let r_malloc_succ ( lhs : Cil_types.lval option ) sslv (mid: global_mem_manager 
 	let l = mid#get_last_lvar () in
 	let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
 	  scal_param in
+	let interpret_param =  Flatac_ndet_nts_support.arithm_value_of_ndsupport_or_fails interpret_param in
 	let lhs_pvar = get_pvar_from_exp_node (Lval(lv,off)) in
 	let valid_var_cnt_aff =   make_validity_varpvar lhs_pvar in
-	let valid_var_aff = CntAffect( valid_var_cnt_aff , CntCst(My_bigint.one)) in
-	let interpret_gt_zero = CntBool(CntGt,interpret_param,CntCst(My_bigint.zero)) in
-	let list_locvar_cnt_affect = make_size_locvar l mid interpret_param in 
+	
+	let valid_var_aff_guard = Nts_generic.affect_aexpr_to_nts_genrel_var
+	  valid_var_cnt_aff (Nts_generic.make_nts_int_cst_of_int 0) in
+
+	(*CntAffect( valid_var_cnt_aff , CntCst(My_bigint.one)) 
+	  
+	  in*)
+
+	let interpret_gt_zero = Nts_generic.guard_gt_aexpr interpret_param
+	  Nts_generic.zero 
+	in
+	(*let interpret_gt_zero = CntBool(CntGt,interpret_param,CntCst(My_bigint.zero)) in *)
+	
+	let list_locvar_cnt_affect = Guard_of_mem_acces.make_size_locvar_genrel l mid interpret_param 
+	in 
 	let cnt_ptvar_offset =  make_offset_locpvar lhs_pvar in
-	let zero_pvar_offset =  CntAffect( cnt_ptvar_offset, CntCst(My_bigint.zero)) in
-	let transit_list =  (CntGuard(interpret_gt_zero)) :: list_locvar_cnt_affect  in
-	let transit_list = zero_pvar_offset :: transit_list in
-	let transit_list = valid_var_aff :: transit_list in
-	let ret_list = (( new_abstract , transit_list) :: []) in
+	(*
+	  let zero_pvar_offset =  CntAffect( cnt_ptvar_offset, CntCst(My_bigint.zero)) in
+	*)
+	let zero_pvar_offset = Nts_generic.affect_aexpr_to_nts_genrel_var 
+	  cnt_ptvar_offset Nts_generic.zero
+	in
+	
+	(*let transit_list =  (CntGuard(interpret_gt_zero)) :: list_locvar_cnt_affect  in *)
+	let transition_op = 
+	  Nts_generic.and_of_genrel zero_pvar_offset 
+	  interpret_gt_zero 
+	in
+	let transition_op = 
+	  Nts_generic.and_of_genrel list_locvar_cnt_affect transition_op 
+	in
+	let transition_op =
+	  Nts_generic.and_of_genrel valid_var_aff_guard transition_op in
+	
+	let transition_op = 
+	  Nts_generic.make_guard_of_relation transition_op in
+	(*let transit_list = zero_pvar_offset :: transit_list in
+	let transit_list = valid_var_aff :: transit_list in*)
+	let ret_list = (( new_abstract , transition_op::[]) :: []) in
 	ret_list
 	end
     | None ->
@@ -394,10 +486,28 @@ let r_malloc_succ ( lhs : Cil_types.lval option ) sslv (mid: global_mem_manager 
 	let l = mid#get_last_lvar () in
 	let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
 	  scal_param in
-	let interpret_gt_zero = CntBool(CntGt,interpret_param,CntCst(My_bigint.zero)) in
-	let list_locvar_cnt_affect = make_size_locvar l mid interpret_param in
-	let transit_list =  (CntGuard(interpret_gt_zero)) :: list_locvar_cnt_affect  in
-	let ret_list = (( new_abstract , transit_list) :: []) in
+	let interpret_param = 
+	  Flatac_ndet_nts_support.arithm_value_of_ndsupport_or_fails 
+	    interpret_param 
+	in
+	let interpret_gt_zero =
+	  Nts_generic.guard_gt_aexpr interpret_param
+	  Nts_generic.zero 
+	    
+	(* CntBool(CntGt,interpret_param,CntCst(My_bigint.zero))*)
+	in
+	
+	
+
+	let locvar_cnt_affect = make_size_locvar_genrel l mid interpret_param in
+	let global_guard =  Nts_generic.and_of_genrel locvar_cnt_affect
+	  interpret_gt_zero 
+	in
+	let global_trans_guard = Nts_generic.make_guard_of_relation
+	  global_guard
+	in
+	
+	let ret_list = (( new_abstract , global_trans_guard::[]) :: []) in
 	ret_list
       end
 
@@ -413,24 +523,52 @@ let r_malloc_succ_withvalidcntguard ( lhs : Cil_types.lval option) sslv (mid: gl
 	   
 	    let l = mid#get_last_lvar () in
 	    let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
-	  let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
-	  let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
-	    scal_param in
-	  let interpret_gt_zero = CntBool(CntGt,interpret_param,CntCst(My_bigint.zero)) in
-	  let good_malloc_guard = CntBAnd(validity_guard_cnt,interpret_gt_zero)
-	  in 
-	  let pvar_of_lhs = get_pvar_from_exp_node (Lval(lv,off)) in
-	  let valid_lhs_var = make_validity_varpvar pvar_of_lhs in
-	  let list_locvar_cnt_affect = make_size_locvar l mid interpret_param in
-	  let cnt_ptvar_offset =  make_offset_locpvar pvar_of_lhs in
-	  let zero_pvar_offset =  CntAffect( cnt_ptvar_offset, CntCst(My_bigint.zero)) in
-	  let valid_aff_lhs =  CntAffect( valid_lhs_var, CntCst(My_bigint.one)) in
-	  let transit_list =  (CntGuard(good_malloc_guard)) :: list_locvar_cnt_affect  in
-	  let transit_list = zero_pvar_offset :: transit_list in
-	  let transit_list = valid_aff_lhs :: transit_list in
-	  let ret_list = ( new_abstract , transit_list) :: [] in
-	  ret_list
+	    let validity_guard_cnt = 
+	      valid_expr_2_cnt_bool valid_paral_malloc in
+	    let interpret_param = try_interpret_cscal_from_ndet_supp
+	      sslv.ssl_part 
+	      scal_param in
+	    let interpret_gt_zero = Nts_generic.guard_gt_aexpr
+	      interpret_param Nts_generic.zero
+	    (*(CntGt,interpret_param,CntCst(My_bigint.zero)) *)
+	    in
+	    let good_malloc_guard = 
+	      Nts_generic.and_of_genrel validity_guard_cnt interpret_gt_zero 
+	    in
+	    (*CntBAnd(validity_guard_cnt,interpret_gt_zero)*)
+	       
+	    let pvar_of_lhs = get_pvar_from_exp_node (Lval(lv,off)) in
+	    let valid_lhs_var = make_validity_varpvar pvar_of_lhs in
+	    let list_locvar_cnt_affect = 
+	      make_size_locvar_genrel l mid interpret_param in
+	    let cnt_ptvar_offset =  make_offset_locpvar pvar_of_lhs in
+	    let zero_pvar_offset = 
+	      Nts_generic.affect_aexpr_to_nts_genrel_var cnt_ptvar_offset
+		Nts_generic.zero
+	    (*CntAffect( cnt_ptvar_offset, CntCst(My_bigint.zero)) *)
+	    in
+	    let valid_aff_lhs = 
+	      Nts_generic.affect_aexpr_to_nts_genrel_var valid_lhs_var
+		Nts_generic.one
+	    (*CntAffect( valid_lhs_var, CntCst(My_bigint.one)) *) 
+	    in
+	    let transition = Nts_generic.and_of_genrel good_malloc_guard
+	      list_locvar_cnt_affect in
+	    let transition = Nts_generic.and_of_genrel zero_pvar_offset
+	      transition in
+	    let transition =  Nts_generic.and_of_genrel valid_aff_lhs 
+	      transition in
+	    let transition = 
+	      Nts_generic.make_guard_of_relation
+		transition in 
+	    (*let transit_list =  
+	      (CntGuard(good_malloc_guard)) :: list_locvar_cnt_affect  in
+	      let transit_list = zero_pvar_offset :: transit_list in
+	      let transit_list = valid_aff_lhs :: transit_list in *)
+	    let ret_list = ( new_abstract , transition::[]) :: [] in
+	    ret_list
 	end
+
     | None ->
       begin
 	let new_abstract = copy_validity_absdomain sslv in
@@ -438,15 +576,22 @@ let r_malloc_succ_withvalidcntguard ( lhs : Cil_types.lval option) sslv (mid: gl
 	let l = mid#get_last_lvar () in
 	let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
 	let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
-	let interpret_param = interpret_c_scal_to_cnt sslv.ssl_part 
+	let interpret_param = try_interpret_cscal_from_ndet_supp sslv.ssl_part 
 	  scal_param in
-	let interpret_gt_zero = CntBool(CntGt,interpret_param,CntCst(My_bigint.zero)) in
-	let good_malloc_guard = CntBAnd(validity_guard_cnt,interpret_gt_zero)
+	let interpret_gt_zero = 
+	  Nts_generic.guard_gt_aexpr interpret_param Nts_generic.zero 
+	  (*CntBool(CntGt,interpret_param,CntCst(My_bigint.zero)) *)
+	in
+	let good_malloc_guard = 
+	  Nts_generic.and_of_genrel validity_guard_cnt interpret_gt_zero 
+	  (*CntBAnd(validity_guard_cnt,interpret_gt_zero)*)
 	in 
-	let list_locvar_cnt_affect = make_size_locvar l mid interpret_param in
-	
-	let transit_list =  (CntGuard(good_malloc_guard)) :: list_locvar_cnt_affect  in
-	let ret_list = ( new_abstract , transit_list) :: [] in
+	let list_locvar_cnt_affect = make_size_locvar_genrel l mid interpret_param in
+	let transit = Nts_generic.and_of_genrel list_locvar_cnt_affect 
+	  good_malloc_guard in
+	let transit_guard = Nts_generic.make_guard_of_relation transit in
+	(*let transit_list =  (CntGuard(good_malloc_guard)) :: list_locvar_cnt_affect  in*)
+	let ret_list = ( new_abstract , transit_guard ::[]) :: [] in
 	ret_list
       end
   
@@ -462,25 +607,46 @@ let r_malloc_neg_or_zero_arg ( lhs : Cil_types.lval option ) sslv  (mid: global_
 	begin
 	  let new_abstract = copy_validity_absdomain sslv in
 	  let pvar = get_pvar_from_exp_node (Lval(lv,off)) in
-	  let interpret_param = interpret_c_scal_to_cnt new_abstract.ssl_part 
+	  let interpret_param = try_interpret_cscal_from_ndet_supp new_abstract.ssl_part 
 	    scal_param in
 	  let aff_to_nil = Pointsnil(pvar) in
 	  and_atomic_ptnil aff_to_nil new_abstract.ssl_part;
+	 
+	  let guard_leq_zero = Nts_generic.guard_leq_aexpr interpret_param Nts_generic.zero in
+
+	  (*
 	  let guard_leq_zero =  CntGuard(CntBool(CntLeq,interpret_param,CntCst(My_bigint.zero))) 
-	  in
+	  *)
+
+	  
 	  let pvar_of_lhs = get_pvar_from_exp_node (Lval(lv,off)) in  
 	  let valid_lhs_var = make_validity_varpvar pvar_of_lhs in
-	  let invalid_aff_lhs =  CntAffect( valid_lhs_var, CntCst(My_bigint.zero)) in
-	  let ret_list = ((new_abstract, (guard_leq_zero ::( invalid_aff_lhs ::[])))::[] ) in
+	  let invalid_aff_lhs =
+	    Nts_generic.affect_aexpr_to_nts_genrel_var 
+	      valid_lhs_var Nts_generic.zero
+	  in
+	  let guard = 
+	    Nts_generic.and_of_genrel guard_leq_zero invalid_aff_lhs 
+	  in
+	   let guard =  Nts_generic.make_guard_of_relation guard in
+	  (*let invalid_aff_lhs =  CntAffect( valid_lhs_var, CntCst(My_bigint.zero)) in*)
+	  let ret_list = (new_abstract, guard :: [])::[]  in
 	  ret_list
 	end
     | None ->
       	begin
 	  let new_abstract = copy_validity_absdomain sslv in
-	  let interpret_param = interpret_c_scal_to_cnt new_abstract.ssl_part 
-	    scal_param in
-	  let guard_leq_zero =  CntGuard(CntBool(CntLeq,interpret_param,CntCst(My_bigint.zero))) 
+	  let interpret_param =  
+	    try_interpret_cscal_from_ndet_supp new_abstract.ssl_part 
+	      scal_param in 
+	  let guard_leq_zero = 
+	    Nts_generic.guard_leq_aexpr interpret_param 
+	      Nts_generic.zero
+	  (*let guard_leq_zero =  CntGuard(CntBool(CntLeq,interpret_param,CntCst(My_bigint.zero)))*)
 	  in 
+	  let guard_leq_zero =  Nts_generic.make_guard_of_relation
+	    guard_leq_zero 
+	  in
 	  let ret_list = ((new_abstract, (guard_leq_zero :: []))::[] ) in
 	  ret_list
 	end
@@ -498,30 +664,51 @@ let r_malloc_neg_or_zero_arg_withvalidityguard (lhs : Cil_types.lval option ) ss
 	  let pvar = get_pvar_from_exp_node (Lval(lv,off)) in
 	  let valid_paral_malloc = valid_cscal new_abstract.ssl_part scal_param in
 	  let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
-	  let interpret_param = interpret_c_scal_to_cnt new_abstract.ssl_part 
+	  let interpret_param = try_interpret_cscal_from_ndet_supp new_abstract.ssl_part 
 	    scal_param in
 	  let aff_to_nil = Pointsnil(pvar) in
 	  and_atomic_ptnil aff_to_nil new_abstract.ssl_part;
-	  let interpret_leq_zero = CntBool(CntLeq,interpret_param,CntCst(My_bigint.zero)) 
-	  in 
-	  let guard = CntGuard(CntBAnd(validity_guard_cnt,interpret_leq_zero)) in 
-	   let pvar_of_lhs = get_pvar_from_exp_node (Lval(lv,off)) in  
+	  let interpret_leq_zero =
+	    Nts_generic.guard_lt_aexpr interpret_param Nts_generic.zero 
+	  in
+	    (*CntBool(CntLeq,interpret_param,CntCst(My_bigint.zero)) 
+	  in *)
+	  let guard =
+	    Nts_generic.and_of_genrel  validity_guard_cnt interpret_leq_zero in
+	  (*CntGuard(CntBAnd(validity_guard_cnt,interpret_leq_zero))*)
+	  
+	  let pvar_of_lhs = get_pvar_from_exp_node (Lval(lv,off)) in  
 	  let valid_lhs_var = make_validity_varpvar pvar_of_lhs in
-	  let invalid_aff_lhs =  CntAffect( valid_lhs_var, CntCst(My_bigint.zero)) in 
-	  let ret_list = ((new_abstract, invalid_aff_lhs::(guard :: []))::[] ) in
+	  let invalid_aff_lhs = Nts_generic.affect_aexpr_to_nts_genrel_var valid_lhs_var Nts_generic.zero in 
+	  (*let invalid_aff_lhs =  CntAffect( valid_lhs_var, CntCst(My_bigint.zero)) in *)
+	  let guard = Nts_generic.and_of_genrel guard invalid_aff_lhs in
+	  let guard = Nts_generic. make_guard_of_relation guard in
+	  let ret_list = (new_abstract, guard :: [])::[] 
+	  in
 	  ret_list
 	end
     | None ->
       begin
 	let new_abstract = copy_validity_absdomain sslv in
-	let valid_paral_malloc = valid_cscal new_abstract.ssl_part scal_param in
-	let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
-	let interpret_param = interpret_c_scal_to_cnt new_abstract.ssl_part 
-	  scal_param in
-	let interpret_leq_zero = CntBool(CntLeq,interpret_param,CntCst(My_bigint.zero)) 
+	let valid_paral_malloc = valid_cscal new_abstract.ssl_part scal_param 
+	in
+	let validity_guard_cnt = 
+	  valid_expr_2_cnt_bool valid_paral_malloc 
+	in
+	let interpret_param = 
+	  try_interpret_cscal_from_ndet_supp new_abstract.ssl_part 
+	    scal_param in
+	let interpret_leq_zero =
+	  Nts_generic.guard_leq_aexpr interpret_param Nts_generic.zero 
+	(*CntBool(CntLeq,interpret_param,CntCst(My_bigint.zero)) *)
 	in 
-	let guard = CntGuard(CntBAnd(validity_guard_cnt,interpret_leq_zero)) in 
-	let ret_list = ((new_abstract, (guard :: []))::[] ) in
+	let guard = 
+	  Nts_generic.and_of_genrel validity_guard_cnt interpret_leq_zero
+	in
+	let guard = Nts_generic.make_guard_of_relation guard in
+      (*CntGuard(CntBAnd(validity_guard_cnt,interpret_leq_zero)) *)
+	let ret_list = ((new_abstract, (guard :: []))::[] ) 
+	in
 	ret_list	
       end
 
@@ -535,33 +722,51 @@ let r_malloc_failed_with_unvalidcntgard lhs sslv  (mid: global_mem_manager ) (sc
 	  let abst_domain = create_validity_abstdomain () 
 	  in
 	    set_heap_to_top abst_domain.ssl_part ;
-	    let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
-	    let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
-	    let invalidity_guard = CntGuard(CntNot ( validity_guard_cnt )) in
-	    let ret_list = (( abst_domain , (invalidity_guard :: [])) ::[]) in
-	      ret_list
+	    let valid_paral_malloc = 
+	      valid_cscal sslv.ssl_part scal_param in
+	    let validity_guard_cnt = 
+	      valid_expr_2_cnt_bool valid_paral_malloc in
+	    let invalidity_guard = 
+	      Nts_generic.neg_of_genrel validity_guard_cnt 
+	    (*CntGuard(CntNot ( validity_guard_cnt )) *)
+	    in
+	    let invalidity_guard = 
+	      Nts_generic.make_guard_of_relation invalidity_guard in
+	    let ret_list = 
+	      (( abst_domain , (invalidity_guard :: [])) ::[]) 
+	    in
+	    ret_list
 	end
     | Some((lv,off)) ->
 	begin
-	   Self.debug ~level:0 " r_malloc_failed_with_unvalidcntgard ";
+	  Self.debug ~level:0 " r_malloc_failed_with_unvalidcntgard ";
 	  let sslv = copy_validity_absdomain sslv in
 	  let abst_domain = create_validity_abstdomain () 
 	  in
-	    set_heap_to_top abst_domain.ssl_part ;
-	    let pvar_of_lhs = get_pvar_from_exp_node (Lval(lv,off)) in  
-	    let valid_lhs_var = make_validity_varpvar pvar_of_lhs in
-	    let invalid_aff_lhs =  CntAffect( valid_lhs_var, CntCst(My_bigint.zero)) in 
-	    let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
-	    let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
-	    let invalidity_guard = CntGuard(CntNot ( validity_guard_cnt )) in
-	    let ret_list = (( abst_domain , invalid_aff_lhs::(invalidity_guard :: [])) ::[]) in
-	      ret_list
+	  set_heap_to_top abst_domain.ssl_part ;
+	  let pvar_of_lhs = get_pvar_from_exp_node (Lval(lv,off)) in  
+	  let valid_lhs_var = make_validity_varpvar pvar_of_lhs in
+	  
+	  let invalid_aff_lhs = 
+	    Nts_generic.affect_aexpr_to_nts_genrel_var valid_lhs_var
+	      Nts_generic.zero in
+	    (*CntAffect( valid_lhs_var, CntCst(My_bigint.zero)) in *)
+	  let valid_paral_malloc = valid_cscal sslv.ssl_part scal_param in
+	  let validity_guard_cnt = valid_expr_2_cnt_bool valid_paral_malloc in
+	  let invalidity_guard = 
+	    Nts_generic.neg_of_genrel validity_guard_cnt in
+	  (*CntGuard(CntNot ( validity_guard_cnt )) *)
+	  let guard = Nts_generic.and_of_genrel invalidity_guard 
+	    invalid_aff_lhs in
+	  let guard = Nts_generic.make_guard_of_relation guard in
+	  let ret_list = ( abst_domain , guard :: []) ::[] in
+	  ret_list
 	end
 
 
 
 
-(** The evaluation of the abstract prior the application
+(** The evaluation of the abstract domain prior the application
 of malloc is needed to compute the guards on the
 transition. This value is passed as the sslf_pre paramater,
 and the value sslf_post is used to express the successful
@@ -692,13 +897,13 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 				  let arg_nts_list =
 				     compile_param_list_2_cnt_list sslv lparam in
 				   (* List.map ( fun s-> interpret_c_scal_to_cnt sslv.ssl_part s ) *)
-				  let nts_lvals = Nts.make_ntsvars_of_ptrvar v.vname in
+				  let nts_lvals = Compile_2_nts.make_ntsvars_of_ptrvar v.vname in
 				  let cnt_trans_label = 
-				    CntFunCall(funname,Some(nts_lvals),arg_nts_list) in
+				    CntGenCall(funname,Some(nts_lvals),arg_nts_list) in
 				 (* let mem_access_trans_label =
 				    CntGuard((mem_guards_of_funcall_arg_list sslv lparam)) in*)
 				  
-				  let msg= 
+				  let msg = 
 				    Format.sprintf "[next_on_ssl_instr] Pointer type Var : %s = %s : %s \n[next_on_ssl_instr] argument list %s \n "  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype) (Nts.cnt_pprint_translabel cnt_trans_label ) in
 				Format.printf "%s" msg;
 
@@ -785,9 +990,9 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 					  sslv lparam in
 				  
 				      let nts_lvals =
-					Nts.make_ntsvars_of_intvars v.vname in
+					Compile_2_nts.make_ntsvars_of_intvars v.vname in
 				      let cnt_trans_label = 
-					CntFunCall(funname,Some(nts_lvals),arg_nts_list) in
+					CntGenCall(funname,Some(nts_lvals),arg_nts_list) in
 				            
 				  let mem_access_cond = 
 				    (mem_guards_of_funcall_arg_list sslv lparam) in

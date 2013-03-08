@@ -63,9 +63,9 @@ let make_size_locvar ( l : locvar ) (mid : global_mem_manager ) ( block_size : n
     Nts_generic.make_nts_genvar lsize_name NtsIntType
   in
   let id_seg = Nts_generic.make_nts_int_cst id_seg in
-  let affect_id_seg = Nts_generic.affect_aexpr_to_nts_var 
+  let affect_id_seg = Nts_generic.affect_aexpr_to_nts_genrel_var 
     cnt_lbase id_seg in
-  let affect_size = Nts_generic.affect_aexpr_to_nts_var 
+  let affect_size = Nts_generic.affect_aexpr_to_nts_genrel_var 
     cnt_lsize block_size in
   let affect_list = (affect_id_seg::[])
   in
@@ -77,6 +77,16 @@ let make_size_locvar ( l : locvar ) (mid : global_mem_manager ) ( block_size : n
   *)
 
 
+
+(** Performs the same task as above but returns a genrel_gard instead of
+a list of both genrel.*)
+
+let make_size_locvar_genrel ( l : locvar ) (mid : global_mem_manager ) ( block_size : nts_genrel_arithm_exp) =
+  let ls = make_size_locvar l mid block_size in
+  match ls with 
+    a::(b::[]) -> 
+      Nts_generic.and_of_genrel a b
+  | _ -> assert false
 
 
 

@@ -25,6 +25,22 @@ open Compilation_utils_types
 
 
 
+
+
+
+let valid_name_of_var (vname : string ) =
+  "validity__"^vname^"_"
+
+let offset_name_of_var (vname : string ) =
+  "offset__"^vname^"_"
+
+let make_ntsvars_of_ptrvar (vname : string ) =
+  let val_name = valid_name_of_var vname in
+  let offset_name = offset_name_of_var vname in
+  (NtsGenVar(NtsVar(val_name,NtsIntType),NtsUnPrimed))::(NtsGenVar(NtsVar(offset_name,NtsIntType),NtsUnPrimed)::[])
+
+
+
 let valid_sym_cscal_sslv sslv (exp : c_scal ) =
   valid_sym_cscal sslv.validinfos sslv.ssl_part exp
 
