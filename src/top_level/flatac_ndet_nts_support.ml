@@ -167,26 +167,32 @@ let rec get_set_of_modified_vars_ndet_cnt_bool term folder_set =
     get_set_of_modified_vars_ndet_cnt_bool ndd vg
 
 
-(*
+
 let get_list_of_modified_varsnd_translabel nd_genrel =
-  let accu = Vars_acc.empty in
+  let accu = Vars_acc.empty 
+  in
   let rec collect_vars t acc =
     match t with
-      ND_CntGenGuard () ->
+      ND_CntGenGuard (nd_guard) -> 
+	get_set_of_modified_vars_ndet_cnt_bool nd_guard acc
 
-    | ND_CntGenGuardIf ndet_supp_cnt_genrel
-    | ND_CntGenGuardElse of ndet_supp_cnt_genrel
+    | ND_CntGenGuardIf(ndguard) 
+    | ND_CntGenGuardElse(ndguard) 
+	-> 
+       get_set_of_modified_vars_ndet_cnt_bool ndguard acc
 	
     | ND_CntGenCall ( _, Some(ret_lhs_vars) , _ ) 
       -> 
       begin
-	List.iter (fun s -> Vars_acc.add s acc) ret_lhs_vars
+	let accu = List.fold_left (fun accu elem -> Vars_acc.add elem accu) acc ret_lhs_vars in
+	accu
       end
 				     				     
     | ND_CntGenHavoc _ -> acc 
-*)		     
-
-
+		     
+  in
+  collect_vars nd_genrel accu
+  
 
 (* this method is used to compute the set of counter variables who are
    assigned a new value*)
