@@ -112,7 +112,7 @@ let decl_and_affect_cst_char_star
 	    sslv;*)
 	  let update_var_list = Guard_of_mem_acces.make_size_locvar_genrel lvar
 	    mid  mem_size in
-	  let update_var_list = Nts_generic.make_guard_of_relation 
+	  let update_var_list = Flatac_ndet_nts_support.make_nd_guard_of_det_relation 
 	    update_var_list
 	  in
 	  ((sslv,(update_var_list::[]))::[])

@@ -69,6 +69,24 @@ let aterm_uop_ndet_supp_cnt_val (operator : nts_gen_arithm_unop ) t =
     let typeofaop = type_of_ndet_supp_cnt_val_shallow t in
     DetNdetUOp(operator,t,typeofaop)
 
+
+let add_nd_arithm_expr eg ed =
+  aterm_binop_ndet_supp_cnt_val Nts_types.CntGenSum eg ed
+
+let sub_nd_arithm_expr eg ed =
+  aterm_binop_ndet_supp_cnt_val Nts_types.CntGenMinus eg ed
+
+let mul_nd_arithm_expr eg ed =
+   aterm_binop_ndet_supp_cnt_val Nts_types.CntGenProd eg ed
+
+let div_nd_arithm_expr eg ed =
+  aterm_binop_ndet_supp_cnt_val Nts_types.CntGenDiv eg ed
+
+let mod_nd_arithm_expr eg ed =
+  aterm_binop_ndet_supp_cnt_val Nts_types.CntGenMod eg ed
+
+ 
+
 let bterm_genrel_comp rel_binop nd_vall nd_valr =
   ND_CntGenRelComp(rel_binop,nd_vall,nd_valr)
 
@@ -81,6 +99,74 @@ let neg_bterm bt =
   | _ -> ND_CntGenNot(bt)
 
 
+let guard_nd_lt_aexpr vg vd =
+  bterm_genrel_comp Nts_types.CntLt vg vd
+
+let guard_nd_gt_aexpr vg vd =
+  bterm_genrel_comp Nts_types.CntGt vg vd
+
+let guard_nd_leq_aexpr vg vd =
+  bterm_genrel_comp Nts_types.CntLeq vg vd
+
+let guard_nd_geq_aexpr vg vd =
+  bterm_genrel_comp Nts_types.CntGeq vg vd
+
+let guard_nd_eq_aexpr vg vd =
+  bterm_genrel_comp Nts_types.CntEq vg vd
+
+let guard_nd_neq_aexpr vg vd =
+  bterm_genrel_comp Nts_types.CntNeq vg vd
+
+
+(** Affectations of arithmetical expressions to variables*)
+
+let det_ndet_leaf_aexp aexp =
+  match aexp with
+   DetAVal(_) -> `Nts_Det
+  | NDetAVal(_) -> `Nts_NDet 
+  | _ -> `Nts_Non_Leaf
+
+let make_det_ndet_genrel dettype genrel_expr_var =
+  match dettype with
+    `Nts_Det -> DetAVal(genrel_expr_var)
+  | `Nts_NDet -> NDetAVal(genrel_expr_var)
+  | _ -> assert false
+
+let make_affect_to_var_from_nd_exp nd_aexpr_var rhs_expr =
+  match nd_aexpr_var with
+    DetAVal(CntGenVar(v) )  
+  | NDetAVal(CntGenVar(v) ) -> 
+    begin
+      let in_exp = Nts_generic.primerized_nts_var v in
+      let det_type = det_ndet_leaf_aexp nd_aexpr_var
+      in 
+      let new_lhs = make_det_ndet_genrel det_type (CntGenVar(in_exp)) in
+      ND_CntGenRelComp(Nts_types.CntEq,new_lhs,rhs_expr)
+    end
+  | _ -> assert false
+
+
+let and_of_nd_genrel bg bd =
+  ND_CntGenRel(CntGenBAnd,bg,bd)
+
+let or_of_nd_genrel bg bd =
+   ND_CntGenRel(CntGenBOr,bg,bd)
+  
+
+(** Making different types of guards from relations :
+Both deterministic and non deterministic ones*)
+let make_nd_guard_of_det_relation grel =
+  ND_CntGenGuard(ND_Det_GenRel(grel))
+
+let make_nd_guard_of_relation nbool =
+  ND_CntGenGuard(nbool)
+    
+let make_nd_guard_if nbool =
+  ND_CntGenGuardIf(nbool)
+    
+let make_nd_guard_else nbool =
+  ND_CntGenGuardElse(nbool)
+    
 
 let arithm_value_of_ndsupport_or_fails v =
   match v with
@@ -92,6 +178,41 @@ let is_val_det v =
   match v with
     DetAVal(_) -> true
   | _ -> false
+
+
+let shallow_neg_nd_genrel gr =
+  match gr with
+    ND_CntGenTrue ->  ND_CntGenFalse
+  | ND_CntGenFalse ->  ND_CntGenTrue
+  | ND_CntGenDK ->  ND_CntGenDK
+  | ND_CntGenNot(b) -> b
+  | _ -> ND_CntGenNot(gr)
+    
+
+let  neg_of_nd_genrel gr =
+  match gr with
+    ND_CntGenTrue ->  ND_CntGenFalse
+  | ND_CntGenFalse ->  ND_CntGenTrue
+  | ND_CntGenDK ->  ND_CntGenDK
+  | ND_CntGenNot(b) -> b
+  | ND_CntGenRelComp (bop, tg,td) -> 
+    begin
+      let neg_bop = Nts_generic.neg_cnt_binop bop in
+      ND_CntGenRelComp (neg_bop, tg,td)
+    end
+  | ND_CntGenRel ( bool_op , bg , bd) ->
+    begin
+      let neg_bop = Nts_generic.neg_bool_binop bool_op in
+      let nbg = shallow_neg_nd_genrel bg in
+      let nbd = shallow_neg_nd_genrel bd in
+      ND_CntGenRel ( neg_bop , nbg , nbd)
+    end
+  | ND_Det_GenRel(_) as b ->  ND_CntGenNot(b)
+  
+  
+
+
+
 
 
 (*
@@ -126,6 +247,9 @@ let rec pprint_val value =
 module Vars_acc = Nts_generic.Vars_acc
 
 
+
+
+(** Gets the collection of primed variables in a flatac_ndet_nts_arithm expression *)
 let rec primed_vars_of_ndet_cnt_val term folder_set =
   match term with
     NDetAVal(aexp) | DetAVal (aexp) ->
@@ -147,7 +271,7 @@ let rec primed_vars_of_ndet_cnt_val term folder_set =
   | CntNdet -> folder_set
 
 
-
+(** Gets the collection of primed variables in a c_bool_ expression ... *)
 let rec get_set_of_modified_vars_ndet_cnt_bool term folder_set =
   match term with 
     ND_CntGenTrue
@@ -167,6 +291,8 @@ let rec get_set_of_modified_vars_ndet_cnt_bool term folder_set =
     get_set_of_modified_vars_ndet_cnt_bool ndd vg
 
 
+(** GEts the collection of primed variables in all types of guards,
+using a recursive descent, calls the functions above.*)
 
 let get_list_of_modified_varsnd_translabel nd_genrel =
   let accu = Vars_acc.empty 
