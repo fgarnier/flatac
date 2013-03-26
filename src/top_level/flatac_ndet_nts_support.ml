@@ -118,6 +118,19 @@ let guard_nd_neq_aexpr vg vd =
   bterm_genrel_comp Nts_types.CntNeq vg vd
 
 
+let guard_nd_gt_zero arg = 
+  bterm_genrel_comp Nts_types.CntGt arg (DetAVal(Nts_generic.zero))
+
+let guard_nd_geq_zero arg = 
+  bterm_genrel_comp Nts_types.CntGeq arg (DetAVal(Nts_generic.zero))
+
+let guard_nd_lt_zero arg = 
+  bterm_genrel_comp Nts_types.CntLt arg (DetAVal(Nts_generic.zero))
+
+let guard_nd_leq_zero arg = 
+  bterm_genrel_comp Nts_types.CntLeq arg (DetAVal(Nts_generic.zero))
+
+
 (** Affectations of arithmetical expressions to variables*)
 
 let det_ndet_leaf_aexp aexp =
@@ -150,8 +163,15 @@ let and_of_nd_genrel bg bd =
   ND_CntGenRel(CntGenBAnd,bg,bd)
 
 let or_of_nd_genrel bg bd =
-   ND_CntGenRel(CntGenBOr,bg,bd)
+  ND_CntGenRel(CntGenBOr,bg,bd)
   
+
+
+(** Encapsulates a deterministic relation into a Non deterministic
+constructor for non determisism support*)
+let make_nd_cnt_bool_of_nts_genrel rel =
+  ND_Det_GenRel(rel)
+
 
 (** Making different types of guards from relations :
 Both deterministic and non deterministic ones*)
@@ -290,7 +310,11 @@ let rec get_set_of_modified_vars_ndet_cnt_bool term folder_set =
     in
     get_set_of_modified_vars_ndet_cnt_bool ndd vg
 
-
+  | ND_Det_GenRel(gr) ->
+    let vin = 
+      Nts_generic.primed_vars_of_genrel gr in
+      Vars_acc.union folder_set vin
+    
 (** GEts the collection of primed variables in all types of guards,
 using a recursive descent, calls the functions above.*)
 
@@ -313,12 +337,58 @@ let get_list_of_modified_varsnd_translabel nd_genrel =
 	let accu = List.fold_left (fun accu elem -> Vars_acc.add elem accu) acc ret_lhs_vars in
 	accu
       end
-				     				     
+    | ND_CntGenCall ( _, None, _ ) -> acc
     | ND_CntGenHavoc _ -> acc 
 		     
   in
   collect_vars nd_genrel accu
   
+
+
+
+let valid_name_of_var (vname : string ) =
+  "validity__"^vname^"_"
+
+let offset_name_of_var (vname : string ) =
+  "offset__"^vname^"_"
+
+let make_ntsvars_of_ptrvar (vname : string ) =
+  let val_name = valid_name_of_var vname in
+  let offset_name = offset_name_of_var vname in
+  (NtsGenVar(NtsVar(val_name,NtsIntType),NtsUnPrimed))::((NtsGenVar(NtsVar(offset_name,NtsIntType),NtsUnPrimed))::[])
+    
+     
+let make_ntsvars_of_intvars (vname : string) =
+  let val_name = valid_name_of_var vname in
+  (NtsGenVar(NtsVar(vname,NtsIntType),NtsUnPrimed)::((NtsGenVar(NtsVar(val_name,NtsIntType),NtsUnPrimed))::[]))
+    
+    
+let concat_if_first_arg_nonzero s1 s2 =
+  if String.length s1 != 0
+  then s1^s2
+  else ""
+
+let concat_comma_both_arg_non_empty s1 s2 =
+  if String.length s1 != 0 then
+    begin
+      if String.length s2 != 0 then
+	s1^","^s2
+      else
+	s1
+    end
+  else
+    s2
+
+let pprint_typeinfo_int_nts_var_list l =
+  let is_int_var = function
+  NtsVar(_,NtsIntType) -> true
+    | _ ->false
+  in
+  let int_var_list = List.filter ( is_int_var) l in
+  Nts.pprint_nts_var_list int_var_list
+    
+
+
 
 (* this method is used to compute the set of counter variables who are
    assigned a new value*)

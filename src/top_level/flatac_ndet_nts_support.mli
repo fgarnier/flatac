@@ -86,17 +86,32 @@ val guard_nd_gt_aexpr :
   Flatac_ndet_nts_support_types.ndet_supp_cnt_bool
 
 
+val guard_nd_gt_zero : 
+  Flatac_ndet_nts_support_types.ndet_supp_cnt_val -> 
+  Flatac_ndet_nts_support_types.ndet_supp_cnt_bool
+
+val guard_nd_geq_zero : 
+  Flatac_ndet_nts_support_types.ndet_supp_cnt_val -> 
+  Flatac_ndet_nts_support_types.ndet_supp_cnt_bool
+
+val guard_nd_lt_zero : 
+  Flatac_ndet_nts_support_types.ndet_supp_cnt_val -> 
+  Flatac_ndet_nts_support_types.ndet_supp_cnt_bool
+
+val guard_nd_leq_zero : 
+  Flatac_ndet_nts_support_types.ndet_supp_cnt_val -> 
+  Flatac_ndet_nts_support_types.ndet_supp_cnt_bool
+
+
 val guard_nd_leq_aexpr :
   Flatac_ndet_nts_support_types.ndet_supp_cnt_val -> 
   Flatac_ndet_nts_support_types.ndet_supp_cnt_val ->
   Flatac_ndet_nts_support_types.ndet_supp_cnt_bool
 
-
 val guard_nd_geq_aexpr :
   Flatac_ndet_nts_support_types.ndet_supp_cnt_val -> 
   Flatac_ndet_nts_support_types.ndet_supp_cnt_val ->
   Flatac_ndet_nts_support_types.ndet_supp_cnt_bool
-
 
 val guard_nd_eq_aexpr :
   Flatac_ndet_nts_support_types.ndet_supp_cnt_val -> 
@@ -112,6 +127,7 @@ val guard_nd_neq_aexpr :
 (**
    Guard whose constraint is non-deterministic.
 *)
+
 val make_nd_guard_of_relation :
   Flatac_ndet_nts_support_types.ndet_supp_cnt_bool
   -> Flatac_ndet_nts_support_types.ndet_supp_nts_trans_label
@@ -119,6 +135,11 @@ val make_nd_guard_of_relation :
 (** Express a non deterministic guard whose boolean expression
     is fully deterministic.
 *)
+
+val make_nd_cnt_bool_of_nts_genrel :
+  Nts_types.nts_gen_relation -> 
+  Flatac_ndet_nts_support_types.ndet_supp_cnt_bool
+
 val make_nd_guard_of_det_relation : 
   Nts_types.nts_gen_relation ->  
   Flatac_ndet_nts_support_types.ndet_supp_nts_trans_label
@@ -174,3 +195,5 @@ val or_of_nd_genrel :
 val neg_of_nd_genrel :
   Flatac_ndet_nts_support_types.ndet_supp_cnt_bool -> 
   Flatac_ndet_nts_support_types.ndet_supp_cnt_bool
+
+
