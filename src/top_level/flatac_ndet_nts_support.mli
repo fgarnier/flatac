@@ -238,4 +238,9 @@ val make_nd_fun_call : string ->
 val havocize_var_list : Nts_types.nts_genrel_var list -> 
   Flatac_ndet_nts_support_types.ndet_supp_nts_trans_label
 
+(** Simplifies expressions, by removing some tautologies,
+    also simplifies Nts_types.genrel expressions if any.
+*)
 
+val nd_simplify_gen_rel : Flatac_ndet_nts_support_types.ndet_supp_cnt_bool
+  ->  Flatac_ndet_nts_support_types.ndet_supp_cnt_bool
