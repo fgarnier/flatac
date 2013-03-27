@@ -1361,13 +1361,12 @@ let next_on_ssl_nts (mid : global_mem_manager ) (sslv  ) (skind : Cil_types.stmt
 	      let ret_aff = 
 		Flatac_ndet_nts_support.make_affect_to_det_var_from_ndet_supp_cnt_val ret_var
 		  cnt_exp in
-		(*Nts_generic.affect_aexpr_to_nts_genrel_var ret_val
+	      (*Nts_generic.affect_aexpr_to_nts_genrel_var ret_val
 		cnt_exp in*)
 	      let cnt_aff_guard = 
 		Flatac_ndet_nts_support.make_nd_guard_of_relation 
 		  ret_aff in
-		(*CntAffect(NtsIVar(("ret_val_")),cnt_exp) in*)
-	    
+	      (*CntAffect(NtsIVar(("ret_val_")),cnt_exp) in*)
 	      (sslv , (cnt_aff_guard::[])) :: []
 	    end
       end
