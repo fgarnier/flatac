@@ -162,6 +162,12 @@ val neg_bterm :
     side variable. The left hand side variable is primed
     in the process.
 *)
+
+val make_affect_to_det_var_from_ndet_supp_cnt_val :
+  Nts_types.nts_genrel_var ->
+  Flatac_ndet_nts_support_types.ndet_supp_cnt_val ->
+  Flatac_ndet_nts_support_types.ndet_supp_cnt_bool
+
 val make_affect_to_var_from_nd_exp:
   Flatac_ndet_nts_support_types.ndet_supp_cnt_val ->
   Flatac_ndet_nts_support_types.ndet_supp_cnt_val ->
@@ -195,5 +201,41 @@ val or_of_nd_genrel :
 val neg_of_nd_genrel :
   Flatac_ndet_nts_support_types.ndet_supp_cnt_bool -> 
   Flatac_ndet_nts_support_types.ndet_supp_cnt_bool
+
+
+
+
+
+
+(*
+let valid_name_of_var (vname : string ) =
+  "validity__"^vname^"_"
+
+let offset_name_of_var (vname : string ) =
+  "offset__"^vname^"_"
+*)
+
+(** creates an offset name and a validity var name from a pointer variable name*)
+val make_ntsvars_of_ptrvar : string -> Nts_types.nts_genrel_var list 
+ 
+  
+val make_ntsvars_of_intvars : string ->  Nts_types.nts_genrel_var list
+  
+    
+val concat_if_first_arg_nonzero : string -> string -> string
+ 
+val concat_comma_both_arg_non_empty : string -> string -> string
+ 
+val pprint_typeinfo_int_nts_var_list : Nts_types.nts_var list -> string
+ 
+    
+val make_nd_fun_call : string -> 
+  Nts_types.nts_genrel_var list option
+  -> Flatac_ndet_nts_support_types.ndet_supp_cnt_val list
+  -> Flatac_ndet_nts_support_types.ndet_supp_nts_trans_label
+
+
+val havocize_var_list : Nts_types.nts_genrel_var list -> 
+  Flatac_ndet_nts_support_types.ndet_supp_nts_trans_label
 
 

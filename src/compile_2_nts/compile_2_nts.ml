@@ -34,11 +34,24 @@ let valid_name_of_var (vname : string ) =
 let offset_name_of_var (vname : string ) =
   "offset__"^vname^"_"
 
+
+let valid_var_of_varname vname =
+  let vnamev = valid_name_of_var vname in
+  NtsGenVar(NtsVar(vnamev,NtsIntType),NtsUnPrimed)
+
+let offset_var_of_varname vname =
+  let offset_name = offset_name_of_var vname in
+  NtsGenVar(NtsVar(offset_name,NtsIntType),NtsUnPrimed)
+
 let make_ntsvars_of_ptrvar (vname : string ) =
   let val_name = valid_name_of_var vname in
   let offset_name = offset_name_of_var vname in
-  (NtsGenVar(NtsVar(val_name,NtsIntType),NtsUnPrimed))::(NtsGenVar(NtsVar(offset_name,NtsIntType),NtsUnPrimed)::[])
-
+  let vvar = valid_var_of_varname val_name in
+  let off_var = offset_var_of_varname vname in
+  vvar::(off_var::[])
+ 
+(* (NtsGenVar(NtsVar(val_name,NtsIntType),NtsUnPrimed))::(NtsGenVar(NtsVar(offset_name,NtsIntType),NtsUnPrimed)::[])
+*)
 
 
 let valid_sym_cscal_sslv sslv (exp : c_scal ) =

@@ -1,6 +1,11 @@
 val valid_name_of_var : string -> string
 val offset_name_of_var : string -> string
+
+val valid_var_of_varname : string -> Nts_types.nts_genrel_var
+ 
+val offset_var_of_varname : string -> Nts_types.nts_genrel_var
 val make_ntsvars_of_ptrvar : string -> Nts_types.nts_genrel_var list
+
 val valid_sym_cscal_sslv :
   Ssl_valid_abs_dom_types.ssl_validity_absdom ->
   Intermediate_language_types.c_scal -> Var_validity_types.var_valid

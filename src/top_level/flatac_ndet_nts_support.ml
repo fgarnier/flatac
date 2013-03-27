@@ -118,6 +118,25 @@ let guard_nd_neq_aexpr vg vd =
   bterm_genrel_comp Nts_types.CntNeq vg vd
 
 
+
+(** As guards have been expressed, one can define here
+function that allow to express assignations of values to
+varibles*)
+
+(*
+val make_affect_to_det_var_from_ndet_supp_cnt_val :
+  Nts_generic.nts_genrel_var ->
+  Flatac_ndet_nts_support_types.ndet_supp_cnt_val ->
+  Flatac_ndet_nts_support_types.ndet_supp_cnt_bool
+*)
+
+let make_affect_to_det_var_from_ndet_supp_cnt_val gvar nd_rhs =
+  let gvar = Nts_generic.primerized_nts_var gvar in
+  let nd_gvar = DetAVal(CntGenVar(gvar)) 
+  in guard_nd_eq_aexpr nd_gvar nd_rhs
+    
+
+
 let guard_nd_gt_zero arg = 
   bterm_genrel_comp Nts_types.CntGt arg (DetAVal(Nts_generic.zero))
 
@@ -346,6 +365,8 @@ let get_list_of_modified_varsnd_translabel nd_genrel =
 
 
 
+
+
 let valid_name_of_var (vname : string ) =
   "validity__"^vname^"_"
 
@@ -387,6 +408,27 @@ let pprint_typeinfo_int_nts_var_list l =
   let int_var_list = List.filter ( is_int_var) l in
   Nts.pprint_nts_var_list int_var_list
     
+
+let make_nd_fun_call fname ret_vlist arg_list =
+  ND_CntGenCall(fname,ret_vlist,arg_list)
+
+
+(** Return  havoc(vl') where vl' contains only one occurrence
+of each variable of vl. 
+*)
+
+let havocize_var_list (vl : Nts_types.nts_genrel_var list) =
+  let fold_list vacc var =
+    Nts_generic.Vars_acc.add var vacc
+  in
+  let vacc_uid = 
+    List.fold_left fold_list Nts_generic.Vars_acc.empty vl 
+  in
+  let vl = Nts_generic.Vars_acc.elements vacc_uid 
+  in
+  ND_CntGenHavoc(vl)
+
+
 
 
 

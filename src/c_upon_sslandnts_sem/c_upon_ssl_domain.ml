@@ -416,12 +416,12 @@ let free_upon_sslv (pvar : ptvar)(sslv : ssl_validity_absdom ) =
 	let eq_zero_guard = Nts_generic.guard_eq_aexpr offset_of_pvar
 	  (Nts_generic.make_nts_int_cst_of_int 0)
 	in
-	let eq_zero_transition =  Nts_generic.make_guard_of_relation 
+	let eq_zero_transition =   Flatac_ndet_nts_support.make_nd_guard_of_det_relation
 	  eq_zero_guard 
 	in
 	let non_zero_guard = Nts_generic.neg_of_genrel eq_zero_guard
 	in
-	let neq_zero_transition = Nts_generic.make_guard_of_relation
+	let neq_zero_transition = Flatac_ndet_nts_support.make_nd_guard_of_det_relation
 	  non_zero_guard
 	in
 	let fucked_up_case =  create_validity_abstdomain () in
@@ -1030,9 +1030,17 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 				  let arg_nts_list =
 				     compile_param_list_2_cnt_list sslv lparam in
 				   (* List.map ( fun s-> interpret_c_scal_to_cnt sslv.ssl_part s ) *)
-				  let nts_lvals = Nts.make_ntsvars_of_intvars v.vname in
+				  let nts_lvals = 
+				    Flatac_ndet_nts_support.make_ntsvars_of_intvars v.vname 
+				  in
+				  let nts_lvals = Some(nts_lvals) in
+				  let arg_list =  ndetval_list_of_il_arg_list
+				    arg_nts_list 
+				  in
 				  let cnt_trans_label = 
-				    CntFunCall(funname,Some(nts_lvals),arg_nts_list) in
+				    Flatac_ndet_nts_support.make_nd_fun_call funname nts_lvals arg_list 
+				  in
+				  (*  CntFunCall(funname,Some(nts_lvals),arg_nts_list) in*)
 				 (* let mem_access_trans_label =
 				    CntGuard((mem_guards_of_funcall_arg_list sslv lparam)) in
 				  let mem_access_failure_trans_label =
@@ -1041,10 +1049,17 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 
 				  let mem_access_cond = 
 				    (mem_guards_of_funcall_arg_list sslv lparam) in
-				  let mem_access_trans_label =
-				    CntGuard(mem_access_cond) in
+				  (*let mem_access_trans_label =
+				    CntGuard(mem_access_cond) in*)
+				  let mem_access_trans_label = 
+				    Flatac_ndet_nts_support.make_nd_guard_of_det_relation 
+				      mem_access_cond 
+				  in
+				  let mem_access_failure_cond =
+				    Nts_generic.neg_of_genrel mem_access_cond in
 				  let mem_access_failure_trans_label =
-				    CntGuard(CntNot(mem_access_cond)) in
+				    Flatac_ndet_nts_support.make_nd_guard_of_det_relation mem_access_failure_cond in
+				  (*  CntGuard(CntNot(mem_access_cond)) in *)
 				  let failure_absdom = create_validity_abstdomain () in
 				  set_heap_to_top failure_absdom.ssl_part;
 				  let failtransit = (failure_absdom,mem_access_failure_trans_label::[]) in
@@ -1052,7 +1067,7 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 			  
 				  
 				  let msg= 
-				    Format.sprintf "[next_on_ssl_instr] Integer type Var : %s = %s : %s \n[next_on_ssl_instr] argument list %s \n "  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype) (Nts.cnt_pprint_translabel cnt_trans_label ) in
+				    Format.sprintf "[next_on_ssl_instr] Integer type Var : %s = %s : %s \n[next_on_ssl_instr] argument list --- \n "  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype)  in (*(Nts.cnt_pprint_translabel cnt_trans_label) in*)
 				Format.printf "%s" msg;
 				 failtransit::((sslv,mem_access_trans_label::(cnt_trans_label::[]))::[])
 
@@ -1072,24 +1087,38 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 					  sslv lparam in
 				  
 				      let nts_lvals =
-					Compile_2_nts.make_ntsvars_of_intvars v.vname in
-				      let cnt_trans_label = 
-					CntGenCall(funname,Some(nts_lvals),arg_nts_list) in
+					Flatac_ndet_nts_support.make_ntsvars_of_intvars v.vname in
+				      let nts_lvals = Some(nts_lvals) in
+				      let arg_list = ndetval_list_of_il_arg_list
+					arg_nts_list  
+				      in
+				      let cnt_trans_label =
+					Flatac_ndet_nts_support.make_nd_fun_call funname nts_lvals arg_list in
+				      (*		CntGenCall(funname,Some(nts_lvals),arg_nts_list) in*)
 				            
-				  let mem_access_cond = 
-				    (mem_guards_of_funcall_arg_list sslv lparam) in
-				  let mem_access_trans_label =
-				    CntGuard(mem_access_cond) in
-				  let mem_access_failure_trans_label =
-				    CntGuard(CntNot(mem_access_cond)) in
-				  let failure_absdom = create_validity_abstdomain () in
-				  set_heap_to_top failure_absdom.ssl_part;
-				  let failtransit = 
-				    (failure_absdom,mem_access_failure_trans_label::[]) in				  			  
-				  let msg= 
-				    Format.sprintf "[next_on_ssl_instr] Integer type Var : %s = %s : %s \n[next_on_ssl_instr] argument list %s \n "  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype) (Nts.cnt_pprint_translabel cnt_trans_label ) in
-				  Format.printf "%s" msg;
-				  failtransit::((sslv,mem_access_trans_label::(cnt_trans_label::[]))::[])
+				      let mem_access_cond = 
+					(mem_guards_of_funcall_arg_list sslv lparam) in
+				      let mem_access_trans_label =
+					Flatac_ndet_nts_support.make_nd_guard_of_det_relation 
+					  mem_access_cond 
+					  
+				      in
+				      let mem_access_failure_cond =
+					Nts_generic.neg_of_genrel mem_access_cond in
+				      let mem_access_failure_trans_label =
+					Flatac_ndet_nts_support.make_nd_guard_of_det_relation 
+					  mem_access_failure_cond in
+				      
+				      (*let mem_access_failure_trans_label =
+					CntGuard(CntNot(mem_access_cond)) in*)
+				      let failure_absdom = create_validity_abstdomain () in
+				      set_heap_to_top failure_absdom.ssl_part;
+				      let failtransit = 
+					(failure_absdom,mem_access_failure_trans_label::[]) in				  			  
+				      let msg= 
+					Format.sprintf "[next_on_ssl_instr] Integer type Var : %s = %s : %s \n[next_on_ssl_instr] argument list ----\n "  (v.vname) (pprint_cil_exp exp1)( pprint_ciltypes v.vtype) in
+				      Format.printf "%s" msg;
+				      failtransit::((sslv,mem_access_trans_label::(cnt_trans_label::[]))::[])
 				   
 
 				    | None ->
@@ -1135,7 +1164,7 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 		  begin
 		  (*  let msg = Format.sprintf "[!!! next_on_ssl_instr !!!] The lhs is not a variable : ? = %s, leaving absdomain untouched \n" (pprint_cil_exp exp1 ) in
 		    Format.printf "%s %!" msg;*)
-		    Format.printf "[!!! next_on_ssl_instr !!!] The lhs is not a variable : ? = %s, leaving absdomain untouched \n";
+		   
 		    (sslv,[])::[]
 		  end 
 	  (** Here the returned value is not a variable,
@@ -1188,21 +1217,29 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 			    TFun(TVoid(_),_,_,_) -> None
 			    | _ -> let vname = 
 				     Ast_goodies.name_of_non_assigned_ret_val () in
-				   let nts_lvals = Nts.make_ntsvars_of_intvars vname in
+				   let nts_lvals = Flatac_ndet_nts_support.make_ntsvars_of_intvars vname in
 				   Some(nts_lvals)
 			);
 		      in
 		      let mem_access_cond = 
 			(mem_guards_of_funcall_arg_list sslv lparam) in
+		      let arg_list = ndetval_list_of_il_arg_list arg_nts_list
+		      in
 		      let cnt_trans_label = 
-			CntFunCall(funname,ret_nts_var_opt,arg_nts_list) in
+			Flatac_ndet_nts_support.make_nd_fun_call 
+			  funname ret_nts_var_opt arg_list in
+			
 		      let mem_access_trans_label =
-			CntGuard(mem_access_cond) in
+			Flatac_ndet_nts_support.make_nd_guard_of_det_relation
+			  mem_access_cond in
 		      let valid_transit = 
 			(sslv,cnt_trans_label::(mem_access_trans_label::[])) in
 		      
+		      let mem_access_failure_cond = Nts_generic.neg_of_genrel
+			mem_access_cond in
 		      let mem_access_failure_trans_label =
-			CntGuard(CntNot(mem_access_cond)) in
+			Flatac_ndet_nts_support.make_nd_guard_of_det_relation
+			  mem_access_failure_cond in
 		      let failure_absdom = create_validity_abstdomain () in
 		      set_heap_to_top failure_absdom.ssl_part;
 		      let failtransit = (failure_absdom,mem_access_failure_trans_label::[]) in				 
@@ -1211,7 +1248,7 @@ let next_on_ssl_instr  (mid : global_mem_manager ) ( sslv : ssl_validity_absdom)
 		      (*********************Fin de bloc à factoriser *****************************)
 
 		      let msg= 
-			Format.sprintf "[next_on_ssl_instr] Call to function: %s : %s \n[next_on_ssl_instr] argument list %s \n "  funname ( pprint_ciltypes f.vtype) (Nts.cnt_pprint_translabel cnt_trans_label ) in
+			Format.sprintf "[next_on_ssl_instr] Call to function: %s : %s \n[next_on_ssl_instr] argument list---- \n "  funname ( pprint_ciltypes f.vtype) (*(Nts.cnt_pprint_translabel cnt_trans_label )*) in
 		      Format.printf "%s" msg;
 		       failtransit::(valid_transit::[])
 		   
@@ -1262,24 +1299,76 @@ let next_on_ssl_nts (mid : global_mem_manager ) (sslv  ) (skind : Cil_types.stmt
 	      begin
 		let ptr_offset =  cil_expr_2_ptr  expr in
 		let cnt_offset = interpret_c_ptrexp_to_cnt sslv.ssl_part ptr_offset in
-		let cnt_affect_offset = CntAffect(NtsIVar(("offset__ret_val__")),cnt_offset) in
-	     
+		(*let cnt_affect_offset = CntAffect(NtsIVar(("offset__ret_val__")),cnt_offset) in*)
+		let ptr_offset_var = 
+		  Compile_2_nts.offset_var_of_varname "ret_val_" in
+		let valid_ret_var = Compile_2_nts.valid_var_of_varname 
+		  "ret_val_" in
+		let cnt_affect_offset = 
+		  Flatac_ndet_nts_support.make_affect_to_det_var_from_ndet_supp_cnt_val ptr_offset_var 
+		    cnt_offset
+		in
 		let valid_sym_expr = valid_sym_ptrexp_sslv sslv ptr_offset in
 		let valid_of_ret = 
 		  (match valid_sym_expr with
-		      DKvarValid -> CntHavoc(NtsIVar("validity__ret_val__")::[])
-		    | TruevarValid -> CntAffect(NtsIVar("validity__ret_val__"),CntCst(My_bigint.one))
-		    | FalsevarValid -> CntAffect(NtsIVar("validity__ret_val__"),CntCst(My_bigint.zero))
+		      DKvarValid ->
+			let tlabel = 
+			  Flatac_ndet_nts_support.havocize_var_list 
+			    (valid_ret_var::[]) in
+			tlabel::[]
+		  (* CntHavoc(NtsIVar("validity__ret_val__")::[])*)
+		    
+		  | TruevarValid -> 
+		    begin
+		      let aff = 
+			Nts_generic.affect_aexpr_to_nts_genrel_var 
+			  valid_ret_var Nts_generic.one 
+		      in
+		      let aff_nd_guard = 
+			Flatac_ndet_nts_support.make_nd_guard_of_det_relation 
+			  aff 
+		      in
+		      aff_nd_guard::[]
+
+		    (*CntAffect(NtsIVar("validity__ret_val__"),CntCst(My_bigint.one))*)
+		    end
+		  | FalsevarValid -> 
+		    begin
+		      let aff = 
+			Nts_generic.affect_aexpr_to_nts_genrel_var 
+			  valid_ret_var Nts_generic.zero 
+		      in
+		      let aff_nd_guard = 
+			Flatac_ndet_nts_support.make_nd_guard_of_det_relation 
+			  aff 
+		      in
+		      aff_nd_guard::[]
+		  (*CntAffect(NtsIVar("validity__ret_val__"),CntCst(My_bigint.zero)) *)
+		    end
 		  )
 		in  
-		(sslv , (valid_of_ret::(cnt_affect_offset::[]))) :: []
+		let cnt_guard_aff_offset = 
+		  Flatac_ndet_nts_support.make_nd_guard_of_relation
+		    cnt_affect_offset 
+		in
+		(sslv , (valid_of_ret@(cnt_guard_aff_offset::[]))) :: []
 	      end
 	  | _->
 	    begin
 	      let cnt_exp =  compile_cil_exp_2_cnt sslv expr in
-	      let cnt_affect = CntAffect(NtsIVar(("ret_val_")),cnt_exp) in
+	      
+	      let ret_var = Nts_generic.make_nts_genvar "ret_val_" NtsIntType in
+	      let ret_aff = 
+		Flatac_ndet_nts_support.make_affect_to_det_var_from_ndet_supp_cnt_val ret_var
+		  cnt_exp in
+		(*Nts_generic.affect_aexpr_to_nts_genrel_var ret_val
+		cnt_exp in*)
+	      let cnt_aff_guard = 
+		Flatac_ndet_nts_support.make_nd_guard_of_relation 
+		  ret_aff in
+		(*CntAffect(NtsIVar(("ret_val_")),cnt_exp) in*)
 	    
-	      (sslv , (cnt_affect::[])) :: []
+	      (sslv , (cnt_aff_guard::[])) :: []
 	    end
       end
 
