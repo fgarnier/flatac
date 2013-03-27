@@ -38,6 +38,8 @@ open Var_registration
 open Self
 open Ast_goodies
 open Compile_2_nts
+open Flatac_ndet_nts_support_types
+open Flatac_ndet_nts_support
 (*open Guard_of_mem_access*)
 
 (* This function is used to compute the guard of the default
@@ -68,7 +70,8 @@ let compute_default_case_guard sslv
   (* On compiles the switch parameter expression once for all*)
   let guard_lhs = compile_cil_exp_2_cnt sslv expr_switch_param 
   in
-  let rhs_case_condition_folder (local_guard : cnt_bool ) 
+  let rhs_case_condition_folder 
+      (local_guard : Flatac_ndet_nts_support_types.ndet_supp_cnt_bool ) 
       (rhs : Cil_types.label)
       =
     match rhs with 
@@ -76,13 +79,17 @@ let compute_default_case_guard sslv
 	  let rhs_compiled = 
 	    compile_cil_exp_2_cnt sslv rhs_exp
 	  in
+	  let neq_lhs_rhs = 
+	    Flatac_ndet_nts_support.guard_nd_neq_aexpr 
+	      guard_lhs rhs_compiled in
 	  let local_guard = 
-	    CntBAnd(local_guard,CntBool(CntNeq,guard_lhs,rhs_compiled))
+	    Flatac_ndet_nts_support.and_of_nd_genrel local_guard neq_lhs_rhs
+	  (*CntBAnd(local_guard,CntBool(CntNeq,guard_lhs,rhs_compiled))*)
 	  in local_guard
 	  
       | _ -> local_guard
   in
-  let guard_folder ( guard : cnt_bool) (stmt : Cil_types.stmt) =
+  let guard_folder ( guard : ndet_supp_cnt_bool) (stmt : Cil_types.stmt) =
     if (stmt_has_default_label stmt) 
     then
       begin
@@ -102,7 +109,7 @@ let compute_default_case_guard sslv
       end
   in
   let default_case_guard = 
-    List.fold_left guard_folder CntBTrue stmt_succs 
+    List.fold_left guard_folder ND_CntGenTrue stmt_succs 
   in 
   default_case_guard (* This value should be the expression
 		     of the default guard.*)

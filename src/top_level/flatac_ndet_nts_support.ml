@@ -432,6 +432,65 @@ let havocize_var_list (vl : Nts_types.nts_genrel_var list) =
 
 
 
+(* Syntactic simplification of boolean expressions *)
+  let nd_simplify_genrel_bottom_top e  = 
+    match e with
+      | ND_CntGenRel(CntGenBAnd,ND_CntGenFalse,_) -> ND_CntGenFalse
+      | ND_CntGenRel(CntGenBAnd,_,ND_CntGenFalse) -> ND_CntGenFalse
+      | ND_CntGenRel(CntGenBAnd,ND_CntGenTrue,a) ->  a
+      | ND_CntGenRel(CntGenBAnd,a,ND_CntGenTrue) ->  a
+      | ND_CntGenNot(ND_CntGenTrue) -> ND_CntGenFalse
+      | ND_CntGenNot(ND_CntGenFalse) -> ND_CntGenTrue
+      | ND_CntGenNot(ND_CntGenNot(a)) -> a
+      | ND_CntGenRel(CntGenBOr,_,ND_CntGenTrue) -> ND_CntGenTrue
+      | ND_CntGenRel(CntGenBOr,ND_CntGenTrue,_) -> ND_CntGenTrue
+      | ND_CntGenNot(ND_CntGenRelComp(CntEq,a,b)) -> (ND_CntGenRelComp(CntNeq,a,b))
+      | ND_CntGenNot(ND_CntGenRelComp(CntNeq,a,b)) -> (ND_CntGenRelComp(CntEq,a,b))
+      | ND_CntGenNot(ND_CntGenRelComp(CntLt,a,b)) -> (ND_CntGenRelComp(CntGeq,a,b))
+      | ND_CntGenNot(ND_CntGenRelComp(CntGt,a,b)) -> (ND_CntGenRelComp(CntLeq,a,b))
+      | ND_CntGenNot(ND_CntGenRelComp(CntLeq,a,b)) -> (ND_CntGenRelComp(CntGt,a,b))
+      | ND_CntGenNot(ND_CntGenRelComp(CntGeq,a,b)) -> (ND_CntGenRelComp(CntLt,a,b))	
+      | _ -> e
+
+	
+  let rec nd_simplify_gen_rel e =
+    match e with
+      | ND_CntGenRel(CntGenBAnd,ND_CntGenFalse,_) -> ND_CntGenFalse
+      | ND_CntGenRel(CntGenBAnd,_,ND_CntGenFalse) -> ND_CntGenFalse
+      
+      | ND_CntGenRel(CntGenBOr,ND_CntGenTrue,_) -> ND_CntGenTrue
+      | ND_CntGenRel(CntGenBOr,_,ND_CntGenTrue) -> ND_CntGenTrue	
+      
+      
+      | ND_CntGenNot(ND_CntGenNot(a)) -> 
+	nd_simplify_gen_rel a
+
+      | ND_CntGenRel(CntGenBAnd,a,b) -> 
+	let fg = nd_simplify_gen_rel a in
+	let fd = nd_simplify_gen_rel b in
+	nd_simplify_genrel_bottom_top (ND_CntGenRel(CntGenBAnd,fg,fd))
+	
+	  
+      | ND_CntGenRel(CntGenBOr,a,b) -> 
+	let fg = nd_simplify_gen_rel a in
+	let fd = nd_simplify_gen_rel b in
+	nd_simplify_genrel_bottom_top (ND_CntGenRel(CntGenBOr,fg,fd))		  
+      | ND_CntGenNot(a) -> 
+	let a = nd_simplify_gen_rel a in
+	nd_simplify_genrel_bottom_top (ND_CntGenNot(a))
+
+      | ND_Det_GenRel( genrel ) -> 
+	let in_term = Nts_generic.simplify_gen_rel genrel in
+	ND_Det_GenRel( in_term )
+			 
+      | ND_CntGenTrue -> ND_CntGenTrue
+      | ND_CntGenFalse -> ND_CntGenFalse
+	
+      | _ -> e
+
+
+
+
 (* this method is used to compute the set of counter variables who are
    assigned a new value*)
 (*

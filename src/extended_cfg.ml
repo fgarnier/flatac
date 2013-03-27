@@ -523,11 +523,11 @@ struct
     method private register_if_statement_successors 
       current_node ((abs_true,trans_true),(abs_false,trans_false),(abs_mem_broken,trans_mem_broken)) 
       (true_stmt_opt,false_stmt_opt) =
-      
+      (*
     Format.fprintf Ast_goodies.debug_out "\n \n [Register if statement] abs_true %s \n transtrue : %s \n" (front_end#pretty abs_true) (front_end#pretty_label trans_true);
     Format.fprintf Ast_goodies.debug_out "[Register if statement] abs_false %s \n transfalse : %s \n"  (front_end#pretty abs_false) (front_end#pretty_label trans_false) ; 
     Format.fprintf Ast_goodies.debug_out "[Register if statement] abs_mem_broken %s \n trans_mem_broken %s \n \n"  (front_end#pretty abs_mem_broken) (front_end#pretty_label trans_mem_broken); 
-
+      *)
       match true_stmt_opt,false_stmt_opt with
 	  (None,None) ->
 	    
@@ -580,7 +580,7 @@ struct
 	| (Some(true_stmt),None) ->
 	  begin
 
-	     Format.fprintf Ast_goodies.debug_out "[If test, successors (Some(true_stmt),None) ] \n %!";
+	     (*Format.fprintf Ast_goodies.debug_out "[If test, successors (Some(true_stmt),None) ] \n %!"; *)
 	  (*four successors : test_true and valid_mem_op to true_stmt
 	      test_true and not valid_mem_op to (true_stmt , bot)
 	      test_false and valid_mem_op to (if_stmt.succs.nth 1, abs)
@@ -637,8 +637,8 @@ struct
 	    
 	| (None,Some(false_stmt)) ->
 	  begin
-	    Format.fprintf Ast_goodies.debug_out "[If test, successors (None,Some(false_stmt)) ]  \n %!";
-	      
+	    (*Format.fprintf Ast_goodies.debug_out "[If test, successors (None,Some(false_stmt)) ]  \n %!";
+	    *)
 
 	    let succs_mem_valid_stmt = List.nth current_node.statement.succs
 	      0
@@ -679,10 +679,10 @@ struct
 		fail_mem_invalid_stmt.skind
 	    in
 	  
-	    Format.fprintf Ast_goodies.debug_out "\n \n [Register if statement : In If(None, Some(elseblock))] abs_true %s \n transtrue : %s \n" (front_end#pretty abs_true) (front_end#pretty_label trans_true);
+	  (*  Format.fprintf Ast_goodies.debug_out "\n \n [Register if statement : In If(None, Some(elseblock))] abs_true %s \n transtrue : %s \n" (front_end#pretty abs_true) (front_end#pretty_label trans_true);
 	    Format.fprintf Ast_goodies.debug_out "[Register if statement : In If(None, Some(elseblock))] abs_false %s \n transfalse : %s \n"  (front_end#pretty abs_false) (front_end#pretty_label trans_false) ; 
 	    Format.fprintf Ast_goodies.debug_out "[Register if statement : In If(None, Some(elseblock))] fail_mem_abs_broken %s \n trans_mem_broken %s \n \n"  (front_end#pretty fail_mem_invalid_abs) (front_end#pretty_label trans_mem_broken); 
-
+	  *)
 	    List.iter (self#add_to_not_visited_iterator current_node 
 	      succs_mem_valid_stmt)  nexts_of_succs_mem_valid_stmt;
 	    List.iter (self#add_to_not_visited_iterator current_node
