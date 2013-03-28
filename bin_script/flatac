@@ -2,8 +2,8 @@
 
 
 
-# This files defines how chaining calls between the flatac plugin
-# and the verifications tool, namely eldarica and flatac
+# This file defines how to chain calls between the flatac plugin
+# and the verifications tool flatac
 # 
 # You need to set the variables :
 
@@ -27,7 +27,7 @@
 
 
 ocamllib_install_path=/tmp/Ocaml-nts
-flatac_install_path=/Users/florent/REPOSITORIES/flatac
+flatac_install_path=/tmp/flatac
 nts_bin_path=/home/fgarnier/NTS_BIN/java-nts/
 nts_jar=${nts_bin_path}/nts.jar
 antlr_jar=${nts_bin_path}/antlr-3.3-complete.jar
@@ -47,7 +47,7 @@ cafilename="${csourcefile}.nts"
 cafilenamedump="${cafilename}_dump"
 
 echo "[FLATAC TOOLCHAIN :] compiling ${1} to ${cafilename}"
-frama-c -simplify-cfg  -flatac $1 1>/dev/null && cat $flatac_basic_nts_lib >> $cafilename && `parse_n_print $cafilename` && java -cp ${nts_jar}:${antlr_jar} client.PrintVisitor $cafilenamedump && java -cp ${flata_jar}:${nts_jar}:${antlr_jar} verimag.flata.Main -t-merge-prec -t-fullincl -ce-less ${cafilenamedump}  
+frama-c -simplify-cfg  -flatac $1 1>/dev/null && cat $flatac_basic_nts_lib >> $cafilename && `${parse_n_print} $cafilename` && java -cp ${nts_jar}:${antlr_jar} client.PrintVisitor $cafilenamedump && java -cp ${flata_jar}:${nts_jar}:${antlr_jar} verimag.flata.Main -t-merge-prec -t-fullincl -ce-less ${cafilenamedump}  
 
 
 
