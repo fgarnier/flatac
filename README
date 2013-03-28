@@ -13,7 +13,7 @@ states whose memory is corrupted ( Segmentation fault, alignement
 error, etc ...)
 
 Prior trying to compile this module, make sure you did compile
-FRAMAC version Carbon or latter, and that you have in hands the
+FRAMAC version Nitrogen or latter, and that you have in hands the
 name of the source path of the current installed version of FRAMA-C.
  
 To use the flatac toolchain, you must get the FLATA tool, available
@@ -25,11 +25,11 @@ http://www-verimag.imag.fr/FLATA.html
 
 To build Flatac plugin for frama-c, follow the step as described bellow
 
-1) run ./configure FRAMAC_CARBON_SOURCE_PATH (e.g. ./configure ~/FRAMAC )
+1) run ./configure FRAMAC_NITROGEN_SOURCE_PATH (e.g. ./configure ~/FRAMAC )
 2) run make 
 3) run make install
 
 (c) 
 
-Verimag 2011
+Verimag 2013
 
