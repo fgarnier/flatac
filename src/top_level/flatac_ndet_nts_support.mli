@@ -204,9 +204,6 @@ val neg_of_nd_genrel :
 
 
 
-
-
-
 (*
 let valid_name_of_var (vname : string ) =
   "validity__"^vname^"_"
@@ -244,3 +241,12 @@ val havocize_var_list : Nts_types.nts_genrel_var list ->
 
 val nd_simplify_gen_rel : Flatac_ndet_nts_support_types.ndet_supp_cnt_bool
   ->  Flatac_ndet_nts_support_types.ndet_supp_cnt_bool
+
+val det_translabel_list_of_nd_translabel : 
+  Flatac_ndet_nts_support_types.ndet_supp_nts_trans_label list -> 
+  Nts_types.nts_trans_label list
+
+(*val pprint_nd_gen_rel : Flatac_ndet_nts_support_types.ndet_supp_cnt_bool
+    -> string*)
+  
+  

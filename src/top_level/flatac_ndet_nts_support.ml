@@ -491,31 +491,52 @@ let havocize_var_list (vl : Nts_types.nts_genrel_var list) =
 
 
 
+(**
+
+In this section we define the function needed to 
+translate one lablel of flatac ndet support to Nts trans 
+labels.
+*)
+
+
+  
+
+
+
+(** This function aims at generating NTS transition system
+label from flatac non deterministic support labels of NTS.*)
+
+  let det_translabel_list_of_nd_translabel nd_valabel_list =
+    
+    
+
+    
+
 (* this method is used to compute the set of counter variables who are
    assigned a new value*)
 (*
 
-let havocise (trans_label_list : ndet_supp_nts_trans_label list) =
+  let havocise (trans_label_list : ndet_supp_nts_trans_label list) =
   let not_havoc label =
     match label with
-      ND_CntGenHavoc(_) -> false
-    (*| CntAffect(_,CntNdet)-> false*)
-    (*| CntGuard( CntBool(_,CntNdetVar("__if_ndet_cond__"),_)) -> false*)
-    | _ -> true
+  ND_CntGenHavoc(_) -> false
+  (*| CntAffect(_,CntNdet)-> false*)
+  (*| CntGuard( CntBool(_,CntNdetVar("__if_ndet_cond__"),_)) -> false*)
+  | _ -> true
   in
   let modified_vars (var_list : Nts_types.nts_var list)
-      (trans_label : cnt_trans_label) =
-    match trans_label with
-      
-      
+  (trans_label : cnt_trans_label) =
+  match trans_label with
+  
+  
     (* Elimination
-       de toutes les variables
-       de test à valeurs non déterministes.
-       Cas le plus général,
-       ?? plus grand point fixe ??
-       Pourrait certainement se
-       raffiner.
-    *)
+  de toutes les variables
+  de test à valeurs non déterministes.
+  Cas le plus général,
+  ?? plus grand point fixe ??
+  Pourrait certainement se
+  raffiner.
+*)
       
 (*| CntGuard( CntBool(_,CntNdetVar("__if_ndet_cond__"),_))
 -> (NtsIVar("__if_ndet_cond__"))::var_list*)
