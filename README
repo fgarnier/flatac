@@ -12,16 +12,30 @@ of the NTS that leads to a states that abstracts some program
 states whose memory is corrupted ( Segmentation fault, alignement
 error, etc ...)
 
-Prior trying to compile this module, make sure you did compile
+This tool has been written and is build using the version
+3.12 of the Ocaml compiler.
+Prior trying to build this module, make sure you did compile
 FRAMAC version Nitrogen or latter, and that you have in hands the
 name of the source path of the current installed version of FRAMA-C.
- 
+
 To use the flatac toolchain, you must get the FLATA tool, available
 here, with a fully and comprehensive installation procedure :
 
 http://www-verimag.imag.fr/FLATA.html
 
-              ********* Building FLATAC **********
+
+
+	      ********* Building OCaml Nts Lib *****
+ You now need to install the OCaml Nts Library. To do so, get
+ the current version of the Ocaml-nts lib from its public git 
+ repository :
+
+ $ git clone https://github.com/fgarnier/Ocaml-nts.git
+ $ make nts_lib
+ 
+
+
+               ********* Building FLATAC **********
 
 To build Flatac plugin for frama-c, follow the step as described bellow
 
@@ -29,7 +43,15 @@ To build Flatac plugin for frama-c, follow the step as described bellow
 2) run make 
 3) run make install
 
-(c) 
+	     
+ 	       ********** Setting the toolchain scripts ******
+
+1) Go inside the bin_script/ subdirectory, and tune the environment
+   variable name in both the flatac and flata script, so that it fits 
+   your own configuration. 
+
+2) Add the the bin_scipt/ directory to your PATH global shell variable.
+
 
 Verimag 2013
 

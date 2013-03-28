@@ -1,0 +1,54 @@
+#!/bin/sh
+
+
+
+# This files defines how chaining calls between the flatac plugin
+# and the verifications tool, namely eldarica and flatac
+# 
+# You need to set the variables :
+
+# flatac_install_path : Path to flatac plugin sources 
+# nts_bin_path : Root path for java nts binary distribution
+# nts_jar, antlr_jar and flata_jar might be updated in futures
+# java nts_lib releases.
+# You may consider adding the current path to your PATH global
+# environement variable.
+#  
+# ocamllibpath_install_path is the source directory of the ocaml lib.
+# The ocamllib must be built, and its bin directory must contain
+# the parse_n_print executable file.
+# See README and INSTALL for details.
+# 
+# This file, as well all files contained in the flatac plugin,
+# as well as all files of the OCaml-nts lib and SSL lib are
+# released under the terms of the GNU GPL 2.1 Licence.
+# Developped in the Verimag Lab 2012-2013, Florent Garnier.
+
+
+
+ocamllib_install_path=/tmp/Ocaml-nts
+flatac_install_path=/Users/florent/REPOSITORIES/flatac
+nts_bin_path=/home/fgarnier/NTS_BIN/java-nts/
+nts_jar=${nts_bin_path}/nts.jar
+antlr_jar=${nts_bin_path}/antlr-3.3-complete.jar
+flata_jar=${nts_bin_path}/flata.jar
+
+flatac_basic_nts_lib="${flatac_install_path}/base_nts_libraries/base_fun.ca_lib"
+parse_n_print="${ocamllib_install_path}/bin/parse_n_print"
+
+if [ $# = 0 ]
+ then
+  echo $0 "program_name.c"
+  exit 1
+ else
+
+csourcefile=$1
+cafilename="${csourcefile}.nts"
+cafilenamedump="${cafilename}_dump"
+
+echo "[FLATAC TOOLCHAIN :] compiling ${1} to ${cafilename}"
+frama-c -simplify-cfg  -flatac $1 1>/dev/null && cat $flatac_basic_nts_lib >> $cafilename && `parse_n_print $cafilename` && java -cp ${nts_jar}:${antlr_jar} client.PrintVisitor $cafilenamedump && java -cp ${flata_jar}:${nts_jar}:${antlr_jar} verimag.flata.Main -t-merge-prec -t-fullincl -ce-less ${cafilenamedump}  
+
+
+
+fi
