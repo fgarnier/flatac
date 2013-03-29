@@ -31,7 +31,7 @@ http://www-verimag.imag.fr/FLATA.html
  repository :
 
  $ git clone https://github.com/fgarnier/Ocaml-nts.git
- $ make nts_lib
+ $ make ntslib
  
 
 
@@ -46,12 +46,23 @@ To build Flatac plugin for frama-c, follow the step as described bellow
 	     
  	       ********** Setting the toolchain scripts ******
 
-1) Go inside the bin_script/ subdirectory, and tune the environment
-   variable name in both the flatac and flata script, so that it fits 
-   your own configuration. 
+1) Go inside the bin_script/ subdirectory.
+
+ Copy the flatac_model resp. flata_model scipts to flatac and flata 
+ and then tune the environment variables name in both scripts, 
+ so that it fits your own system configuration. 
 
 2) Add the the bin_scipt/ directory to your PATH global shell variable.
 
+
+        ************* ISSUES BUGS and other Troubleshotings ************
+
+ Under MacOSX 10.6, the plugin fails to extract models from .c programs.
+ Obviously Frama-c Nitrogen dislikes some C-Language extentions provided
+ by Apple, such as Code Blocks. 
+ 
+ The test behave in a better way when using a genuiune GNU compiler and
+ standard library.
 
 Verimag 2013
 
