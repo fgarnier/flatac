@@ -209,7 +209,7 @@
 %% Access to memory @ pointer address P :
 \newcommand{\accs}[1]{\mbox{\lstinline!access!}(#1)}
 
-
+\newcommand{\clisting}[1]{\begin{lstlisting}[language=C,basicstyle=\ttfamily,keywordstyle=\color{red}] {#1} \end{lstlisting}}
 
 %%%%%%%%%%%%%%%%%% SSL RELATED STUFFS END BLOCK %%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
@@ -245,7 +245,7 @@
 \frame{\titlepage 
 }
 
-\date{Febuary 2012}
+\date{Febuary 2013}
 %\part{Main}
 
 
@@ -309,6 +309,18 @@
 \end{itemize}
 }
 
+\frame{
+\frametitle{NTS language support}
+\begin{itemize}
+ \item Basic types: bool, int, real
+ \item Control states: initial, final, error
+ \item Transitions: first-order arithemtic
+ \item Multi dimesional arrays
+ \item Hierarchy: (recursive) function calls
+ \item Shared memory concurrency
+
+\end{itemize}
+}
 
 \frame{
 \begin{center}
@@ -316,9 +328,92 @@
 \end{center}
 }
 
+
+\defverbatim[colored]\lstI{%
+\begin{lstlisting}[language=C,basicstyle=\ttfamily,keywordstyle=\color{red}] 
+void foo(){
+ char *x, *y;
+ \uncover<1>{Emp}
+ x=malloc(10);
+ %\uncover<2>{ x-\>l /\ Alloc(l)}
+ y=x;
+ free(x);
+ free(y;)
+}
+\end{lstlisting}
+}
+
+
+
+\begin{frame}{Verifying Heap Consistency}
+\lstI
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{Verifying Heap Consistancy}
+\setbeamercolor{alerted text}{fg=blue}
+\setbeamerfont{alerted text}{series=\bfseries,family=\ttfamily}
+
+\begin{semiverbatim}
+ void foo()\{
+   char *x, *y;
+   \uncover<2->{\alert<2->{ \{ emp \}}}
+   x=malloc(10);
+   \uncover<3->{\alert<3->{ \{ x->l | Alloc(l) \}}}
+   y=x;
+   \uncover<4->{\alert<4->{ \{ x->l and y-> l| Alloc(l) \}}}
+   free(x);
+   \uncover<5->{\alert<5->{ \{ x->l and y-> l | emp \}}}
+   free(y);
+   \uncover<6->{\alert<6->{ \{ error \}}}
+ \}
+\end{semiverbatim}
+\end{frame}
+\begin{frame}[fragile]{Verifying Heap Consistancy}
+\setbeamercolor{alerted text}{fg=blue}
+\setbeamerfont{alerted text}{series=\bfseries,family=\ttfamily}
+
+\begin{semiverbatim}
+ void foo()\{
+   char *x, *y;
+   \uncover<2->{\alert<2->{ \{ emp \}}}
+   x=malloc(10);
+   \uncover<3->{\alert<3->{ \{ x->l | Alloc(l) \}}}
+   x++;
+   \uncover<4->{\alert<4->{ \{ x->l | Alloc(l) \}}}
+   free(x);
+   \only<5>{\alert<5>{ \{ x->l | emp \}}} \only<6>{\alert<6>{ \{error\} !}}
+  
+ \}
+\end{semiverbatim}
+\end{frame}
+
+
+
+
+%\defverbatim[colored]\lstH1{
+
+
+%}
+
+
+%\begin{frame}[fragile]
+%\frametitle{trying another way ...}
+
+ %\begin{lstlisting}[language=C,basicstyle=\ttfamily,keywordstyle=\color{red}]
+ %  void foo(){
+ %    char *x, *y;
+% \clisting{void foo(){
+ %    char *x, *y;
+  % } }
+%\end{frame}
+
+
 \frame{
 \begin{center}
-\includegraphics[angle=270,width=0.8\textwidth]{torino-25.pdf}
+\includegraphics[width=0.4\textwidth]{align.eps}
 \end{center}
 }
 
@@ -732,45 +827,45 @@ Recurse on $(sid_i,\psi_i)$
 }
 
 
-\section{Benchmarks}
+%\section{Benchmarks}
 
-\frame{
-\frametitle{Benchmarks}
+%\frame{
+%\frametitle{Benchmarks}
 
-\begin{figure}[h!]
-%\begin{scriptsize}
-{\small
-\begin{minipage}[t]{.5\textwidth}
-%\begin{scriptsize}
-\begin{tabular}[t]{lrrrr}
-\hline
-%\multirow{2}{*}{Model} & \multicolumn{2}{c}{ Time [s]} \\
-& F. & E. & S. & D. \\
-\hline
-\multicolumn{3}{l}{\textbf{(a) Examples from TACASO6\[\]}} \\
-\hline
-anubhav (C)  &  0.6  & 1.5 &  1.8  &  1.5\\
-copy1 (E)  &  1.7 & 8.1  &  1.2  &  3.5\\
-cousot (C) &  0.5 & -  &  -  &  4.3 \\
-loop1 (C) &  0.4 & 2.1  &  0.9  &  2.1 \\
-loop (C) &  0.4 & 0.3  &  0.9  &  0.3 \\
-scan  (E) &  2.4 & -  &  1.0  &  2.9 \\
-string\_concat1  (E) &  4.4  & -  &  3.2  &  5.0  \\
-string\_concat  (E) &  4.1  & -  &  2.5  &  4.2  \\
-string\_copy  (E) &  3.7  & -  &  1.5  &  3.6  \\
-substring1 (E) &  0.3  & 1.6  &  23.9  &  1.5 \\
-substring (E) &  1.8  & 0.6  &  1.6  &  0.6 \\
-\hline
-\end{tabular}
-\end{minipage}%
-\hspace*{-2ex}%
-} % end small
+%\begin{figure}[h!]
+%%\begin{scriptsize}
+%{\small
+%\begin{minipage}[t]{.5\textwidth}
+%%\begin{scriptsize}
+%\begin{tabular}[t]{lrrrr}
+%\hline
+%%\multirow{2}{*}{Model} & \multicolumn{2}{c}{ Time [s]} \\
+%& F. & E. & S. & D. \\
+%\hline
+%\multicolumn{3}{l}{\textbf{(a) Examples from TACASO6\[\]}} \\
+%\hline
+%anubhav (C)  &  0.6  & 1.5 &  1.8  &  1.5\\
+%copy1 (E)  &  1.7 & 8.1  &  1.2  &  3.5\\
+%cousot (C) &  0.5 & -  &  -  &  4.3 \\
+%loop1 (C) &  0.4 & 2.1  &  0.9  &  2.1 \\
+%loop (C) &  0.4 & 0.3  &  0.9  &  0.3 \\
+%scan  (E) &  2.4 & -  &  1.0  &  2.9 \\
+%string\_concat1  (E) &  4.4  & -  &  3.2  &  5.0  \\
+%string\_concat  (E) &  4.1  & -  &  2.5  &  4.2  \\
+%string\_copy  (E) &  3.7  & -  &  1.5  &  3.6  \\
+%substring1 (E) &  0.3  & 1.6  &  23.9  &  1.5 \\
+%substring (E) &  1.8  & 0.6  &  1.6  &  0.6 \\
+%\hline
+%\end{tabular}
+%\end{minipage}%
+%\hspace*{-2ex}%
+%} % end small
 %\end{scriptsize}
-\end{figure}
-\textbf{F}lata, \textbf{E}ldarica, Eldarica (\textbf{S}tatic loop acceleration)
- and CEGAAR (\textbf{D}ynamic acceleration).  
+%\end{figure}
+%\textbf{F}lata, \textbf{E}ldarica, Eldarica (\textbf{S}tatic loop acceleration)
+% and CEGAAR (\textbf{D}ynamic acceleration).  
 
-}
+%}
 
 
 \frame{
