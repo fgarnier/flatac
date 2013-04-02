@@ -262,8 +262,8 @@
 \subsection{Motivations : Proving memory faults freedom of C programs}
 
 \frame{
-\frametitle{Typical memory faults :}
-
+\frametitle{Classical memory faults :}
+\begin{block}{}
 \begin{itemize}
 \item Memory access outside and allocated memory zone of the heap 
 \item Access to an array outside of its bounds
@@ -272,90 +272,36 @@
 \item Freeing an allocated segment using an pointer that does not points at the begining of the segment.
 \item Memory leaks
 \end{itemize}
+\end{block}
 }
 
 
 \frame{
 \frametitle{Two subkinds of properties :}
+\begin{block}{Shape}
 \begin{itemize}
-\item Properties concerning the memory shape (Simple Separation Logic):
-	\begin{itemize}
-	\item Relation between pointer variables (Stack) and location variables (heaps).
-	\item Memory allocation.
-	\item Allocated Segment separation.
+  \item Relation between pointer variables (Stack) and location variables (heaps).
+  \item Memory allocation.
+  \item Allocated Segment separation.
 
-	\end{itemize}
-\item Arithmetic properties :
-	\begin{itemize}
-	\item Memory segment access within its bounds. 
-	\item Memory address alignment (Congruence).
-	\end{itemize}
-\end{itemize}
+  \end{itemize}
+\end{block}
+
+\begin{block}{Arithmetic properties}
+  \begin{itemize}
+  \item Memory segment access within its bounds. 
+  \item Memory address alignment (Congruence).
+  \item Calling on the begining of an allocated segment.
+  \end{itemize}
+\end{block}
 }
-
-\subsection{What is flatac}
-\frame{
-\frametitle{What is flatac ?}
-\begin{itemize}
-\item Part of a toolchain that aims at proving that C programs don't generate memory faults and don't violates assertions.
-\item Build a NTS based model of C programs, using static analysis techniques.
-\item Exports this model in the NTL format for an a-posteriori verification pahse :
-\begin{itemize}
-\item Reachability of error states.
-\item Termination.
-\end{itemize}
-
-\item Coded as a Frama-C plugin. 
-\end{itemize}
-}
-
-\frame{
-\frametitle{NTS language support}
-\begin{itemize}
- \item Basic types: bool, int, real
- \item Control states: initial, final, error
- \item Transitions: first-order arithemtic
- \item Multi dimesional arrays
- \item Hierarchy: (recursive) function calls
- \item Shared memory concurrency
-
-\end{itemize}
-}
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.8\textwidth]{torino-24.pdf}
-\end{center}
-}
-
-
-\defverbatim[colored]\lstI{%
-\begin{lstlisting}[language=C,basicstyle=\ttfamily,keywordstyle=\color{red}] 
-void foo(){
- char *x, *y;
- \uncover<1>{Emp}
- x=malloc(10);
- %\uncover<2>{ x-\>l /\ Alloc(l)}
- y=x;
- free(x);
- free(y;)
-}
-\end{lstlisting}
-}
-
-
-
-\begin{frame}{Verifying Heap Consistency}
-\lstI
-\end{frame}
-
-
 
 
 \begin{frame}[fragile]{Verifying Heap Consistancy}
 \setbeamercolor{alerted text}{fg=blue}
 \setbeamerfont{alerted text}{series=\bfseries,family=\ttfamily}
 
+\begin{block}{Errors tractable by shape analysis}
 \begin{semiverbatim}
  void foo()\{
    char *x, *y;
@@ -363,18 +309,21 @@ void foo(){
    x=malloc(10);
    \uncover<3->{\alert<3->{ \{ x->l | Alloc(l) \}}}
    y=x;
-   \uncover<4->{\alert<4->{ \{ x->l and y-> l| Alloc(l) \}}}
+   \uncover<4->{\alert<4->{ \{ x->l and y-> l | Alloc(l) \}}}
    free(x);
    \uncover<5->{\alert<5->{ \{ x->l and y-> l | emp \}}}
    free(y);
    \uncover<6->{\alert<6->{ \{ error \}}}
  \}
 \end{semiverbatim}
+\end{block}
 \end{frame}
+
+
 \begin{frame}[fragile]{Verifying Heap Consistancy}
 \setbeamercolor{alerted text}{fg=blue}
 \setbeamerfont{alerted text}{series=\bfseries,family=\ttfamily}
-
+\begin{block}{Shape is not enough}
 \begin{semiverbatim}
  void foo()\{
    char *x, *y;
@@ -384,10 +333,11 @@ void foo(){
    x++;
    \uncover<4->{\alert<4->{ \{ x->l | Alloc(l) \}}}
    free(x);
-   \only<5>{\alert<5>{ \{ x->l | emp \}}} \only<6>{\alert<6>{ \{error\} !}}
+   \only<5>{\alert<5>{ \{ x->l | emp \}}} \only<6>{\alert<6>{ \{error\} }}
   
  \}
 \end{semiverbatim}
+\end{block}
 \end{frame}
 
 
@@ -412,135 +362,19 @@ void foo(){
 
 
 \frame{
+\frametitle{A better suited model}
+\begin{block}{Shape and arithmetic properties}
 \begin{center}
 \includegraphics[width=0.4\textwidth]{align.eps}
 \end{center}
+\end{block}
 }
 
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.8\textwidth]{torino-26.pdf}
-\end{center}
-}
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.8\textwidth]{torino-27.pdf}
-\end{center}
-}
-
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.8\textwidth]{torino-28.pdf}
-\end{center}
-}
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.8\textwidth]{torino-29.pdf}
-\end{center}
-}
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.8\textwidth]{torino-30.pdf}
-\end{center}
-}
-
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.8\textwidth]{torino-31.pdf}
-\end{center}
-}
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.8\textwidth]{torino-32.pdf}
-\end{center}
-}
-
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.8\textwidth]{torino-33.pdf}
-\end{center}
-}
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.8\textwidth]{torino-34.pdf}
-\end{center}
-}
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.8\textwidth]{torino-35.pdf}
-\end{center}
-}
-
-\frame{
-\begin{center}
-\includegraphics[angle=270,width=0.8\textwidth]{torino-36.pdf}
-\end{center}
-}
-
-
-
-
-\frame{
-\frametitle{Tracked property}
-\tgreen{This front end aims at proving that C programs :}
-\begin{itemize}
-\item Have no execution run that lead to memory fault.
-\item Have no exectution that violates some assertion expressed
-using arithmetic constraints.
-\end{itemize}
-\tgreen{Flatac plugin: Front end of NTS error state reachability analysis }
-\begin{itemize}
-\item Extracts models of C Programs using Abstract Interpretation Techniques. 
-\item Adds \tred{Numerical Transitions Systems} informations on the
-model for \tred{a posteri Verification Phase}.  
-
-\end{itemize}
-}
-
-
-
-
-
-
-\frame{
-\frametitle{How to do that ?}
-\begin{enumerate}
-\item Extracting an extended cfg from Frama-c cfg $($Cil statements $\times$SSL memory abstractions$)^2$
-\item Labelling the Ecfg transitions with Numerical Transition System expression --Guards, counter affectation and Function Calls.
-\item If a SSL Abs value of a state is $\bot$, define this state as
-an error state.
-\item Export the labelled Ecfg into Nts Format.
-\item Ask an analysis tool --Flata, Eldarica, to check whether 
-some error state is reachable from the entry point (main function).
-
-\end{enumerate}
-
-}
-
-
-
-\subsection{Flata-c a link in a toolchain}
-\frame{
-\frametitle{Flatac in the tool-chain:}
-\begin{center}
-\resizebox{9.5cm}{7cm}{\input{toolchain.pstex_t}}
-\end{center}
-
-
-}
 
 
 \section{Abstract reprentation of the memory}
-\subsection{The SSL logic}
+\subsection{The SSL logic : Decribing the Shape}
+
 \frame{
 \frametitle{Abstract interpretation preliminary part}
  Simple Separation Logic formulae : Abstract domain.
@@ -554,25 +388,146 @@ $$
 \end{array}
 $$
 \end{block}
-
 }
-
 
 
 \frame{
 \frametitle{Good properties of SSL}
-
 \begin{block}{Properties}
 The problem that follows are decidable :
 \begin{itemize}
 \item Satisfiability (Valid configuration)
-\item Entailment, Equivalence.
+\item Entailment, Equivalence (Fix point detection).
 \item Memory leaks
 \end{itemize}
 \end{block}
 
 Those problems are solved using rewriting techniques.
 }
+
+
+\frame{
+\frametitle{Numerical Transition Language}
+\begin{block}{Allows express and define:}
+\begin{itemize}
+ \item Basic types: bool, int, real
+ \item Control states: initial, final, error
+ \item Transitions: first-order arithemtic
+ \item Multi dimesional arrays
+ \item Hierarchy: (recursive) function calls
+ \item Shared memory concurrency
+\end{itemize}
+
+Models are expressed in this language.
+\end{block}
+
+}
+
+\subsection{What is flatac}
+\frame{
+\begin{block}{What is flatac ?}
+\begin{itemize}
+\item Takes as input a C Program description using FRAMA-C/Cil AST and CFG.
+\item Extracts a NTS base model of the program using static analysis techniques.
+
+ \item \begin{itemize}
+    \item Control states having an unsat SSL formula are error states.
+    \item Return control states having a sat SSL formula are final.
+    \item Entry point of function are initial states.
+  \end{itemize}
+\item Exports this model in the NTL format.
+ \end{itemize}
+\end{block}
+
+\begin{block}{Goal}
+\begin{itemize}
+\item Query Verification tools for the Reachability of error states.
+\item Termination.
+\end{itemize}
+
+ Coded as a Frama-C plugin. 
+\end{block}
+}
+
+
+
+%\frame{
+%\begin{center}
+%\includegraphics[angle=270,width=0.8\textwidth]{torino-24.pdf}
+%\end{center}
+%}
+
+
+%\defverbatim[colored]\lstI{%
+%\begin{lstlisting}[language=C,basicstyle=\ttfamily,keywordstyle=\color{red}] 
+%void foo(){
+% char *x, *y;
+% \uncover<1>{Emp}
+% x=malloc(10);
+% %\uncover<2>{ x-\>l /\ Alloc(l)}
+% y=x;
+% free(x);
+% free(y;)
+%}
+%\end{lstlisting}
+%}
+
+
+
+%\begin{frame}{Verifying Heap Consistency}
+%\lstI
+%\end{frame}
+
+
+
+
+
+
+%\frame{
+%\frametitle{Tracked property}
+%\begin{block}{ Checking that C programs:}
+%\begin{itemize}
+%\item have no execution run that lead to memory fault,
+%\item have no exectution that violates some assertion expressed.
+%using arithmetic constraints.
+%\end{itemize}
+%\tgreen{A verification front-end. }
+%\begin{itemize}
+%\item Extracts models of C Programs using Abstract Interpretation Techniques. 
+%\item Adds \tred{Numerical Transitions Systems} informations on the
+%model for \tred{a posteriori Verification Phase}.  
+%\item Exports the model into the NTL language.
+%\end{itemize}
+%\end{block}
+%}
+
+
+%\frame{
+%\frametitle{}
+%\begin{enumerate}
+%\item Extracting an extended cfg from Frama-c cfg $($Cil statements $\times$SSL memory abstractions$)^2$
+%\item Labelling the Ecfg transitions with Numerical Transition System expression --Guards, counter affectation and Function Calls.
+%\item If a SSL Abs value of a state is $\bot$, define this state as
+%an error state.
+%\item Export the labelled Ecfg into Nts Format.
+%\item Ask an analysis tool --Flata, Eldarica, to check whether 
+%some error state is reachable from the entry point (main function).
+
+%\end{enumerate}
+
+%}
+
+\subsection{Flata-c a link in a toolchain}
+\frame{
+\frametitle{Flatac in the tool-chain:}
+\begin{center}
+\resizebox{9.5cm}{7cm}{\input{toolchain.pstex_t}}
+\end{center}
+
+}
+
+
+
 
 %\frame{
 %\frametitle{Example of SSL formulae}
