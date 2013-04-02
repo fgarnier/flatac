@@ -628,9 +628,9 @@ To any integer variable is associated a validity counter. An
 expression is valid if it is the result of deterministic values.
 \begin{block}{Basic rules}
 \begin{tabular}{lll}
-\texttt{int x;} & \texttt{valid\_x = false} \\
-\texttt{int x=cst;} & \texttt{valid\_x = true} \\
-\texttt{x=y;} & \texttt{valid\_x= valid\_y;} \\
+\texttt{int x;} & \texttt{v\_x = false} \\
+\texttt{int x=cst;} & \texttt{v\_x = true} \\
+\texttt{x=y;} & \texttt{v\_x= v\_y;} \\
 \texttt{x=ptrw-ptrz;} & \texttt{true} &if $\Formula{\Pointsto{ptrw}{l}\wedge\Pointsto{ptrz}{l}}{.}$\\
 & \texttt{false} &else
 \end{tabular}
