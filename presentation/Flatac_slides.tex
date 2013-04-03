@@ -253,7 +253,7 @@
 
 
 
-  \title{Application}
+  \title{The Flata-C Verification Font End}
  % \part{Main}
 
 
@@ -263,14 +263,14 @@
 \frame{\titlepage 
 }
 
-\date{Febuary 2013}
+\date{April 2013}
 %\part{Main}
 
 
-\begin{frame}
-\frametitle{Outline}
- \tableofcontents[]
-\end{frame}
+%\begin{frame}
+%\frametitle{Outline}
+% \tableofcontents[section,pausesections]
+%\end{frame}
 
 \part{Introducing myself}
 \frame{\partpage}
@@ -280,12 +280,12 @@
 \frametitle{About Florent Garnier}
 \begin{block}{Education}
 \begin{itemize}
-\item Ph.D. in computer Sciences; Institut National Polythechique de Lorraine, INRIA-Lorraine. 
+\item Ph.D. in computer Sciences; Institut National Polytechique de Lorraine, INRIA-Lorraine. 
  \begin{itemize}
    \item Proving the Termination of rules based randomized systems. 
    \item Modeling distributed randomized protocols and proving
      they satisfy liveness properties.
-   \item Term rewritting
+   \item Term rewriting
  \end{itemize}
 \item M.D. in Mathematics and Computer Sciences; Universit\'e de Versailles SQY.
  \begin{itemize}
@@ -298,19 +298,22 @@
 }
 
 \frame{
-\frametitle{About what I like}
-\begin{block}{}
+\frametitle{Recent Activities}
+\begin{block}{Recent activites}
 \begin{itemize}
-\item Modeling and analysing systems and programs
-\item Designing analysis methods
-\item Working in a stimulating and rich environment 
-\item Working with skilled people 
+\item Reseach concerning C programs analysis and verification techniques
+\item Developing OCaml libraries for NTS and the SSL Abstract domain.
+\item Developing a C Code static analyser as a verification front-end
 \end{itemize}
 \end{block}
 }
 
+
+
+
 \part{Technical Presentation}
 \frame{\partpage}
+
 
 %\begin{frame}
 %\frametitle{Technical Presentation}
@@ -320,6 +323,12 @@
 %\end{frame}
 
 \section{Technical Presentation : }
+
+\begin{frame}
+ \frametitle{Outline}
+ \tableofcontents[currentsection]
+\end{frame}
+
 \subsection{Motivations : Proving memory fault freedom of C programs}
 
 \frame{
@@ -330,7 +339,7 @@
 \item Access to an array outside of its bounds
 \item Memory access using a non aligned address
 \item Double free
-\item Freeing an allocated segment using an pointer that does not points at the begining of the segment.
+\item Freeing an allocated segment using an pointer that does not points at the beginning of the segment.
 \item Memory leaks
 \end{itemize}
 \end{block}
@@ -352,13 +361,13 @@
   \begin{itemize}
   \item Memory segment access within its bounds. 
   \item Memory address alignment (Congruence).
-  \item Calling on the begining of an allocated segment.
+  \item Calling on the beginning of an allocated segment.
   \end{itemize}
 \end{block}
 }
 
 
-\begin{frame}[fragile]{Verifying Heap Consistancy}
+\begin{frame}[fragile]{Verifying Heap Consistency}
 \setbeamercolor{alerted text}{fg=blue}
 \setbeamerfont{alerted text}{series=\bfseries,family=\ttfamily}
 
@@ -381,7 +390,7 @@
 \end{frame}
 
 
-\begin{frame}[fragile]{Verifying Heap Consistancy}
+\begin{frame}[fragile]{Verifying Heap Consistency}
 \setbeamercolor{alerted text}{fg=blue}
 \setbeamerfont{alerted text}{series=\bfseries,family=\ttfamily}
 \begin{block}{Shape is not enough}
@@ -434,7 +443,13 @@
 
 
 \section{Extracting a SSL+NTS based model using Flata-C}
-\frame{\sectionpage}
+\begin{frame}
+ \frametitle{Outline}
+ \tableofcontents[currentsection]
+\end{frame}
+
+
+%\frame{\sectionpage}
 %\subsection{The SSL logic : Decribing the Shape}
 
 %\frame{
@@ -452,14 +467,21 @@
 %\end{block}
 %}
 
-
+\subsection{SSL logic to abstract the memory shape}
 \frame{
-\frametitle{Good properties of SSL}
+\frametitle{Abstract memory description using SSL}
+\begin{block}{SSL describes the following shapes:}
+ \begin{itemize}
+ \item Relation between stack pointer and location variables
+ \item Allocation predicate
+ \item Separation operator : Disjoint allocated heap cells
+ \end{itemize}
+\end{block}
 \begin{block}{Properties}
-The problem that follows are decidable :
+The problems that follow are decidable:
 \begin{itemize}
-\item Satisfiability (Valid configuration)
-\item Entailment, Equivalence (Fix point detection).
+\item Satisfiability (Valid memory configuration)
+\item Entailment, Equivalence (Fix point detection)
 \item Memory leaks
 \end{itemize}
 \end{block}
@@ -467,7 +489,7 @@ The problem that follows are decidable :
 Those problems are solved using rewriting techniques.
 }
 
-
+\subsection{NTL to express arithmetic properties on transitions}
 \frame{
 \frametitle{Numerical Transition Language }
 \begin{block}{Allows express and define:}
@@ -486,6 +508,7 @@ Those problems are solved using rewriting techniques.
 
 \subsection{What is Flata-C ?}
 \frame{
+\subsection{What is Flata-C}
 \begin{block}{A Verification Front-end}
 \begin{itemize} 
 \item Takes as input a C Program description using FRAMA-C/Cil AST and CFG.
@@ -578,7 +601,7 @@ Those problems are solved using rewriting techniques.
 
 %}
 
-\subsection{Flata-c a link in a toolchain}
+\subsection{Flata-c font-end in the  toolchain}
 \frame{
 \frametitle{Flatac in the tool-chain:}
 \begin{center}
@@ -630,7 +653,13 @@ Those problems are solved using rewriting techniques.
 
 
 \section{Model extraction}
-\frame{\sectionpage}
+%\frame{\sectionpage}
+\begin{frame}
+ \frametitle{Outline}
+ \tableofcontents[currentsection]
+\end{frame}
+
+
 \subsection{Cil representation of C programs}
 \frame{
 \frametitle{Cil representation of C programs}
@@ -748,7 +777,7 @@ Generated Model : Numerical Transition System
   
 \begin{block}{ECFG Generation}
 \begin{itemize}
-\item The vertices are statement id labelled with SSL formula.
+\item The vertexes are statement id labelled with SSL formula.
 \item The edges are labelled with Nts Guards, affectation, and
 function calls.
 \end{itemize}
@@ -756,7 +785,7 @@ function calls.
 
 \begin{block}{ECFG TO NTS compilation}
 \begin{itemize}
-\item Sort states w.r.t. they are valid, final or erroreous.
+\item Sort states w.r.t. they are valid, final or erroneous.
 \item Pretty print the NTS.
 \end{itemize}
 \end{block}
@@ -764,7 +793,7 @@ function calls.
 
 
 \frame{
-\frametitle{Extraction : Basic statment}
+\frametitle{Extraction : Basic statement}
 
 \begin{block}{\texttt{Var(v)=expr}}
 \begin{center}
@@ -839,7 +868,7 @@ Recurse on $(sid_i,\psi_i)$
 \begin{block}{Reachability of the error states}
 \begin{itemize}
 \item Exporting the Ecfg Hierarchical Numerical Transition System.
-\item Reachability analisys of the error states by FLATA and/or ELDARICA
+\item Reachability analysis of the error states by FLATA and/or ELDARICA
 \item If some error state is reachable : An alarm is raised.
 \item If no error states is reachable : The program is free of the memory fault we consider. 
 \end{itemize}
@@ -887,15 +916,20 @@ Recurse on $(sid_i,\psi_i)$
 
 %}
 
-\section{Developpement and Current State of Flata-c}
-\frame{\sectionpage}
+\section{Development and Current State of Flata-c}
+
+\begin{frame}
+ \frametitle{Outline}
+ \tableofcontents[currentsection]
+\end{frame}
+
 
 \frame{
 \frametitle{Flata-c currently support}
 \begin{block}{Currently implemented}
   \begin{itemize}
-    \item Assert checking on first order arithemtic. 
-    \item Funtion calls with scalar values and pointers.
+    \item Assert checking on first order arithmetic. 
+    \item Function calls with scalar values and pointers.
     \item Inner function memory model extraction.
     \item NTL code generation.
   \end{itemize}
@@ -905,23 +939,32 @@ Recurse on $(sid_i,\psi_i)$
 
 \frame{
 \frametitle{Current development}
-\begin{block}{Current developpment}
+\begin{block}{Current development}
   \begin{itemize}
   \item Handling arbitrary parameters in function calls.
   \item Hoar logic style pre and post condition inference.
   \item Better handling of Non-determinism.
   \item Counter-example trace analysis.
-    \end{itemize}
+  \end{itemize}
 \end{block}
 }
 
 
 \section{Personal contributions}
-\frame{
+\begin{frame}
+ \frametitle{Outline}
+ \tableofcontents[currentsection]
+\end{frame}
 
-  %\begin{block}
-  %  \be
-  %\end{block}
+
+\frame{
+  \begin{block}{Others and Collaborative contributions}
+    \begin{itemize}
+      \item SSL logic : Radu Iosif
+      \item NTL : Radu Iosif, Viktor Kuncak(EPFL), Vojnar Tomas( Brno University) 
+      \item Verification tools : Flata (Filip Konecny) and Eldarica (Hossein Hojjat)
+    \end{itemize}
+  \end{block}
 
   \begin{block}{Personal Contributions}
     \begin{itemize}
@@ -942,7 +985,7 @@ Recurse on $(sid_i,\psi_i)$
 \frame{
   \begin{block}{}
     \begin{itemize}
-      \item Incrementally adding features led to some desing inconsistancies
+      \item Incrementally adding features led to some design inconsistencies
       \item The semantic action module is not suited for specification
         inference.
       \item Need to design a language for expressing SSL+NTL Hoar like 
@@ -955,10 +998,33 @@ Recurse on $(sid_i,\psi_i)$
         featured adding, as well as unitary testing easier.
       \item I will try to devise better strategies to maintain two
         branches of the same software when urgent deadline are looming.
-      \item Not casually evaluting how long it takes to achieve a task.
+      \item Not casually evaluating how long it takes to achieve a task.
       \end{itemize}
   \end{block}
 
+}
+
+
+
+\section{Why my application for a C/C++ Compiler Developer position at The Mathworks ?}
+
+\begin{frame}
+ \frametitle{Outline}
+ \tableofcontents[currentsection]
+\end{frame}
+
+\frame{
+\frametitle{Why my application for a C/C++ Compiler Developer position at The Mathworks ?}
+\begin{block}{Main motivations}
+  \begin{itemize}
+    \item Good opportunity to put my skills at use and to the test
+    \item I'm looking for working together with skilled and communicating colleagues.
+    \item A Great opportunity to gain outstanding skills in the field of compilation
+    \item I expect to work on ambitious and challenging projects 
+    \item I would be proud of bringing a contribution to famous softwares
+    \item The Mathworks offers an international working environment
+  \end{itemize}
+\end{block}
 }
 %\frame{
 %\frametitle{Benchmarks}
@@ -1071,7 +1137,7 @@ $$
 \frametitle{Compiling expressions}
 
 
-\begin{block}{From pointer arithmetics to Nts expressions}
+\begin{block}{From pointer arithmetic to Nts expressions}
 $$
 \begin{array}{|lll|}
 \hline
@@ -1213,7 +1279,7 @@ then $\to = \to \cup (s_{curr},\phi),R,(s_{next},\psi)$
 \end{itemize}
 
 \begin{block}{Termination}
-This algorith terminates as the $sid$ index is a fixed set and
+This algorithm terminates as the $sid$ index is a fixed set and
 that the SSL formula w.r.t. the partial order $\vdash$ is a 
 complete lattice.
 \end{block}
