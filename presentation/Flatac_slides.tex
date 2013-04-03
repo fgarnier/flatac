@@ -506,20 +506,28 @@ Those problems are solved using rewriting techniques.
 
 }
 
-\subsection{What is Flata-C ?}
+\section{What is Flata-C ?}
+\begin{frame}
+ \frametitle{Outline}
+ \tableofcontents[currentsection]
+\end{frame}
+
+\subsection{Flata-c is Verification Front-end}
+
 \frame{
-\subsection{What is Flata-C}
 \begin{block}{A Verification Front-end}
 \begin{itemize} 
 \item Takes as input a C Program description using FRAMA-C/Cil AST and CFG.
 \item Extracts a NTS base model of the program using static analysis techniques.
 
- \item \begin{itemize}
-    \item Control states having an unsat SSL formula are error states.
-    \item Return control states having a sat SSL formula are final.
-    \item Entry point of function are initial states.
+ \item 
+   \begin{itemize}
+   \item Control states having an unsat SSL formula are error states.
+   \item Return control states having a sat SSL formula are final.
+   \item Entry point of function are initial states.
   \end{itemize}
-\item Exports this model in the NTL format.
+\item Exports this model in the NTL format
+\item The exported model is an over approximation !
  \end{itemize}
 \end{block}
 
@@ -667,17 +675,40 @@ Those problems are solved using rewriting techniques.
 Cil provides and AST and CFG info from C files.
 
 \begin{block}{Most relevant information}
-For each function of the AST :
+For each function the AST contains :
 \begin{itemize}
-\item Expressions.
-\item Locals and formal variables.
-\item Statements of the Control flow graph.
-
+\item Variables list : Locals and Formals
+\item Return type of the function
+\item Statements list 
+\item Each Statement has an unique ids $s_{id}$
+\item Expressions
+\item The CFG provides a successor list for each $s_{id}$
 \end{itemize}
 \end{block}
 
 }
 
+\frame{
+\frametitle{Model extraction : Two main steps}
+
+Input : Cil AST and Control flow graph
+Generated Model : Numerical Transition System
+  
+\begin{block}{ECFG Generation}
+\begin{itemize}
+\item The vertexes : $(s_{id},\phi)$ where $\phi$ a SSL formula. 
+\item The edges are labelled with NTL labels, expressing 
+Guards, affectation, and function calls.
+\end{itemize}
+\end{block}
+
+\begin{block}{ECFG TO NTS compilation}
+\begin{itemize}
+\item Sort states w.r.t. they are valid, final or erroneous.
+\item Pretty print the NTS.
+\end{itemize}
+\end{block}
+}
 
 
 \frame{
@@ -697,6 +728,33 @@ For each function of the AST :
 \end{center}
 }
 
+\frame{
+\frametitle{Extraction : Basic statement}
+
+\begin{block}{\texttt{Var(v)=expr}}
+\begin{center}
+\resizebox{8cm}{!}{\input{affectvar.pstex_t}}
+\end{center}
+
+\end{block}
+}
+
+\frame{
+\frametitle{Nts guards for safe memory access}
+
+Let \texttt{x} a $PVar$ such that \texttt{x:}$\tau$\texttt{*}
+Let $\texttt{safe\_mem}:\texttt{Cil\_types.expr}\times SSL \mapsto NtsGuards$
+
+\begin{block}{Memory access guards Cil for atomic expressions}
+\begin{tabular}{lcl}
+Expr &Mem abstraction & Nts Guard \\ 
+\texttt{*x} &$\Formula{\Pointsto{x}{l}}{\Alloc{l}}$ & \texttt{true}\\
+\texttt{*x} &$\Formula{\Pointsto{x}{l}}{\Emp}$& \texttt{false}\\ 
+\texttt{*(x+i)} & $\Formula{\Pointsto{x}{l}}{\Alloc{l}}$& \texttt{v\_i}$\wedge 0\leq i\times$\texttt{sizeof(}$\tau$\texttt{)}$<$\texttt{l\_size}\\
+\texttt{tab[i]}&$\Formula{true}{\Emp}$& \texttt{v\_i}$\wedge 0\leq i <$ \texttt{tab\_size}\\
+\end{tabular}
+\end{block}
+}
 
 \frame{
 \frametitle{Step 2 : Updating absdomain evaluation}
@@ -706,7 +764,18 @@ For each function of the AST :
 }
 
 \frame{
-\frametitle{Step 3 : Recurse on all abstract successors}
+\frametitle{Extraction : Basic statement}
+\begin{block}{\texttt{lval=call(fun,arg1},...,\texttt{argn)}}
+Call of \texttt{fun} where \texttt{\{P\} fun \{Q\}}.
+\begin{center}
+\resizebox{7cm}{!}{\input{funcall.pstex_t}}
+\end{center}
+
+\end{block}
+}
+
+\frame{
+\frametitle{Step 3 : Recurse on all CFG sucessors)}
 \begin{center}
 \resizebox{8cm}{!}{\input{compilestep3.pstex_t}}
 \end{center}
@@ -731,22 +800,7 @@ For each function of the AST :
 
 %}
 
-\frame{
-\frametitle{Nts guards for safe memory access}
 
-Let \texttt{x} a $PVar$ such that \texttt{x:}$\tau$\texttt{*}
-Let $\texttt{safe\_mem}:\texttt{Cil\_types.expr}\times SSL \mapsto NtsGuards$
-
-\begin{block}{Memory access guards Cil for atomic expressions}
-\begin{tabular}{lcl}
-Expr &Mem abstraction & Nts Guard \\ 
-\texttt{*x} &$\Formula{\Pointsto{x}{l}}{\Alloc{l}}$ & \texttt{true}\\
-\texttt{*x} &$\Formula{\Pointsto{x}{l}}{\Emp}$& \texttt{false}\\ 
-\texttt{*(x+i)} & $\Formula{\Pointsto{x}{l}}{\Alloc{l}}$& \texttt{v\_i}$\wedge 0\leq i\times$\texttt{sizeof(}$\tau$\texttt{)}$<$\texttt{l\_size}\\
-\texttt{tab[i]}&$\Formula{true}{\Emp}$& \texttt{v\_i}$\wedge 0\leq i <$ \texttt{tab\_size}\\
-\end{tabular}
-\end{block}
-}
 
 
 %\frame{
@@ -769,39 +823,9 @@ Expr &Mem abstraction & Nts Guard \\
 %\end{block}
 %}
 
-\frame{
-\frametitle{Model extraction : Two main steps}
-
-Input : Cil AST and Control flow graph
-Generated Model : Numerical Transition System
-  
-\begin{block}{ECFG Generation}
-\begin{itemize}
-\item The vertexes are statement id labelled with SSL formula.
-\item The edges are labelled with Nts Guards, affectation, and
-function calls.
-\end{itemize}
-\end{block}
-
-\begin{block}{ECFG TO NTS compilation}
-\begin{itemize}
-\item Sort states w.r.t. they are valid, final or erroneous.
-\item Pretty print the NTS.
-\end{itemize}
-\end{block}
-}
 
 
-\frame{
-\frametitle{Extraction : Basic statement}
 
-\begin{block}{\texttt{Var(v)=expr}}
-\begin{center}
-\resizebox{8cm}{!}{\input{affectvar.pstex_t}}
-\end{center}
-
-\end{block}
-}
 
 
 
@@ -819,16 +843,7 @@ function calls.
 %}
 
 
-\frame{
-\frametitle{Extraction : Basic statement}
-\begin{block}{\texttt{lval=call(fun,arg1},...,\texttt{argn)}}
-Call of \texttt{fun} where \texttt{\{P\} fun \{Q\}}.
-\begin{center}
-\resizebox{7cm}{!}{\input{funcall.pstex_t}}
-\end{center}
 
-\end{block}
-}
 
 
 %\frame{
@@ -843,14 +858,15 @@ Call of \texttt{fun} where \texttt{\{P\} fun \{Q\}}.
 
 \frame{
 \frametitle{Extraction : Extended Cfg building algorithm}
-\begin{block}{}
+\begin{block}{Ecfg Generation step}
 When generating some $(sid_i,\psi_i)$ from the current abstract
-state $(s,\phi)$, with label $R$ do:
+state $(s,\phi)$, using a semantic rule $R$ do:
 \begin{itemize}
 \item Create a new vertex $(sid_i,\psi_i)$ if $\psi_i$
-is the most general formula associated to $sid_i$ (Entailement Relation).
+is the most general formula associated to $sid_i$  or not
+entailed by any $(sid_i,\sigma)$.
 Create a new edge between the two vertex, with label $R$.
-Recurse on $(sid_i,\psi_i)$ 
+Schedule $(sid_i,\psi_i)$ for futur traversal.
 \item Else 
   \begin{itemize}
   \item Add an edge labelled R from the current state 
@@ -858,6 +874,7 @@ Recurse on $(sid_i,\psi_i)$
   \end{itemize}
 \end{itemize}
 \end{block}
+
 }
 
 
