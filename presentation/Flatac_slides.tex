@@ -235,12 +235,30 @@
 
 %\input{../macros}
 
-  \title{The Flatac Frama-c front-end}
+
+%\defbeamertemplate*{section page}{default}[1][]
+%{
+%  \centering
+%    \begin{beamercolorbox}[sep=8pt,center,#1]{section title}
+%      \usebeamerfont{section title}\insertsection\par
+%    \end{beamercolorbox}
+%}
+%\newcommand*{\sectionpage}{\usebeamertemplate*{section page}}
+
+
+
+
+
+
+
+
+
+  \title{Application}
  % \part{Main}
 
 
-  \author{Radu Iosif, Florent Garnier}
-
+%  \author{Radu Iosif, Florent Garnier}
+\author{Florent Garnier}
 \begin{document}
 \frame{\titlepage 
 }
@@ -251,19 +269,62 @@
 
 \begin{frame}
 \frametitle{Outline}
- \tableofcontents[pausesections]
+ \tableofcontents[]
 \end{frame}
 
+\part{Introducing myself}
+\frame{\partpage}
 
+\section{ Curriculum :}
+\frame{
+\frametitle{About Florent Garnier}
+\begin{block}{Education}
+\begin{itemize}
+\item Ph.D. in computer Sciences; Institut National Polythechique de Lorraine, INRIA-Lorraine. 
+ \begin{itemize}
+   \item Proving the Termination of rules based randomized systems. 
+   \item Modeling distributed randomized protocols and proving
+     they satisfy liveness properties.
+   \item Term rewritting
+ \end{itemize}
+\item M.D. in Mathematics and Computer Sciences; Universit\'e de Versailles SQY.
+ \begin{itemize}
+ \item Stochastic processes
+ \item Formal Calculus
+ \item Graph Theory and Graph algorithmic
+ \end{itemize}
+\end{itemize}
+\end{block}
+}
 
-\section{Introduction }
+\frame{
+\frametitle{About what I like}
+\begin{block}{}
+\begin{itemize}
+\item Modeling and analysing systems and programs
+\item Designing analysis methods
+\item Working in a stimulating and rich environment 
+\item Working with skilled people 
+\end{itemize}
+\end{block}
+}
 
+\part{Technical Presentation}
+\frame{\partpage}
 
-\subsection{Motivations : Proving memory faults freedom of C programs}
+%\begin{frame}
+%\frametitle{Technical Presentation}
+% \begin{centered}
+%   \textbf{\color{green} Technical Presentation}
+% \end{centered}
+%\end{frame}
+
+\section{Technical Presentation : }
+\subsection{Motivations : Proving memory fault freedom of C programs}
 
 \frame{
 \frametitle{Classical memory faults :}
-\begin{block}{}
+\begin{block}{Some operations that corrupt the heap:}
 \begin{itemize}
 \item Memory access outside and allocated memory zone of the heap 
 \item Access to an array outside of its bounds
@@ -277,7 +338,7 @@
 
 
 \frame{
-\frametitle{Two subkinds of properties :}
+\frametitle{Two subkinds of properties:}
 \begin{block}{Shape}
 \begin{itemize}
   \item Relation between pointer variables (Stack) and location variables (heaps).
@@ -372,23 +433,24 @@
 
 
 
-\section{Abstract reprentation of the memory}
-\subsection{The SSL logic : Decribing the Shape}
+\section{Extracting a SSL+NTS based model using Flata-C}
+\frame{\sectionpage}
+%\subsection{The SSL logic : Decribing the Shape}
 
-\frame{
-\frametitle{Abstract interpretation preliminary part}
- Simple Separation Logic formulae : Abstract domain.
+%\frame{
+%\frametitle{Abstract interpretation preliminary part}
+% Simple Separation Logic formulae : Abstract domain.
 
-\begin{block}{Syntax of SSL}
-$$
-\begin{array}{lclr}
-\phi & := & \Formula{\pi}{\sigma} \gspace | \gspace \Exists{l}{\phi} & \mbox{Formulae} \\
-\pi & := & \Pointsto{x}{l} \gspace | \gspace \Pointstonil{x} \gspace | \gspace \EqLoc{l_1}{l_2} \gspace | \gspace \Andpure{\pi_1}{\pi_2} & {\mbox{Pure part}} \\
-\sigma &:=& \Emp  \gspace | \gspace \Alloc{l} \gspace | \gspace \Sep{\sigma_1}{\sigma_2}\ \gspace | \gspace \bot & \mbox{Spatial part}
-\end{array}
-$$
-\end{block}
-}
+%\begin{block}{Syntax of SSL}
+%$$
+%\begin{array}{lclr}
+%\phi & := & \Formula{\pi}{\sigma} \gspace | \gspace \Exists{l}{\phi} & \mbox{Formulae} \\
+%\pi & := & \Pointsto{x}{l} \gspace | \gspace \Pointstonil{x} \gspace | \gspace \EqLoc{l_1}{l_2} \gspace | \gspace \Andpure{\pi_1}{\pi_2} & {\mbox{Pure part}} \\
+%\sigma &:=& \Emp  \gspace | \gspace \Alloc{l} \gspace | \gspace \Sep{\sigma_1}{\sigma_2}\ \gspace | \gspace \bot & \mbox{Spatial part}
+%\end{array}
+%$$
+%\end{block}
+%}
 
 
 \frame{
@@ -407,7 +469,7 @@ Those problems are solved using rewriting techniques.
 
 
 \frame{
-\frametitle{Numerical Transition Language}
+\frametitle{Numerical Transition Language }
 \begin{block}{Allows express and define:}
 \begin{itemize}
  \item Basic types: bool, int, real
@@ -418,15 +480,14 @@ Those problems are solved using rewriting techniques.
  \item Shared memory concurrency
 \end{itemize}
 
-Models are expressed in this language.
 \end{block}
 
 }
 
-\subsection{What is flatac}
+\subsection{What is Flata-C ?}
 \frame{
-\begin{block}{What is flatac ?}
-\begin{itemize}
+\begin{block}{A Verification Front-end}
+\begin{itemize} 
 \item Takes as input a C Program description using FRAMA-C/Cil AST and CFG.
 \item Extracts a NTS base model of the program using static analysis techniques.
 
@@ -442,7 +503,7 @@ Models are expressed in this language.
 \begin{block}{Goal}
 \begin{itemize}
 \item Query Verification tools for the Reachability of error states.
-\item Termination.
+\item Query Verification tools for the reachability of final states.
 \end{itemize}
 
  Coded as a Frama-C plugin. 
@@ -543,32 +604,33 @@ Models are expressed in this language.
 %}
 %
 
-\subsection{Memory model}
-\frame{
-\frametitle{Flata-c Memory model}
-A memory model that associates counters to SSL
-variables :
+%\subsection{Memory model}
+%\frame{
+%\frametitle{Flata-c Memory model}
+%A memory model that associates counters to SSL
+%variables :
 
-\begin{block}{Additional quantitative informations}
-$$
-\begin{array}{lcr}
-\mbox{SSL Variable} & \mbox{NTS counter} & \\
-x\in PVar & \mbox{\texttt{x\_offset}} & \mbox{offset} \\
-l\in LVar & \mbox{\texttt{l\_size}} & \mbox{segment size}
-\end{array}
-$$
-In order to :
-\begin{itemize}
-\item Associate to segment their size.
-\item Associate to pointer their offset.
-\item To express guards on memory access.
-\end{itemize}
-\end{block}
-}
+%\begin{block}{Additional quantitative informations}
+%$$
+%\begin{array}{lcr}
+%\mbox{SSL Variable} & \mbox{NTS counter} & \\
+%x\in PVar & \mbox{\texttt{x\_offset}} & \mbox{offset} \\
+%l\in LVar & \mbox{\texttt{l\_size}} & \mbox{segment size}
+%\end{array}
+%$$
+%In order to :
+%\begin{itemize}
+%\item Associate to segment their size.
+%\item Associate to pointer their offset.
+%\item To express guards on memory access.
+%\end{itemize}
+%\end{block}
+%}
 
 
 
 \section{Model extraction}
+\frame{\sectionpage}
 \subsection{Cil representation of C programs}
 \frame{
 \frametitle{Cil representation of C programs}
@@ -622,21 +684,23 @@ For each function of the AST :
 }
 
 
-\frame{
-\frametitle{Non deterministic evaluation : validity}
-To any integer variable is associated a validity counter. An
-expression is valid if it is the result of deterministic values.
-\begin{block}{Basic rules}
-\begin{tabular}{lll}
-\texttt{int x;} & \texttt{v\_x = false} \\
-\texttt{int x=cst;} & \texttt{v\_x = true} \\
-\texttt{x=y;} & \texttt{v\_x= v\_y;} \\
-\texttt{x=ptrw-ptrz;} & \texttt{true} &if $\Formula{\Pointsto{ptrw}{l}\wedge\Pointsto{ptrz}{l}}{.}$\\
-& \texttt{false} &else
-\end{tabular}
-\end{block}
 
-}
+
+%\frame{
+%\frametitle{Non deterministic evaluation : validity}
+%To any integer variable is associated a validity counter. An
+%expression is valid if it is the result of deterministic values.
+%\begin{block}{Basic rules}
+%\begin{tabular}{lll}
+%\texttt{int x;} & \texttt{v\_x = false} \\
+%\texttt{int x=cst;} & \texttt{v\_x = true} \\
+%\texttt{x=y;} & \texttt{v\_x= v\_y;} \\
+%%\texttt{x=ptrw-ptrz;} & \texttt{true} &if $\Formula{\Pointsto{ptrw}{l}\wedge\Pointsto{ptrz}{l}}{.}$\\
+%& \texttt{false} &else
+%\end{tabular}
+%\end{block}
+
+%}
 
 \frame{
 \frametitle{Nts guards for safe memory access}
@@ -649,48 +713,53 @@ Let $\texttt{safe\_mem}:\texttt{Cil\_types.expr}\times SSL \mapsto NtsGuards$
 Expr &Mem abstraction & Nts Guard \\ 
 \texttt{*x} &$\Formula{\Pointsto{x}{l}}{\Alloc{l}}$ & \texttt{true}\\
 \texttt{*x} &$\Formula{\Pointsto{x}{l}}{\Emp}$& \texttt{false}\\ 
-\texttt{*(x+i)} & $\Formula{\Pointsto{x}{l}}{\Alloc{l}}$& \texttt{valid\_i}$\wedge 0\leq i\times$\texttt{sizeof(}$\tau$\texttt{)}$<$\texttt{l\_size}\\
-\texttt{tab[i]}&$\Formula{true}{\Emp}$& \texttt{valid\_i}$\wedge 0\leq i <$ \texttt{tab\_size}\\
+\texttt{*(x+i)} & $\Formula{\Pointsto{x}{l}}{\Alloc{l}}$& \texttt{v\_i}$\wedge 0\leq i\times$\texttt{sizeof(}$\tau$\texttt{)}$<$\texttt{l\_size}\\
+\texttt{tab[i]}&$\Formula{true}{\Emp}$& \texttt{v\_i}$\wedge 0\leq i <$ \texttt{tab\_size}\\
 \end{tabular}
 \end{block}
 }
 
 
-\frame{
-\frametitle{Control flow statements v.s. basic instructions}
+%\frame{
+%\frametitle{Control flow statements v.s. basic instructions}
 
-\begin{block}{Control flow statement}
-One need to consider a transition to $\bot$ guarded by
-$\neg$ \texttt{safe\_mem(expr)}.
-\begin{itemize}
-\item \texttt{if(expr,blockif,blockelse)}
-\item \texttt{switch(expr,case\_list)}
-\end{itemize}
-\end{block}
-Basic statement are easier to model.
-\begin{block}{Instruction statement}
-\begin{itemize}
-\item \texttt{lval=expr}
-\item \texttt{lval=funcall(name,exp list)}
-\end{itemize}
-\end{block}
-}
+%\begin{block}{Control flow statement}
+%One need to consider a transition to $\bot$ guarded by
+%$\neg$ \texttt{safe\_mem(expr)}.
+%\begin{itemize}
+%\item \texttt{if(expr,blockif,blockelse)}
+%\item \texttt{switch(expr,case\_list)}
+%\end{itemize}
+%\end{block}
+%Basic statement are easier to model.
+%\begin{block}{Instruction statement}
+%\begin{itemize}
+%\item \texttt{lval=expr}
+%\item \texttt{lval=funcall(name,exp list)}
+%\end{itemize}
+%\end{block}
+%}
 
 \frame{
-\frametitle{Model extraction :}
+\frametitle{Model extraction : Two main steps}
 
 Input : Cil AST and Control flow graph
-
-Generated Model : Extended CFG,
+Generated Model : Numerical Transition System
   
-
-
-where :
+\begin{block}{ECFG Generation}
 \begin{itemize}
-\item The verticies are statement id labelled with SSL formula.
+\item The vertices are statement id labelled with SSL formula.
 \item The edges are labelled with Nts Guards, affectation, and
 function calls.
 \end{itemize}
+\end{block}
+
+\begin{block}{ECFG TO NTS compilation}
+\begin{itemize}
+\item Sort states w.r.t. they are valid, final or erroreous.
+\item Pretty print the NTS.
+\end{itemize}
+\end{block}
 }
 
 
@@ -707,18 +776,18 @@ function calls.
 
 
 
-\frame{
-\frametitle{Extraction : Basic statment}
+%\frame{
+%\frametitle{Extraction : Basic statment}
 
-\begin{block}{\texttt{lval=expr}}
-Considered lvals are array element and referenced mem
-cells. 
-\begin{center}
-\resizebox{8cm}{!}{\input{affectlval.pstex_t}}
-\end{center}
+%\begin{block}{\texttt{lval=expr}}
+%Considered lvals are array element and referenced mem
+%cells. 
+%\begin{center}
+%\resizebox{8cm}{!}{\input{affectlval.pstex_t}}
+%\end{center}
 
-\end{block}
-}
+%\end{block}
+%}
 
 
 \frame{
@@ -733,52 +802,48 @@ Call of \texttt{fun} where \texttt{\{P\} fun \{Q\}}.
 }
 
 
-\frame{
-\frametitle{Extraction : Control Flow operation}
-\begin{block}{\texttt{if(test, stmtif, stmtelse)}}
-Expression \texttt{test} might perform some illegal operations.
-\begin{center}
-\resizebox{5cm}{!}{\input{ifthen.pstex_t}}
-\end{center}
-\end{block}
-}
-
+%\frame{
+%\frametitle{Extraction : Control Flow operation}
+%\begin{block}{\texttt{if(test, stmtif, stmtelse)}}
+%Expression \texttt{test} might perform some illegal operations.
+%\begin{center}
+%\resizebox{5cm}{!}{\input{ifthen.pstex_t}}
+%\end{center}
+%\end{block}
+%}
 
 \frame{
 \frametitle{Extraction : Extended Cfg building algorithm}
-
+\begin{block}{}
 When generating some $(sid_i,\psi_i)$ from the current abstract
 state $(s,\phi)$, with label $R$ do:
 \begin{itemize}
 \item Create a new vertex $(sid_i,\psi_i)$ if $\psi_i$
-is the most general formula associated to $sid_i$.
+is the most general formula associated to $sid_i$ (Entailement Relation).
 Create a new edge between the two vertex, with label $R$.
-Recurse on $(sid_i,\psi_i)$
+Recurse on $(sid_i,\psi_i)$ 
 \item Else 
   \begin{itemize}
   \item Add an edge labelled R from the current state 
     to $(sid_i,\psi_g)$ with $\psi_g$ greatest element.
   \end{itemize}
 \end{itemize}
-
-
+\end{block}
 }
-
-
-
 
 
 \subsection{Exporting into NTL format for verification step}
 
 \frame{
 \frametitle{Verification Phase : Reachability Analysis}
-
+\begin{block}{Reachability of the error states}
 \begin{itemize}
 \item Exporting the Ecfg Hierarchical Numerical Transition System.
 \item Reachability analisys of the error states by FLATA and/or ELDARICA
 \item If some error state is reachable : An alarm is raised.
 \item If no error states is reachable : The program is free of the memory fault we consider. 
 \end{itemize}
+\end{block}
 }
 
 
@@ -822,43 +887,117 @@ Recurse on $(sid_i,\psi_i)$
 
 %}
 
+\section{Developpement and Current State of Flata-c}
+\frame{\sectionpage}
 
 \frame{
-\frametitle{Benchmarks}
+\frametitle{Flata-c currently support}
+\begin{block}{Currently implemented}
+  \begin{itemize}
+    \item Assert checking on first order arithemtic. 
+    \item Funtion calls with scalar values and pointers.
+    \item Inner function memory model extraction.
+    \item NTL code generation.
+  \end{itemize}
+\end{block}
+}
 
-\begin{figure}[h!]
-%\begin{scriptsize}
-{\small
-\begin{minipage}[t]{.5\textwidth}
-%\begin{scriptsize}
-\begin{tabular}[t]{lrrrr}
-\hline
-%\multirow{2}{*}{Model} & \multicolumn{2}{c}{ Time [s]} \\
-& F. & E. & S. & D. \\
-\hline
-\multicolumn{3}{l}{\textbf{ Examples from Monniaux}} \\
-boustrophedon (C) &  -  & -  &  -  &  12.2 \\
-gopan (C) &  0.5  & -  &  -  &  6.7 \\
-halbwachs (C) & -  & -  &  1.6  &  8.2 \\
-rate\_limiter (C) &  -  & 7.2  &  2.7  &  7.1 \\
-\hline
-\multicolumn{3}{l}{\textbf{(e) NECLA benchmarks}} \\
-\hline
-inf1 (E) &  0.1  & 0.3  &  0.3  &  0.3 \\
-inf4 (E) &  0.8  & 0.5  &  0.5  &  0.5 \\
-inf6 (C) & 0.1  & 0.3  &  0.3  &  0.3 \\
-inf8 (C) &  0.3  & 0.6  &  0.6  &  0.6 \\
-\hline
-\end{tabular}
-\end{minipage}%
-\hspace*{-2ex}%
-} % end small
-%\end{scriptsize}
-\end{figure}
-\textbf{F}lata, \textbf{E}ldarica, Eldarica (\textbf{S}tatic loop acceleration)
- and CEGAAR (\textbf{D}ynamic acceleration).  
+
+\frame{
+\frametitle{Current development}
+\begin{block}{Current developpment}
+  \begin{itemize}
+  \item Handling arbitrary parameters in function calls.
+  \item Hoar logic style pre and post condition inference.
+  \item Better handling of Non-determinism.
+  \item Counter-example trace analysis.
+    \end{itemize}
+\end{block}
+}
+
+
+\section{Personal contributions}
+\frame{
+
+  %\begin{block}
+  %  \be
+  %\end{block}
+
+  \begin{block}{Personal Contributions}
+    \begin{itemize}
+    \item Designed and Implementation of decision procedures. 
+      (OCaml SSL library)
+    \item Ocaml implementation of the NTL library as a
+      target language.
+    \item Designed and implemented the components of
+      the model extraction front-end.
+    \end{itemize}
+\end{block}
+}
+
+
+\section{Introspective Analysis}
+\frame{\sectionpage}
+
+\frame{
+  \begin{block}{}
+    \begin{itemize}
+      \item Incrementally adding features led to some desing inconsistancies
+      \item The semantic action module is not suited for specification
+        inference.
+      \item Need to design a language for expressing SSL+NTL Hoar like 
+        specifications for functions.
+      \item Choosing an Object oriented design for the static analyser
+        part proved too be a poor choice as it makes code hard to read
+        and brings nothing as counterpart.
+      \item Both SSL and NTL implementation have been externalized as
+        separated libraries, in order to make code maintenance and
+        featured adding, as well as unitary testing easier.
+      \item I will try to devise better strategies to maintain two
+        branches of the same software when urgent deadline are looming.
+      \item Not casually evaluting how long it takes to achieve a task.
+      \end{itemize}
+  \end{block}
 
 }
+%\frame{
+%\frametitle{Benchmarks}
+
+%\begin{figure}[h!]
+%\begin{scriptsize}
+%{\small
+%\begin{minipage}[t]{.5\textwidth}
+%\begin{scriptsize}
+%\begin{tabular}[t]{lrrrr}
+%\hline
+%%\multirow{2}{*}{Model} & \multicolumn{2}{c}{ Time [s]} \\
+%& F. & E. & S. & D. \\
+%\hline
+%\multicolumn{3}{l}{\textbf{ Examples from Monniaux}} \\
+%boustrophedon (C) &  -  & -  &  -  &  12.2 \\
+%gopan (C) &  0.5  & -  &  -  &  6.7 \\
+%halbwachs (C) & -  & -  &  1.6  &  8.2 \\
+%rate\_limiter (C) &  -  & 7.2  &  2.7  &  7.1 \\
+%\hline
+%\multicolumn{3}{l}{\textbf{(e) NECLA benchmarks}} \\
+%\hline
+%inf1 (E) &  0.1  & 0.3  &  0.3  &  0.3 \\
+%inf4 (E) &  0.8  & 0.5  &  0.5  &  0.5 \\
+%inf6 (C) & 0.1  & 0.3  &  0.3  &  0.3 \\
+%inf8 (C) &  0.3  & 0.6  &  0.6  &  0.6 \\
+%\hline
+%\end{tabular}
+%\end{minipage}%
+%\hspace*{-2ex}%
+%} % end small
+%%\end{scriptsize}
+%\end{figure}
+%\textbf{F}lata, \textbf{E}ldarica, Eldarica (\textbf{S}tatic loop acceleration)
+ %and CEGAAR (\textbf{D}ynamic acceleration).  
+
+%}
+
+
 %\fram
 %\frame{
 %\frametitle{How to label terms with A.P. ?}
