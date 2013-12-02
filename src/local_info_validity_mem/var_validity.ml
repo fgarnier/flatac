@@ -323,7 +323,12 @@ and valid_sym_boolexp (loc_map : validity_loc_map ) (sslf : ssl_formula ) ( bool
 	let valid_ed = valid_sym_cscal loc_map sslf expd in
 	and_sym_validity valid_eg valid_ed 
       end
-	
+
+    | LiBScal(exp) 
+      ->  valid_sym_cscal loc_map sslf exp
+    | LiBNot(exp) 
+      -> valid_sym_boolexp loc_map sslf exp
+      
     | LiBPtrEq (expg , expd)  | LiBPtrNeq (expg , expd) 
     | LiBPtrGt (expg , expd)  | LiBPtrLt (expg , expd)
     | LiBPtrGeq (expg , expd) | LiBPtrLeq ( expg , expd)	
